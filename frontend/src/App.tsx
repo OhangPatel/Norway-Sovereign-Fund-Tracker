@@ -1,121 +1,53 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useState, useEffect } from 'react'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [dataCount, setDataCount] = useState(0);
+  const [message, setMessage] = useState("Ready to test.");
+
+  // 1. Fetch data on load
+  useEffect(() => {
+    fetch("http://127.0.0.1:8000/api/holdings")
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === "error") {
+          setMessage("Backend Error: " + data.message);
+        } else {
+          setDataCount(data.length);
+        }
+      })
+      .catch(() => setMessage("Failed to connect to backend."));
+  }, []);
+
+  // 2. Test the Update Button Logic
+  const testUpdate = () => {
+    setMessage("Sending request...");
+    
+    fetch("http://127.0.0.1:8000/api/trigger-update", { method: "POST" })
+      .then(res => res.json())
+      .then(result => {
+        // This will print the exact status: "started", "running", or "cooldown"
+        setMessage(`Status: [${result.status.toUpperCase()}] - ${result.message}`);
+      })
+      .catch(() => setMessage("Failed to trigger update."));
+  };
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+    <div style={{ padding: "50px" }}>
+      <h1>Logic Test Page</h1>
+      
+      <h3>1. Database Connection:</h3>
+      <p>Items in Database: <strong>{dataCount}</strong></p>
+      
+      <h3>2. Button Logic:</h3>
+      <button onClick={testUpdate} style={{ padding: "10px", fontSize: "16px" }}>
+        TEST UPDATE BUTTON
+      </button>
+      
+      <div style={{ marginTop: "20px", padding: "10px", border: "2px solid black", backgroundColor: "#eee" }}>
+        <strong>Server Reply:</strong> <br/>
+        {message}
+      </div>
+    </div>
   )
 }
 
