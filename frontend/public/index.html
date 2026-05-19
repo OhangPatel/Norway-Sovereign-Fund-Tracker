@@ -4,8 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sovereign Insights</title>
-    <script crossorigin src="https://unpkg.com/react@19/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@19/umd/react-dom.production.min.js"></script>
     <style>
       :root[data-theme="dark"] {
         --bg: #0a0a0a;
@@ -82,16 +80,19 @@
   </head>
   <body>
     <div id="app"></div>
-    
-    <!-- Load all components -->
-    <script src="/src/format.jsx"></script>
-    <script src="/src/charts.jsx"></script>
-    <script src="/src/topbar.jsx"></script>
-    <script src="/src/filters.jsx"></script>
-    <script src="/src/summary.jsx"></script>
-    <script src="/src/table.jsx"></script>
-    <script src="/src/detail.jsx"></script>
-    <script src="/src/compare.jsx"></script>
-    <script src="/src/app.jsx"></script>
+
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script type="text/babel" data-presets="react" src="/src/format.jsx"></script>
+    <script type="text/babel" data-presets="react" src="/src/charts.jsx"></script>
+    <script type="text/babel" data-presets="react" src="/src/topbar.jsx"></script>
+    <script type="text/babel" data-presets="react" src="/src/filters.jsx"></script>
+    <script type="text/babel" data-presets="react" src="/src/summary.jsx"></script>
+    <script type="text/babel" data-presets="react" src="/src/table.jsx"></script>
+    <script type="text/babel" data-presets="react" src="/src/detail.jsx"></script>
+    <script type="text/babel" data-presets="react" src="/src/compare.jsx"></script>
+    <script type="text/babel" data-presets="react" src="/src/app.jsx"></script>
   </body>
 </html>
