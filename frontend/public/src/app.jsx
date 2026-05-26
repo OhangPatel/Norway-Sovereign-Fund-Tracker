@@ -1,8 +1,253 @@
-// Main app composition
+// ── Pipeline Controls ─────────────────────────────────────────────────────────
+
+var PIPELINE_API = 'http://127.0.0.1:8000';
+
+function PipelineBtn(props) {
+  var children = props.children;
+  var disabled  = props.disabled;
+  var active    = props.active;
+  var onClick   = props.onClick;
+
+  var base = {
+    display: 'inline-flex', alignItems: 'center', gap: 5,
+    padding: '6px 11px',
+    border: '1px solid ' + (active ? 'var(--accent)' : 'var(--hairline)'),
+    borderRadius: 8,
+    cursor: disabled ? 'not-allowed' : 'pointer',
+    fontFamily: 'var(--font-ui)',
+    fontSize: 12, fontWeight: 500,
+    opacity: (disabled && !active) ? 0.55 : 1,
+    transition: 'all .12s ease',
+    whiteSpace: 'nowrap',
+    background: active ? 'var(--surface-2)' : 'var(--surface)',
+    color: active ? 'var(--accent)' : (disabled ? 'var(--muted-2)' : 'var(--ink-2)'),
+  };
+
+  return React.createElement('button', {
+    onClick: onClick,
+    disabled: disabled,
+    style: base,
+  }, children);
+}
+
+function PipelineControls(props) {
+  var defaultStatus = {
+    is_running: false, job_type: null, step: '', progress: 0,
+    message: 'Idle', started_at: null, completed_at: null, error: null,
+    rate_limit: { metrics_runs_today: 0, max_per_day: 2, can_run: true },
+  };
+
+  var statusState  = React.useState(defaultStatus);
+  var status       = statusState[0];
+  var setStatus    = statusState[1];
+
+  var onlineState  = React.useState(false);
+  var online       = onlineState[0];
+  var setOnline    = onlineState[1];
+
+  var elapsedState = React.useState(0);
+  var elapsed      = elapsedState[0];
+  var setElapsed   = elapsedState[1];
+
+  var prevRunning  = React.useRef(false);
+
+  // Poll every 3 s
+  React.useEffect(function() {
+    function poll() {
+      fetch(PIPELINE_API + '/api/pipeline/status')
+        .then(function(res) { return res.json(); })
+        .then(function(d) {
+          // Detect running → done transition
+          if (prevRunning.current && !d.is_running && !d.error && d.completed_at) {
+            if (props.onComplete) props.onComplete();
+          }
+          prevRunning.current = d.is_running;
+          setStatus(d);
+          setOnline(true);
+        })
+        .catch(function() { setOnline(false); });
+    }
+    poll();
+    var id = setInterval(poll, 3000);
+    return function() { clearInterval(id); };
+  }, []);
+
+  // Elapsed tick
+  React.useEffect(function() {
+    if (!status.is_running || !status.started_at) return;
+    var t0 = new Date(status.started_at).getTime();
+    var id = setInterval(function() {
+      setElapsed(Math.floor((Date.now() - t0) / 1000));
+    }, 1000);
+    return function() { clearInterval(id); };
+  }, [status.is_running, status.started_at]);
+
+  function fmtTime(s) {
+    return s >= 60 ? (Math.floor(s / 60) + 'm ' + (s % 60) + 's') : (s + 's');
+  }
+
+  function fmtAt(iso) {
+    if (!iso) return '';
+    var d = new Date(iso);
+    var h = d.getHours(), m = d.getMinutes();
+    return (h < 10 ? '0' + h : h) + ':' + (m < 10 ? '0' + m : m);
+  }
+
+  function getEmoji(step) {
+    if (!step) return '⚙️';
+    if (/launch|browser/i.test(step)) return '🌐';
+    if (/download/i.test(step))       return '📥';
+    if (/filter|apply/i.test(step))   return '🔍';
+    if (/sav/i.test(step))            return '💾';
+    if (/fetch|batch/i.test(step))    return '📡';
+    if (/merg|join/i.test(step))      return '🔀';
+    if (/done/i.test(step))           return '✅';
+    return '⚙️';
+  }
+
+  function trigger(endpoint) {
+    fetch(PIPELINE_API + '/api/pipeline/' + endpoint, { method: 'POST' })
+      .then(function(res) {
+        return res.json().then(function(data) {
+          if (!res.ok) { alert(data.error || 'Failed to start pipeline'); return; }
+          prevRunning.current = true;
+          setElapsed(0);
+          setStatus(function(s) {
+            return Object.assign({}, s, {
+              is_running: true, error: null, progress: 0,
+              job_type: endpoint === 'fetch-clean' ? 'fetch_clean' : 'metrics_merge',
+              started_at: new Date().toISOString(), completed_at: null,
+            });
+          });
+        });
+      })
+      .catch(function() {
+        alert('Cannot reach backend at ' + PIPELINE_API + '. Is uvicorn running?');
+      });
+  }
+
+  var isRunning = status.is_running;
+  var rl        = status.rate_limit;
+  var pct       = status.progress;
+  var isError   = !!status.error;
+  var showBar   = isRunning || isError;
+  var barColor  = isError ? 'var(--neg)' : 'var(--accent)';
+  var displayElapsed = elapsed;
+
+  var estLeft = null;
+  if (isRunning && pct > 5 && displayElapsed > 0) {
+    estLeft = Math.max(0, Math.round(((100 - pct) / pct) * displayElapsed));
+  }
+
+  return (
+    <div style={{ borderBottom: '1px solid var(--hairline)', background: 'var(--bg-2)' }}>
+      <div style={{
+        maxWidth: 1680, margin: '0 auto',
+        padding: '10px clamp(16px, 3vw, 32px)',
+        display: 'flex', flexDirection: 'column', gap: 8,
+      }}>
+
+        {/* Button row */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+          <span className="eyebrow" style={{ flexShrink: 0, fontSize: 10 }}>Data Pipeline</span>
+
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'flex-end' }}>
+
+            <PipelineBtn
+              disabled={isRunning || !online}
+              active={isRunning && status.job_type === 'fetch_clean'}
+              onClick={() => trigger('fetch-clean')}
+            >
+              {isRunning && status.job_type === 'fetch_clean' ? '⏳ Fetching…' : '🌐 Fetch Latest Data'}
+            </PipelineBtn>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <PipelineBtn
+                disabled={isRunning || !rl.can_run || !online}
+                active={isRunning && status.job_type === 'metrics_merge'}
+                onClick={() => trigger('metrics-merge')}
+              >
+                {isRunning && status.job_type === 'metrics_merge' ? '⏳ Updating…' : '📊 Update Metrics & Merge'}
+              </PipelineBtn>
+              <span className="mono" style={{
+                fontSize: 9.5, paddingLeft: 2,
+                color: rl.metrics_runs_today >= rl.max_per_day ? 'var(--neg)' : 'var(--muted)',
+              }}>
+                {rl.metrics_runs_today}/{rl.max_per_day} uses today · resets midnight
+              </span>
+            </div>
+
+            <PipelineBtn disabled={true}>
+              🤖 AI Report &amp; Export{' '}
+              <span className="mono" style={{
+                fontSize: 9, padding: '1px 5px', marginLeft: 4,
+                border: '1px solid var(--hairline)', borderRadius: 4,
+                color: 'var(--muted-2)',
+              }}>soon</span>
+            </PipelineBtn>
+          </div>
+
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8 }}>
+            {!online && (
+              <span className="mono" style={{ fontSize: 10, color: 'var(--muted)' }}>backend offline</span>
+            )}
+            {isRunning && (
+              <span className="mono" style={{ fontSize: 10.5, color: 'var(--muted)' }}>
+                ⏱ {fmtTime(displayElapsed)}
+                {estLeft !== null ? ' · ~' + fmtTime(estLeft) + ' left' : ''}
+              </span>
+            )}
+            {!isRunning && status.completed_at && !isError && (
+              <span className="mono" style={{ fontSize: 10, color: 'var(--muted)' }}>
+                Last updated {fmtAt(status.completed_at)}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Progress bar */}
+        {showBar && (
+          <div style={{ animation: 'rise .2s ease-out' }}>
+            <div style={{
+              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+              marginBottom: 4, fontSize: 11,
+            }}>
+              <span style={{ color: isError ? 'var(--neg)' : 'var(--ink-2)' }}>
+                {getEmoji(status.step)}&nbsp;
+                {isError ? status.error : (status.step || status.message)}
+              </span>
+              <span className="mono" style={{ fontSize: 10.5, color: 'var(--muted)', fontWeight: 600 }}>
+                {pct}%
+              </span>
+            </div>
+            <div style={{ height: 3, borderRadius: 2, background: 'var(--hairline)', overflow: 'hidden', position: 'relative' }}>
+              <div style={{
+                position: 'absolute', left: 0, top: 0, bottom: 0,
+                width: pct + '%', background: barColor,
+                borderRadius: 2, transition: 'width .7s ease',
+              }}/>
+              {isRunning && !isError && (
+                <div style={{
+                  position: 'absolute', top: 0, bottom: 0,
+                  left: (pct * 0.5) + '%', width: '20%',
+                  background: 'linear-gradient(90deg, transparent, rgba(255,255,255,.35), transparent)',
+                  animation: 'pipeShimmer 1.6s ease-in-out infinite',
+                }}/>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ── Main app composition ──────────────────────────────────────────────────────
 
 function App() {
   const [data, setData] = React.useState(null);
   const [err, setErr] = React.useState(null);
+  const [dataKey, setDataKey] = React.useState(0);
   const [theme, setTheme] = React.useState(() => localStorage.getItem('sov-theme') || 'dark');
   const [query, setQuery] = React.useState('');
   const [filters, setFilters] = React.useState({
@@ -36,13 +281,15 @@ function App() {
     pin:       { label: 'Pin',            visible: true },
   });
 
-  // Load data
+  // Load (or reload) data — re-runs when dataKey increments after pipeline completes.
+  // ?v= includes Date.now() on first load so a stale browser cache never serves old data.
   React.useEffect(() => {
-    fetch('data.json')
+    const bust = dataKey === 0 ? Date.now() : dataKey;
+    fetch('data.json?v=' + bust)
       .then(r => r.json())
       .then(setData)
       .catch(e => setErr(e.message));
-  }, []);
+  }, [dataKey]);
 
   // Theme effect
   React.useEffect(() => {
@@ -144,6 +391,8 @@ function App() {
         onOpenColumns={() => setShowColumns(o => !o)}
         lastFetched={lastFetched}
       />
+
+      <PipelineControls onComplete={() => setDataKey(k => k + 1)} />
 
       <main style={{
         maxWidth: 1680, margin: '0 auto',

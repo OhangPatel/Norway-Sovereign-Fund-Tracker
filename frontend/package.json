@@ -4,10 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
+    "dev": "npx http-server public -p 8080 -o",
+    "build": "echo 'Static app — no build step needed'",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "npx http-server public -p 8080"
   },
   "dependencies": {
     "express": "^5.2.1",
