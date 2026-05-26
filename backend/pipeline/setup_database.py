@@ -13,7 +13,7 @@ def setup_metrics_schema():
 
     create_table_query = """
     CREATE TABLE IF NOT EXISTS financial_metrics (
-        ticker TEXT,
+        ticker TEXT PRIMARY KEY,
         fetched_at DATETIME,
         pe_ratio REAL,
         forward_pe REAL,
@@ -27,7 +27,8 @@ def setup_metrics_schema():
         beta REAL,
         sector TEXT,
         industry TEXT,
-        PRIMARY KEY (ticker, fetched_at)
+        price REAL,
+        change REAL
     );
     """
 

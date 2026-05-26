@@ -1,123 +1,276 @@
-from fastapi import FastAPI, Query, BackgroundTasks
+from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 import sqlite3
 from pathlib import Path
 import json
 import subprocess
-from datetime import datetime
+import sys
+import os
+import threading
+from datetime import datetime, date, timedelta
 
 app = FastAPI(title="NBIM Tracker API")
 
-# Step 1: Scaffold & CORS setup (Allows your Vite app to securely request data)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"], 
+    allow_origins=[
+        "http://localhost:5173", "http://127.0.0.1:5173",
+        "http://localhost:8080", "http://127.0.0.1:8080",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Connect to the DB we built
 DB_PATH = Path(__file__).resolve().parent.parent / "nbim.db"
+PIPELINE_DIR = Path(__file__).resolve().parent.parent / "pipeline"
+RATE_LIMIT_FILE = Path(__file__).resolve().parent / "rate_limits.json"
+MAX_METRICS_RUNS_PER_DAY = 2
+
+# ── Pipeline state ────────────────────────────────────────────────────────────
+_lock = threading.Lock()
+_status: dict = {
+    "is_running": False,
+    "job_type": None,
+    "step": "",
+    "progress": 0,
+    "message": "Idle",
+    "started_at": None,
+    "completed_at": None,
+    "error": None,
+}
+
 
 def get_db_connection():
     conn = sqlite3.connect(str(DB_PATH))
-    # This magic line tells SQLite to return data as Python dictionaries instead of raw tuples!
-    conn.row_factory = sqlite3.Row 
+    conn.row_factory = sqlite3.Row
     return conn
 
-# ---------------------------------------------------------
-# Step 2: Build GET /holdings endpoint (The Main Data Table)
-# ---------------------------------------------------------
+
+# ── Rate-limit helpers ────────────────────────────────────────────────────────
+def _load_rate_limits() -> dict:
+    if RATE_LIMIT_FILE.exists():
+        return json.loads(RATE_LIMIT_FILE.read_text())
+    return {"metrics_merge_runs": []}
+
+
+def _save_rate_limits(data: dict):
+    RATE_LIMIT_FILE.write_text(json.dumps(data, indent=2))
+
+
+def _count_today_metrics_runs() -> int:
+    data = _load_rate_limits()
+    today = date.today().isoformat()
+    return sum(1 for r in data["metrics_merge_runs"] if r.startswith(today))
+
+
+def _record_metrics_run():
+    data = _load_rate_limits()
+    data["metrics_merge_runs"].append(datetime.now().isoformat())
+    cutoff = (date.today() - timedelta(days=30)).isoformat()
+    data["metrics_merge_runs"] = [r for r in data["metrics_merge_runs"] if r >= cutoff]
+    _save_rate_limits(data)
+
+
+# ── Subprocess runner with progress parsing ───────────────────────────────────
+def _run_script(script_name: str, progress_offset: int = 0, progress_scale: float = 1.0) -> int:
+    env = os.environ.copy()
+    env["PYTHONUNBUFFERED"] = "1"
+    process = subprocess.Popen(
+        [sys.executable, "-u", str(PIPELINE_DIR / script_name)],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        bufsize=1,
+        env=env,
+    )
+    for raw in process.stdout:
+        line = raw.strip()
+        if not line:
+            continue
+        print(line, flush=True)
+        if line.startswith("PROGRESS:"):
+            try:
+                cur, tot = line[9:].split("/")
+                pct = int(int(cur) / int(tot) * 100 * progress_scale) + progress_offset
+                _status["progress"] = min(pct, 99)
+            except Exception:
+                pass
+        elif line.startswith("STEP:"):
+            _status["step"] = line[5:].strip()
+        else:
+            _status["message"] = line
+    process.wait()
+    return process.returncode
+
+
+# ── Worker threads ────────────────────────────────────────────────────────────
+def _fetch_clean_worker():
+    try:
+        _status.update({
+            "is_running": True,
+            "job_type": "fetch_clean",
+            "progress": 0,
+            "step": "Launching browser...",
+            "message": "Starting Playwright to scrape NBIM website",
+            "error": None,
+            "started_at": datetime.now().isoformat(),
+            "completed_at": None,
+        })
+        ret = _run_script("fetch_and_clean_holding.py")
+        if ret != 0:
+            raise RuntimeError("fetch_and_clean_holding.py exited with non-zero status")
+        _status.update({
+            "is_running": False,
+            "progress": 100,
+            "step": "Done",
+            "message": "Holdings data fetched and cleaned successfully!",
+            "completed_at": datetime.now().isoformat(),
+        })
+    except Exception as e:
+        _status.update({"is_running": False, "error": str(e), "message": f"Error: {e}"})
+    finally:
+        _lock.release()
+
+
+def _metrics_merge_worker():
+    try:
+        _status.update({
+            "is_running": True,
+            "job_type": "metrics_merge",
+            "progress": 0,
+            "step": "Fetching Yahoo Finance metrics...",
+            "message": "Starting yfinance batch fetcher — this takes 10-20 min",
+            "error": None,
+            "started_at": datetime.now().isoformat(),
+            "completed_at": None,
+        })
+        _record_metrics_run()
+
+        # Fetch metrics  (~88% of total time)
+        ret = _run_script("fetch_yahoo_metrics.py", progress_offset=0, progress_scale=0.88)
+        if ret != 0:
+            raise RuntimeError("fetch_yahoo_metrics.py failed")
+
+        # Merge (~12% of total time)
+        _status.update({"step": "Merging data...", "progress": 90, "message": "Joining holdings with fresh metrics..."})
+        ret = _run_script("merge_and_enrich.py", progress_offset=90, progress_scale=0.09)
+        if ret != 0:
+            raise RuntimeError("merge_and_enrich.py failed")
+
+        _status.update({
+            "is_running": False,
+            "progress": 100,
+            "step": "Done",
+            "message": "Metrics fetched and data merged successfully!",
+            "completed_at": datetime.now().isoformat(),
+        })
+    except Exception as e:
+        _status.update({"is_running": False, "error": str(e), "message": f"Error: {e}"})
+    finally:
+        _lock.release()
+
+
+# ── Pipeline endpoints ────────────────────────────────────────────────────────
+@app.get("/api/pipeline/status")
+def get_pipeline_status():
+    today_runs = _count_today_metrics_runs()
+    return {
+        **_status,
+        "rate_limit": {
+            "metrics_runs_today": today_runs,
+            "max_per_day": MAX_METRICS_RUNS_PER_DAY,
+            "can_run": today_runs < MAX_METRICS_RUNS_PER_DAY and not _status["is_running"],
+        },
+    }
+
+
+@app.post("/api/pipeline/fetch-clean")
+def trigger_fetch_clean():
+    if not _lock.acquire(blocking=False):
+        return JSONResponse(status_code=409, content={"error": "A pipeline job is already running"})
+    threading.Thread(target=_fetch_clean_worker, daemon=True).start()
+    return {"message": "Fetch & clean started"}
+
+
+@app.post("/api/pipeline/metrics-merge")
+def trigger_metrics_merge():
+    today_runs = _count_today_metrics_runs()
+    if today_runs >= MAX_METRICS_RUNS_PER_DAY:
+        return JSONResponse(
+            status_code=429,
+            content={"error": f"Rate limit: max {MAX_METRICS_RUNS_PER_DAY} runs per day ({today_runs} used today)"},
+        )
+    if not _lock.acquire(blocking=False):
+        return JSONResponse(status_code=409, content={"error": "A pipeline job is already running"})
+    threading.Thread(target=_metrics_merge_worker, daemon=True).start()
+    return {"message": "Metrics fetch & merge started"}
+
+
+@app.post("/api/pipeline/ai-report")
+def trigger_ai_report():
+    return JSONResponse(
+        status_code=501,
+        content={"message": "AI report generation coming soon", "status": "not_implemented"},
+    )
+
+
+# ── Data endpoints ────────────────────────────────────────────────────────────
 @app.get("/api/holdings")
 def get_holdings(
-    page: int = Query(1, ge=1, description="Page number"),
-    limit: int = Query(50, ge=1, le=500, description="Items per page")
+    page: int = Query(1, ge=1),
+    limit: int = Query(50, ge=1, le=500),
 ):
     conn = get_db_connection()
     cursor = conn.cursor()
-    
     offset = (page - 1) * limit
-    
-    # Get the total count of unique companies for the frontend pagination math
-    cursor.execute("SELECT COUNT(DISTINCT Yahoo_Ticker) FROM enriched_holdings WHERE Yahoo_Ticker IS NOT NULL")
+
+    cursor.execute(
+        "SELECT COUNT(DISTINCT Yahoo_Ticker) FROM enriched_holdings WHERE Yahoo_Ticker IS NOT NULL"
+    )
     total_count = cursor.fetchone()[0]
-    
-    # Fetch the actual data. 
-    # GROUP BY Yahoo_Ticker cleanly ignores the duplicates from your double-run!
-    # Fetch the actual data. 
-    query = """
-        SELECT 
-            Name, 
-            Yahoo_Ticker, 
-            sector, 
-            Country AS country, 
-            pe_ratio, 
-            market_cap,
-            high_52w,
-            low_52w,
-            fetched_at
+
+    cursor.execute(
+        """
+        SELECT Name, Yahoo_Ticker, sector, Country AS country,
+               pe_ratio, market_cap, high_52w, low_52w, fetched_at
         FROM enriched_holdings
         WHERE Yahoo_Ticker IS NOT NULL
         GROUP BY Yahoo_Ticker
         ORDER BY market_cap DESC
         LIMIT ? OFFSET ?
-    """
-    cursor.execute(query, (limit, offset))
+        """,
+        (limit, offset),
+    )
     rows = cursor.fetchall()
     conn.close()
-    
+
     return {
         "data": [dict(row) for row in rows],
         "pagination": {
             "total_count": total_count,
             "current_page": page,
             "limit": limit,
-            "total_pages": (total_count + limit - 1) // limit
-        }
+            "total_pages": (total_count + limit - 1) // limit,
+        },
     }
 
-# ---------------------------------------------------------
-# Step 3: Build GET /report/{ticker} endpoint (Existing AI Report)
-# ---------------------------------------------------------
+
 @app.get("/api/report/{ticker}")
 def get_ai_report(ticker: str):
     conn = get_db_connection()
     cursor = conn.cursor()
-    
-    cursor.execute("SELECT description, outlook, key_risks FROM generated_reports WHERE ticker = ?", (ticker,))
+    cursor.execute(
+        "SELECT description, outlook, key_risks FROM generated_reports WHERE ticker = ?", (ticker,)
+    )
     report = cursor.fetchone()
     conn.close()
-    
     if report:
         return {
             "ticker": ticker,
             "description": report["description"],
             "outlook": report["outlook"],
-            "key_risks": json.loads(report["key_risks"]) if report["key_risks"] else []
+            "key_risks": json.loads(report["key_risks"]) if report["key_risks"] else [],
         }
-    
-    return {"error": "Report not found or not generated yet.", "status": "pending"}
-
-# This is the worker function that runs silently in the background
-def run_pipeline_worker():
-    print(f"[{datetime.now()}] 🚀 Starting background pipeline update...")
-    try:
-        # 1. Run the Yahoo Finance scraper (Make sure this matches your script's actual name!)
-        print("Fetching live market data from Yahoo Finance...")
-        subprocess.run(["python", "../pipeline/your_yahoo_scraper_script.py"], check=True)
-        
-        # 2. SKIP AI GENERATION FOR NOW
-        print("Skipping AI Report generation...")
-        # subprocess.run(["python", "../pipeline/5_generate_ai_reports.py"], check=True)
-        
-        # 3. Export the Mega CSV with the fresh Yahoo data
-        print("Exporting Mega CSV...")
-        subprocess.run(["python", "../pipeline/export_report.py"], check=True)
-        
-        print(f"[{datetime.now()}] ✅ Background pipeline completed successfully!")
-        
-    except subprocess.CalledProcessError as e:
-        print(f"❌ Pipeline crashed during execution: {e}")
-    except Exception as e:
-        print(f"❌ Unexpected error in background task: {e}")
+    return {"error": "Report not found", "status": "pending"}
