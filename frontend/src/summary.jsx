@@ -1,6 +1,10 @@
+import React from 'react';
+import { fmt, Icon } from './format.jsx';
+import { TopBarList, Histogram, Donut } from './charts.jsx';
+
 // Summary section: stat cards + charts (top holdings, sector donut, ownership histogram)
 
-var SECTOR_COLORS = {
+export var SECTOR_COLORS = {
   'Technology':            'oklch(0.78 0.13 80)',
   'Financial Services':    'oklch(0.72 0.11 230)',
   'Healthcare':            'oklch(0.78 0.13 155)',
@@ -15,7 +19,7 @@ var SECTOR_COLORS = {
   '':                      'oklch(0.5 0.005 80)',
 };
 
-function Summary({ data, filtered, onPickCompany, onSetFilter }) {
+export function Summary({ data, filtered, onPickCompany, onSetFilter }) {
   const totalNok = filtered.reduce((s, c) => s + (c.mvNok || 0), 0);
   const totalUsd = filtered.reduce((s, c) => s + (c.mvUsd || 0), 0);
   const avgOwn = filtered.length ? filtered.reduce((s, c) => s + (c.ownership || 0), 0) / filtered.length : 0;
@@ -202,19 +206,19 @@ function Summary({ data, filtered, onPickCompany, onSetFilter }) {
   );
 }
 
-function median(arr) {
+export function median(arr) {
   if (!arr.length) return 0;
   const s = [...arr].sort((a,b)=>a-b);
   const m = Math.floor(s.length/2);
   return s.length % 2 ? s[m] : (s[m-1]+s[m])/2;
 }
-function percentile(arr, p) {
+export function percentile(arr, p) {
   if (!arr.length) return 0;
   const s = [...arr].sort((a,b)=>a-b);
   return s[Math.min(s.length-1, Math.floor(p * s.length))];
 }
 
-function StatCell({ label, value, sub, accent, clickable, onClick }) {
+export function StatCell({ label, value, sub, accent, clickable, onClick }) {
   return (
     <div
       onClick={clickable ? onClick : undefined}
@@ -237,7 +241,7 @@ function StatCell({ label, value, sub, accent, clickable, onClick }) {
   );
 }
 
-function StatMini({ label, value }) {
+export function StatMini({ label, value }) {
   return (
     <div>
       <div className="eyebrow" style={{ fontSize: 9 }}>{label}</div>
@@ -246,7 +250,7 @@ function StatMini({ label, value }) {
   );
 }
 
-function Card({ title, eyebrow, rightSlot, children, padding = 18 }) {
+export function Card({ title, eyebrow, rightSlot, children, padding = 18 }) {
   return (
     <div className="card" style={{ padding }}>
       <div style={{

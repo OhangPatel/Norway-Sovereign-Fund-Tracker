@@ -1,6 +1,9 @@
+import React from 'react';
+import { fmt, Icon } from './format.jsx';
+
 // Filters strip — country/sector multi-select chips + ownership range slider + reset
 
-function Filters({ data, filters, setFilters, columns, setColumns, showColumns, setShowColumns, count }) {
+export function Filters({ data, filters, setFilters, columns, setColumns, showColumns, setShowColumns, count }) {
   const allCountries = React.useMemo(() => [...new Set(data.map(d => d.country))].filter(Boolean).sort(), [data]);
   const allSectors = React.useMemo(() => [...new Set(data.map(d => d.sector || d.industry))].filter(Boolean).sort(), [data]);
   const allRecs = React.useMemo(() => [...new Set(data.map(d => d.rec))].filter(Boolean).sort(), [data]);
@@ -114,7 +117,7 @@ function Filters({ data, filters, setFilters, columns, setColumns, showColumns, 
   );
 }
 
-function FilterMenu({ label, icon, options, selected, onToggle, onClear, format = (v) => v, counter }) {
+export function FilterMenu({ label, icon, options, selected, onToggle, onClear, format = (v) => v, counter }) {
   const [open, setOpen] = React.useState(false);
   const ref = React.useRef(null);
 
@@ -204,7 +207,7 @@ function FilterMenu({ label, icon, options, selected, onToggle, onClear, format 
   );
 }
 
-function RangeFilter({ label, min, max, step, valueMin, valueMax, onChange, formatValue }) {
+export function RangeFilter({ label, min, max, step, valueMin, valueMax, onChange, formatValue }) {
   const [open, setOpen] = React.useState(false);
   const ref = React.useRef(null);
   React.useEffect(() => {
@@ -292,7 +295,7 @@ function RangeFilter({ label, min, max, step, valueMin, valueMax, onChange, form
   );
 }
 
-function ColumnsPopover({ columns, setColumns, onClose }) {
+export function ColumnsPopover({ columns, setColumns, onClose }) {
   const ref = React.useRef(null);
   React.useEffect(() => {
     const close = (e) => { if (ref.current && !ref.current.contains(e.target)) onClose(); };
@@ -332,5 +335,3 @@ function ColumnsPopover({ columns, setColumns, onClose }) {
     </div>
   );
 }
-
-window.Filters = Filters;

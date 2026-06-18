@@ -1,6 +1,10 @@
+import React from 'react';
+import { fmt, Chip, Delta, RangeBar, MicroBar, Icon } from './format.jsx';
+import { SECTOR_COLORS } from './summary.jsx';
+
 // Core data table — sortable, virtualized scroll, sticky header, compare/pin support
 
-var ALL_COLUMNS = {
+export var ALL_COLUMNS = {
   rank:    { label: '#',         width: 48,  align: 'right', sortable: false },
   name:    { label: 'Company',   width: 280, align: 'left',  sortable: true,  sortKey: 'name' },
   ticker:  { label: 'Ticker',    width: 86,  align: 'left',  sortable: true,  sortKey: 'ticker' },
@@ -16,7 +20,7 @@ var ALL_COLUMNS = {
   pin:     { label: '',          width: 38,  align: 'center', sortable: false },
 };
 
-const REC_TONE = {
+export const REC_TONE = {
   strong_buy: 'pos',
   buy: 'pos',
   hold: 'neutral',
@@ -26,7 +30,7 @@ const REC_TONE = {
   none: 'neutral',
 };
 
-function DataTable({
+export function DataTable({
   data, columns,
   sort, setSort,
   pinned, togglePin,
@@ -162,7 +166,7 @@ function DataTable({
   );
 }
 
-function Row({ row, rank, visibleCols, onOpen, pinned, togglePin, compareOn, compared, toggleCompare, maxOwnership }) {
+export function Row({ row, rank, visibleCols, onOpen, pinned, togglePin, compareOn, compared, toggleCompare, maxOwnership }) {
   const [hover, setHover] = React.useState(false);
 
   const cellBase = {
@@ -215,7 +219,7 @@ function Row({ row, rank, visibleCols, onOpen, pinned, togglePin, compareOn, com
   );
 }
 
-function Cell({ colKey, row, rank, cellBase, pinned, togglePin, hover, maxOwnership }) {
+export function Cell({ colKey, row, rank, cellBase, pinned, togglePin, hover, maxOwnership }) {
   const col = ALL_COLUMNS[colKey];
   const style = { ...cellBase, justifyContent: col.align === 'right' ? 'flex-end' : col.align === 'center' ? 'center' : 'flex-start' };
 
@@ -262,7 +266,7 @@ function Cell({ colKey, row, rank, cellBase, pinned, togglePin, hover, maxOwners
         }}>
           <span style={{
             width: 6, height: 6, borderRadius: 99,
-            background: (window.SECTOR_COLORS && window.SECTOR_COLORS[row.sector]) || 'var(--muted-2)'
+            background: (SECTOR_COLORS && SECTOR_COLORS[row.sector]) || 'var(--muted-2)'
           }}/>
           {row.sector || row.industry || '—'}
         </span>

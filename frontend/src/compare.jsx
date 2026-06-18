@@ -1,6 +1,11 @@
+import React from 'react';
+import { fmt, Chip, Delta, Icon } from './format.jsx';
+import { REC_TONE } from './table.jsx';
+import { IconBtn } from './detail.jsx';
+
 // Compare dock — pinned bottom bar showing selected companies side-by-side
 
-function CompareDock({ companies, onRemove, onClear, onExpand, onOpenCompany }) {
+export function CompareDock({ companies, onRemove, onClear, onExpand, onOpenCompany }) {
   if (!companies.length) return null;
 
   return (
@@ -84,7 +89,7 @@ function CompareDock({ companies, onRemove, onClear, onExpand, onOpenCompany }) 
   );
 }
 
-function btnStyle(primary) {
+export function btnStyle(primary) {
   return {
     padding: '6px 12px',
     background: primary ? 'var(--accent)' : 'transparent',
@@ -96,7 +101,7 @@ function btnStyle(primary) {
 }
 
 // Modal: side-by-side comparison
-function CompareModal({ companies, onClose, allData }) {
+export function CompareModal({ companies, onClose, allData }) {
   React.useEffect(() => {
     const onKey = (e) => { if (e.key === 'Escape') onClose(); };
     window.addEventListener('keydown', onKey);
@@ -120,7 +125,7 @@ function CompareModal({ companies, onClose, allData }) {
     { label: 'P/E (trailing)',  val: c => c.pe?.toFixed(2) ?? '—', mono: true, divider: true },
     { label: 'Forward P/E',     val: c => c.fwdPe?.toFixed(2) ?? '—', mono: true },
     { label: 'Price / Book',    val: c => c.pb?.toFixed(2) ?? '—', mono: true },
-    { label: 'Dividend yield',  val: c => c.divYield ? (c.divYield*100).toFixed(2) + '%' : '—', mono: true },
+    { label: 'Dividend yield',  val: c => c.divYield ? c.divYield.toFixed(2) + '%' : '—', mono: true },
     { label: 'Beta (5y)',       val: c => c.beta?.toFixed(2) ?? '—', mono: true },
     { label: 'Market cap',      val: c => fmt.money(c.marketCap, 'USD', 1), mono: true },
     { label: 'Recommendation',  val: c => <Chip tone={REC_TONE[c.rec] || 'neutral'}>{fmt.rec(c.rec)}</Chip>, html: true },
@@ -213,6 +218,3 @@ function CompareModal({ companies, onClose, allData }) {
     </>
   );
 }
-
-window.CompareDock = CompareDock;
-window.CompareModal = CompareModal;

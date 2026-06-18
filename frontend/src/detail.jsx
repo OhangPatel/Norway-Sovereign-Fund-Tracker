@@ -1,6 +1,11 @@
+import React from 'react';
+import { fmt, Chip, Delta, RangeBar, Icon } from './format.jsx';
+import { Sparkline, genSeries } from './charts.jsx';
+import { REC_TONE } from './table.jsx';
+
 // Slide-over detail drawer for a single company
 
-function Detail({ company, allData, onClose, onPickCompany, pinned, togglePin }) {
+export function Detail({ company, allData, onClose, onPickCompany, pinned, togglePin }) {
   const [entered, setEntered] = React.useState(false);
   React.useEffect(() => {
     const onKey = (e) => { if (e.key === 'Escape') onClose(); };
@@ -165,7 +170,7 @@ function Detail({ company, allData, onClose, onPickCompany, pinned, togglePin })
               <KvCell label="P/E ratio (trailing)" value={company.pe?.toFixed(2) ?? '—'}/>
               <KvCell label="Forward P/E" value={company.fwdPe?.toFixed(2) ?? '—'}/>
               <KvCell label="Price / Book" value={company.pb?.toFixed(2) ?? '—'}/>
-              <KvCell label="Dividend yield" value={company.divYield ? (company.divYield * 100).toFixed(2) + '%' : '—'}/>
+              <KvCell label="Dividend yield" value={company.divYield ? company.divYield.toFixed(2) + '%' : '—'}/>
               <KvCell label="Beta (5y)" value={company.beta?.toFixed(2) ?? '—'}/>
               <KvCell label="Analyst rec" value={<Chip tone={REC_TONE[company.rec] || 'neutral'}>{fmt.rec(company.rec)}</Chip>}/>
             </div>
@@ -205,7 +210,7 @@ function Detail({ company, allData, onClose, onPickCompany, pinned, togglePin })
   );
 }
 
-function Metric({ label, value, accent }) {
+export function Metric({ label, value, accent }) {
   return (
     <div>
       <div className="eyebrow" style={{ fontSize: 9.5 }}>{label}</div>
@@ -217,7 +222,7 @@ function Metric({ label, value, accent }) {
   );
 }
 
-function KvCell({ label, value }) {
+export function KvCell({ label, value }) {
   return (
     <div style={{ background:'var(--surface)', padding: '14px 16px' }}>
       <div className="eyebrow" style={{ fontSize: 9 }}>{label}</div>
@@ -226,7 +231,7 @@ function KvCell({ label, value }) {
   );
 }
 
-function IconBtn({ children, onClick, title, active }) {
+export function IconBtn({ children, onClick, title, active }) {
   return (
     <button onClick={onClick} title={title}
       style={{
@@ -243,5 +248,3 @@ function IconBtn({ children, onClick, title, active }) {
     >{children}</button>
   );
 }
-
-window.Detail = Detail;

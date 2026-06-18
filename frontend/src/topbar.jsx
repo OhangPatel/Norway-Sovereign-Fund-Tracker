@@ -1,6 +1,9 @@
+import React from 'react';
+import { fmt, Icon } from './format.jsx';
+
 // Top navigation bar with brand, search, theme toggle, compare toggle
 
-function TopBar({ data, query, setQuery, theme, setTheme, onPick, compareOn, setCompareOn, compareCount, onOpenColumns, lastFetched }) {
+export function TopBar({ data, query, setQuery, theme, setTheme, onPick, compareOn, setCompareOn, compareCount, onOpenColumns, lastFetched }) {
   const [focused, setFocused] = React.useState(false);
   const [active, setActive] = React.useState(0);
   const wrapRef = React.useRef(null);
@@ -170,7 +173,7 @@ function TopBar({ data, query, setQuery, theme, setTheme, onPick, compareOn, set
   );
 }
 
-function TopBtn({ children, onClick, active, title }) {
+export function TopBtn({ children, onClick, active, title }) {
   return (
     <button onClick={onClick} title={title}
       style={{
@@ -191,5 +194,3 @@ function TopBtn({ children, onClick, active, title }) {
     </button>
   );
 }
-
-window.TopBar = TopBar;

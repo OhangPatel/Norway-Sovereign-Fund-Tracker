@@ -1,8 +1,16 @@
+import React from 'react';
+import { TopBar } from './topbar.jsx';
+import { Filters } from './filters.jsx';
+import { Summary } from './summary.jsx';
+import { DataTable } from './table.jsx';
+import { Detail } from './detail.jsx';
+import { CompareDock, CompareModal } from './compare.jsx';
+
 // ── Pipeline Controls ─────────────────────────────────────────────────────────
 
-var PIPELINE_API = 'http://127.0.0.1:8000';
+export var PIPELINE_API = 'http://127.0.0.1:8000';
 
-function PipelineBtn(props) {
+export function PipelineBtn(props) {
   var children = props.children;
   var disabled  = props.disabled;
   var active    = props.active;
@@ -30,7 +38,7 @@ function PipelineBtn(props) {
   }, children);
 }
 
-function PipelineControls(props) {
+export function PipelineControls(props) {
   var defaultStatus = {
     is_running: false, job_type: null, step: '', progress: 0,
     message: 'Idle', started_at: null, completed_at: null, error: null,
@@ -244,7 +252,7 @@ function PipelineControls(props) {
 
 // ── Main app composition ──────────────────────────────────────────────────────
 
-function App() {
+export function App() {
   const [data, setData] = React.useState(null);
   const [err, setErr] = React.useState(null);
   const [dataKey, setDataKey] = React.useState(0);
@@ -471,7 +479,7 @@ function App() {
   );
 }
 
-var kbd = {
+export var kbd = {
   fontFamily: 'var(--font-mono)',
   padding: '1px 5px',
   border: '1px solid var(--hairline)',
@@ -481,7 +489,7 @@ var kbd = {
   color: 'var(--ink-2)',
 };
 
-function LoadingState() {
+export function LoadingState() {
   return (
     <div style={{ padding: '80px 32px', maxWidth: 1680, margin: '0 auto' }}>
       <div className="eyebrow">Sovereign Insights</div>
@@ -510,5 +518,3 @@ function LoadingState() {
   );
 }
 
-const root = ReactDOM.createRoot(document.getElementById('app'));
-root.render(<App/>);

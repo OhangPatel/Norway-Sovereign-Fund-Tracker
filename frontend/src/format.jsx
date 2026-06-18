@@ -1,6 +1,6 @@
 // Formatting + small UI primitives shared across components.
 
-const fmt = {
+export const fmt = {
   // Compact short form: 1.2B, 845M, 3.4K
   short(n, digits = 1) {
     if (n == null || isNaN(n)) return '—';
@@ -21,10 +21,11 @@ const fmt = {
     if (n == null || isNaN(n)) return '—';
     return n.toFixed(digits) + '%';
   },
+  // n is already a percent value (e.g. -1.74 -> "-1.74%"), matching pct().
   signedPct(n, digits = 2) {
     if (n == null || isNaN(n)) return '—';
     const s = n >= 0 ? '+' : '';
-    return s + (n * 100).toFixed(digits) + '%';
+    return s + n.toFixed(digits) + '%';
   },
   price(n, digits = 2) {
     if (n == null || isNaN(n)) return '—';
@@ -37,7 +38,7 @@ const fmt = {
 };
 
 // Small chip / badge
-function Chip({ children, tone = 'neutral', style = {} }) {
+export function Chip({ children, tone = 'neutral', style = {} }) {
   const tones = {
     neutral: { bg: 'var(--surface-2)', fg: 'var(--ink-2)', bd: 'var(--hairline)' },
     pos:     { bg: 'color-mix(in oklch, var(--pos) 14%, transparent)', fg: 'var(--pos)', bd: 'color-mix(in oklch, var(--pos) 35%, transparent)' },
@@ -65,7 +66,7 @@ function Chip({ children, tone = 'neutral', style = {} }) {
 }
 
 // Tiny up/down delta
-function Delta({ value, fmt: f = 'pct' }) {
+export function Delta({ value, fmt: f = 'pct' }) {
   if (value == null) return <span className="mono" style={{color:'var(--muted)'}}>—</span>;
   const pos = value >= 0;
   const arrow = pos ? '▲' : '▼';
@@ -82,7 +83,7 @@ function Delta({ value, fmt: f = 'pct' }) {
 }
 
 // 52-week range visual: low ─── current ─── high
-function RangeBar({ low, high, value, height = 8, showLabels = false }) {
+export function RangeBar({ low, high, value, height = 8, showLabels = false }) {
   if (low == null || high == null || value == null) {
     return <div style={{ height, background: 'var(--surface-2)', borderRadius: 99 }}/>;
   }
@@ -120,7 +121,7 @@ function RangeBar({ low, high, value, height = 8, showLabels = false }) {
 }
 
 // Sparkline-ish micro bar: percent fill (for ownership column)
-function MicroBar({ value, max, tone = 'accent', height = 4 }) {
+export function MicroBar({ value, max, tone = 'accent', height = 4 }) {
   const pct = max ? Math.min(100, (value / max) * 100) : 0;
   const tones = {
     accent: 'var(--accent)',
@@ -141,7 +142,7 @@ function MicroBar({ value, max, tone = 'accent', height = 4 }) {
 }
 
 // Icon (24px stroke) — minimal, sketched glyphs
-function Icon({ name, size = 16, color = 'currentColor', strokeWidth = 1.5 }) {
+export function Icon({ name, size = 16, color = 'currentColor', strokeWidth = 1.5 }) {
   const props = {
     width: size, height: size, viewBox: '0 0 24 24', fill: 'none',
     stroke: color, strokeWidth, strokeLinecap: 'round', strokeLinejoin: 'round'

@@ -1,7 +1,7 @@
 // Hand-rolled SVG charts — bar, histogram, horizontal bar, donut
 
 // Horizontal bar list (top holdings)
-function TopBarList({ items, max, valueFmt, height = 280, onClick, accent = 'var(--accent)' }) {
+export function TopBarList({ items, max, valueFmt, height = 280, onClick, accent = 'var(--accent)' }) {
   const n = items.length;
   const rowH = Math.max(18, (height - 8) / n);
   return (
@@ -48,7 +48,7 @@ function TopBarList({ items, max, valueFmt, height = 280, onClick, accent = 'var
 }
 
 // Histogram (distribution of ownership %)
-function Histogram({ data, bins = 20, height = 140, accent = 'var(--accent)', xFmt = v => v.toFixed(1) }) {
+export function Histogram({ data, bins = 20, height = 140, accent = 'var(--accent)', xFmt = v => v.toFixed(1) }) {
   if (!data || !data.length) return null;
   const min = Math.min(...data);
   const max = Math.max(...data);
@@ -93,7 +93,7 @@ function Histogram({ data, bins = 20, height = 140, accent = 'var(--accent)', xF
 }
 
 // Donut (sector breakdown)
-function Donut({ slices, size = 180, thickness = 22, hoverIndex, onHover }) {
+export function Donut({ slices, size = 180, thickness = 22, hoverIndex, onHover }) {
   const total = slices.reduce((s, x) => s + x.value, 0) || 1;
   const r = size / 2 - 2;
   const ir = r - thickness;
@@ -128,7 +128,7 @@ function Donut({ slices, size = 180, thickness = 22, hoverIndex, onHover }) {
 }
 
 // Sparkline (small)
-function Sparkline({ points, width = 120, height = 32, color = 'var(--ink-2)', fill = false }) {
+export function Sparkline({ points, width = 120, height = 32, color = 'var(--ink-2)', fill = false }) {
   if (!points || points.length < 2) return null;
   const min = Math.min(...points);
   const max = Math.max(...points);
@@ -151,7 +151,7 @@ function Sparkline({ points, width = 120, height = 32, color = 'var(--ink-2)', f
 }
 
 // Deterministic synthetic price series for a ticker (used in detail view)
-function genSeries(seed, n = 60, base = 100, vol = 0.02) {
+export function genSeries(seed, n = 60, base = 100, vol = 0.02) {
   let h = 0;
   for (let i = 0; i < seed.length; i++) h = (h * 9301 + seed.charCodeAt(i) + 49297) % 233280;
   const rand = () => { h = (h * 9301 + 49297) % 233280; return h / 233280; };

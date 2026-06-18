@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>Sovereign Insights</title>
     <style>
       :root[data-theme="dark"] {
@@ -85,19 +86,6 @@
   </head>
   <body>
     <div id="app"></div>
-
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-    <script type="text/babel" data-presets="react" src="/src/format.jsx"></script>
-    <script type="text/babel" data-presets="react" src="/src/charts.jsx"></script>
-    <script type="text/babel" data-presets="react" src="/src/topbar.jsx"></script>
-    <script type="text/babel" data-presets="react" src="/src/filters.jsx"></script>
-    <script type="text/babel" data-presets="react" src="/src/summary.jsx"></script>
-    <script type="text/babel" data-presets="react" src="/src/table.jsx"></script>
-    <script type="text/babel" data-presets="react" src="/src/detail.jsx"></script>
-    <script type="text/babel" data-presets="react" src="/src/compare.jsx"></script>
-    <script type="text/babel" data-presets="react" src="/src/app.jsx"></script>
+    <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
