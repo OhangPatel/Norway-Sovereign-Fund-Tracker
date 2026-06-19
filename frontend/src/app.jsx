@@ -312,7 +312,7 @@ export function App() {
 
   // Max ownership (set ownMax dynamically once data is loaded)
   React.useEffect(() => {
-    if (data && filters.ownMax === 100) {
+    if (data && data.length && filters.ownMax === 100) {
       const max = Math.max(...data.map(d => d.ownership || 0));
       setFilters(f => ({ ...f, ownMax: max }));
     }
@@ -346,7 +346,7 @@ export function App() {
   }, [data, filters, sort, pinned, query]);
 
   // Stable max ownership for bars
-  const maxOwn = React.useMemo(() => data ? Math.max(...data.map(d => d.ownership || 0)) : 1, [data]);
+  const maxOwn = React.useMemo(() => (data && data.length) ? Math.max(...data.map(d => d.ownership || 0)) : 1, [data]);
 
   const togglePin = (ticker) => {
     setPinned(prev => {
