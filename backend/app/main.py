@@ -262,6 +262,17 @@ def get_ai_report(ticker: str):
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute(
+        """
+        CREATE TABLE IF NOT EXISTS generated_reports (
+            ticker TEXT PRIMARY KEY,
+            description TEXT,
+            outlook TEXT,
+            key_risks TEXT,
+            generated_at DATETIME
+        )
+        """
+    )
+    cursor.execute(
         "SELECT description, outlook, key_risks FROM generated_reports WHERE ticker = ?", (ticker,)
     )
     report = cursor.fetchone()
