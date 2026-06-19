@@ -20,28 +20,54 @@ export var SECTOR_COLORS = {
 };
 
 export function Summary({ data, filtered, onPickCompany, onSetFilter }) {
-  const totalNok = filtered.reduce((s, c) => s + (c.mvNok || 0), 0);
-  const totalUsd = filtered.reduce((s, c) => s + (c.mvUsd || 0), 0);
-  const avgOwn = filtered.length ? filtered.reduce((s, c) => s + (c.ownership || 0), 0) / filtered.length : 0;
-  const countries = new Set(filtered.map(c => c.country)).size;
+  const { totalNok, totalUsd, avgOwn, countries, sectorCount } = React.useMemo(() => {
+    let totalNok = 0, totalUsd = 0, ownSum = 0;
+    const countrySet = new Set();
+    const sectorSet = new Set();
+    for (const c of filtered) {
+      totalNok += c.mvNok || 0;
+      totalUsd += c.mvUsd || 0;
+      ownSum += c.ownership || 0;
+      countrySet.add(c.country);
+      const s = c.sector || c.industry;
+      if (s) sectorSet.add(s);
+    }
+    return {
+      totalNok, totalUsd,
+      avgOwn: filtered.length ? ownSum / filtered.length : 0,
+      countries: countrySet.size,
+      sectorCount: sectorSet.size,
+    };
+  }, [filtered]);
 
-  const top10 = [...filtered].sort((a, b) => b.mvNok - a.mvNok).slice(0, 8);
+  const top10 = React.useMemo(
+    () => [...filtered].sort((a, b) => b.mvNok - a.mvNok).slice(0, 8),
+    [filtered]
+  );
   const topMax = top10[0]?.mvNok || 1;
 
   // Sector breakdown
-  const bySector = new Map();
-  for (const c of filtered) {
-    const k = c.sector || c.industry || '—';
-    bySector.set(k, (bySector.get(k) || 0) + c.mvUsd);
-  }
-  const sectors = [...bySector.entries()]
-    .map(([label, value]) => ({ label, value, color: SECTOR_COLORS[label] || 'oklch(0.5 0.005 80)' }))
-    .sort((a, b) => b.value - a.value);
+  const sectors = React.useMemo(() => {
+    const bySector = new Map();
+    for (const c of filtered) {
+      const k = c.sector || c.industry || '—';
+      bySector.set(k, (bySector.get(k) || 0) + c.mvUsd);
+    }
+    return [...bySector.entries()]
+      .map(([label, value]) => ({ label, value, color: SECTOR_COLORS[label] || 'oklch(0.5 0.005 80)' }))
+      .sort((a, b) => b.value - a.value);
+  }, [filtered]);
 
   const [sectorHover, setSectorHover] = React.useState(null);
   const activeSlice = sectorHover != null ? sectors[sectorHover] : sectors[0];
 
-  const owns = filtered.map(c => c.ownership).filter(v => v > 0);
+  const owns = React.useMemo(() => filtered.map(c => c.ownership).filter(v => v > 0), [filtered]);
+  const ownStats = React.useMemo(() => ({
+    median: median(owns),
+    topDecile: percentile(owns, 0.9),
+    above5: owns.filter(v => v >= 5).length,
+    max: owns.length ? Math.max(...owns) : 0,
+  }), [owns]);
 
   return (
     <section style={{ display:'grid', gridTemplateColumns:'1fr', gap: 20 }}>
@@ -88,12 +114,12 @@ export function Summary({ data, filtered, onPickCompany, onSetFilter }) {
           <StatCell
             label="Avg ownership"
             value={fmt.pct(avgOwn, 2)}
-            sub={`${owns.filter(v => v >= 5).length} positions above 5%`}
+            sub={`${ownStats.above5} positions above 5%`}
           />
           <StatCell
             label="Markets covered"
             value={countries.toString()}
-            sub={`${new Set(filtered.map(c => c.sector || c.industry).filter(Boolean)).size} sectors`}
+            sub={`${sectorCount} sectors`}
           />
           <StatCell
             label="Top single position"
@@ -193,10 +219,10 @@ export function Summary({ data, filtered, onPickCompany, onSetFilter }) {
               display:'flex', justifyContent:'space-between', alignItems:'baseline',
               marginTop: 12, paddingTop: 12, borderTop: '1px solid var(--hairline)'
             }}>
-              <StatMini label="Median" value={fmt.pct(median(owns), 2)}/>
-              <StatMini label="Top decile" value={fmt.pct(percentile(owns, 0.9), 2)}/>
-              <StatMini label="Above 5%" value={owns.filter(v => v >= 5).length.toLocaleString()}/>
-              <StatMini label="Max" value={fmt.pct(Math.max(...owns), 2)}/>
+              <StatMini label="Median" value={fmt.pct(ownStats.median, 2)}/>
+              <StatMini label="Top decile" value={fmt.pct(ownStats.topDecile, 2)}/>
+              <StatMini label="Above 5%" value={ownStats.above5.toLocaleString()}/>
+              <StatMini label="Max" value={fmt.pct(ownStats.max, 2)}/>
             </div>
           </div>
         </Card>
