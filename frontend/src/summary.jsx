@@ -121,7 +121,7 @@ export function Summary({ data, filtered, onPickCompany, onSetFilter }) {
             items={top10.map(c => ({
               key: c.ticker,
               label: c.name,
-              sub: c.ticker + ' · ' + (c.country.slice(0,3).toUpperCase()),
+              sub: (c.ticker || '') + ' · ' + ((c.country || '').slice(0,3).toUpperCase()),
               value: c.mvNok,
               raw: c
             }))}

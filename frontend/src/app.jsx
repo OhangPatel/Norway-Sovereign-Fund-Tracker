@@ -329,7 +329,7 @@ export function App() {
       const o = c.ownership || 0;
       if (o < filters.ownMin || o > filters.ownMax) return false;
       if (filters.pinned && !pinned.has(c.ticker)) return false;
-      if (q && !(c.name.toLowerCase().includes(q) || c.ticker.toLowerCase().includes(q))) return false;
+      if (q && !((c.name || '').toLowerCase().includes(q) || (c.ticker || '').toLowerCase().includes(q))) return false;
       return true;
     });
     // sort

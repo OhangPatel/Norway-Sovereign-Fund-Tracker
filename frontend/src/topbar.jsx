@@ -12,7 +12,7 @@ export function TopBar({ data, query, setQuery, theme, setTheme, onPick, compare
     if (!query) return [];
     const q = query.toLowerCase();
     const list = data
-      .filter(c => c.name.toLowerCase().includes(q) || c.ticker.toLowerCase().includes(q) || (c.country||'').toLowerCase().includes(q))
+      .filter(c => (c.name||'').toLowerCase().includes(q) || (c.ticker||'').toLowerCase().includes(q) || (c.country||'').toLowerCase().includes(q))
       .slice(0, 8);
     return list;
   }, [query, data]);
