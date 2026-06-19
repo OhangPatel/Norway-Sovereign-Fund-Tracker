@@ -242,9 +242,13 @@ def get_holdings(
         SELECT Name, Yahoo_Ticker, sector, Country AS country,
                pe_ratio, market_cap, high_52w, low_52w, fetched_at
         FROM enriched_holdings
-        WHERE Yahoo_Ticker IS NOT NULL
-        GROUP BY Yahoo_Ticker
-        ORDER BY market_cap DESC
+        WHERE rowid IN (
+            SELECT MIN(rowid)
+            FROM enriched_holdings
+            WHERE Yahoo_Ticker IS NOT NULL
+            GROUP BY Yahoo_Ticker
+        )
+        ORDER BY market_cap DESC, Yahoo_Ticker
         LIMIT ? OFFSET ?
         """,
         (limit, offset),
