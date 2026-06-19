@@ -51,7 +51,13 @@ def get_db_connection():
 # ── Rate-limit helpers ────────────────────────────────────────────────────────
 def _load_rate_limits() -> dict:
     if RATE_LIMIT_FILE.exists():
-        return json.loads(RATE_LIMIT_FILE.read_text())
+        try:
+            data = json.loads(RATE_LIMIT_FILE.read_text())
+            if isinstance(data, dict):
+                data.setdefault("metrics_merge_runs", [])
+                return data
+        except (json.JSONDecodeError, OSError):
+            pass
     return {"metrics_merge_runs": []}
 
 
@@ -62,7 +68,7 @@ def _save_rate_limits(data: dict):
 def _count_today_metrics_runs() -> int:
     data = _load_rate_limits()
     today = date.today().isoformat()
-    return sum(1 for r in data["metrics_merge_runs"] if r.startswith(today))
+    return sum(1 for r in data.get("metrics_merge_runs", []) if r.startswith(today))
 
 
 def _record_metrics_run():
