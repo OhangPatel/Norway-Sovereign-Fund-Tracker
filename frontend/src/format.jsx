@@ -158,6 +158,7 @@ export function Icon({ name, size = 16, color = 'currentColor', strokeWidth = 1.
     case 'arrow-down': return <svg {...props}><path d="M12 5v14M19 12l-7 7-7-7"/></svg>;
     case 'arrow-right': return <svg {...props}><path d="M5 12h14M12 5l7 7-7 7"/></svg>;
     case 'filter':  return <svg {...props}><path d="M3 5h18M6 12h12M10 19h4"/></svg>;
+    case 'sliders': return <svg {...props}><path d="M4 7h8M16 7h4M4 17h4M12 17h8"/><circle cx="14" cy="7" r="2.2"/><circle cx="10" cy="17" r="2.2"/></svg>;
     case 'columns': return <svg {...props}><rect x="3" y="4" width="6" height="16" rx="1"/><rect x="11" y="4" width="4" height="16" rx="1"/><rect x="17" y="4" width="4" height="16" rx="1"/></svg>;
     case 'compare': return <svg {...props}><rect x="3" y="4" width="8" height="16" rx="1"/><rect x="13" y="4" width="8" height="16" rx="1"/></svg>;
     case 'chev-down': return <svg {...props}><path d="m6 9 6 6 6-6"/></svg>;
