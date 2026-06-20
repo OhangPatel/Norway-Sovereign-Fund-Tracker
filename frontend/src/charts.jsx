@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 // Hand-rolled SVG charts — bar, histogram, horizontal bar, donut
 
 // Horizontal bar list (top holdings)
@@ -127,42 +129,64 @@ export function Donut({ slices, size = 180, thickness = 22, hoverIndex, onHover 
   );
 }
 
-// Sparkline (small)
-export function Sparkline({ points, width = 120, height = 32, color = 'var(--ink-2)', fill = false }) {
+// Interactive price chart: line + fill + hover crosshair with a date/price tooltip
+const _MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function fmtDay(s) {
+  if (!s) return '';
+  const [y, m, d] = s.split('-');
+  return `${_MONTHS[+m - 1]} ${+d}, ${y}`;
+}
+
+export function PriceChart({ points, dates, width = 320, height = 84, color = 'auto', valueFmt = (v) => v }) {
+  const [hover, setHover] = useState(null);
   if (!points || points.length < 2) return null;
+
   const min = Math.min(...points);
   const max = Math.max(...points);
   const range = Math.max(max - min, 0.0001);
   const sx = (i) => (i / (points.length - 1)) * width;
   const sy = (v) => height - ((v - min) / range) * (height - 2) - 1;
   const d = points.map((p, i) => `${i ? 'L' : 'M'} ${sx(i).toFixed(1)} ${sy(p).toFixed(1)}`).join(' ');
-  const last = points[points.length - 1];
-  const first = points[0];
-  const isUp = last >= first;
-  const stroke = color === 'auto' ? (isUp ? 'var(--pos)' : 'var(--neg)') : color;
+  const stroke = color === 'auto' ? (points[points.length - 1] >= points[0] ? 'var(--pos)' : 'var(--neg)') : color;
+
+  const onMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const rel = rect.width ? (e.clientX - rect.left) / rect.width : 0;
+    setHover(Math.max(0, Math.min(points.length - 1, Math.round(rel * (points.length - 1)))));
+  };
+
+  const hx = hover != null ? sx(hover) : 0;
+  const hy = hover != null ? sy(points[hover]) : 0;
+
   return (
-    <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} style={{ display:'block' }}>
-      {fill && (
+    <div style={{ position: 'relative', width, height }}>
+      <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} style={{ display: 'block' }}
+        onMouseMove={onMove} onMouseLeave={() => setHover(null)}>
         <path d={`${d} L ${width} ${height} L 0 ${height} Z`} fill={stroke} opacity={0.12}/>
+        <path d={d} fill="none" stroke={stroke} strokeWidth={1.25} strokeLinejoin="round" strokeLinecap="round"/>
+        {hover != null && (
+          <g>
+            <line x1={hx} y1={0} x2={hx} y2={height} stroke="var(--muted)" strokeWidth={0.75} strokeDasharray="3 3"/>
+            <circle cx={hx} cy={hy} r={3} fill={stroke} stroke="var(--bg)" strokeWidth={1.5}/>
+          </g>
+        )}
+      </svg>
+      {hover != null && (
+        <div className="mono" style={{
+          position: 'absolute', top: 0,
+          left: Math.max(0, Math.min(hx - 40, width - 96)),
+          transform: 'translateY(-100%)',
+          pointerEvents: 'none',
+          background: 'var(--surface)', border: '1px solid var(--hairline-strong)',
+          borderRadius: 6, padding: '4px 8px', whiteSpace: 'nowrap',
+          boxShadow: '0 6px 16px rgba(0,0,0,.28)',
+        }}>
+          <div style={{ fontSize: 10, color: 'var(--muted)' }}>{dates ? fmtDay(dates[hover]) : ''}</div>
+          <div style={{ fontSize: 12, color: 'var(--ink)', marginTop: 1 }}>{valueFmt(points[hover])}</div>
+        </div>
       )}
-      <path d={d} fill="none" stroke={stroke} strokeWidth={1.25} strokeLinejoin="round" strokeLinecap="round"/>
-    </svg>
+    </div>
   );
 }
 
-// Deterministic synthetic price series for a ticker (used in detail view)
-export function genSeries(seed, n = 60, base = 100, vol = 0.02) {
-  let h = 0;
-  for (let i = 0; i < seed.length; i++) h = (h * 9301 + seed.charCodeAt(i) + 49297) % 233280;
-  const rand = () => { h = (h * 9301 + 49297) % 233280; return h / 233280; };
-  const out = [];
-  let v = base;
-  for (let i = 0; i < n; i++) {
-    const drift = (rand() - 0.48) * vol * base;
-    v = Math.max(0.1, v + drift);
-    out.push(+v.toFixed(2));
-  }
-  return out;
-}
-
-Object.assign(window, { TopBarList, Histogram, Donut, Sparkline, genSeries });
+Object.assign(window, { TopBarList, Histogram, Donut, PriceChart });

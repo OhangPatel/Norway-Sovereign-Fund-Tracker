@@ -9,6 +9,7 @@ import sys
 import os
 import threading
 from datetime import datetime, date, timedelta
+import yfinance as yf
 
 app = FastAPI(title="NBIM Tracker API")
 
@@ -264,6 +265,42 @@ def get_holdings(
             "limit": limit,
             "total_pages": (total_count + limit - 1) // limit,
         },
+    }
+
+
+# Map each chart range to an interval that keeps the payload reasonable.
+_HISTORY_RANGES = {"1y": "1d", "5y": "1wk", "max": "1mo"}
+
+
+@app.get("/api/history/{ticker}")
+def get_price_history(ticker: str, range: str = Query("1y")):
+    """Live daily/weekly/monthly close prices from Yahoo. Fetched on demand,
+    not stored — each request hits yfinance directly."""
+    interval = _HISTORY_RANGES.get(range)
+    if interval is None:
+        return JSONResponse(
+            status_code=400,
+            content={"error": f"range must be one of {', '.join(_HISTORY_RANGES)}"},
+        )
+
+    try:
+        hist = yf.Ticker(ticker).history(period=range, interval=interval)
+    except Exception as e:
+        return JSONResponse(status_code=502, content={"error": f"Failed to fetch history: {e}"})
+
+    if hist is None or hist.empty or "Close" not in hist:
+        return JSONResponse(
+            status_code=404,
+            content={"error": "No price history available (invalid ticker or rate limited)"},
+        )
+
+    closes = hist["Close"].dropna()
+    return {
+        "ticker": ticker,
+        "range": range,
+        "interval": interval,
+        "points": [round(float(v), 2) for v in closes.tolist()],
+        "dates": [d.strftime("%Y-%m-%d") for d in closes.index],
     }
 
 

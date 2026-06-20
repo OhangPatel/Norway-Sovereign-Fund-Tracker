@@ -1,9 +1,12 @@
 import React from 'react';
 import { fmt, Chip, Delta, RangeBar, Icon } from './format.jsx';
-import { Sparkline, genSeries } from './charts.jsx';
+import { PriceChart } from './charts.jsx';
 import { REC_TONE } from './table.jsx';
+import { PIPELINE_API } from './app.jsx';
 
 // Slide-over detail drawer for a single company
+
+const RANGE_LABEL = { '1y': '1 year ago', '5y': '5 years ago', 'max': 'All time' };
 
 export function Detail({ company, allData, onClose, onPickCompany, pinned, togglePin }) {
   const [entered, setEntered] = React.useState(false);
@@ -15,16 +18,31 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
     return () => window.removeEventListener('keydown', onKey);
   }, [onClose]);
 
+  // Live price history fetched on demand from the backend (yfinance, not stored).
+  // `loading` is derived from the request key so the effect never sets state synchronously.
+  const [range, setRange] = React.useState('1y');
+  const [history, setHistory] = React.useState({ key: null, points: null, dates: null, error: null });
+
+  React.useEffect(() => {
+    if (!company?.ticker) return;
+    const ctrl = new AbortController();
+    const key = `${company.ticker}|${range}`;
+    fetch(`${PIPELINE_API}/api/history/${encodeURIComponent(company.ticker)}?range=${range}`, { signal: ctrl.signal })
+      .then(r => r.json().then(j => ({ ok: r.ok, j })))
+      .then(({ ok, j }) => {
+        setHistory(ok
+          ? { key, points: j.points, dates: j.dates, error: null }
+          : { key, points: null, dates: null, error: j.error || 'Unavailable' });
+      })
+      .catch(e => {
+        if (e.name !== 'AbortError') setHistory({ key, points: null, dates: null, error: 'Cannot reach backend' });
+      });
+    return () => ctrl.abort();
+  }, [company?.ticker, range]);
+
   if (!company) return null;
 
-  // Synthetic price history seeded by ticker
-  const series = React.useMemo(() => {
-    const lo = company.low52 || 50;
-    const hi = company.high52 || 100;
-    const base = (lo + hi) / 2;
-    const vol = (hi - lo) / base * 0.18 + 0.005;
-    return genSeries(company.ticker, 120, base, vol);
-  }, [company.ticker]);
+  const loading = history.key !== `${company.ticker}|${range}`;
 
   const peerSet = allData
     .filter(c => (c.sector || c.industry) === (company.sector || company.industry) && c.ticker !== company.ticker)
@@ -123,9 +141,31 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
               )}
             </div>
             <div style={{ alignSelf:'stretch' }}>
-              <Sparkline points={series} width={320} height={84} color="auto" fill={true}/>
+              <div style={{ display:'flex', gap: 4, justifyContent:'flex-end', marginBottom: 6 }}>
+                {['1y', '5y', 'max'].map(r => (
+                  <button key={r} onClick={() => setRange(r)}
+                    className="mono"
+                    style={{
+                      fontSize: 10, padding: '2px 8px', borderRadius: 5, cursor: 'pointer',
+                      textTransform: 'uppercase', letterSpacing: '0.04em',
+                      background: range === r ? 'var(--accent)' : 'transparent',
+                      color: range === r ? 'var(--accent-ink)' : 'var(--muted)',
+                      border: `1px solid ${range === r ? 'var(--accent)' : 'var(--hairline)'}`,
+                      transition: 'all .12s',
+                    }}>{r}</button>
+                ))}
+              </div>
+              <div style={{ height: 84, display:'grid', placeItems:'center' }}>
+                {loading ? (
+                  <span className="mono" style={{ fontSize: 11, color:'var(--muted)' }}>Loading price history…</span>
+                ) : (history.error || !history.points || history.points.length < 2) ? (
+                  <span className="mono" style={{ fontSize: 11, color:'var(--muted)' }}>{history.error || 'No price history'}</span>
+                ) : (
+                  <PriceChart points={history.points} dates={history.dates} valueFmt={fmt.price} width={320} height={84} color="auto"/>
+                )}
+              </div>
               <div className="mono" style={{ display:'flex', justifyContent:'space-between', marginTop: 6, fontSize: 10, color:'var(--muted)' }}>
-                <span>120d ago</span><span>Today</span>
+                <span>{RANGE_LABEL[range]}</span><span>Today</span>
               </div>
             </div>
           </div>
