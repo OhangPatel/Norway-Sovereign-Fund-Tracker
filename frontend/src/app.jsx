@@ -1,4 +1,5 @@
 import React from 'react';
+import { Icon } from './format.jsx';
 import { TopBar } from './topbar.jsx';
 import { Filters } from './filters.jsx';
 import { Summary } from './summary.jsx';
@@ -16,25 +17,33 @@ export function PipelineBtn(props) {
   var active    = props.active;
   var onClick   = props.onClick;
 
+  // Lime ghost pill (matches TopBtn). Running = accent fill; idle = invert on hover.
   var base = {
-    display: 'inline-flex', alignItems: 'center', gap: 5,
-    padding: '6px 11px',
-    border: '1px solid ' + (active ? 'var(--accent)' : 'var(--hairline)'),
-    borderRadius: 8,
+    display: 'inline-flex', alignItems: 'center', gap: 6,
+    padding: '7px 14px',
+    border: '1px solid ' + (active ? 'var(--accent)' : 'var(--line)'),
+    borderRadius: 999,
     cursor: disabled ? 'not-allowed' : 'pointer',
-    fontFamily: 'var(--font-ui)',
-    fontSize: 12, fontWeight: 500,
-    opacity: (disabled && !active) ? 0.55 : 1,
-    transition: 'all .12s ease',
+    fontFamily: 'var(--font-mono)',
+    fontSize: 11, fontWeight: 500,
+    letterSpacing: '0.04em', textTransform: 'uppercase',
+    opacity: (disabled && !active) ? 0.5 : 1,
+    transition: 'all .14s ease',
     whiteSpace: 'nowrap',
-    background: active ? 'var(--surface-2)' : 'var(--surface)',
-    color: active ? 'var(--accent)' : (disabled ? 'var(--muted-2)' : 'var(--ink-2)'),
+    background: active ? 'var(--accent)' : 'transparent',
+    color: active ? 'var(--treemap-cell-fg)' : 'var(--ink)',
   };
 
   return React.createElement('button', {
     onClick: onClick,
     disabled: disabled,
     style: base,
+    onMouseEnter: function (e) {
+      if (!disabled && !active) { e.currentTarget.style.background = 'var(--ink)'; e.currentTarget.style.color = 'var(--bg)'; }
+    },
+    onMouseLeave: function (e) {
+      if (!disabled && !active) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--ink)'; }
+    },
   }, children);
 }
 
@@ -101,18 +110,6 @@ export function PipelineControls(props) {
     return (h < 10 ? '0' + h : h) + ':' + (m < 10 ? '0' + m : m);
   }
 
-  function getEmoji(step) {
-    if (!step) return '⚙️';
-    if (/launch|browser/i.test(step)) return '🌐';
-    if (/download/i.test(step))       return '📥';
-    if (/filter|apply/i.test(step))   return '🔍';
-    if (/sav/i.test(step))            return '💾';
-    if (/fetch|batch/i.test(step))    return '📡';
-    if (/merg|join/i.test(step))      return '🔀';
-    if (/done/i.test(step))           return '✅';
-    return '⚙️';
-  }
-
   function trigger(endpoint) {
     fetch(PIPELINE_API + '/api/pipeline/' + endpoint, { method: 'POST' })
       .then(function(res) {
@@ -139,7 +136,7 @@ export function PipelineControls(props) {
   var pct       = status.progress;
   var isError   = !!status.error;
   var showBar   = isRunning || isError;
-  var barColor  = isError ? 'var(--neg)' : 'var(--accent)';
+  var barColor  = isError ? 'var(--bear)' : 'var(--accent)';
   var displayElapsed = elapsed;
 
   var estLeft = null;
@@ -148,10 +145,10 @@ export function PipelineControls(props) {
   }
 
   return (
-    <div style={{ borderBottom: '1px solid var(--hairline)', background: 'var(--bg-2)' }}>
+    <div style={{ borderBottom: '1px solid var(--line)', background: 'transparent' }}>
       <div style={{
         maxWidth: 1680, margin: '0 auto',
-        padding: '10px clamp(16px, 3vw, 32px)',
+        padding: '13px clamp(16px, 3vw, 32px)',
         display: 'flex', flexDirection: 'column', gap: 8,
       }}>
 
@@ -166,7 +163,9 @@ export function PipelineControls(props) {
               active={isRunning && status.job_type === 'fetch_clean'}
               onClick={() => trigger('fetch-clean')}
             >
-              {isRunning && status.job_type === 'fetch_clean' ? '⏳ Fetching…' : '🌐 Fetch Latest Data'}
+              {isRunning && status.job_type === 'fetch_clean'
+                ? <><span style={{ display: 'inline-flex', animation: 'spin 1s linear infinite' }}><Icon name="refresh" size={13}/></span> Fetching…</>
+                : <><Icon name="download" size={13}/> Fetch Latest Data</>}
             </PipelineBtn>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -175,39 +174,44 @@ export function PipelineControls(props) {
                 active={isRunning && status.job_type === 'metrics_merge'}
                 onClick={() => trigger('metrics-merge')}
               >
-                {isRunning && status.job_type === 'metrics_merge' ? '⏳ Updating…' : '📊 Update Metrics & Merge'}
+                {isRunning && status.job_type === 'metrics_merge'
+                  ? <><span style={{ display: 'inline-flex', animation: 'spin 1s linear infinite' }}><Icon name="refresh" size={13}/></span> Updating…</>
+                  : <><Icon name="refresh" size={13}/> Update Metrics &amp; Merge</>}
               </PipelineBtn>
               <span className="mono" style={{
                 fontSize: 9.5, paddingLeft: 2,
-                color: rl.metrics_runs_today >= rl.max_per_day ? 'var(--neg)' : 'var(--muted)',
+                color: rl.metrics_runs_today >= rl.max_per_day ? 'var(--bear)' : 'var(--soft)',
               }}>
                 {rl.metrics_runs_today}/{rl.max_per_day} uses today · resets midnight
               </span>
             </div>
 
             <PipelineBtn disabled={true}>
-              🤖 AI Report &amp; Export{' '}
+              <Icon name="sparkle" size={13}/> AI Report &amp; Export{' '}
               <span className="mono" style={{
-                fontSize: 9, padding: '1px 5px', marginLeft: 4,
-                border: '1px solid var(--hairline)', borderRadius: 4,
-                color: 'var(--muted-2)',
+                fontSize: 9, padding: '1px 7px', marginLeft: 4,
+                border: '1px solid var(--line)', borderRadius: 999,
+                letterSpacing: '0.08em', textTransform: 'uppercase',
+                color: 'var(--soft)',
               }}>soon</span>
             </PipelineBtn>
           </div>
 
           <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8 }}>
             {!online && (
-              <span className="mono" style={{ fontSize: 10, color: 'var(--muted)' }}>backend offline</span>
+              <span className="mono" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 10, letterSpacing: '0.04em', textTransform: 'uppercase', color: 'var(--soft)' }}>
+                <span style={{ width: 6, height: 6, borderRadius: 999, background: 'var(--bear)' }}/> Backend offline
+              </span>
             )}
             {isRunning && (
-              <span className="mono" style={{ fontSize: 10.5, color: 'var(--muted)' }}>
-                ⏱ {fmtTime(displayElapsed)}
+              <span className="mono" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 10.5, color: 'var(--soft)' }}>
+                <Icon name="clock" size={11}/> {fmtTime(displayElapsed)}
                 {estLeft !== null ? ' · ~' + fmtTime(estLeft) + ' left' : ''}
               </span>
             )}
-            {!isRunning && status.completed_at && !isError && (
-              <span className="mono" style={{ fontSize: 10, color: 'var(--muted)' }}>
-                Last updated {fmtAt(status.completed_at)}
+            {!isRunning && status.completed_at && !isError && online && (
+              <span className="mono" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 10, letterSpacing: '0.04em', textTransform: 'uppercase', color: 'var(--soft)' }}>
+                <span style={{ width: 6, height: 6, borderRadius: 999, background: 'var(--bull)' }}/> Updated {fmtAt(status.completed_at)}
               </span>
             )}
           </div>
@@ -220,19 +224,19 @@ export function PipelineControls(props) {
               display: 'flex', justifyContent: 'space-between', alignItems: 'center',
               marginBottom: 4, fontSize: 11,
             }}>
-              <span style={{ color: isError ? 'var(--neg)' : 'var(--ink-2)' }}>
-                {getEmoji(status.step)}&nbsp;
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7, color: isError ? 'var(--bear)' : 'var(--sub)' }}>
+                {!isError && <span style={{ display: 'inline-flex', animation: 'spin 1s linear infinite', color: 'var(--accent-text)' }}><Icon name="refresh" size={12}/></span>}
                 {isError ? status.error : (status.step || status.message)}
               </span>
-              <span className="mono" style={{ fontSize: 10.5, color: 'var(--muted)', fontWeight: 600 }}>
+              <span className="mono" style={{ fontSize: 10.5, color: 'var(--soft)', fontWeight: 600 }}>
                 {pct}%
               </span>
             </div>
-            <div style={{ height: 3, borderRadius: 2, background: 'var(--hairline)', overflow: 'hidden', position: 'relative' }}>
+            <div style={{ height: 4, borderRadius: 999, background: 'var(--track)', overflow: 'hidden', position: 'relative' }}>
               <div style={{
                 position: 'absolute', left: 0, top: 0, bottom: 0,
                 width: pct + '%', background: barColor,
-                borderRadius: 2, transition: 'width .7s ease',
+                borderRadius: 999, transition: 'width .7s ease',
               }}/>
               {isRunning && !isError && (
                 <div style={{
@@ -256,7 +260,7 @@ export function App() {
   const [data, setData] = React.useState(null);
   const [err, setErr] = React.useState(null);
   const [dataKey, setDataKey] = React.useState(0);
-  const [theme, setTheme] = React.useState(() => localStorage.getItem('sov-theme') || 'dark');
+  const [theme, setTheme] = React.useState(() => localStorage.getItem('sov-theme') || 'light');
   const [query, setQuery] = React.useState('');
   const [filters, setFilters] = React.useState({
     countries: [], sectors: [], recs: [],
@@ -377,7 +381,7 @@ export function App() {
   }, [data]);
 
   if (err) {
-    return <div style={{ padding: 60, color: 'var(--neg)' }}>
+    return <div style={{ padding: 60, color: 'var(--bear)' }}>
       <div className="display" style={{ fontSize: 24 }}>Failed to load data.</div>
       <pre style={{ marginTop: 8, fontSize: 12 }}>{err}</pre>
     </div>;
@@ -439,7 +443,7 @@ export function App() {
           {/* Footnote */}
           <div className="mono" style={{
             display:'flex', justifyContent:'space-between',
-            fontSize: 10.5, color: 'var(--muted)',
+            fontSize: 10.5, color: 'var(--soft)',
             padding: '4px 6px'
           }}>
             <span>Press <kbd style={kbd}>/</kbd> to search · <kbd style={kbd}>Esc</kbd> to close</span>
@@ -482,11 +486,11 @@ export function App() {
 export var kbd = {
   fontFamily: 'var(--font-mono)',
   padding: '1px 5px',
-  border: '1px solid var(--hairline)',
+  border: '1px solid var(--line)',
   borderRadius: 3,
   fontSize: 10,
   background: 'var(--surface)',
-  color: 'var(--ink-2)',
+  color: 'var(--sub)',
 };
 
 export function LoadingState() {
@@ -501,7 +505,7 @@ export function LoadingState() {
           <div key={i} style={{
             height: 110,
             background: 'var(--surface)',
-            border: '1px solid var(--hairline)',
+            border: '1px solid var(--line)',
             borderRadius: 14,
             animation: 'pulse 1.6s ease-in-out infinite',
             animationDelay: `${i * 0.1}s`
@@ -510,7 +514,7 @@ export function LoadingState() {
       </div>
       <div style={{
         marginTop: 24, height: 420,
-        background: 'var(--surface)', border: '1px solid var(--hairline)',
+        background: 'var(--surface)', border: '1px solid var(--line)',
         borderRadius: 14,
         animation: 'pulse 1.6s ease-in-out infinite'
       }}/>

@@ -1,22 +1,28 @@
 import React from 'react';
-import { fmt, Icon } from './format.jsx';
-import { TopBarList, Histogram, Donut } from './charts.jsx';
+import { fmt } from './format.jsx';
+import { TopBarList, Histogram, Treemap } from './charts.jsx';
 
-// Summary section: stat cards + charts (top holdings, sector donut, ownership histogram)
+// Summary section: hero bento + charts (top holdings, sector treemap, ownership histogram)
 
+// Each sector mapped to its semantic Lime --sector-* token (STYLE_GUIDE §2).
 export var SECTOR_COLORS = {
-  'Technology':            'oklch(0.78 0.13 80)',
-  'Financial Services':    'oklch(0.72 0.11 230)',
-  'Healthcare':            'oklch(0.78 0.13 155)',
-  'Consumer Cyclical':     'oklch(0.72 0.14 30)',
-  'Consumer Defensive':    'oklch(0.74 0.10 110)',
-  'Industrials':           'oklch(0.68 0.07 65)',
-  'Communication Services':'oklch(0.72 0.12 310)',
-  'Energy':                'oklch(0.7 0.16 50)',
-  'Basic Materials':       'oklch(0.7 0.09 200)',
-  'Utilities':             'oklch(0.7 0.08 260)',
-  'Real Estate':           'oklch(0.72 0.10 20)',
-  '':                      'oklch(0.5 0.005 80)',
+  'Technology':            'var(--sector-tech)',
+  'Communication Services':'var(--sector-tech)',
+  'Telecommunications':    'var(--sector-tech)',
+  'Financial Services':    'var(--sector-financials)',
+  'Financials':            'var(--sector-financials)',
+  'Healthcare':            'var(--sector-healthcare)',
+  'Health Care':           'var(--sector-healthcare)',
+  'Energy':                'var(--sector-energy)',
+  'Basic Materials':       'var(--sector-energy)',
+  'Industrials':           'var(--sector-industrials)',
+  'Consumer Cyclical':     'var(--sector-consumer)',
+  'Consumer Discretionary':'var(--sector-consumer)',
+  'Consumer Defensive':    'var(--sector-consumer)',
+  'Consumer Staples':      'var(--sector-consumer)',
+  'Utilities':             'var(--sector-utilities)',
+  'Real Estate':           'var(--sector-realestate)',
+  '':                      'var(--soft)',
 };
 
 export function Summary({ data, filtered, onPickCompany, onSetFilter }) {
@@ -46,20 +52,23 @@ export function Summary({ data, filtered, onPickCompany, onSetFilter }) {
   );
   const topMax = top10[0]?.mvNok || 1;
 
-  // Sector breakdown
+  // Sector breakdown (share of total USD value)
   const sectors = React.useMemo(() => {
     const bySector = new Map();
+    let tot = 0;
     for (const c of filtered) {
       const k = c.sector || c.industry || '—';
       bySector.set(k, (bySector.get(k) || 0) + c.mvUsd);
+      tot += c.mvUsd || 0;
     }
     return [...bySector.entries()]
-      .map(([label, value]) => ({ label, value, color: SECTOR_COLORS[label] || 'oklch(0.5 0.005 80)' }))
+      .map(([label, value]) => ({
+        label, value,
+        pct: tot ? (value / tot) * 100 : 0,
+        color: SECTOR_COLORS[label] || 'var(--soft)',
+      }))
       .sort((a, b) => b.value - a.value);
   }, [filtered]);
-
-  const [sectorHover, setSectorHover] = React.useState(null);
-  const activeSlice = sectorHover != null ? sectors[sectorHover] : sectors[0];
 
   const owns = React.useMemo(() => filtered.map(c => c.ownership).filter(v => v > 0), [filtered]);
   const ownStats = React.useMemo(() => ({
@@ -71,144 +80,100 @@ export function Summary({ data, filtered, onPickCompany, onSetFilter }) {
 
   return (
     <section style={{ display:'grid', gridTemplateColumns:'1fr', gap: 20 }}>
-      {/* Editorial top: headline + stat strip */}
+      {/* Hero bento (STYLE_GUIDE §6) */}
       <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'minmax(0, 1.2fr) minmax(0, 1fr)',
-        gap: 32,
-        alignItems: 'end',
-        padding: '8px 4px 4px',
+        display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)',
+        gridAutoRows: 'minmax(118px, auto)', gap: 14,
       }}>
-        <div style={{ minWidth: 0 }}>
-          <div className="eyebrow" style={{ marginBottom: 12 }}>
-            <Icon name="dot" size={8} color="var(--accent)"/> &nbsp;Portfolio · Quarterly cut
+        {/* Lead card — spans 3×2 */}
+        <div className="card" style={{
+          gridColumn: 'span 3', gridRow: 'span 2', borderRadius: 24,
+          padding: 'clamp(28px, 3vw, 44px)',
+          display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div className="eyebrow" style={{ color: 'var(--accent-text)' }}>Portfolio · Quarterly cut</div>
+            <div className="mono" style={{ fontSize: 11, color: 'var(--soft)' }}>[ 01 / 04 ]</div>
           </div>
           <h1 className="display" style={{
-            fontSize: 'clamp(34px, 4.4vw, 56px)',
-            lineHeight: 1.05, margin: 0,
-            letterSpacing: '-0.02em',
-            fontWeight: 400,
-            textWrap: 'balance',
+            fontSize: 'clamp(32px, 4.2vw, 58px)', fontWeight: 600,
+            lineHeight: 0.99, letterSpacing: '-0.03em', margin: '20px 0', maxWidth: 760, textWrap: 'balance',
           }}>
-            The world&apos;s largest <span className="display-italic">sovereign wealth fund</span>, tracked equity by equity.
+            The world&apos;s largest sovereign wealth fund, tracked equity by equity.
           </h1>
-          <p style={{
-            color: 'var(--muted)', fontSize: 14.5, maxWidth: 560, marginTop: 20, marginBottom: 0, lineHeight: 1.55
-          }}>
+          <p style={{ fontSize: 15, lineHeight: 1.6, color: 'var(--sub)', maxWidth: 560, margin: 0 }}>
             Norway&apos;s Government Pension Fund Global holds positions in {fmt.short(data.length, 0)}+ public companies across six markets.
             Filter, compare, and click through to see how every krone is allocated.
           </p>
         </div>
 
+        {/* Feature card — spans 1×3, inverts between themes */}
         <div style={{
-          display:'grid', gridTemplateColumns:'repeat(2, 1fr)', gap: 1,
-          background: 'var(--hairline)',
-          border: '1px solid var(--hairline)', borderRadius: 14, overflow: 'hidden',
-        }}>
-          <StatCell
-            label="Total holdings"
-            value={fmt.money(totalUsd, 'USD', 1)}
-            sub={`${fmt.money(totalNok, 'NOK', 1)} · ${filtered.length.toLocaleString()} of ${data.length.toLocaleString()} cos`}
-            accent
-          />
-          <StatCell
-            label="Avg ownership"
-            value={fmt.pct(avgOwn, 2)}
-            sub={`${ownStats.above5} positions above 5%`}
-          />
-          <StatCell
-            label="Markets covered"
-            value={countries.toString()}
-            sub={`${sectorCount} sectors`}
-          />
-          <StatCell
-            label="Top single position"
-            value={top10[0] ? top10[0].name : '—'}
-            sub={top10[0] ? `${top10[0].ticker} · ${fmt.money(top10[0].mvUsd, 'USD', 1)}` : ''}
-            clickable
-            onClick={() => top10[0] && onPickCompany(top10[0])}
-          />
-        </div>
-      </div>
-
-      {/* Three charts */}
-      <div style={{
-        display:'grid',
-        gridTemplateColumns: 'minmax(0, 1.4fr) minmax(0, 1fr)',
-        gridTemplateAreas: '"top sector" "top own"',
-        gap: 16,
-      }}>
-        {/* Top holdings */}
-        <div style={{ gridArea: 'top' }}>
-        <Card title="Top holdings" eyebrow="Market value · NOK"
-          rightSlot={<span className="eyebrow">Top 8 / {filtered.length.toLocaleString()}</span>}
+          gridRow: 'span 3', background: 'var(--feature)', color: 'var(--feature-ink)',
+          borderRadius: 24, padding: '32px 30px',
+          display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+          transition: 'transform .18s',
+        }}
+          onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; }}
+          onMouseLeave={e => { e.currentTarget.style.transform = 'none'; }}
         >
-          <TopBarList
-            items={top10.map(c => ({
-              key: c.ticker,
-              label: c.name,
-              sub: (c.ticker || '') + ' · ' + ((c.country || '').slice(0,3).toUpperCase()),
-              value: c.mvNok,
-              raw: c
-            }))}
-            max={topMax}
-            valueFmt={v => fmt.money(v, 'NOK', 1)}
-            onClick={(it) => onPickCompany(it.raw)}
-            accent="var(--accent)"
-          />
-        </Card>
-        </div>
-
-        {/* Sector donut */}
-        <div style={{ gridArea: 'sector' }}>
-        <Card title="Sector allocation" eyebrow="By USD value">
-          <div style={{ display:'grid', gridTemplateColumns:'auto 1fr', gap: 18, alignItems:'center' }}>
-            <div style={{ position: 'relative' }}>
-              <Donut slices={sectors} size={170} thickness={20}
-                hoverIndex={sectorHover}
-                onHover={setSectorHover}
-              />
-              <div style={{
-                position:'absolute', inset:0, display:'grid', placeItems:'center',
-                pointerEvents:'none', textAlign:'center'
-              }}>
-                <div>
-                  <div className="eyebrow" style={{ fontSize: 9 }}>{activeSlice ? activeSlice.label : 'Total'}</div>
-                  <div className="display" style={{ fontSize: 22, lineHeight: 1.1, marginTop: 2 }}>
-                    {activeSlice ? fmt.money(activeSlice.value, 'USD', 1) : fmt.money(totalUsd, 'USD', 1)}
-                  </div>
-                  {activeSlice && (
-                    <div className="mono" style={{ fontSize: 10.5, color:'var(--muted)' }}>
-                      {((activeSlice.value / totalUsd) * 100).toFixed(1)}%
-                    </div>
-                  )}
-                </div>
-              </div>
+          <div className="mono" style={{ fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--feature-sub)' }}>Total holdings</div>
+          <div>
+            <div className="display" style={{ fontSize: 'clamp(34px, 3vw, 46px)', fontWeight: 600, letterSpacing: '-0.03em', lineHeight: 0.95, color: 'var(--feature-num)' }}>
+              {fmt.money(totalUsd, 'USD', 1)}
             </div>
-            <div style={{ display:'grid', gap: 4 }}>
-              {sectors.slice(0, 6).map((s, i) => (
-                <div key={s.label}
-                  onMouseEnter={() => setSectorHover(i)}
-                  onMouseLeave={() => setSectorHover(null)}
-                  onClick={() => onSetFilter && onSetFilter({ sector: s.label })}
-                  style={{
-                    display:'grid', gridTemplateColumns: '10px 1fr auto', alignItems:'center', gap: 8,
-                    padding: '3px 6px', borderRadius: 4, cursor: 'pointer',
-                    background: sectorHover === i ? 'var(--surface-2)' : 'transparent',
-                    transition:'background .1s'
-                  }}>
-                  <span style={{ width:10, height:10, borderRadius: 2, background: s.color }}/>
-                  <span style={{ fontSize: 12, color:'var(--ink-2)', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{s.label || '—'}</span>
-                  <span className="mono" style={{ fontSize: 11, color: 'var(--muted)' }}>{((s.value / totalUsd) * 100).toFixed(1)}%</span>
-                </div>
-              ))}
+            <div className="mono" style={{ fontSize: 10.5, color: 'var(--feature-sub)', marginTop: 10 }}>
+              {fmt.money(totalNok, 'NOK', 1)} · {filtered.length.toLocaleString()} cos
             </div>
           </div>
-        </Card>
         </div>
 
-        {/* Ownership histogram */}
-        <div style={{ gridArea: 'own' }}>
+        {/* Stat cells — single cells fill the bottom row */}
+        <StatCell label="Avg ownership" value={fmt.pct(avgOwn, 2)} sub={`${ownStats.above5} positions above 5%`} />
+        <StatCell label="Markets covered" value={countries.toString()} sub={`${sectorCount} sectors`} />
+        <StatCell
+          label="Top position"
+          value={top10[0] ? top10[0].name : '—'}
+          sub={top10[0] ? `${top10[0].ticker} · ${fmt.money(top10[0].mvUsd, 'USD', 1)}` : ''}
+          clickable
+          onClick={() => top10[0] && onPickCompany(top10[0])}
+        />
+      </div>
+
+      {/* Detail row: holdings table + sector treemap (STYLE_GUIDE §6) */}
+      <div style={{ display: 'grid', gap: 14 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.5fr) minmax(0, 1fr)', gap: 14 }}>
+          <Card title="Top holdings" eyebrow="Market value · NOK"
+            rightSlot={<span className="eyebrow">Top 8 / {filtered.length.toLocaleString()}</span>}
+          >
+            <TopBarList
+              items={top10.map(c => ({
+                key: c.ticker,
+                label: c.name,
+                sub: (c.ticker || '') + ' · ' + ((c.country || '').slice(0,3).toUpperCase()),
+                value: c.mvNok,
+                raw: c
+              }))}
+              max={topMax}
+              valueFmt={v => fmt.money(v, 'NOK', 1)}
+              onClick={(it) => onPickCompany(it.raw)}
+              accent="var(--accent)"
+            />
+          </Card>
+
+          <Card title="Sector weight*" eyebrow="By USD value"
+            rightSlot={<span className="eyebrow">{sectors.length} sectors</span>}
+          >
+            <Treemap items={sectors} height={300}
+              onClick={(it) => onSetFilter && it.label !== '—' && onSetFilter({ sector: it.label })}
+            />
+            <div className="mono" style={{ fontSize: 10, color: 'var(--soft)', marginTop: 12, lineHeight: 1.4 }}>
+              * Tile areas are approximate — the smallest sectors are enlarged so they stay clickable. Hover any tile for its true share; click to filter.
+            </div>
+          </Card>
+        </div>
+
+        {/* Ownership distribution — full-width histogram panel */}
         <Card title="Ownership distribution" eyebrow="% per holding"
           rightSlot={<span className="eyebrow">{owns.length.toLocaleString()} cos</span>}
         >
@@ -217,7 +182,7 @@ export function Summary({ data, filtered, onPickCompany, onSetFilter }) {
               xFmt={v => v.toFixed(1) + '%'}/>
             <div style={{
               display:'flex', justifyContent:'space-between', alignItems:'baseline',
-              marginTop: 12, paddingTop: 12, borderTop: '1px solid var(--hairline)'
+              marginTop: 12, paddingTop: 12, borderTop: '1px solid var(--line)'
             }}>
               <StatMini label="Median" value={fmt.pct(ownStats.median, 2)}/>
               <StatMini label="Top decile" value={fmt.pct(ownStats.topDecile, 2)}/>
@@ -226,7 +191,6 @@ export function Summary({ data, filtered, onPickCompany, onSetFilter }) {
             </div>
           </div>
         </Card>
-        </div>
       </div>
     </section>
   );
@@ -244,25 +208,23 @@ export function percentile(arr, p) {
   return s[Math.min(s.length-1, Math.floor(p * s.length))];
 }
 
-export function StatCell({ label, value, sub, accent, clickable, onClick }) {
+export function StatCell({ label, value, sub, clickable, onClick }) {
   return (
     <div
+      className="card"
       onClick={clickable ? onClick : undefined}
       style={{
-        background: accent ? 'linear-gradient(180deg, color-mix(in oklch, var(--accent) 12%, var(--surface)), var(--surface))' : 'var(--surface)',
-        padding: '16px 18px',
+        padding: '20px 22px',
+        display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
         cursor: clickable ? 'pointer' : 'default',
-        transition: 'background .15s',
       }}
-      onMouseEnter={e => { if (clickable) e.currentTarget.style.background = 'var(--surface-2)'; }}
-      onMouseLeave={e => { if (clickable) e.currentTarget.style.background = accent ? 'linear-gradient(180deg, color-mix(in oklch, var(--accent) 12%, var(--surface)), var(--surface))' : 'var(--surface)'; }}
     >
-      <div className="eyebrow" style={{ fontSize: 9.5 }}>{label}</div>
+      <div className="mono" style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--soft)' }}>{label}</div>
       <div className="display" style={{
-        fontSize: 26, lineHeight: 1.15, marginTop: 6, letterSpacing: '-0.01em',
+        fontSize: 32, fontWeight: 600, lineHeight: 1.1, marginTop: 8, letterSpacing: '-0.02em',
         overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap'
       }}>{value}</div>
-      <div className="mono" style={{ fontSize: 11, color:'var(--muted)', marginTop: 4 }}>{sub}</div>
+      <div className="mono" style={{ fontSize: 11, color:'var(--soft)', marginTop: 4 }}>{sub}</div>
     </div>
   );
 }
@@ -276,9 +238,9 @@ export function StatMini({ label, value }) {
   );
 }
 
-export function Card({ title, eyebrow, rightSlot, children, padding = 18 }) {
+export function Card({ title, eyebrow, rightSlot, children, padding = 22 }) {
   return (
-    <div className="card" style={{ padding }}>
+    <div style={{ background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: 24, padding }}>
       <div style={{
         display:'flex', justifyContent:'space-between', alignItems:'baseline',
         marginBottom: 14, gap: 10

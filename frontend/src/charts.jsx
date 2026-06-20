@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 
 // Hand-rolled SVG charts — bar, histogram, horizontal bar, donut
 
@@ -20,21 +20,21 @@ export function TopBarList({ items, max, valueFmt, height = 280, onClick, accent
               gap: 10,
               padding: '6px 0',
               cursor: onClick ? 'pointer' : 'default',
-              borderBottom: i < n - 1 ? '1px solid var(--hairline)' : 'none',
+              borderBottom: i < n - 1 ? '1px solid var(--line)' : 'none',
             }}
-            onMouseEnter={e => e.currentTarget.style.background = 'color-mix(in oklch, var(--surface-2) 40%, transparent)'}
+            onMouseEnter={e => e.currentTarget.style.background = 'var(--row-hover)'}
             onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
           >
-            <span className="mono" style={{ fontSize: 10.5, color: 'var(--muted)' }}>{String(i + 1).padStart(2,'0')}</span>
+            <span className="mono" style={{ fontSize: 10.5, color: 'var(--soft)' }}>{String(i + 1).padStart(2,'0')}</span>
             <div style={{ minWidth: 0 }}>
               <div style={{
                 display:'flex', justifyContent:'space-between', alignItems:'baseline',
                 fontSize: 12, marginBottom: 4, gap: 8
               }}>
                 <span style={{ overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', color: 'var(--ink)' }}>{it.label}</span>
-                <span className="mono" style={{ fontSize: 11, color:'var(--muted)' }}>{it.sub}</span>
+                <span className="mono" style={{ fontSize: 11, color:'var(--soft)' }}>{it.sub}</span>
               </div>
-              <div style={{ position: 'relative', height: 4, background:'var(--surface-2)', borderRadius:2 }}>
+              <div style={{ position: 'relative', height: 4, background:'var(--track)', borderRadius:2 }}>
                 <div style={{
                   position:'absolute', left:0, top:0, bottom:0, width: pct + '%',
                   background: accent, borderRadius: 2
@@ -72,7 +72,7 @@ export function Histogram({ data, bins = 20, height = 140, accent = 'var(--accen
         style={{ display:'block', overflow:'visible' }}>
         {/* grid */}
         {[0.25, 0.5, 0.75].map(g => (
-          <line key={g} x1={0} x2={w} y1={h * (1-g)} y2={h * (1-g)} stroke="var(--hairline)" strokeDasharray="2 4"/>
+          <line key={g} x1={0} x2={w} y1={h * (1-g)} y2={h * (1-g)} stroke="var(--line)" strokeDasharray="2 4"/>
         ))}
         {buckets.map((c, i) => {
           const bh = peak ? (c / peak) * (h - 8) : 0;
@@ -86,7 +86,7 @@ export function Histogram({ data, bins = 20, height = 140, accent = 'var(--accen
       </svg>
       <div className="mono" style={{
         display:'flex', justifyContent:'space-between',
-        fontSize: 10.5, color:'var(--muted)', marginTop: 4
+        fontSize: 10.5, color:'var(--soft)', marginTop: 4
       }}>
         <span>{xFmt(min)}</span><span>{xFmt((min+max)/2)}</span><span>{xFmt(max)}</span>
       </div>
@@ -94,38 +94,136 @@ export function Histogram({ data, bins = 20, height = 140, accent = 'var(--accen
   );
 }
 
-// Donut (sector breakdown)
-export function Donut({ slices, size = 180, thickness = 22, hoverIndex, onHover }) {
-  const total = slices.reduce((s, x) => s + x.value, 0) || 1;
-  const r = size / 2 - 2;
-  const ir = r - thickness;
-  const cx = size / 2, cy = size / 2;
-  let acc = 0;
-  const arcs = slices.map((s, i) => {
-    const start = acc / total;
-    acc += s.value;
-    const end = acc / total;
-    const a0 = start * Math.PI * 2 - Math.PI / 2;
-    const a1 = end * Math.PI * 2 - Math.PI / 2;
-    const large = end - start > 0.5 ? 1 : 0;
-    const x0 = cx + Math.cos(a0) * r,  y0 = cy + Math.sin(a0) * r;
-    const x1 = cx + Math.cos(a1) * r,  y1 = cy + Math.sin(a1) * r;
-    const ix0 = cx + Math.cos(a0) * ir, iy0 = cy + Math.sin(a0) * ir;
-    const ix1 = cx + Math.cos(a1) * ir, iy1 = cy + Math.sin(a1) * ir;
-    const d = `M ${x0} ${y0} A ${r} ${r} 0 ${large} 1 ${x1} ${y1} L ${ix1} ${iy1} A ${ir} ${ir} 0 ${large} 0 ${ix0} ${iy0} Z`;
-    return { d, color: s.color, label: s.label, value: s.value, pct: (s.value/total)*100, i };
-  });
+
+// Squarified treemap (sector weight) — S&P-500-style heat grid (STYLE_GUIDE §5).
+// Cell area ∝ value; the squarified algorithm (Bruls et al.) keeps every cell as
+// close to square as possible instead of producing thin slivers.
+function computeSquarified(values, W, H) {
+  const result = new Array(values.length);
+  const total = values.reduce((a, b) => a + b, 0);
+  if (total <= 0 || W <= 0 || H <= 0) return values.map(() => ({ x: 0, y: 0, w: 0, h: 0 }));
+
+  const nodes = values.map((v, idx) => ({ area: (v / total) * (W * H), idx }));
+
+  const worst = (row, len) => {
+    const sum = row.reduce((a, r) => a + r.area, 0);
+    let max = -Infinity, min = Infinity;
+    for (const r of row) { if (r.area > max) max = r.area; if (r.area < min) min = r.area; }
+    const s2 = sum * sum, l2 = len * len;
+    return Math.max((l2 * max) / s2, s2 / (l2 * min));
+  };
+
+  const place = (items, x, y, w, h) => {
+    if (!items.length) return;
+    if (w <= 0 || h <= 0) { for (const n of items) result[n.idx] = { x, y, w: 0, h: 0 }; return; }
+    const len = Math.min(w, h);
+    let row = [], i = 0;
+    while (i < items.length) {
+      const cand = row.concat(items[i]);
+      if (row.length === 0 || worst(cand, len) <= worst(row, len)) { row = cand; i++; }
+      else break;
+    }
+    const rest = items.slice(i);
+    const sum = row.reduce((a, r) => a + r.area, 0);
+    if (w >= h) {
+      const bandW = sum / h;
+      let cy = y;
+      for (const r of row) { const ch = r.area / bandW; result[r.idx] = { x, y: cy, w: bandW, h: ch }; cy += ch; }
+      place(rest, x + bandW, y, w - bandW, h);
+    } else {
+      const bandH = sum / w;
+      let cx = x;
+      for (const r of row) { const cw = r.area / bandH; result[r.idx] = { x: cx, y, w: cw, h: bandH }; cx += cw; }
+      place(rest, x, y + bandH, w, h - bandH);
+    }
+  };
+
+  place(nodes, 0, 0, W, H);
+  return result;
+}
+
+export function Treemap({ items, height = 300, gap = 5, radius = 4, minShare = 0.011, onClick }) {
+  const ref = useRef(null);
+  const [width, setWidth] = useState(0);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const ro = new ResizeObserver(entries => { for (const e of entries) setWidth(e.contentRect.width); });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  const [hover, setHover] = useState(null); // { i, x, y }
+
+  const data = useMemo(
+    () => (items || []).filter(it => it.value > 0).sort((a, b) => b.value - a.value),
+    [items]
+  );
+  // Lay out on floored values so the smallest sectors stay clickable. The true
+  // share (it.pct) is still shown in labels/tooltip — only the geometry is nudged.
+  const rects = useMemo(() => {
+    const vals = data.map(d => d.value);
+    const total = vals.reduce((a, b) => a + b, 0);
+    const floor = total * minShare;
+    return computeSquarified(vals.map(v => Math.max(v, floor)), width, height);
+  }, [data, width, height, minShare]);
+
+  const hovered = hover != null ? data[hover.i] : null;
+
   return (
-    <svg viewBox={`0 0 ${size} ${size}`} width={size} height={size} style={{ display:'block' }}>
-      {arcs.map(a => (
-        <path key={a.i} d={a.d} fill={a.color}
-          opacity={hoverIndex == null || hoverIndex === a.i ? 1 : 0.32}
-          onMouseEnter={() => onHover && onHover(a.i)}
-          onMouseLeave={() => onHover && onHover(null)}
-          style={{ transition: 'opacity .15s', cursor: onHover ? 'pointer' : 'default' }}
-        />
-      ))}
-    </svg>
+    <div ref={ref} style={{ position: 'relative', width: '100%', height }}>
+      {data.map((it, i) => {
+        const r = rects[i];
+        if (!r || r.w <= 0 || r.h <= 0) return null;
+        // Adaptive gutter so even tiny cells keep a visible, hoverable footprint.
+        const gx = Math.min(gap, Math.max(0, r.w - 1));
+        const gy = Math.min(gap, Math.max(0, r.h - 1));
+        const cw = r.w - gx, ch = r.h - gy;
+        const showName = cw > 44 && ch > 22;
+        const showPct = cw > 44 && ch > 40;
+        return (
+          <div key={it.label}
+            onClick={() => onClick && onClick(it)}
+            onMouseEnter={e => setHover({ i, x: e.clientX, y: e.clientY })}
+            onMouseMove={e => setHover({ i, x: e.clientX, y: e.clientY })}
+            onMouseLeave={() => setHover(null)}
+            style={{
+              position: 'absolute',
+              left: r.x + gx / 2, top: r.y + gy / 2,
+              width: cw, height: ch,
+              background: it.color, borderRadius: Math.min(radius, cw / 2, ch / 2),
+              padding: showName ? '7px 9px' : 0, overflow: 'hidden',
+              color: 'var(--treemap-cell-fg)', boxSizing: 'border-box',
+              cursor: onClick ? 'pointer' : 'default', transition: 'filter .15s',
+              filter: hover && hover.i === i ? 'brightness(1.08)' : 'none',
+              outline: hover && hover.i === i ? '1.5px solid var(--ink)' : 'none',
+              outlineOffset: -1.5,
+            }}>
+            {showName && (
+              <div style={{ fontSize: 11.5, fontWeight: 600, lineHeight: 1.15, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{it.label}</div>
+            )}
+            {showPct && (
+              <div className="mono" style={{ fontSize: 10.5, opacity: 0.82, marginTop: 1 }}>{it.pct.toFixed(1)}%</div>
+            )}
+          </div>
+        );
+      })}
+
+      {hovered && (
+        <div style={{
+          position: 'fixed', left: hover.x + 14, top: hover.y + 14, zIndex: 50,
+          pointerEvents: 'none', whiteSpace: 'nowrap',
+          background: 'var(--surface)', border: '1px solid var(--line)',
+          borderRadius: 8, padding: '7px 10px', boxShadow: '0 8px 24px rgba(0,0,0,.18)',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+            <span style={{ width: 9, height: 9, borderRadius: 2, background: hovered.color, flexShrink: 0 }}/>
+            <span style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--ink)' }}>{hovered.label}</span>
+          </div>
+          <div className="mono" style={{ fontSize: 11, color: 'var(--soft)', marginTop: 3 }}>{hovered.pct.toFixed(2)}% of value</div>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -147,7 +245,7 @@ export function PriceChart({ points, dates, width = 320, height = 84, color = 'a
   const sx = (i) => (i / (points.length - 1)) * width;
   const sy = (v) => height - ((v - min) / range) * (height - 2) - 1;
   const d = points.map((p, i) => `${i ? 'L' : 'M'} ${sx(i).toFixed(1)} ${sy(p).toFixed(1)}`).join(' ');
-  const stroke = color === 'auto' ? (points[points.length - 1] >= points[0] ? 'var(--pos)' : 'var(--neg)') : color;
+  const stroke = color === 'auto' ? (points[points.length - 1] >= points[0] ? 'var(--bull)' : 'var(--bear)') : color;
 
   const onMove = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -166,7 +264,7 @@ export function PriceChart({ points, dates, width = 320, height = 84, color = 'a
         <path d={d} fill="none" stroke={stroke} strokeWidth={1.25} strokeLinejoin="round" strokeLinecap="round"/>
         {hover != null && (
           <g>
-            <line x1={hx} y1={0} x2={hx} y2={height} stroke="var(--muted)" strokeWidth={0.75} strokeDasharray="3 3"/>
+            <line x1={hx} y1={0} x2={hx} y2={height} stroke="var(--soft)" strokeWidth={0.75} strokeDasharray="3 3"/>
             <circle cx={hx} cy={hy} r={3} fill={stroke} stroke="var(--bg)" strokeWidth={1.5}/>
           </g>
         )}
@@ -177,11 +275,11 @@ export function PriceChart({ points, dates, width = 320, height = 84, color = 'a
           left: Math.max(0, Math.min(hx - 40, width - 96)),
           transform: 'translateY(-100%)',
           pointerEvents: 'none',
-          background: 'var(--surface)', border: '1px solid var(--hairline-strong)',
+          background: 'var(--surface)', border: '1px solid var(--line)',
           borderRadius: 6, padding: '4px 8px', whiteSpace: 'nowrap',
           boxShadow: '0 6px 16px rgba(0,0,0,.28)',
         }}>
-          <div style={{ fontSize: 10, color: 'var(--muted)' }}>{dates ? fmtDay(dates[hover]) : ''}</div>
+          <div style={{ fontSize: 10, color: 'var(--soft)' }}>{dates ? fmtDay(dates[hover]) : ''}</div>
           <div style={{ fontSize: 12, color: 'var(--ink)', marginTop: 1 }}>{valueFmt(points[hover])}</div>
         </div>
       )}
@@ -189,4 +287,4 @@ export function PriceChart({ points, dates, width = 320, height = 84, color = 'a
   );
 }
 
-Object.assign(window, { TopBarList, Histogram, Donut, PriceChart });
+Object.assign(window, { TopBarList, Histogram, Treemap, PriceChart });

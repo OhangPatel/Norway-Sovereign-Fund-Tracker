@@ -40,11 +40,11 @@ export const fmt = {
 // Small chip / badge
 export function Chip({ children, tone = 'neutral', style = {} }) {
   const tones = {
-    neutral: { bg: 'var(--surface-2)', fg: 'var(--ink-2)', bd: 'var(--hairline)' },
-    pos:     { bg: 'color-mix(in oklch, var(--pos) 14%, transparent)', fg: 'var(--pos)', bd: 'color-mix(in oklch, var(--pos) 35%, transparent)' },
-    neg:     { bg: 'color-mix(in oklch, var(--neg) 14%, transparent)', fg: 'var(--neg)', bd: 'color-mix(in oklch, var(--neg) 35%, transparent)' },
-    accent:  { bg: 'color-mix(in oklch, var(--accent) 18%, transparent)', fg: 'var(--accent)', bd: 'color-mix(in oklch, var(--accent) 35%, transparent)' },
-    info:    { bg: 'color-mix(in oklch, var(--info) 14%, transparent)', fg: 'var(--info)', bd: 'color-mix(in oklch, var(--info) 30%, transparent)' },
+    neutral: { bg: 'var(--row-hover)', fg: 'var(--sub)', bd: 'var(--line)' },
+    pos:     { bg: 'color-mix(in oklch, var(--bull) 14%, transparent)', fg: 'var(--bull)', bd: 'color-mix(in oklch, var(--bull) 35%, transparent)' },
+    neg:     { bg: 'color-mix(in oklch, var(--bear) 14%, transparent)', fg: 'var(--bear)', bd: 'color-mix(in oklch, var(--bear) 35%, transparent)' },
+    accent:  { bg: 'color-mix(in oklch, var(--accent) 18%, transparent)', fg: 'var(--accent-text)', bd: 'color-mix(in oklch, var(--accent) 35%, transparent)' },
+    info:    { bg: 'color-mix(in oklch, var(--sector-tech) 14%, transparent)', fg: 'var(--sector-tech)', bd: 'color-mix(in oklch, var(--sector-tech) 30%, transparent)' },
   };
   const t = tones[tone] || tones.neutral;
   return (
@@ -67,13 +67,13 @@ export function Chip({ children, tone = 'neutral', style = {} }) {
 
 // Tiny up/down delta
 export function Delta({ value, fmt: f = 'pct' }) {
-  if (value == null) return <span className="mono" style={{color:'var(--muted)'}}>—</span>;
+  if (value == null) return <span className="mono" style={{color:'var(--soft)'}}>—</span>;
   const pos = value >= 0;
   const arrow = pos ? '▲' : '▼';
   const label = f === 'pct' ? fmt.signedPct(value) : (pos ? '+' : '') + fmt.short(value, 2);
   return (
     <span className="mono" style={{
-      color: pos ? 'var(--pos)' : 'var(--neg)',
+      color: pos ? 'var(--bull)' : 'var(--bear)',
       fontSize: 12, fontWeight: 500,
       display: 'inline-flex', alignItems:'center', gap: 4,
     }}>
@@ -85,7 +85,7 @@ export function Delta({ value, fmt: f = 'pct' }) {
 // 52-week range visual: low ─── current ─── high
 export function RangeBar({ low, high, value, height = 8, showLabels = false }) {
   if (low == null || high == null || value == null) {
-    return <div style={{ height, background: 'var(--surface-2)', borderRadius: 99 }}/>;
+    return <div style={{ height, background: 'var(--row-hover)', borderRadius: 99 }}/>;
   }
   const range = Math.max(high - low, 0.0001);
   const t = Math.max(0, Math.min(1, (value - low) / range));
@@ -93,8 +93,8 @@ export function RangeBar({ low, high, value, height = 8, showLabels = false }) {
     <div style={{ width: '100%' }}>
       <div style={{
         position: 'relative', height, borderRadius: 99,
-        background: 'linear-gradient(90deg, color-mix(in oklch, var(--neg) 40%, transparent), color-mix(in oklch, var(--muted-2) 30%, transparent) 50%, color-mix(in oklch, var(--pos) 40%, transparent))',
-        border: '1px solid var(--hairline)',
+        background: 'linear-gradient(90deg, color-mix(in oklch, var(--bear) 40%, transparent), color-mix(in oklch, var(--soft) 30%, transparent) 50%, color-mix(in oklch, var(--bull) 40%, transparent))',
+        border: '1px solid var(--line)',
         overflow: 'visible',
       }}>
         <div style={{
@@ -110,7 +110,7 @@ export function RangeBar({ low, high, value, height = 8, showLabels = false }) {
       {showLabels && (
         <div className="mono" style={{
           display:'flex', justifyContent:'space-between',
-          fontSize: 10.5, color:'var(--muted)', marginTop: 4
+          fontSize: 10.5, color:'var(--soft)', marginTop: 4
         }}>
           <span>{fmt.price(low)}</span>
           <span>{fmt.price(high)}</span>
@@ -125,16 +125,16 @@ export function MicroBar({ value, max, tone = 'accent', height = 4 }) {
   const pct = max ? Math.min(100, (value / max) * 100) : 0;
   const tones = {
     accent: 'var(--accent)',
-    pos: 'var(--pos)',
-    neg: 'var(--neg)',
-    info: 'var(--info)',
-    muted: 'var(--muted-2)',
+    pos: 'var(--bull)',
+    neg: 'var(--bear)',
+    info: 'var(--sector-tech)',
+    muted: 'var(--soft)',
   };
   return (
     <div style={{
-      height, background: 'var(--surface-2)',
+      height, background: 'var(--row-hover)',
       borderRadius: 2, overflow: 'hidden',
-      border: '1px solid var(--hairline)',
+      border: '1px solid var(--line)',
     }}>
       <div style={{ height: '100%', width: pct + '%', background: tones[tone], transition: 'width .3s ease' }}/>
     </div>
@@ -167,6 +167,10 @@ export function Icon({ name, size = 16, color = 'currentColor', strokeWidth = 1.
     case 'wave':    return <svg {...props}><path d="M3 12c2-4 4-4 6 0s4 4 6 0 4-4 6 0"/></svg>;
     case 'sparkle': return <svg {...props}><path d="M12 3v6M12 15v6M3 12h6M15 12h6M5.6 5.6 9 9M15 15l3.4 3.4M5.6 18.4 9 15M15 9l3.4-3.4"/></svg>;
     case 'dot':     return <svg {...props} fill="currentColor"><circle cx="12" cy="12" r="3" stroke="none"/></svg>;
+    case 'download': return <svg {...props}><path d="M12 3v12M8 11l4 4 4-4M5 21h14"/></svg>;
+    case 'refresh':  return <svg {...props}><path d="M21 12a9 9 0 1 1-2.64-6.36M21 4v5h-5"/></svg>;
+    case 'clock':    return <svg {...props}><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/></svg>;
+    case 'export':   return <svg {...props}><path d="M12 15V3M8 7l4-4 4 4M5 15v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"/></svg>;
     default: return null;
   }
 }
