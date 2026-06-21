@@ -31,13 +31,31 @@ export const REC_TONE = {
 };
 
 export function DataTable({
-  data, columns,
+  data, columns, setColumns,
   sort, setSort,
   pinned, togglePin,
   compareOn, compared, toggleCompare,
   onOpen,
   maxOwnership
 }) {
+  // Drag-to-reorder columns: order is the key order of `columns`, so a drop
+  // just rebuilds that object with the dragged key spliced before the target.
+  const [dragKey, setDragKey] = React.useState(null);
+  const [overKey, setOverKey] = React.useState(null);
+
+  const moveColumn = (from, to) => {
+    if (!from || from === to) return;
+    setColumns(prev => {
+      const keys = Object.keys(prev);
+      const fromI = keys.indexOf(from);
+      const toI = keys.indexOf(to);
+      if (fromI < 0 || toI < 0) return prev;
+      keys.splice(toI, 0, keys.splice(fromI, 1)[0]);
+      const next = {};
+      keys.forEach(k => { next[k] = prev[k]; });
+      return next;
+    });
+  };
   const visibleCols = Object.entries(columns).filter(([k, v]) => v.visible).map(([k]) => k);
   const minTableWidth = visibleCols.reduce((s, k) => s + (ALL_COLUMNS[k]?.width || 0), 0) + (compareOn ? 40 : 0);
 
@@ -108,10 +126,22 @@ export function DataTable({
             {visibleCols.map(k => {
               const col = ALL_COLUMNS[k];
               const isSorted = sort.key === col.sortKey;
+              const isDragging = dragKey === k;
+              const isOver = overKey === k && dragKey && dragKey !== k;
               return (
                 <div key={k}
-                  onClick={() => headerSortClick(k)}
-                  style={headerCellStyle(col)}>
+                  draggable
+                  onClick={() => { if (!dragKey) headerSortClick(k); }}
+                  onDragStart={(e) => { setDragKey(k); e.dataTransfer.effectAllowed = 'move'; }}
+                  onDragOver={(e) => { e.preventDefault(); if (overKey !== k) setOverKey(k); }}
+                  onDrop={(e) => { e.preventDefault(); moveColumn(dragKey, k); setDragKey(null); setOverKey(null); }}
+                  onDragEnd={() => { setDragKey(null); setOverKey(null); }}
+                  style={{
+                    ...headerCellStyle(col),
+                    cursor: 'grab',
+                    opacity: isDragging ? 0.4 : 1,
+                    boxShadow: isOver ? 'inset 2px 0 0 var(--accent)' : 'none',
+                  }}>
                   <span style={{ display:'inline-flex', alignItems:'center', gap: 4 }}>
                     {col.label}
                     {col.sortable && (

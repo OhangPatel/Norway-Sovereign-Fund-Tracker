@@ -492,6 +492,7 @@ export function App() {
           <DataTable
             data={filtered}
             columns={columns}
+            setColumns={setColumns}
             sort={sort} setSort={setSort}
             pinned={pinned} togglePin={togglePin}
             compareOn={compareOn}

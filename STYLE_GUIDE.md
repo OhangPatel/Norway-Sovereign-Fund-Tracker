@@ -26,7 +26,7 @@ colors through the `var(--token)` names below — never hardcode hex values in c
 
 | Token                  | Light       | Dark        | Use |
 |------------------------|-------------|-------------|-----|
-| `--bg`                 | `#F4F3EE`   | `#131019`   | Page background |
+| `--bg`                 | `#F4F3EE`   | `#1A1816`   | Page background |
 | `--surface`            | `#FFFFFF`   | `#2D2A29`   | Cards / panels |
 | `--line`               | `#E4E2DA`   | `#46413D`   | Borders, dividers |
 | `--track`              | `#ECEAE2`   | `#3A3633`   | Progress-bar track |
@@ -52,9 +52,9 @@ colors through the `var(--token)` names below — never hardcode hex values in c
 | Token            | Light       | Dark        |
 |------------------|-------------|-------------|
 | `--feature`      | `#1B1A17`   | `#D6E134`   | Feature card background |
-| `--feature-ink`  | `#FCFEE7`   | `#131019`   | Feature card text |
+| `--feature-ink`  | `#FCFEE7`   | `#1A1816`   | Feature card text |
 | `--feature-sub`  | `#9A968A`   | `#5F6A12`   | Feature card secondary text |
-| `--feature-num`  | `#D6E134`   | `#131019`   | Feature card hero number |
+| `--feature-num`  | `#D6E134`   | `#1A1816`   | Feature card hero number |
 
 The feature card inverts between themes: a near-black card in light mode becomes a solid
 lime card in dark mode. Use it for the single most important stat on a screen.
@@ -82,7 +82,7 @@ Categorical colors for charts, treemaps, tags. Pick by sector, not by index.
 | `--bear`   | `#F87171` | Negative / losses |
 
 When placing sector colors as a treemap/chart fill, text on top uses
-`--treemap-cell-fg` (`#1B1A17` light, `#131019` dark) — these sector hues are all light
+`--treemap-cell-fg` (`#1B1A17` light, `#1A1816` dark) — these sector hues are all light
 enough to take dark text in both themes.
 
 ---
