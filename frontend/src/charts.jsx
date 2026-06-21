@@ -209,9 +209,15 @@ export function Treemap({ items, height = 300, gap = 5, radius = 4, minShare = 0
         );
       })}
 
-      {hovered && (
+      {hovered && (() => {
+        // Flip the tooltip to the left of the cursor near the right edge so it
+        // doesn't run off-screen for right-side cells.
+        const flip = hover.x > window.innerWidth * 0.6;
+        return (
         <div style={{
-          position: 'fixed', left: hover.x + 14, top: hover.y + 14, zIndex: 50,
+          position: 'fixed',
+          left: flip ? hover.x - 14 : hover.x + 14, top: hover.y + 14, zIndex: 50,
+          transform: flip ? 'translateX(-100%)' : 'none',
           pointerEvents: 'none', whiteSpace: 'nowrap',
           background: 'var(--surface)', border: '1px solid var(--line)',
           borderRadius: 8, padding: '7px 10px', boxShadow: '0 8px 24px rgba(0,0,0,.18)',
@@ -222,7 +228,8 @@ export function Treemap({ items, height = 300, gap = 5, radius = 4, minShare = 0
           </div>
           <div className="mono" style={{ fontSize: 11, color: 'var(--soft)', marginTop: 3 }}>{hovered.pct.toFixed(2)}% of value</div>
         </div>
-      )}
+        );
+      })()}
     </div>
   );
 }
