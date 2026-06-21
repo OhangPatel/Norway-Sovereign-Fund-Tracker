@@ -5,47 +5,94 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>Sovereign Insights</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-      :root[data-theme="dark"] {
-        --bg: #0a0a0a;
-        --bg-2: #141414;
-        --surface: #1a1a1a;
-        --surface-2: #242424;
-        --hairline: #333333;
-        --hairline-strong: #4a4a4a;
-        --ink: #ffffff;
-        --ink-2: #b3b3b3;
-        --muted: #808080;
-        --muted-2: #5a5a5a;
-        --accent: #4f98ff;
-        --accent-ink: #ffffff;
-        --info: #00d9ff;
-        --pos: #10b981;
-        --neg: #ef4444;
-        --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        --font-mono: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace;
-        --font-display: "Georgia", serif;
+      /* ============================================================
+         "LIME" DESIGN SYSTEM — see STYLE_GUIDE.md (single source of truth)
+         Light is default; [data-theme="dark"] inverts.
+         Canonical tokens first, then back-compat aliases that map the
+         app's legacy token names onto Lime values during migration.
+         ============================================================ */
+      :root[data-theme="light"] {
+        /* — canonical Lime tokens — */
+        --bg: #F4F3EE;
+        --surface: #FFFFFF;
+        --line: #E4E2DA;
+        --track: #ECEAE2;
+
+        --ink: #1B1A17;
+        --sub: #7C786E;
+        --soft: #9C988C;
+
+        --accent: #D6E134;
+        --accent-text: #8E9612;
+
+        --feature: #1B1A17;
+        --feature-ink: #FCFEE7;
+        --feature-sub: #9A968A;
+        --feature-num: #D6E134;
+
+        --row-hover: #FAF9F5;
+        --card-hover-border: #1B1A17;
+
+        --sector-tech: #60A5FA;
+        --sector-financials: #D6E134;
+        --sector-healthcare: #2DD4BF;
+        --sector-energy: #FB923C;
+        --sector-industrials: #A78BFA;
+        --sector-consumer: #F472B6;
+        --sector-utilities: #FBBF24;
+        --sector-realestate: #4ADE80;
+
+        --bull: #4ADE80;
+        --bear: #F87171;
+
+        --treemap-cell-fg: #1B1A17;
+
+        --font-display: 'Space Grotesk', sans-serif;
+        --font-mono: 'JetBrains Mono', monospace;
       }
 
-      :root[data-theme="light"] {
-        --bg: #fafafa;
-        --bg-2: #f0f0f0;
-        --surface: #ffffff;
-        --surface-2: #f5f5f5;
-        --hairline: #e5e5e5;
-        --hairline-strong: #d0d0d0;
-        --ink: #0a0a0a;
-        --ink-2: #4d4d4d;
-        --muted: #808080;
-        --muted-2: #a6a6a6;
-        --accent: #0066cc;
-        --accent-ink: #ffffff;
-        --info: #0099cc;
-        --pos: #059669;
-        --neg: #dc2626;
-        --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        --font-mono: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace;
-        --font-display: "Georgia", serif;
+      :root[data-theme="dark"] {
+        /* — canonical Lime tokens — ONYX palette (pure neutral black) */
+        --bg: #08080A;
+        --surface: #131316;
+        --line: #1C1C20;
+        --track: #1C1C20;
+
+        --ink: #F6F6F2;
+        --sub: #A0A0A4;
+        --soft: #74747A;
+
+        --accent: #D6E134;
+        --accent-text: #D6E134;
+
+        --feature: #D6E134;
+        --feature-ink: #08080A;
+        --feature-sub: #5F6A12;
+        --feature-num: #08080A;
+
+        --row-hover: #1C1C20;
+        --card-hover-border: #D6E134;
+
+        --sector-tech: #60A5FA;
+        --sector-financials: #D6E134;
+        --sector-healthcare: #2DD4BF;
+        --sector-energy: #FB923C;
+        --sector-industrials: #A78BFA;
+        --sector-consumer: #F472B6;
+        --sector-utilities: #FBBF24;
+        --sector-realestate: #4ADE80;
+
+        --bull: #4ADE80;
+        --bear: #F87171;
+
+        --treemap-cell-fg: #08080A;
+
+        --font-display: 'Space Grotesk', sans-serif;
+        --font-mono: 'JetBrains Mono', monospace;
       }
 
       * { box-sizing: border-box; }
@@ -53,15 +100,16 @@
       body {
         background: var(--bg);
         color: var(--ink);
-        font-family: var(--font-ui);
+        font-family: var(--font-display);
         line-height: 1.5;
+        transition: background .25s, color .25s;
       }
 
-      .display { font-family: var(--font-display); font-size: 32px; font-weight: 400; }
+      .display { font-family: var(--font-display); font-size: 32px; font-weight: 600; letter-spacing: -0.02em; }
       .display-italic { font-style: italic; }
-      .eyebrow { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); font-weight: 500; }
+      .eyebrow { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--soft); font-weight: 500; }
       .mono { font-family: var(--font-mono); }
-      .card { background: var(--surface); border: 1px solid var(--hairline); border-radius: 12px; }
+      .card { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; }
 
       @keyframes pulse {
         0%, 100% { opacity: 1; }
@@ -82,6 +130,7 @@
         0%   { transform: translateX(-100%); }
         100% { transform: translateX(400%);  }
       }
+      @keyframes spin { to { transform: rotate(360deg); } }
     </style>
   </head>
   <body>

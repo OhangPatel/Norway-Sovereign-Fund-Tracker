@@ -45,7 +45,7 @@ export function TopBar({ data, query, setQuery, theme, setTheme, onPick, compare
       background: 'color-mix(in oklch, var(--bg) 86%, transparent)',
       backdropFilter: 'blur(14px) saturate(140%)',
       WebkitBackdropFilter: 'blur(14px) saturate(140%)',
-      borderBottom: '1px solid var(--hairline)',
+      borderBottom: '1px solid var(--line)',
     }}>
       <div style={{
         display: 'grid', gridTemplateColumns: 'auto 1fr auto',
@@ -54,19 +54,18 @@ export function TopBar({ data, query, setQuery, theme, setTheme, onPick, compare
         maxWidth: 1680, margin: '0 auto',
       }}>
         {/* Brand */}
-        <div style={{ display:'flex', alignItems:'center', gap: 14 }}>
+        <div style={{ display:'flex', alignItems:'center', gap: 12 }}>
           <div style={{
-            width: 30, height: 30, borderRadius: 8,
-            background: 'linear-gradient(135deg, var(--accent), color-mix(in oklch, var(--accent) 50%, var(--info)))',
+            width: 28, height: 28, borderRadius: 7,
+            background: 'var(--accent)',
             display:'grid', placeItems:'center',
-            color: 'var(--accent-ink)', fontFamily: 'var(--font-display)', fontStyle:'italic', fontSize: 19, fontWeight: 700,
-            boxShadow: '0 1px 0 rgba(255,255,255,.2) inset, 0 4px 12px rgba(0,0,0,.3)'
+            color: 'var(--treemap-cell-fg)', fontFamily: 'var(--font-display)', fontSize: 16, fontWeight: 700,
           }}>S</div>
           <div>
-            <div className="display" style={{ fontSize: 19, lineHeight: 1, letterSpacing: '-0.015em' }}>
-              Sovereign <span className="display-italic">Insights</span>
+            <div className="display" style={{ fontSize: 18, lineHeight: 1, letterSpacing: '-0.015em', fontWeight: 600 }}>
+              Sovereign <span style={{ color: 'var(--accent-text)' }}>Insights</span>
             </div>
-            <div className="eyebrow" style={{ marginTop: 2, fontSize: 9.5 }}>
+            <div className="eyebrow" style={{ marginTop: 3, fontSize: 9.5 }}>
               Norway GPFG · Equity Holdings · {lastFetched}
             </div>
           </div>
@@ -76,39 +75,38 @@ export function TopBar({ data, query, setQuery, theme, setTheme, onPick, compare
         <div ref={wrapRef} style={{ position: 'relative', maxWidth: 540, width: '100%', justifySelf:'center' }}>
           <div style={{
             display:'flex', alignItems:'center', gap: 10,
-            padding: '8px 12px',
-            background: focused ? 'var(--surface)' : 'var(--bg-2)',
-            border: `1px solid ${focused ? 'var(--accent)' : 'var(--hairline)'}`,
-            borderRadius: 10,
-            transition: 'all .15s ease',
-            boxShadow: focused ? '0 0 0 4px color-mix(in oklch, var(--accent) 18%, transparent)' : 'none',
+            padding: '9px 16px',
+            background: 'var(--surface)',
+            border: `1px solid ${focused ? 'var(--accent-text)' : 'var(--line)'}`,
+            borderRadius: 999,
+            transition: 'border-color .15s ease',
           }}>
-            <Icon name="search" size={15} color="var(--muted)"/>
+            <Icon name="search" size={15} color="var(--soft)"/>
             <input
               value={query}
               onChange={e => setQuery(e.target.value)}
               onFocus={() => setFocused(true)}
               onBlur={() => setTimeout(() => setFocused(false), 120)}
               onKeyDown={handleKey}
-              placeholder="Search 1,412 companies — by name, ticker, or country"
+              placeholder="Search companies — by name, ticker, or country"
               style={{
                 flex: 1,
                 border: 'none', outline: 'none', background: 'transparent',
-                color: 'var(--ink)', fontFamily: 'var(--font-ui)', fontSize: 13,
+                color: 'var(--ink)', fontFamily: 'var(--font-display)', fontSize: 13,
               }}
             />
             <span className="mono" style={{
-              fontSize: 10.5, color: 'var(--muted)',
-              padding: '2px 6px', border: '1px solid var(--hairline)', borderRadius: 4,
+              fontSize: 10.5, color: 'var(--soft)',
+              padding: '2px 6px', border: '1px solid var(--line)', borderRadius: 4,
             }}>/</span>
           </div>
 
           {focused && query && matches.length > 0 && (
             <div style={{
-              position: 'absolute', top: 'calc(100% + 6px)', left: 0, right: 0,
-              background: 'var(--surface)', border: '1px solid var(--hairline-strong)',
-              borderRadius: 10, overflow: 'hidden',
-              boxShadow: '0 30px 60px -20px rgba(0,0,0,.6)',
+              position: 'absolute', top: 'calc(100% + 8px)', left: 0, right: 0,
+              background: 'var(--surface)', border: '1px solid var(--line)',
+              borderRadius: 16, overflow: 'hidden',
+              boxShadow: '0 24px 48px -24px rgba(0,0,0,.45)',
               animation: 'rise .12s ease-out'
             }}>
               {matches.map((m, i) => (
@@ -116,30 +114,30 @@ export function TopBar({ data, query, setQuery, theme, setTheme, onPick, compare
                   onMouseDown={() => { onPick(m); setQuery(''); }}
                   onMouseEnter={() => setActive(i)}
                   style={{
-                    padding: '10px 12px',
+                    padding: '11px 16px',
                     display: 'grid', gridTemplateColumns: '1fr auto auto', alignItems:'center', gap: 12,
-                    background: i === active ? 'var(--surface-2)' : 'transparent',
+                    background: i === active ? 'var(--row-hover)' : 'transparent',
                     cursor: 'pointer',
-                    borderBottom: i < matches.length - 1 ? '1px solid var(--hairline)' : 'none',
+                    borderBottom: i < matches.length - 1 ? '1px solid var(--line)' : 'none',
                   }}>
                   <div>
-                    <div style={{ fontSize: 13, color: 'var(--ink)' }}>{m.name}</div>
-                    <div className="mono" style={{ fontSize: 10.5, color: 'var(--muted)' }}>{m.country} · {m.sector || m.industry}</div>
+                    <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--ink)' }}>{m.name}</div>
+                    <div className="mono" style={{ fontSize: 10.5, color: 'var(--soft)' }}>{m.country} · {m.sector || m.industry}</div>
                   </div>
-                  <span className="mono" style={{ fontSize: 11, color: 'var(--ink-2)' }}>{m.ticker}</span>
-                  <span className="mono" style={{ fontSize: 11, color: 'var(--muted)' }}>{fmt.money(m.mvUsd, 'USD', 1)}</span>
+                  <span className="mono" style={{ fontSize: 11, color: 'var(--sub)' }}>{m.ticker}</span>
+                  <span className="mono" style={{ fontSize: 11, color: 'var(--soft)' }}>{fmt.money(m.mvUsd, 'USD', 1)}</span>
                 </div>
               ))}
             </div>
           )}
           {focused && query && matches.length === 0 && (
             <div style={{
-              position: 'absolute', top: 'calc(100% + 6px)', left: 0, right: 0,
-              background: 'var(--surface)', border: '1px solid var(--hairline)',
-              borderRadius: 10, padding: '14px',
-              color: 'var(--muted)', fontSize: 12,
+              position: 'absolute', top: 'calc(100% + 8px)', left: 0, right: 0,
+              background: 'var(--surface)', border: '1px solid var(--line)',
+              borderRadius: 16, padding: '16px',
+              color: 'var(--soft)', fontSize: 12,
             }}>
-              <span className="display-italic">No companies matched "{query}".</span> Try a ticker, country, or partial name.
+              No companies matched &ldquo;{query}&rdquo;. Try a ticker, country, or partial name.
             </div>
           )}
         </div>
@@ -158,8 +156,8 @@ export function TopBar({ data, query, setQuery, theme, setTheme, onPick, compare
             <span>Compare</span>
             {compareCount > 0 && (
               <span className="mono" style={{
-                padding: '1px 6px', borderRadius: 99,
-                background: 'var(--accent)', color: 'var(--accent-ink)',
+                padding: '1px 6px', borderRadius: 999,
+                background: 'var(--accent)', color: 'var(--treemap-cell-fg)',
                 fontSize: 10, fontWeight: 600
               }}>{compareCount}</span>
             )}
@@ -173,22 +171,24 @@ export function TopBar({ data, query, setQuery, theme, setTheme, onPick, compare
   );
 }
 
+// Ghost pill button (STYLE_GUIDE §5): mono/uppercase, rounded, inverts on hover/active.
 export function TopBtn({ children, onClick, active, title }) {
   return (
     <button onClick={onClick} title={title}
       style={{
         display:'inline-flex', alignItems:'center', gap: 6,
-        padding: '7px 11px',
-        background: active ? 'var(--accent)' : 'var(--bg-2)',
-        color: active ? 'var(--accent-ink)' : 'var(--ink-2)',
-        border: `1px solid ${active ? 'var(--accent)' : 'var(--hairline)'}`,
-        borderRadius: 8,
+        padding: '7px 13px',
+        background: active ? 'var(--ink)' : 'transparent',
+        color: active ? 'var(--bg)' : 'var(--ink)',
+        border: `1px solid ${active ? 'var(--ink)' : 'var(--line)'}`,
+        borderRadius: 999,
         cursor: 'pointer',
-        fontFamily: 'var(--font-ui)', fontSize: 12, fontWeight: 500,
-        transition: 'all .12s ease'
+        fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 500,
+        letterSpacing: '0.04em', textTransform: 'uppercase',
+        transition: 'all .14s ease'
       }}
-      onMouseEnter={e => { if (!active) e.currentTarget.style.background = 'var(--surface-2)'; }}
-      onMouseLeave={e => { if (!active) e.currentTarget.style.background = 'var(--bg-2)'; }}
+      onMouseEnter={e => { if (!active) { e.currentTarget.style.background = 'var(--ink)'; e.currentTarget.style.color = 'var(--bg)'; } }}
+      onMouseLeave={e => { if (!active) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--ink)'; } }}
     >
       {children}
     </button>

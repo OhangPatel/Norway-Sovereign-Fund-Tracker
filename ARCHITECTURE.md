@@ -4,6 +4,22 @@
 > basics but are still building intuition for backend architecture and SQLite.
 > Every decision below has a "Why?" explanation.
 
+> ### 🎯 This is the TARGET architecture (not all built yet)
+> Updated 2026-06-21. This doc describes where the project is **heading**. For what
+> actually exists today, see [README.md](README.md). Reconciliation with current state:
+>
+> - **Frontend is already Vite + React 19.** Source lives in `frontend/src/` and the
+>   entry is `frontend/index.html` → `/src/main.jsx`. The "Proposed Folder Structure"
+>   in §3 below shows a `public/src` + Babel layout — treat that part as superseded.
+> - **Not yet built:** the normalized multi-table schema (`companies`, `yearly_holdings`,
+>   `metrics_snapshots`, `price_history`, `pipeline_runs`, `import_logs`), the `routes/`
+>   + `services/` split, and most `/api/*` endpoints in §8. Today there is one flat
+>   `financial_metrics` table (single `ticker` PK), an `enriched_holdings` cache, and
+>   `generated_reports`; the API surface is the handful of endpoints listed in README.
+> - **Partially there:** real price history is served live on-demand via `/api/history/{ticker}`
+>   (not yet stored in a `price_history` table as §9 proposes); multi-year raw NBIM
+>   snapshots (2023, 2025) are being collected in `data/snapshots/`.
+
 ---
 
 ## Table of Contents
@@ -1142,4 +1158,4 @@ ORDER BY started_at DESC LIMIT 10;
 
 ---
 
-*Last updated: May 2026*
+*Last updated: 2026-06-21*

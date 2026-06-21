@@ -31,13 +31,31 @@ export const REC_TONE = {
 };
 
 export function DataTable({
-  data, columns,
+  data, columns, setColumns,
   sort, setSort,
   pinned, togglePin,
   compareOn, compared, toggleCompare,
   onOpen,
   maxOwnership
 }) {
+  // Drag-to-reorder columns: order is the key order of `columns`, so a drop
+  // just rebuilds that object with the dragged key spliced before the target.
+  const [dragKey, setDragKey] = React.useState(null);
+  const [overKey, setOverKey] = React.useState(null);
+
+  const moveColumn = (from, to) => {
+    if (!from || from === to) return;
+    setColumns(prev => {
+      const keys = Object.keys(prev);
+      const fromI = keys.indexOf(from);
+      const toI = keys.indexOf(to);
+      if (fromI < 0 || toI < 0) return prev;
+      keys.splice(toI, 0, keys.splice(fromI, 1)[0]);
+      const next = {};
+      keys.forEach(k => { next[k] = prev[k]; });
+      return next;
+    });
+  };
   const visibleCols = Object.entries(columns).filter(([k, v]) => v.visible).map(([k]) => k);
   const minTableWidth = visibleCols.reduce((s, k) => s + (ALL_COLUMNS[k]?.width || 0), 0) + (compareOn ? 40 : 0);
 
@@ -55,12 +73,12 @@ export function DataTable({
   const headerCellStyle = (col) => ({
     padding: '12px 14px',
     fontSize: 10.5, fontFamily: 'var(--font-mono)', fontWeight: 500,
-    color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.08em',
+    color: 'var(--soft)', textTransform: 'uppercase', letterSpacing: '0.08em',
     textAlign: col.align,
     cursor: col.sortable ? 'pointer' : 'default',
     userSelect: 'none', whiteSpace: 'nowrap',
     background: 'var(--surface)',
-    borderBottom: '1px solid var(--hairline-strong)',
+    borderBottom: '1px solid var(--line)',
     position: 'sticky', top: 0, zIndex: 2,
   });
 
@@ -74,21 +92,21 @@ export function DataTable({
   };
 
   return (
-    <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+    <div style={{ background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: 24, padding: 0, overflow: 'hidden' }}>
       <div style={{
         display:'flex', alignItems:'baseline', justifyContent:'space-between',
-        padding: '16px 20px', borderBottom: '1px solid var(--hairline)',
+        padding: '16px 20px', borderBottom: '1px solid var(--line)',
         gap: 16, flexWrap: 'wrap',
       }}>
         <div style={{ minWidth: 0 }}>
           <div className="eyebrow">Holdings ledger</div>
           <div className="display" style={{ fontSize: 22, marginTop: 2, letterSpacing:'-0.01em', whiteSpace: 'nowrap' }}>
-            All positions <span className="display-italic" style={{ color:'var(--muted)' }}>· {data.length.toLocaleString()} rows</span>
+            All positions <span className="display-italic" style={{ color:'var(--soft)' }}>· {data.length.toLocaleString()} rows</span>
           </div>
         </div>
-        <div className="mono" style={{ fontSize: 10.5, color: 'var(--muted)' }}>
-          Sorted by <span style={{ color:'var(--ink-2)' }}>{sort.key}</span> {sort.dir === 'desc' ? '↓' : '↑'}
-          {compareOn && <span style={{ marginLeft: 14, color: 'var(--accent)' }}>· Compare mode</span>}
+        <div className="mono" style={{ fontSize: 10.5, color: 'var(--soft)' }}>
+          Sorted by <span style={{ color:'var(--sub)' }}>{sort.key}</span> {sort.dir === 'desc' ? '↓' : '↑'}
+          {compareOn && <span style={{ marginLeft: 14, color: 'var(--accent-text)' }}>· Compare mode</span>}
         </div>
       </div>
 
@@ -108,16 +126,28 @@ export function DataTable({
             {visibleCols.map(k => {
               const col = ALL_COLUMNS[k];
               const isSorted = sort.key === col.sortKey;
+              const isDragging = dragKey === k;
+              const isOver = overKey === k && dragKey && dragKey !== k;
               return (
                 <div key={k}
-                  onClick={() => headerSortClick(k)}
-                  style={headerCellStyle(col)}>
+                  draggable
+                  onClick={() => { if (!dragKey) headerSortClick(k); }}
+                  onDragStart={(e) => { setDragKey(k); e.dataTransfer.effectAllowed = 'move'; }}
+                  onDragOver={(e) => { e.preventDefault(); if (overKey !== k) setOverKey(k); }}
+                  onDrop={(e) => { e.preventDefault(); moveColumn(dragKey, k); setDragKey(null); setOverKey(null); }}
+                  onDragEnd={() => { setDragKey(null); setOverKey(null); }}
+                  style={{
+                    ...headerCellStyle(col),
+                    cursor: 'grab',
+                    opacity: isDragging ? 0.4 : 1,
+                    boxShadow: isOver ? 'inset 2px 0 0 var(--accent)' : 'none',
+                  }}>
                   <span style={{ display:'inline-flex', alignItems:'center', gap: 4 }}>
                     {col.label}
                     {col.sortable && (
                       <span style={{
                         opacity: isSorted ? 1 : 0.25,
-                        color: isSorted ? 'var(--accent)' : 'var(--muted)',
+                        color: isSorted ? 'var(--accent-text)' : 'var(--soft)',
                         fontSize: 9, marginLeft: 2,
                       }}>
                         {isSorted ? (sort.dir === 'desc' ? '▼' : '▲') : '⇅'}
@@ -152,9 +182,9 @@ export function DataTable({
           {data.length === 0 && (
             <div style={{
               padding: '64px 24px', textAlign:'center',
-              color:'var(--muted)',
+              color:'var(--soft)',
             }}>
-              <div className="display-italic" style={{ fontSize: 24, color:'var(--ink-2)' }}>
+              <div className="display-italic" style={{ fontSize: 24, color:'var(--sub)' }}>
                 No companies match these filters.
               </div>
               <div style={{ marginTop: 8, fontSize: 13 }}>Try clearing a filter or widening the ownership range.</div>
@@ -174,7 +204,7 @@ export function Row({ row, rank, visibleCols, onOpen, pinned, togglePin, compare
     fontSize: 13,
     height: 50,
     display: 'flex', alignItems: 'center',
-    borderBottom: '1px solid var(--hairline)',
+    borderBottom: '1px solid var(--line)',
     overflow:'hidden',
   };
 
@@ -185,7 +215,7 @@ export function Row({ row, rank, visibleCols, onOpen, pinned, togglePin, compare
 
   const bg = compared ? 'color-mix(in oklch, var(--accent) 10%, transparent)'
     : pinned ? 'color-mix(in oklch, var(--accent) 4%, transparent)'
-    : hover ? 'color-mix(in oklch, var(--surface-2) 50%, transparent)'
+    : hover ? 'color-mix(in oklch, var(--row-hover) 50%, transparent)'
     : 'transparent';
 
   return (
@@ -205,11 +235,11 @@ export function Row({ row, rank, visibleCols, onOpen, pinned, togglePin, compare
         <div style={{ ...cellBase, padding: 0, justifyContent:'center' }}>
           <span style={{
             width:16, height:16, borderRadius:4,
-            border:`1.5px solid ${compared ? 'var(--accent)' : 'var(--hairline-strong)'}`,
+            border:`1.5px solid ${compared ? 'var(--accent)' : 'var(--line)'}`,
             background: compared ? 'var(--accent)' : 'transparent',
             display:'grid', placeItems:'center',
           }}>
-            {compared && <Icon name="check" size={11} color="var(--accent-ink)" strokeWidth={2.5}/>}
+            {compared && <Icon name="check" size={11} color="var(--treemap-cell-fg)" strokeWidth={2.5}/>}
           </span>
         </div>
       )}
@@ -226,7 +256,7 @@ export function Cell({ colKey, row, rank, cellBase, pinned, togglePin, hover, ma
   switch (colKey) {
     case 'rank':
       return <div style={style}>
-        <span className="mono" style={{ fontSize: 11, color: 'var(--muted)' }}>{String(rank).padStart(3,'0')}</span>
+        <span className="mono" style={{ fontSize: 11, color: 'var(--soft)' }}>{String(rank).padStart(3,'0')}</span>
       </div>;
 
     case 'name':
@@ -237,7 +267,7 @@ export function Cell({ colKey, row, rank, cellBase, pinned, togglePin, hover, ma
             whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis',
             maxWidth: 240
           }}>{row.name}</div>
-          <div className="mono" style={{ fontSize: 10.5, color: 'var(--muted)', marginTop: 1, whiteSpace:'nowrap' }}>
+          <div className="mono" style={{ fontSize: 10.5, color: 'var(--soft)', marginTop: 1, whiteSpace:'nowrap' }}>
             {row.industry || row.sector || '—'}
           </div>
         </div>
@@ -246,27 +276,27 @@ export function Cell({ colKey, row, rank, cellBase, pinned, togglePin, hover, ma
     case 'ticker':
       return <div style={style}>
         <span className="mono" style={{
-          fontSize: 11.5, fontWeight: 500, color: 'var(--ink-2)',
-          background: 'var(--surface-2)',
+          fontSize: 11.5, fontWeight: 500, color: 'var(--sub)',
+          background: 'var(--row-hover)',
           padding: '3px 7px', borderRadius: 4,
-          border: '1px solid var(--hairline)',
+          border: '1px solid var(--line)',
         }}>{row.ticker}</span>
       </div>;
 
     case 'country':
       return <div style={style}>
-        <span style={{ fontSize: 12.5, color: 'var(--ink-2)' }}>{row.country}</span>
+        <span style={{ fontSize: 12.5, color: 'var(--sub)' }}>{row.country}</span>
       </div>;
 
     case 'sector':
       return <div style={style}>
         <span style={{
-          fontSize: 11.5, color: 'var(--ink-2)',
+          fontSize: 11.5, color: 'var(--sub)',
           display:'inline-flex', alignItems:'center', gap: 6
         }}>
           <span style={{
             width: 6, height: 6, borderRadius: 99,
-            background: (SECTOR_COLORS && SECTOR_COLORS[row.sector]) || 'var(--muted-2)'
+            background: (SECTOR_COLORS && SECTOR_COLORS[row.sector]) || 'var(--soft)'
           }}/>
           {row.sector || row.industry || '—'}
         </span>
@@ -290,7 +320,7 @@ export function Cell({ colKey, row, rank, cellBase, pinned, togglePin, hover, ma
           <RangeBar low={row.low52} high={row.high52} value={row.price}/>
           <div className="mono" style={{
             display:'flex', justifyContent:'space-between',
-            fontSize: 9.5, color:'var(--muted)', marginTop: 4
+            fontSize: 9.5, color:'var(--soft)', marginTop: 4
           }}>
             <span>{fmt.price(row.low52)}</span>
             <span>{fmt.price(row.high52)}</span>
@@ -302,7 +332,7 @@ export function Cell({ colKey, row, rank, cellBase, pinned, togglePin, hover, ma
       return <div style={style}>
         <div style={{ textAlign:'right' }}>
           <div className="mono" style={{ fontSize: 13, color: 'var(--ink)' }}>{fmt.money(row.mvUsd, 'USD', 1)}</div>
-          <div className="mono" style={{ fontSize: 10, color:'var(--muted)' }}>{fmt.money(row.mvNok, 'NOK', 1)}</div>
+          <div className="mono" style={{ fontSize: 10, color:'var(--soft)' }}>{fmt.money(row.mvNok, 'NOK', 1)}</div>
         </div>
       </div>;
 
@@ -312,10 +342,10 @@ export function Cell({ colKey, row, rank, cellBase, pinned, togglePin, hover, ma
       return <div style={{ ...style, padding: '0 14px' }}>
         <div style={{ width: '100%' }}>
           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'baseline', marginBottom: 4 }}>
-            <span className="mono" style={{ fontSize: 13, color: isHigh ? 'var(--accent)' : 'var(--ink)', fontWeight: isHigh ? 500 : 400 }}>
+            <span className="mono" style={{ fontSize: 13, color: isHigh ? 'var(--accent-text)' : 'var(--ink)', fontWeight: isHigh ? 600 : 400 }}>
               {fmt.pct(o, 2)}
             </span>
-            {isHigh && <span style={{ fontSize: 9, color: 'var(--accent)', letterSpacing: '0.04em', fontFamily:'var(--font-mono)' }}>HIGH</span>}
+            {isHigh && <span style={{ fontSize: 9, color: 'var(--accent-text)', letterSpacing: '0.04em', fontFamily:'var(--font-mono)' }}>HIGH</span>}
           </div>
           <MicroBar value={o} max={maxOwnership} tone={isHigh ? 'accent' : 'muted'}/>
         </div>
@@ -329,7 +359,7 @@ export function Cell({ colKey, row, rank, cellBase, pinned, togglePin, hover, ma
 
     case 'pe':
       return <div style={style}>
-        <span className="mono" style={{ fontSize: 12.5, color: row.pe ? 'var(--ink-2)' : 'var(--muted-2)' }}>
+        <span className="mono" style={{ fontSize: 12.5, color: row.pe ? 'var(--sub)' : 'var(--soft)' }}>
           {row.pe ? row.pe.toFixed(1) : '—'}
         </span>
       </div>;
@@ -342,7 +372,7 @@ export function Cell({ colKey, row, rank, cellBase, pinned, togglePin, hover, ma
             background:'transparent', border:'none', padding: 6,
             cursor:'pointer', display:'grid', placeItems:'center',
             opacity: pinned ? 1 : hover ? 0.6 : 0.2,
-            color: pinned ? 'var(--accent)' : 'var(--ink-2)',
+            color: pinned ? 'var(--accent-text)' : 'var(--sub)',
             transition: 'opacity .15s, transform .12s',
           }}
           onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.15)'}

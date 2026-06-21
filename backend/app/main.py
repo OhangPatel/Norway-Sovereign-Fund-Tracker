@@ -8,7 +8,7 @@ import subprocess
 import sys
 import os
 import threading
-from datetime import datetime, date, timedelta
+from datetime import datetime, date, timedelta, timezone
 import yfinance as yf
 
 app = FastAPI(title="NBIM Tracker API")
@@ -122,7 +122,7 @@ def _fetch_clean_worker():
             "step": "Launching browser...",
             "message": "Starting Playwright to scrape NBIM website",
             "error": None,
-            "started_at": datetime.now().isoformat(),
+            "started_at": datetime.now(timezone.utc).isoformat(),
             "completed_at": None,
         })
         ret = _run_script("fetch_and_clean_holding.py")
@@ -133,7 +133,7 @@ def _fetch_clean_worker():
             "progress": 100,
             "step": "Done",
             "message": "Holdings data fetched and cleaned successfully!",
-            "completed_at": datetime.now().isoformat(),
+            "completed_at": datetime.now(timezone.utc).isoformat(),
         })
     except Exception as e:
         _status.update({"is_running": False, "error": str(e), "message": f"Error: {e}"})
@@ -150,7 +150,7 @@ def _metrics_merge_worker():
             "step": "Fetching Yahoo Finance metrics...",
             "message": "Starting yfinance batch fetcher — this takes 10-20 min",
             "error": None,
-            "started_at": datetime.now().isoformat(),
+            "started_at": datetime.now(timezone.utc).isoformat(),
             "completed_at": None,
         })
         _record_metrics_run()
@@ -171,7 +171,7 @@ def _metrics_merge_worker():
             "progress": 100,
             "step": "Done",
             "message": "Metrics fetched and data merged successfully!",
-            "completed_at": datetime.now().isoformat(),
+            "completed_at": datetime.now(timezone.utc).isoformat(),
         })
     except Exception as e:
         _status.update({"is_running": False, "error": str(e), "message": f"Error: {e}"})

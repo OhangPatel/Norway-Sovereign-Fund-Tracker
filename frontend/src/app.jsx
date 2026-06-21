@@ -1,4 +1,5 @@
 import React from 'react';
+import { Icon } from './format.jsx';
 import { TopBar } from './topbar.jsx';
 import { Filters } from './filters.jsx';
 import { Summary } from './summary.jsx';
@@ -10,32 +11,34 @@ import { CompareDock, CompareModal } from './compare.jsx';
 
 export var PIPELINE_API = 'http://127.0.0.1:8000';
 
-export function PipelineBtn(props) {
-  var children = props.children;
-  var disabled  = props.disabled;
-  var active    = props.active;
-  var onClick   = props.onClick;
-
-  var base = {
-    display: 'inline-flex', alignItems: 'center', gap: 5,
-    padding: '6px 11px',
-    border: '1px solid ' + (active ? 'var(--accent)' : 'var(--hairline)'),
-    borderRadius: 8,
-    cursor: disabled ? 'not-allowed' : 'pointer',
-    fontFamily: 'var(--font-ui)',
-    fontSize: 12, fontWeight: 500,
-    opacity: (disabled && !active) ? 0.55 : 1,
-    transition: 'all .12s ease',
-    whiteSpace: 'nowrap',
-    background: active ? 'var(--surface-2)' : 'var(--surface)',
-    color: active ? 'var(--accent)' : (disabled ? 'var(--muted-2)' : 'var(--ink-2)'),
-  };
-
-  return React.createElement('button', {
-    onClick: onClick,
-    disabled: disabled,
-    style: base,
-  }, children);
+// A single row inside the Data Tools dropdown: icon tile · title + caption · chip.
+export function ToolRow(props) {
+  var disabled = props.disabled;
+  return (
+    <button
+      onClick={disabled ? undefined : props.onClick}
+      disabled={disabled}
+      style={{
+        display: 'flex', alignItems: 'center', gap: 13, width: '100%', textAlign: 'left',
+        padding: '11px 12px', background: 'transparent', border: 'none', borderRadius: 12,
+        cursor: disabled ? 'not-allowed' : 'pointer', opacity: disabled ? 0.5 : 1,
+        transition: 'background .12s ease',
+      }}
+      onMouseEnter={(e) => { if (!disabled) e.currentTarget.style.background = 'var(--row-hover)'; }}
+      onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
+    >
+      <span style={{
+        width: 38, height: 38, borderRadius: 10, flexShrink: 0,
+        display: 'grid', placeItems: 'center',
+        background: 'var(--row-hover)', border: '1px solid var(--line)', color: 'var(--ink)',
+      }}>{props.icon}</span>
+      <span style={{ flex: 1, minWidth: 0 }}>
+        <span className="mono" style={{ display: 'block', fontSize: 12, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--ink)' }}>{props.title}</span>
+        <span className="mono" style={{ display: 'block', fontSize: 10.5, color: 'var(--soft)', marginTop: 3 }}>{props.caption}</span>
+      </span>
+      {props.chip || null}
+    </button>
+  );
 }
 
 export function PipelineControls(props) {
@@ -58,6 +61,19 @@ export function PipelineControls(props) {
   var setElapsed   = elapsedState[1];
 
   var prevRunning  = React.useRef(false);
+
+  var openState    = React.useState(false);
+  var open         = openState[0];
+  var setOpen      = openState[1];
+  var menuRef      = React.useRef(null);
+
+  // Close the Data Tools menu on outside click
+  React.useEffect(function() {
+    if (!open) return;
+    function onDown(e) { if (menuRef.current && !menuRef.current.contains(e.target)) setOpen(false); }
+    window.addEventListener('mousedown', onDown);
+    return function() { window.removeEventListener('mousedown', onDown); };
+  }, [open]);
 
   // Poll every 3 s
   React.useEffect(function() {
@@ -94,26 +110,36 @@ export function PipelineControls(props) {
     return s >= 60 ? (Math.floor(s / 60) + 'm ' + (s % 60) + 's') : (s + 's');
   }
 
+  // All clock/calendar parts are rendered in Winnipeg time, regardless of the
+  // viewer's own timezone. Age is an absolute difference, so it's tz-agnostic.
+  var TZ = 'America/Winnipeg';
   function fmtAt(iso) {
     if (!iso) return '';
     var d = new Date(iso);
-    var h = d.getHours(), m = d.getMinutes();
-    return (h < 10 ? '0' + h : h) + ':' + (m < 10 ? '0' + m : m);
-  }
+    var ageMs = Date.now() - d.getTime();
+    var DAY = 86400000, YEAR = 365 * DAY;
 
-  function getEmoji(step) {
-    if (!step) return '⚙️';
-    if (/launch|browser/i.test(step)) return '🌐';
-    if (/download/i.test(step))       return '📥';
-    if (/filter|apply/i.test(step))   return '🔍';
-    if (/sav/i.test(step))            return '💾';
-    if (/fetch|batch/i.test(step))    return '📡';
-    if (/merg|join/i.test(step))      return '🔀';
-    if (/done/i.test(step))           return '✅';
-    return '⚙️';
+    // Less than a day old → "today at 11:27 PM" (12-hour clock).
+    if (ageMs < DAY) {
+      var time = new Intl.DateTimeFormat('en-US', {
+        timeZone: TZ, hour: 'numeric', minute: '2-digit', hour12: true,
+      }).format(d);
+      return 'today at ' + time;
+    }
+    // Within the last year → day and month, e.g. "21 Jun".
+    if (ageMs < YEAR) {
+      return new Intl.DateTimeFormat('en-GB', {
+        timeZone: TZ, day: 'numeric', month: 'short',
+      }).format(d);
+    }
+    // Older than a year → month and year, e.g. "Jun 2024".
+    return new Intl.DateTimeFormat('en-US', {
+      timeZone: TZ, month: 'short', year: 'numeric',
+    }).format(d);
   }
 
   function trigger(endpoint) {
+    setOpen(false);
     fetch(PIPELINE_API + '/api/pipeline/' + endpoint, { method: 'POST' })
       .then(function(res) {
         return res.json().then(function(data) {
@@ -139,7 +165,7 @@ export function PipelineControls(props) {
   var pct       = status.progress;
   var isError   = !!status.error;
   var showBar   = isRunning || isError;
-  var barColor  = isError ? 'var(--neg)' : 'var(--accent)';
+  var barColor  = isError ? 'var(--bear)' : 'var(--accent)';
   var displayElapsed = elapsed;
 
   var estLeft = null;
@@ -147,68 +173,127 @@ export function PipelineControls(props) {
     estLeft = Math.max(0, Math.round(((100 - pct) / pct) * displayElapsed));
   }
 
+  var runsLeft = Math.max(0, rl.max_per_day - rl.metrics_runs_today);
+
+  // Plain-language freshness headline for the status card — what a real user
+  // wants to know: is this current, is it updating, or is the source down.
+  var stateColor, headline;
+  if (!online) {
+    stateColor = 'var(--bear)';
+    headline = 'Source offline';
+  } else if (isError) {
+    stateColor = 'var(--bear)';
+    headline = 'Update failed';
+  } else if (isRunning) {
+    stateColor = 'var(--accent)';
+    headline = (status.job_type === 'fetch_clean' ? 'Refreshing holdings' : 'Updating prices') +
+      '… ' + fmtTime(displayElapsed) + (estLeft !== null ? ' · ~' + fmtTime(estLeft) + ' left' : '');
+  } else if (status.completed_at) {
+    stateColor = 'var(--accent)';
+    headline = 'Updated ' + fmtAt(status.completed_at);
+  } else {
+    stateColor = 'var(--accent)';
+    headline = 'Current as of ' + (props.lastFetched || '—');
+  }
+
+  // Pill chip styling for the menu rows: lime (ok) · red (limit reached) · grey (soon).
+  function chip(kind) {
+    var warn = kind === 'warn', soon = kind === 'soon';
+    return {
+      fontFamily: 'var(--font-mono)', fontSize: 9.5, flexShrink: 0,
+      padding: '2px 9px', borderRadius: 999,
+      letterSpacing: '0.08em', textTransform: 'uppercase',
+      border: '1px solid ' + (warn ? 'color-mix(in oklch, var(--bear) 45%, transparent)'
+        : soon ? 'var(--line)'
+        : 'color-mix(in oklch, var(--accent) 45%, transparent)'),
+      color: warn ? 'var(--bear)' : soon ? 'var(--soft)' : 'var(--accent-text)',
+    };
+  }
+  var spinner = <span style={{ display: 'inline-flex', animation: 'spin 1s linear infinite', color: 'var(--accent-text)' }}><Icon name="refresh" size={17}/></span>;
+
   return (
-    <div style={{ borderBottom: '1px solid var(--hairline)', background: 'var(--bg-2)' }}>
+    <div style={{ borderBottom: '1px solid var(--line)', background: 'transparent' }}>
       <div style={{
         maxWidth: 1680, margin: '0 auto',
-        padding: '10px clamp(16px, 3vw, 32px)',
-        display: 'flex', flexDirection: 'column', gap: 8,
+        padding: '16px clamp(16px, 3vw, 32px)',
+        display: 'flex', flexDirection: 'column', gap: 12,
       }}>
 
-        {/* Button row */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-          <span className="eyebrow" style={{ flexShrink: 0, fontSize: 10 }}>Data Pipeline</span>
+        {/* Status card + Data Tools menu */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
 
-          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'flex-end' }}>
-
-            <PipelineBtn
-              disabled={isRunning || !online}
-              active={isRunning && status.job_type === 'fetch_clean'}
-              onClick={() => trigger('fetch-clean')}
-            >
-              {isRunning && status.job_type === 'fetch_clean' ? '⏳ Fetching…' : '🌐 Fetch Latest Data'}
-            </PipelineBtn>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <PipelineBtn
-                disabled={isRunning || !rl.can_run || !online}
-                active={isRunning && status.job_type === 'metrics_merge'}
-                onClick={() => trigger('metrics-merge')}
-              >
-                {isRunning && status.job_type === 'metrics_merge' ? '⏳ Updating…' : '📊 Update Metrics & Merge'}
-              </PipelineBtn>
-              <span className="mono" style={{
-                fontSize: 9.5, paddingLeft: 2,
-                color: rl.metrics_runs_today >= rl.max_per_day ? 'var(--neg)' : 'var(--muted)',
-              }}>
-                {rl.metrics_runs_today}/{rl.max_per_day} uses today · resets midnight
-              </span>
+          {/* Left — live data status card */}
+          <div style={{
+            border: '1.5px solid ' + stateColor,
+            borderRadius: 14, padding: '11px 22px',
+            boxShadow: '0 0 22px -8px color-mix(in oklch, ' + stateColor + ' 55%, transparent)',
+            transition: 'border-color .2s ease',
+          }}>
+            <div className="eyebrow" style={{ fontSize: 10 }}>Live Data</div>
+            <div className="display" style={{
+              fontSize: 19, fontWeight: 600, letterSpacing: '-0.01em',
+              marginTop: 4, whiteSpace: 'nowrap',
+            }}>
+              {headline}
             </div>
-
-            <PipelineBtn disabled={true}>
-              🤖 AI Report &amp; Export{' '}
-              <span className="mono" style={{
-                fontSize: 9, padding: '1px 5px', marginLeft: 4,
-                border: '1px solid var(--hairline)', borderRadius: 4,
-                color: 'var(--muted-2)',
-              }}>soon</span>
-            </PipelineBtn>
           </div>
 
-          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8 }}>
-            {!online && (
-              <span className="mono" style={{ fontSize: 10, color: 'var(--muted)' }}>backend offline</span>
-            )}
-            {isRunning && (
-              <span className="mono" style={{ fontSize: 10.5, color: 'var(--muted)' }}>
-                ⏱ {fmtTime(displayElapsed)}
-                {estLeft !== null ? ' · ~' + fmtTime(estLeft) + ' left' : ''}
+          {/* Right — Data Tools dropdown */}
+          <div ref={menuRef} style={{ marginLeft: 'auto', position: 'relative' }}>
+            <button
+              onClick={() => setOpen(o => !o)}
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: 9,
+                padding: '10px 16px',
+                background: open ? 'var(--ink)' : 'transparent',
+                color: open ? 'var(--bg)' : 'var(--ink)',
+                border: '1px solid ' + (open ? 'var(--ink)' : 'var(--line)'),
+                borderRadius: 999, cursor: 'pointer',
+                fontFamily: 'var(--font-mono)', fontSize: 11.5, fontWeight: 500,
+                letterSpacing: '0.06em', textTransform: 'uppercase',
+                transition: 'all .14s ease',
+              }}
+              onMouseEnter={(e) => { if (!open) { e.currentTarget.style.background = 'var(--ink)'; e.currentTarget.style.color = 'var(--bg)'; } }}
+              onMouseLeave={(e) => { if (!open) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--ink)'; } }}
+            >
+              <Icon name="sliders" size={15}/>
+              <span>Data Tools</span>
+              <span style={{ display: 'inline-flex', transition: 'transform .18s ease', transform: open ? 'rotate(180deg)' : 'none' }}>
+                <Icon name="chev-down" size={14}/>
               </span>
-            )}
-            {!isRunning && status.completed_at && !isError && (
-              <span className="mono" style={{ fontSize: 10, color: 'var(--muted)' }}>
-                Last updated {fmtAt(status.completed_at)}
-              </span>
+            </button>
+
+            {open && (
+              <div style={{
+                position: 'absolute', top: 'calc(100% + 10px)', right: 0, width: 344, zIndex: 60,
+                background: 'var(--surface)', border: '1px solid var(--line)',
+                borderRadius: 18, padding: 8,
+                boxShadow: '0 28px 56px -28px rgba(0,0,0,.5)',
+                animation: 'rise .12s ease-out',
+              }}>
+                <ToolRow
+                  icon={isRunning && status.job_type === 'fetch_clean' ? spinner : <Icon name="download" size={17}/>}
+                  title="Refresh Holdings"
+                  caption="Newest fund positions"
+                  disabled={isRunning || !online}
+                  onClick={() => trigger('fetch-clean')}
+                />
+                <ToolRow
+                  icon={isRunning && status.job_type === 'metrics_merge' ? spinner : <Icon name="refresh" size={17}/>}
+                  title="Update Prices"
+                  caption="Live prices · resets midnight"
+                  disabled={isRunning || !rl.can_run || !online}
+                  onClick={() => trigger('metrics-merge')}
+                  chip={<span style={chip(runsLeft === 0 ? 'warn' : 'ok')}>{runsLeft} left</span>}
+                />
+                <ToolRow
+                  icon={<Icon name="sparkle" size={17}/>}
+                  title="AI Report"
+                  caption="Auto portfolio analysis"
+                  disabled={true}
+                  chip={<span style={chip('soon')}>soon</span>}
+                />
+              </div>
             )}
           </div>
         </div>
@@ -220,19 +305,19 @@ export function PipelineControls(props) {
               display: 'flex', justifyContent: 'space-between', alignItems: 'center',
               marginBottom: 4, fontSize: 11,
             }}>
-              <span style={{ color: isError ? 'var(--neg)' : 'var(--ink-2)' }}>
-                {getEmoji(status.step)}&nbsp;
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7, color: isError ? 'var(--bear)' : 'var(--sub)' }}>
+                {!isError && <span style={{ display: 'inline-flex', animation: 'spin 1s linear infinite', color: 'var(--accent-text)' }}><Icon name="refresh" size={12}/></span>}
                 {isError ? status.error : (status.step || status.message)}
               </span>
-              <span className="mono" style={{ fontSize: 10.5, color: 'var(--muted)', fontWeight: 600 }}>
+              <span className="mono" style={{ fontSize: 10.5, color: 'var(--soft)', fontWeight: 600 }}>
                 {pct}%
               </span>
             </div>
-            <div style={{ height: 3, borderRadius: 2, background: 'var(--hairline)', overflow: 'hidden', position: 'relative' }}>
+            <div style={{ height: 4, borderRadius: 999, background: 'var(--track)', overflow: 'hidden', position: 'relative' }}>
               <div style={{
                 position: 'absolute', left: 0, top: 0, bottom: 0,
                 width: pct + '%', background: barColor,
-                borderRadius: 2, transition: 'width .7s ease',
+                borderRadius: 999, transition: 'width .7s ease',
               }}/>
               {isRunning && !isError && (
                 <div style={{
@@ -256,7 +341,7 @@ export function App() {
   const [data, setData] = React.useState(null);
   const [err, setErr] = React.useState(null);
   const [dataKey, setDataKey] = React.useState(0);
-  const [theme, setTheme] = React.useState(() => localStorage.getItem('sov-theme') || 'dark');
+  const [theme, setTheme] = React.useState(() => localStorage.getItem('sov-theme') || 'light');
   const [query, setQuery] = React.useState('');
   const [filters, setFilters] = React.useState({
     countries: [], sectors: [], recs: [],
@@ -318,8 +403,12 @@ export function App() {
     }
   }, [data]);
 
-  // Filter + sort
-  const filtered = React.useMemo(() => {
+  // Ownership-histogram bar selection ({ lo, hi, last } | null) — narrows the
+  // table only, while the histogram itself keeps showing the full distribution.
+  const [ownSel, setOwnSel] = React.useState(null);
+
+  // Filter + sort (base set — drives the summary charts, excludes the histogram pick)
+  const baseFiltered = React.useMemo(() => {
     if (!data) return [];
     const q = query.toLowerCase();
     let arr = data.filter(c => {
@@ -344,6 +433,15 @@ export function App() {
     });
     return arr;
   }, [data, filters, sort, pinned, query]);
+
+  // Table set — base set narrowed to the selected ownership-histogram bin.
+  const filtered = React.useMemo(() => {
+    if (!ownSel) return baseFiltered;
+    return baseFiltered.filter(c => {
+      const o = c.ownership || 0;
+      return o >= ownSel.lo && (ownSel.last ? o <= ownSel.hi : o < ownSel.hi);
+    });
+  }, [baseFiltered, ownSel]);
 
   // Stable max ownership for bars
   const maxOwn = React.useMemo(() => (data && data.length) ? Math.max(...data.map(d => d.ownership || 0)) : 1, [data]);
@@ -377,7 +475,7 @@ export function App() {
   }, [data]);
 
   if (err) {
-    return <div style={{ padding: 60, color: 'var(--neg)' }}>
+    return <div style={{ padding: 60, color: 'var(--bear)' }}>
       <div className="display" style={{ fontSize: 24 }}>Failed to load data.</div>
       <pre style={{ marginTop: 8, fontSize: 12 }}>{err}</pre>
     </div>;
@@ -400,7 +498,7 @@ export function App() {
         lastFetched={lastFetched}
       />
 
-      <PipelineControls onComplete={() => setDataKey(k => k + 1)} />
+      <PipelineControls onComplete={() => setDataKey(k => k + 1)} lastFetched={lastFetched} />
 
       <main style={{
         maxWidth: 1680, margin: '0 auto',
@@ -409,9 +507,12 @@ export function App() {
       }}>
         <Summary
           data={data}
-          filtered={filtered}
+          filtered={baseFiltered}
           onPickCompany={setSelected}
           onSetFilter={({ sector }) => setFilters(f => ({ ...f, sectors: [sector] }))}
+          activeSectors={filters.sectors}
+          onClearSectors={() => setFilters(f => ({ ...f, sectors: [] }))}
+          onOwnSelect={setOwnSel}
         />
 
         <section style={{ display:'grid', gap: 14, position: 'relative' }}>
@@ -428,6 +529,7 @@ export function App() {
           <DataTable
             data={filtered}
             columns={columns}
+            setColumns={setColumns}
             sort={sort} setSort={setSort}
             pinned={pinned} togglePin={togglePin}
             compareOn={compareOn}
@@ -439,7 +541,7 @@ export function App() {
           {/* Footnote */}
           <div className="mono" style={{
             display:'flex', justifyContent:'space-between',
-            fontSize: 10.5, color: 'var(--muted)',
+            fontSize: 10.5, color: 'var(--soft)',
             padding: '4px 6px'
           }}>
             <span>Press <kbd style={kbd}>/</kbd> to search · <kbd style={kbd}>Esc</kbd> to close</span>
@@ -482,11 +584,11 @@ export function App() {
 export var kbd = {
   fontFamily: 'var(--font-mono)',
   padding: '1px 5px',
-  border: '1px solid var(--hairline)',
+  border: '1px solid var(--line)',
   borderRadius: 3,
   fontSize: 10,
   background: 'var(--surface)',
-  color: 'var(--ink-2)',
+  color: 'var(--sub)',
 };
 
 export function LoadingState() {
@@ -501,7 +603,7 @@ export function LoadingState() {
           <div key={i} style={{
             height: 110,
             background: 'var(--surface)',
-            border: '1px solid var(--hairline)',
+            border: '1px solid var(--line)',
             borderRadius: 14,
             animation: 'pulse 1.6s ease-in-out infinite',
             animationDelay: `${i * 0.1}s`
@@ -510,7 +612,7 @@ export function LoadingState() {
       </div>
       <div style={{
         marginTop: 24, height: 420,
-        background: 'var(--surface)', border: '1px solid var(--hairline)',
+        background: 'var(--surface)', border: '1px solid var(--line)',
         borderRadius: 14,
         animation: 'pulse 1.6s ease-in-out infinite'
       }}/>

@@ -18,7 +18,7 @@ export function CompareDock({ companies, onRemove, onClear, onExpand, onOpenComp
       <div style={{
         background: 'color-mix(in oklch, var(--surface) 92%, transparent)',
         backdropFilter: 'blur(20px) saturate(140%)',
-        border: '1px solid var(--hairline-strong)',
+        border: '1px solid var(--line)',
         borderRadius: 14,
         boxShadow: '0 30px 60px -20px rgba(0,0,0,.6)',
         overflow: 'hidden',
@@ -26,11 +26,11 @@ export function CompareDock({ companies, onRemove, onClear, onExpand, onOpenComp
         <div style={{
           display:'flex', alignItems:'center', justifyContent:'space-between',
           padding: '10px 16px',
-          borderBottom: '1px solid var(--hairline)'
+          borderBottom: '1px solid var(--line)'
         }}>
           <div style={{ display:'flex', alignItems:'center', gap: 10 }}>
-            <Icon name="compare" size={14} color="var(--accent)"/>
-            <div className="display" style={{ fontSize: 16 }}>Comparing <span style={{ color:'var(--accent)' }}>{companies.length}</span> companies</div>
+            <Icon name="compare" size={14} color="var(--accent-text)"/>
+            <div className="display" style={{ fontSize: 16 }}>Comparing <span style={{ color:'var(--accent-text)' }}>{companies.length}</span> companies</div>
           </div>
           <div style={{ display:'flex', gap: 6 }}>
             <button onClick={onExpand} style={btnStyle(true)}>Open comparison</button>
@@ -47,30 +47,30 @@ export function CompareDock({ companies, onRemove, onClear, onExpand, onOpenComp
               style={{
                 minWidth: 180,
                 padding: '12px 14px',
-                background: 'var(--bg-2)',
-                border: '1px solid var(--hairline)',
+                background: 'var(--bg)',
+                border: '1px solid var(--line)',
                 borderRadius: 10,
                 cursor: 'pointer',
                 position: 'relative',
                 transition: 'background .12s'
               }}
-              onMouseEnter={e => e.currentTarget.style.background = 'var(--surface-2)'}
-              onMouseLeave={e => e.currentTarget.style.background = 'var(--bg-2)'}
+              onMouseEnter={e => e.currentTarget.style.background = 'var(--row-hover)'}
+              onMouseLeave={e => e.currentTarget.style.background = 'var(--bg)'}
             >
               <button onClick={(e) => { e.stopPropagation(); onRemove(c.ticker); }}
                 style={{
                   position:'absolute', top: 6, right: 6,
                   width: 20, height: 20, padding:0,
                   background:'transparent', border:'none',
-                  cursor:'pointer', color:'var(--muted)',
+                  cursor:'pointer', color:'var(--soft)',
                   display:'grid', placeItems:'center', borderRadius: 4,
                 }}
-                onMouseEnter={e => e.currentTarget.style.background = 'var(--hairline)'}
+                onMouseEnter={e => e.currentTarget.style.background = 'var(--line)'}
                 onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
               >
                 <Icon name="x" size={11}/>
               </button>
-              <div className="mono" style={{ fontSize: 10.5, color:'var(--muted)' }}>{c.ticker}</div>
+              <div className="mono" style={{ fontSize: 10.5, color:'var(--soft)' }}>{c.ticker}</div>
               <div style={{
                 fontSize: 13, color: 'var(--ink)', marginTop: 2, marginBottom: 8,
                 whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis',
@@ -78,8 +78,8 @@ export function CompareDock({ companies, onRemove, onClear, onExpand, onOpenComp
               }}>{c.name}</div>
               <div className="mono" style={{ fontSize: 14, color:'var(--ink)' }}>{fmt.money(c.mvUsd, 'USD', 1)}</div>
               <div style={{ marginTop: 4, display:'flex', justifyContent:'space-between', alignItems:'baseline' }}>
-                <span className="mono" style={{ fontSize: 10.5, color:'var(--muted)' }}>own</span>
-                <span className="mono" style={{ fontSize: 11, color: c.ownership >= 5 ? 'var(--accent)' : 'var(--ink-2)' }}>{fmt.pct(c.ownership, 2)}</span>
+                <span className="mono" style={{ fontSize: 10.5, color:'var(--soft)' }}>own</span>
+                <span className="mono" style={{ fontSize: 11, color: c.ownership >= 5 ? 'var(--accent-text)' : 'var(--sub)' }}>{fmt.pct(c.ownership, 2)}</span>
               </div>
             </div>
           ))}
@@ -93,10 +93,10 @@ export function btnStyle(primary) {
   return {
     padding: '6px 12px',
     background: primary ? 'var(--accent)' : 'transparent',
-    color: primary ? 'var(--accent-ink)' : 'var(--ink-2)',
-    border: `1px solid ${primary ? 'var(--accent)' : 'var(--hairline)'}`,
+    color: primary ? 'var(--treemap-cell-fg)' : 'var(--sub)',
+    border: `1px solid ${primary ? 'var(--accent)' : 'var(--line)'}`,
     borderRadius: 7, cursor: 'pointer',
-    fontFamily: 'var(--font-ui)', fontSize: 12, fontWeight: 500,
+    fontFamily: 'var(--font-display)', fontSize: 12, fontWeight: 500,
   };
 }
 
@@ -142,18 +142,18 @@ export function CompareModal({ companies, onClose, allData }) {
         position: 'fixed', inset: 32,
         zIndex: 91,
         background: 'var(--bg)',
-        border: '1px solid var(--hairline-strong)',
+        border: '1px solid var(--line)',
         borderRadius: 16,
         overflow: 'hidden',
         display:'flex', flexDirection:'column',
         animation: 'rise .25s cubic-bezier(.22,.61,.36,1)'
       }}>
         <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between',
-          padding: '20px 28px', borderBottom: '1px solid var(--hairline)' }}>
+          padding: '20px 28px', borderBottom: '1px solid var(--line)' }}>
           <div>
             <div className="eyebrow">Side-by-side</div>
             <div className="display" style={{ fontSize: 26, marginTop: 2, letterSpacing:'-0.01em' }}>
-              Comparing <span className="display-italic" style={{ color:'var(--accent)' }}>{companies.length}</span> positions
+              Comparing <span className="display-italic" style={{ color:'var(--accent-text)' }}>{companies.length}</span> positions
             </div>
           </div>
           <IconBtn onClick={onClose} title="Close"><Icon name="x" size={14}/></IconBtn>
@@ -169,11 +169,11 @@ export function CompareModal({ companies, onClose, allData }) {
           }}>
             <div></div>
             {companies.map(c => (
-              <div key={c.ticker} style={{ padding: '0 14px', borderLeft: '1px solid var(--hairline)' }}>
+              <div key={c.ticker} style={{ padding: '0 14px', borderLeft: '1px solid var(--line)' }}>
                 <span className="mono" style={{
-                  fontSize: 10.5, color:'var(--ink-2)',
+                  fontSize: 10.5, color:'var(--sub)',
                   background:'var(--surface)', padding:'2px 6px', borderRadius:3,
-                  border:'1px solid var(--hairline)'
+                  border:'1px solid var(--line)'
                 }}>{c.ticker}</span>
                 <div className="display" style={{
                   fontSize: 20, lineHeight: 1.1, marginTop: 8, letterSpacing:'-0.01em',
@@ -189,22 +189,22 @@ export function CompareModal({ companies, onClose, allData }) {
                 gridTemplateColumns: `180px repeat(${companies.length}, minmax(180px, 1fr))`,
                 alignItems:'center',
                 padding: '12px 0',
-                borderTop: row.divider ? '1px solid var(--hairline-strong)' : '1px solid var(--hairline)',
+                borderTop: row.divider ? '1px solid var(--line)' : '1px solid var(--line)',
               }}>
-                <div className="mono" style={{ fontSize: 10.5, color:'var(--muted)', letterSpacing:'0.06em', textTransform:'uppercase' }}>
+                <div className="mono" style={{ fontSize: 10.5, color:'var(--soft)', letterSpacing:'0.06em', textTransform:'uppercase' }}>
                   {row.label}
                 </div>
                 {companies.map(c => {
                   const isHi = row.hi && row.hi(c);
                   return (
-                    <div key={c.ticker} style={{ padding: '0 14px', borderLeft:'1px solid var(--hairline)' }}>
+                    <div key={c.ticker} style={{ padding: '0 14px', borderLeft:'1px solid var(--line)' }}>
                       {row.html ? (
                         row.val(c)
                       ) : (
                         <span className={row.mono ? 'mono' : ''} style={{
                           fontSize: row.mono ? 14 : 13,
-                          color: isHi ? 'var(--accent)' : 'var(--ink)',
-                          fontWeight: isHi ? 500 : 400,
+                          color: isHi ? 'var(--accent-text)' : 'var(--ink)',
+                          fontWeight: isHi ? 600 : 400,
                         }}>{row.val(c)}</span>
                       )}
                     </div>

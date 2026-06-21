@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GPFG Global — Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     LIME THEME — design tokens
+     Light is default; [data-theme="dark"] overrides.
+     ============================================================ */
+  :root {
+    --bg: #F4F3EE;
+    --surface: #FFFFFF;
+    --line: #E4E2DA;
+    --track: #ECEAE2;
+
+    --ink: #1B1A17;
+    --sub: #7C786E;
+    --soft: #9C988C;
+
+    --accent: #D6E134;
+    --accent-text: #8E9612;
+
+    --feature: #1B1A17;
+    --feature-ink: #FCFEE7;
+    --feature-sub: #9A968A;
+    --feature-num: #D6E134;
+
+    --row-hover: #FAF9F5;
+    --card-hover-border: #1B1A17;
+
+    /* Sector palette (shared across both themes) */
+    --sector-tech: #60A5FA;
+    --sector-financials: #D6E134;
+    --sector-healthcare: #2DD4BF;
+    --sector-energy: #FB923C;
+    --sector-industrials: #A78BFA;
+    --sector-consumer: #F472B6;
+    --sector-utilities: #FBBF24;
+    --sector-realestate: #4ADE80;
+
+    --bull: #4ADE80;
+    --bear: #F87171;
+
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+
+    --treemap-cell-fg: #1B1A17;
+  }
+
+  [data-theme="dark"] {
+    --bg: #131019;
+    --surface: #2D2A29;
+    --line: #46413D;
+    --track: #3A3633;
+
+    --ink: #FCFEE7;
+    --sub: #A89F95;
+    --soft: #8C857F;
+
+    --accent: #D6E134;
+    --accent-text: #D6E134;
+
+    --feature: #D6E134;
+    --feature-ink: #131019;
+    --feature-sub: #5F6A12;
+    --feature-num: #131019;
+
+    --row-hover: #34302E;
+    --card-hover-border: #D6E134;
+
+    --treemap-cell-fg: #131019;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-display);
+    transition: background .25s, color .25s;
+    padding-bottom: 96px;
+  }
+  .wrap { max-width: 1760px; margin: 0 auto; }
+  .mono { font-family: var(--font-mono); }
+
+  /* Header */
+  header { display: flex; justify-content: space-between; align-items: center; padding: 24px 5vw; }
+  .brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-mono); font-weight: 700; font-size: 15px; letter-spacing: -0.01em; }
+  .brand .dot { width: 13px; height: 13px; background: var(--accent); display: inline-block; }
+  .btn-ghost {
+    border: 1.5px solid var(--ink); font-family: var(--font-mono); font-size: 12px;
+    letter-spacing: 0.06em; text-transform: uppercase; padding: 8px 18px;
+    border-radius: 999px; cursor: pointer; background: none; color: var(--ink); transition: all .14s;
+  }
+  .btn-ghost:hover { background: var(--ink); color: var(--bg); }
+
+  section { padding: 14px 5vw 16px; }
+
+  /* Hero bento grid */
+  .bento { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: minmax(110px, auto); gap: 14px; }
+  .card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 20px;
+    padding: 24px 26px; transition: transform .18s, border-color .18s;
+  }
+  .card:hover { transform: translateY(-4px); border-color: var(--card-hover-border); }
+  .card-lg { grid-column: span 3; grid-row: span 2; border-radius: 24px; padding: 48px 44px; display: flex; flex-direction: column; justify-content: space-between; }
+  .eyebrow { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent-text); }
+  .idx { font-family: var(--font-mono); font-size: 11px; color: var(--soft); }
+  .card-lg h1 { font-size: 62px; font-weight: 600; line-height: 0.98; letter-spacing: -0.03em; margin: 24px 0; max-width: 760px; }
+  .card-lg p { font-size: 15px; line-height: 1.6; color: var(--sub); max-width: 520px; margin: 0; }
+
+  .feature {
+    grid-row: span 3; background: var(--feature); color: var(--feature-ink);
+    border-radius: 24px; padding: 32px 30px; display: flex; flex-direction: column; justify-content: space-between;
+    transition: transform .18s;
+  }
+  .feature:hover { transform: translateY(-4px); }
+  .feature .label { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--feature-sub); }
+  .feature .big { font-size: 48px; font-weight: 600; letter-spacing: -0.03em; line-height: 0.95; color: var(--feature-num); }
+  .feature .sub { font-family: var(--font-mono); font-size: 10.5px; color: var(--feature-sub); margin-top: 10px; }
+
+  .stat .label { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--soft); }
+  .stat .val { font-size: 38px; font-weight: 600; letter-spacing: -0.02em; margin-top: 8px; }
+
+  /* Lower row */
+  .lower { display: grid; grid-template-columns: 1.5fr 1fr; gap: 14px; }
+  .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 24px; padding: 34px 38px; }
+  .panel-head { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--line); padding-bottom: 14px; margin-bottom: 6px; }
+  .panel-head h2 { font-size: 26px; font-weight: 600; letter-spacing: -0.02em; margin: 0; }
+  .sort-btn {
+    background: none; border: 1px solid var(--ink); border-radius: 999px; font-family: var(--font-mono);
+    font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink);
+    padding: 7px 14px; cursor: pointer; transition: all .14s;
+  }
+  .sort-btn:hover { background: var(--ink); color: var(--bg); }
+
+  .row { display: flex; align-items: center; gap: 16px; padding: 11px 6px; border-bottom: 1px solid var(--line); transition: background .14s; }
+  .row:hover { background: var(--row-hover); }
+  .row .rank { font-family: var(--font-mono); font-size: 11px; color: var(--soft); width: 20px; }
+  .row .name { font-size: 16px; font-weight: 600; width: 180px; }
+  .row .bar { flex: 1; height: 6px; background: var(--track); border-radius: 999px; }
+  .row .bar > i { display: block; height: 100%; background: var(--accent); border-radius: 999px; }
+  .row .val { font-family: var(--font-mono); font-size: 13px; width: 92px; text-align: right; }
+
+  .panel-sm { background: var(--surface); border: 1px solid var(--line); border-radius: 24px; padding: 34px 32px; display: flex; flex-direction: column; }
+  .panel-sm .eyebrow-soft { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--soft); margin-bottom: 16px; }
+
+  /* Treemap */
+  .treemap { display: flex; flex-wrap: wrap; flex: 1; width: 100%; min-height: 240px; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+  .cell { border-right: 2px solid var(--surface); border-bottom: 2px solid var(--surface); padding: 10px 12px; overflow: hidden; transition: opacity .2s; color: var(--treemap-cell-fg); }
+  .cell:hover { opacity: .82; }
+  .cell .cn { font-size: 12px; font-weight: 600; line-height: 1.1; }
+  .cell .cp { font-family: var(--font-mono); font-size: 11px; opacity: .85; }
+
+  /* Ownership distribution histogram */
+  .panel-wide { background: var(--surface); border: 1px solid var(--line); border-radius: 24px; padding: 30px 38px 28px; }
+  .panel-wide .head { display: flex; justify-content: space-between; align-items: baseline; }
+  .panel-wide .head .l { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--soft); }
+  .panel-wide .head .r { font-family: var(--font-mono); font-size: 11px; color: var(--soft); }
+  .panel-wide h2 { font-size: 26px; font-weight: 600; letter-spacing: -0.02em; margin: 6px 0 22px; }
+  .chart { position: relative; height: 180px; border-bottom: 1px solid var(--line);
+    background-image: repeating-linear-gradient(to top, transparent 0, transparent 59px, var(--line) 59px, var(--line) 60px); }
+  .bars { position: absolute; inset: 0; display: flex; align-items: flex-end; gap: 5px; }
+  .bars > i { flex: 1; display: block; background: var(--accent); border-radius: 3px 3px 0 0; min-height: 2px; transition: opacity .2s; }
+  .bars > i:hover { opacity: .7; }
+  .axis { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 11px; color: var(--soft); margin-top: 10px; }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; border-top: 1px solid var(--line); margin-top: 18px; padding-top: 18px; }
+  .stats .label { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--soft); }
+  .stats .v { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; margin-top: 6px; }
+
+  /* Mode toggle */
+  .toggle {
+    position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 9999;
+    display: flex; align-items: center; gap: 12px; padding: 9px 16px 9px 12px;
+    background: rgba(18,18,20,0.92); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255,255,255,0.16); border-radius: 999px; box-shadow: 0 14px 44px rgba(0,0,0,0.4);
+  }
+  .toggle .lbl { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em; color: rgba(255,255,255,0.45); text-transform: uppercase; }
+  .toggle .pills { display: flex; align-items: center; gap: 6px; }
+  .pill { border: none; border-radius: 999px; font-family: var(--font-mono); font-weight: 600; font-size: 11px; padding: 8px 14px; cursor: pointer; transition: all .15s; background: transparent; color: rgba(255,255,255,0.55); }
+  .pill.active { background: #fff; color: #111; }
+  .toggle .sep { width: 1px; height: 22px; background: rgba(255,255,255,0.16); }
+  .toggle .theme-name { display: flex; align-items: center; gap: 7px; font-family: var(--font-mono); font-size: 12px; color: #fff; }
+  .toggle .theme-name .swatch { width: 13px; height: 13px; border-radius: 50%; background: #D6E134; }
+</style>
+</head>
+<body>
+
+  <template id="__bundler_thumbnail" data-bg-color="#131019">
+    <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+      <rect width="1200" height="800" fill="#131019"/>
+      <rect x="360" y="300" width="200" height="200" rx="16" fill="#D6E134"/>
+      <rect x="600" y="300" width="130" height="95" rx="12" fill="#60A5FA"/>
+      <rect x="600" y="405" width="130" height="95" rx="12" fill="#F472B6"/>
+      <rect x="770" y="300" width="70" height="200" rx="12" fill="#2DD4BF"/>
+    </svg>
+  </template>
+
+  <div class="wrap">
+    <header>
+      <div class="brand"><span class="dot"></span>GPFG / GLOBAL</div>
+      <button class="btn-ghost">Explore →</button>
+    </header>
+
+    <!-- Hero bento -->
+    <section>
+      <div class="bento">
+        <div class="card card-lg">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <div class="eyebrow">Quarterly Portfolio Cut</div>
+            <div class="idx">[ 01 / 04 ]</div>
+          </div>
+          <h1>The world's largest sovereign wealth fund, tracked equity by equity.</h1>
+          <p>Norway's Government Pension Fund Global holds positions in 1,430 public companies across six markets.</p>
+        </div>
+
+        <div class="feature">
+          <div class="label">Total holdings</div>
+          <div>
+            <div class="big">$955.8B</div>
+            <div class="sub">kr 9.6T · 1,430 cos</div>
+          </div>
+        </div>
+
+        <div class="card stat"><div class="label">Avg own.</div><div class="val">1.47%</div></div>
+        <div class="card stat"><div class="label">Companies</div><div class="val">1,430</div></div>
+        <div class="card stat"><div class="label">Markets</div><div class="val">6</div></div>
+      </div>
+    </section>
+
+    <!-- Holdings + sector weight -->
+    <section>
+      <div class="lower">
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Top holdings</h2>
+            <button class="sort-btn" id="sortBtn">By value</button>
+          </div>
+          <div id="holdings"></div>
+        </div>
+
+        <div class="panel-sm">
+          <div class="eyebrow-soft">Fig.3 / Sector weight</div>
+          <div class="treemap" id="treemap"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ownership distribution -->
+    <section>
+      <div class="panel-wide">
+        <div class="head"><span class="l">% per holding</span><span class="r">1,422 cos</span></div>
+        <h2>Ownership distribution</h2>
+        <div class="chart"><div class="bars" id="histo"></div></div>
+        <div class="axis"><span>0.0%</span><span>12.6%</span><span>25.2%</span></div>
+        <div class="stats">
+          <div><div class="label">Median</div><div class="v">1.27%</div></div>
+          <div><div class="label">Top decile</div><div class="v">2.60%</div></div>
+          <div><div class="label">Above 5%</div><div class="v">34</div></div>
+          <div><div class="label">Max</div><div class="v">25.19%</div></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Mode toggle -->
+  <div class="toggle">
+    <span class="lbl">Mode</span>
+    <div class="pills">
+      <button class="pill active" data-mode="light">LIGHT</button>
+      <button class="pill" data-mode="dark">DARK</button>
+    </div>
+    <span class="sep"></span>
+    <span class="theme-name"><span class="swatch"></span>Lime</span>
+  </div>
+
+<script>
+  // ---- Data -------------------------------------------------
+  const HOLDINGS = [
+    { rank: "01", name: "NVIDIA Corp",        val: "kr 573.9B", num: 573.9 },
+    { rank: "02", name: "Apple Inc",          val: "kr 496.5B", num: 496.5 },
+    { rank: "03", name: "Microsoft Corp",     val: "kr 458.6B", num: 458.6 },
+    { rank: "04", name: "Alphabet Inc",       val: "kr 439.3B", num: 439.3 },
+    { rank: "05", name: "Amazon.com Inc",     val: "kr 307.9B", num: 307.9 },
+    { rank: "06", name: "Broadcom Inc",       val: "kr 215.6B", num: 215.6 },
+    { rank: "07", name: "Meta Platforms Inc", val: "kr 195.6B", num: 195.6 },
+    { rank: "08", name: "Tesla Inc",          val: "kr 161.4B", num: 161.4 }
+  ];
+  const MAX = 573.9;
+
+  const TREEMAP = [
+    { name: "Technology",   pct: 28.8, color: "var(--sector-tech)",        row: 0 },
+    { name: "Financials",   pct: 16.3, color: "var(--sector-financials)",  row: 0 },
+    { name: "Consumer",     pct: 10.3, color: "var(--sector-consumer)",    row: 0 },
+    { name: "Healthcare",   pct: 9.7,  color: "var(--sector-healthcare)",  row: 1 },
+    { name: "Comms",        pct: 9.7,  color: "var(--sector-industrials)", row: 1 },
+    { name: "Industrials+", pct: 25.2, color: "var(--sector-energy)",      row: 1 }
+  ];
+
+  // ---- Render holdings --------------------------------------
+  let sortMode = "value";
+  function renderHoldings() {
+    const list = HOLDINGS.slice();
+    if (sortMode === "name") list.sort((a, b) => a.name.localeCompare(b.name));
+    document.getElementById("holdings").innerHTML = list.map(h => `
+      <div class="row">
+        <span class="rank">${h.rank}</span>
+        <span class="name">${h.name}</span>
+        <span class="bar"><i style="width:${(h.num / MAX * 100).toFixed(1)}%"></i></span>
+        <span class="val">${h.val}</span>
+      </div>`).join("");
+  }
+  document.getElementById("sortBtn").addEventListener("click", function () {
+    sortMode = sortMode === "value" ? "name" : "value";
+    this.textContent = sortMode === "value" ? "By value" : "A–Z";
+    renderHoldings();
+  });
+
+  // ---- Render treemap ---------------------------------------
+  function renderTreemap() {
+    const r0 = TREEMAP.filter(s => s.row === 0), r1 = TREEMAP.filter(s => s.row === 1);
+    const s0 = r0.reduce((a, b) => a + b.pct, 0), s1 = r1.reduce((a, b) => a + b.pct, 0);
+    const cell = (s, sum) => `
+      <div class="cell" style="width:${(s.pct / sum * 100).toFixed(2)}%;height:50%;background:${s.color};">
+        <div class="cn">${s.name}</div>
+        <div class="cp">${s.pct.toFixed(1)}%</div>
+      </div>`;
+    document.getElementById("treemap").innerHTML =
+      r0.map(s => cell(s, s0)).join("") + r1.map(s => cell(s, s1)).join("");
+  }
+
+  // ---- Render ownership-distribution histogram --------------
+  // Long-tail of ownership %: most holdings cluster <2%, a thin tail to the 25% max.
+  const HISTO = [62, 100, 41, 23, 15, 10, 8, 6, 6, 5, 5, 4, 4, 3, 3, 3, 2, 2, 2, 2,
+                 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1];
+  function renderHisto() {
+    const max = Math.max.apply(null, HISTO);
+    document.getElementById("histo").innerHTML =
+      HISTO.map(h => `<i style="height:${(h / max * 100).toFixed(1)}%"></i>`).join("");
+  }
+
+  // ---- Theme toggle -----------------------------------------
+  const saved = localStorage.getItem("gpfg-theme");
+  if (saved) {
+    document.documentElement.setAttribute("data-theme", saved);
+    document.querySelectorAll(".pill").forEach(p => p.classList.toggle("active", p.dataset.mode === saved));
+  }
+  document.querySelectorAll(".pill").forEach(pill => {
+    pill.addEventListener("click", function () {
+      const mode = this.dataset.mode;
+      document.documentElement.setAttribute("data-theme", mode);
+      localStorage.setItem("gpfg-theme", mode);
+      document.querySelectorAll(".pill").forEach(p => p.classList.remove("active"));
+      this.classList.add("active");
+    });
+  });
+
+  renderHoldings();
+  renderTreemap();
+  renderHisto();
+</script>
+</body>
+</html>

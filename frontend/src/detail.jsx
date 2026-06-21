@@ -64,7 +64,7 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
         position:'fixed', top: 0, right: 0, bottom: 0,
         width: 'min(640px, 96vw)',
         background: 'var(--bg)',
-        borderLeft: '1px solid var(--hairline-strong)',
+        borderLeft: '1px solid var(--line)',
         zIndex: 81,
         overflowY: 'auto',
         boxShadow: '-30px 0 60px -20px rgba(0,0,0,.6)',
@@ -75,7 +75,7 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
         <div style={{
           display:'flex', alignItems:'center', justifyContent:'space-between',
           padding: '14px 24px',
-          borderBottom: '1px solid var(--hairline)',
+          borderBottom: '1px solid var(--line)',
           background: 'color-mix(in oklch, var(--bg) 90%, transparent)',
           backdropFilter: 'blur(10px)',
           position: 'sticky', top: 0, zIndex: 5,
@@ -97,21 +97,21 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
             <div style={{ minWidth: 0 }}>
               <div style={{ display:'flex', alignItems:'center', gap: 10, marginBottom: 8 }}>
                 <span className="mono" style={{
-                  fontSize: 12, color:'var(--ink-2)',
-                  background:'var(--surface)', border:'1px solid var(--hairline)',
+                  fontSize: 12, color:'var(--sub)',
+                  background:'var(--surface)', border:'1px solid var(--line)',
                   padding: '3px 8px', borderRadius: 4
                 }}>{company.ticker}</span>
-                <span style={{ fontSize: 12, color:'var(--muted)' }}>{company.country}</span>
-                <span style={{ width: 3, height: 3, background:'var(--muted)', borderRadius: 99 }}/>
-                <span style={{ fontSize: 12, color:'var(--muted)' }}>{company.industry}</span>
+                <span style={{ fontSize: 12, color:'var(--soft)' }}>{company.country}</span>
+                <span style={{ width: 3, height: 3, background:'var(--soft)', borderRadius: 99 }}/>
+                <span style={{ fontSize: 12, color:'var(--soft)' }}>{company.industry}</span>
               </div>
               <h2 className="display" style={{
                 fontSize: 38, lineHeight: 1.05, margin: 0,
                 letterSpacing: '-0.015em',
               }}>{company.name}</h2>
               {company.reason && (
-                <div className="mono" style={{ marginTop: 8, fontSize: 11, color: 'var(--muted)', letterSpacing:'0.04em' }}>
-                  Inclusion basis · <span style={{ color:'var(--ink-2)' }}>{company.reason}</span>
+                <div className="mono" style={{ marginTop: 8, fontSize: 11, color: 'var(--soft)', letterSpacing:'0.04em' }}>
+                  Inclusion basis · <span style={{ color:'var(--sub)' }}>{company.reason}</span>
                 </div>
               )}
             </div>
@@ -131,10 +131,10 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
                 <Delta value={company.change} fmt="pct"/>
               </div>
               {company.targetPrice && (
-                <div className="mono" style={{ marginTop: 6, fontSize: 11, color: 'var(--muted)' }}>
-                  Analyst target · <span style={{ color:'var(--ink-2)' }}>{fmt.price(company.targetPrice)}</span>
+                <div className="mono" style={{ marginTop: 6, fontSize: 11, color: 'var(--soft)' }}>
+                  Analyst target · <span style={{ color:'var(--sub)' }}>{fmt.price(company.targetPrice)}</span>
                   &nbsp;
-                  <span style={{ color: company.targetPrice > company.price ? 'var(--pos)' : 'var(--neg)' }}>
+                  <span style={{ color: company.targetPrice > company.price ? 'var(--bull)' : 'var(--bear)' }}>
                     ({((company.targetPrice / company.price - 1) * 100).toFixed(1)}%)
                   </span>
                 </div>
@@ -149,22 +149,22 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
                       fontSize: 10, padding: '2px 8px', borderRadius: 5, cursor: 'pointer',
                       textTransform: 'uppercase', letterSpacing: '0.04em',
                       background: range === r ? 'var(--accent)' : 'transparent',
-                      color: range === r ? 'var(--accent-ink)' : 'var(--muted)',
-                      border: `1px solid ${range === r ? 'var(--accent)' : 'var(--hairline)'}`,
+                      color: range === r ? 'var(--treemap-cell-fg)' : 'var(--soft)',
+                      border: `1px solid ${range === r ? 'var(--accent)' : 'var(--line)'}`,
                       transition: 'all .12s',
                     }}>{r}</button>
                 ))}
               </div>
               <div style={{ height: 84, display:'grid', placeItems:'center' }}>
                 {loading ? (
-                  <span className="mono" style={{ fontSize: 11, color:'var(--muted)' }}>Loading price history…</span>
+                  <span className="mono" style={{ fontSize: 11, color:'var(--soft)' }}>Loading price history…</span>
                 ) : (history.error || !history.points || history.points.length < 2) ? (
-                  <span className="mono" style={{ fontSize: 11, color:'var(--muted)' }}>{history.error || 'No price history'}</span>
+                  <span className="mono" style={{ fontSize: 11, color:'var(--soft)' }}>{history.error || 'No price history'}</span>
                 ) : (
                   <PriceChart points={history.points} dates={history.dates} valueFmt={fmt.price} width={320} height={84} color="auto"/>
                 )}
               </div>
-              <div className="mono" style={{ display:'flex', justifyContent:'space-between', marginTop: 6, fontSize: 10, color:'var(--muted)' }}>
+              <div className="mono" style={{ display:'flex', justifyContent:'space-between', marginTop: 6, fontSize: 10, color:'var(--soft)' }}>
                 <span>{RANGE_LABEL[range]}</span><span>Today</span>
               </div>
             </div>
@@ -180,9 +180,9 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
           <div style={{
             marginTop: 28,
             padding: 22,
-            border:'1px solid var(--hairline-strong)',
-            background: 'linear-gradient(180deg, color-mix(in oklch, var(--accent) 9%, var(--surface)), var(--surface))',
-            borderRadius: 14,
+            border:'1px solid var(--line)',
+            background: 'color-mix(in oklch, var(--accent) 7%, var(--surface))',
+            borderRadius: 20,
           }}>
             <div className="eyebrow" style={{ marginBottom: 10 }}>Norway GPFG holding</div>
             <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap: 16 }}>
@@ -191,7 +191,7 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
               <Metric label="Ownership" value={fmt.pct(company.ownership, 3)}
                 accent={company.ownership >= 5}/>
             </div>
-            <div style={{ marginTop: 16, paddingTop: 16, borderTop: '1px solid var(--hairline)', display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap: 16 }}>
+            <div style={{ marginTop: 16, paddingTop: 16, borderTop: '1px solid var(--line)', display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap: 16 }}>
               <Metric label="Voting rights" value={fmt.pct(company.voting, 3)}/>
               <Metric label="Mkt cap (USD)" value={fmt.money(company.marketCap, 'USD', 1)}/>
               <Metric label="% of mkt cap"
@@ -204,8 +204,8 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
             <div className="eyebrow" style={{ marginBottom: 10 }}>Financials</div>
             <div style={{
               display:'grid', gridTemplateColumns:'1fr 1fr', gap: 1,
-              background:'var(--hairline)', borderRadius: 12, overflow:'hidden',
-              border:'1px solid var(--hairline)'
+              background:'var(--line)', borderRadius: 12, overflow:'hidden',
+              border:'1px solid var(--line)'
             }}>
               <KvCell label="P/E ratio (trailing)" value={company.pe?.toFixed(2) ?? '—'}/>
               <KvCell label="Forward P/E" value={company.fwdPe?.toFixed(2) ?? '—'}/>
@@ -220,7 +220,7 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
           {peerSet.length > 0 && (
             <div style={{ marginTop: 28 }}>
               <div className="eyebrow" style={{ marginBottom: 12 }}>Top peers in {company.sector || company.industry}</div>
-              <div style={{ display: 'grid', gap: 1, background: 'var(--hairline)', borderRadius: 10, overflow:'hidden', border: '1px solid var(--hairline)' }}>
+              <div style={{ display: 'grid', gap: 1, background: 'var(--line)', borderRadius: 10, overflow:'hidden', border: '1px solid var(--line)' }}>
                 {peerSet.map(p => (
                   <div key={p.ticker} onClick={() => onPickCompany(p)}
                     style={{
@@ -229,16 +229,16 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
                       background: 'var(--surface)',
                       cursor:'pointer', transition:'background .12s'
                     }}
-                    onMouseEnter={e => e.currentTarget.style.background = 'var(--surface-2)'}
+                    onMouseEnter={e => e.currentTarget.style.background = 'var(--row-hover)'}
                     onMouseLeave={e => e.currentTarget.style.background = 'var(--surface)'}
                   >
                     <div style={{ minWidth: 0 }}>
                       <div style={{ fontSize: 13, color:'var(--ink)', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{p.name}</div>
-                      <div className="mono" style={{ fontSize: 10.5, color:'var(--muted)' }}>{p.ticker} · {p.country}</div>
+                      <div className="mono" style={{ fontSize: 10.5, color:'var(--soft)' }}>{p.ticker} · {p.country}</div>
                     </div>
-                    <span className="mono" style={{ fontSize: 12, color:'var(--ink-2)' }}>{fmt.money(p.mvUsd, 'USD', 1)}</span>
-                    <span className="mono" style={{ fontSize: 12, color:'var(--muted)' }}>{fmt.pct(p.ownership, 2)}</span>
-                    <Icon name="arrow-right" size={14} color="var(--muted)"/>
+                    <span className="mono" style={{ fontSize: 12, color:'var(--sub)' }}>{fmt.money(p.mvUsd, 'USD', 1)}</span>
+                    <span className="mono" style={{ fontSize: 12, color:'var(--soft)' }}>{fmt.pct(p.ownership, 2)}</span>
+                    <Icon name="arrow-right" size={14} color="var(--soft)"/>
                   </div>
                 ))}
               </div>
@@ -256,7 +256,7 @@ export function Metric({ label, value, accent }) {
       <div className="eyebrow" style={{ fontSize: 9.5 }}>{label}</div>
       <div className="display" style={{
         fontSize: 22, marginTop: 4, letterSpacing: '-0.01em',
-        color: accent ? 'var(--accent)' : 'var(--ink)'
+        color: accent ? 'var(--accent-text)' : 'var(--ink)'
       }}>{value}</div>
     </div>
   );
@@ -278,12 +278,12 @@ export function IconBtn({ children, onClick, title, active }) {
         width: 32, height: 32,
         display:'grid', placeItems:'center',
         background: active ? 'var(--accent)' : 'transparent',
-        color: active ? 'var(--accent-ink)' : 'var(--ink-2)',
-        border: `1px solid ${active ? 'var(--accent)' : 'var(--hairline)'}`,
+        color: active ? 'var(--treemap-cell-fg)' : 'var(--sub)',
+        border: `1px solid ${active ? 'var(--accent)' : 'var(--line)'}`,
         borderRadius: 8, cursor:'pointer',
         transition: 'all .12s',
       }}
-      onMouseEnter={e => { if (!active) e.currentTarget.style.background = 'var(--surface-2)'; }}
+      onMouseEnter={e => { if (!active) e.currentTarget.style.background = 'var(--row-hover)'; }}
       onMouseLeave={e => { if (!active) e.currentTarget.style.background = 'transparent'; }}
     >{children}</button>
   );
