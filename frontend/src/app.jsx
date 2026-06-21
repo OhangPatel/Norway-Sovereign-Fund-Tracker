@@ -6,6 +6,7 @@ import { Summary } from './summary.jsx';
 import { DataTable } from './table.jsx';
 import { Detail } from './detail.jsx';
 import { CompareDock, CompareModal } from './compare.jsx';
+import { ChatWidget } from './chat.jsx';
 
 // ── Pipeline Controls ─────────────────────────────────────────────────────────
 
@@ -577,6 +578,8 @@ export function App() {
           allData={data}
         />
       )}
+
+      <ChatWidget />
     </>
   );
 }
