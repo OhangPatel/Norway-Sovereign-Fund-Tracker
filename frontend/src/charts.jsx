@@ -50,11 +50,24 @@ export function TopBarList({ items, max, valueFmt, height = 280, onClick, accent
 }
 
 // Histogram (distribution of ownership %)
-export function Histogram({ data, bins = 20, height = 140, accent = 'var(--accent)', xFmt = v => v.toFixed(1) }) {
+export function Histogram({ data, bins = 20, height = 140, accent = 'var(--accent)', xFmt = v => v.toFixed(1), onSelect }) {
+  const [selected, setSelected] = useState(null); // selected bin index, or null
+  // Drop a stale selection (and notify) whenever the underlying data changes.
+  useEffect(() => { setSelected(null); onSelect && onSelect(null); }, [data]);
   if (!data || !data.length) return null;
   const min = Math.min(...data);
   const max = Math.max(...data);
   const range = Math.max(max - min, 0.0001);
+
+  const toggle = (i) => {
+    const next = selected === i ? null : i;
+    setSelected(next);
+    if (onSelect) onSelect(next == null ? null : {
+      lo: min + (i / bins) * range,
+      hi: min + ((i + 1) / bins) * range,
+      last: i === bins - 1,
+    });
+  };
   const buckets = new Array(bins).fill(0);
   for (const v of data) {
     let b = Math.floor(((v - min) / range) * bins);
@@ -76,10 +89,17 @@ export function Histogram({ data, bins = 20, height = 140, accent = 'var(--accen
         ))}
         {buckets.map((c, i) => {
           const bh = peak ? (c / peak) * (h - 8) : 0;
+          const dimmed = selected != null && selected !== i;
           return (
             <g key={i}>
               <rect x={i*barW + 1} y={h - bh} width={barW - 2} height={bh}
-                fill={accent} opacity={0.85} rx={1}/>
+                fill={accent} opacity={dimmed ? 0.2 : 0.85} rx={1}
+                style={{ cursor: 'pointer', transition: 'opacity .15s' }}
+                onClick={() => toggle(i)}/>
+              {/* Full-height hit area so thin/empty bars stay clickable */}
+              <rect x={i*barW} y={0} width={barW} height={h} fill="transparent"
+                style={{ cursor: 'pointer' }}
+                onClick={() => toggle(i)}/>
             </g>
           );
         })}

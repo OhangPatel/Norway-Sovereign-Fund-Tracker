@@ -110,11 +110,32 @@ export function PipelineControls(props) {
     return s >= 60 ? (Math.floor(s / 60) + 'm ' + (s % 60) + 's') : (s + 's');
   }
 
+  // All clock/calendar parts are rendered in Winnipeg time, regardless of the
+  // viewer's own timezone. Age is an absolute difference, so it's tz-agnostic.
+  var TZ = 'America/Winnipeg';
   function fmtAt(iso) {
     if (!iso) return '';
     var d = new Date(iso);
-    var h = d.getHours(), m = d.getMinutes();
-    return (h < 10 ? '0' + h : h) + ':' + (m < 10 ? '0' + m : m);
+    var ageMs = Date.now() - d.getTime();
+    var DAY = 86400000, YEAR = 365 * DAY;
+
+    // Less than a day old → "today at 11:27 PM" (12-hour clock).
+    if (ageMs < DAY) {
+      var time = new Intl.DateTimeFormat('en-US', {
+        timeZone: TZ, hour: 'numeric', minute: '2-digit', hour12: true,
+      }).format(d);
+      return 'today at ' + time;
+    }
+    // Within the last year → day and month, e.g. "21 Jun".
+    if (ageMs < YEAR) {
+      return new Intl.DateTimeFormat('en-GB', {
+        timeZone: TZ, day: 'numeric', month: 'short',
+      }).format(d);
+    }
+    // Older than a year → month and year, e.g. "Jun 2024".
+    return new Intl.DateTimeFormat('en-US', {
+      timeZone: TZ, month: 'short', year: 'numeric',
+    }).format(d);
   }
 
   function trigger(endpoint) {
@@ -382,8 +403,12 @@ export function App() {
     }
   }, [data]);
 
-  // Filter + sort
-  const filtered = React.useMemo(() => {
+  // Ownership-histogram bar selection ({ lo, hi, last } | null) — narrows the
+  // table only, while the histogram itself keeps showing the full distribution.
+  const [ownSel, setOwnSel] = React.useState(null);
+
+  // Filter + sort (base set — drives the summary charts, excludes the histogram pick)
+  const baseFiltered = React.useMemo(() => {
     if (!data) return [];
     const q = query.toLowerCase();
     let arr = data.filter(c => {
@@ -408,6 +433,15 @@ export function App() {
     });
     return arr;
   }, [data, filters, sort, pinned, query]);
+
+  // Table set — base set narrowed to the selected ownership-histogram bin.
+  const filtered = React.useMemo(() => {
+    if (!ownSel) return baseFiltered;
+    return baseFiltered.filter(c => {
+      const o = c.ownership || 0;
+      return o >= ownSel.lo && (ownSel.last ? o <= ownSel.hi : o < ownSel.hi);
+    });
+  }, [baseFiltered, ownSel]);
 
   // Stable max ownership for bars
   const maxOwn = React.useMemo(() => (data && data.length) ? Math.max(...data.map(d => d.ownership || 0)) : 1, [data]);
@@ -473,9 +507,12 @@ export function App() {
       }}>
         <Summary
           data={data}
-          filtered={filtered}
+          filtered={baseFiltered}
           onPickCompany={setSelected}
           onSetFilter={({ sector }) => setFilters(f => ({ ...f, sectors: [sector] }))}
+          activeSectors={filters.sectors}
+          onClearSectors={() => setFilters(f => ({ ...f, sectors: [] }))}
+          onOwnSelect={setOwnSel}
         />
 
         <section style={{ display:'grid', gap: 14, position: 'relative' }}>

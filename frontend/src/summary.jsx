@@ -25,7 +25,7 @@ export var SECTOR_COLORS = {
   '':                      'var(--soft)',
 };
 
-export function Summary({ data, filtered, onPickCompany, onSetFilter }) {
+export function Summary({ data, filtered, onPickCompany, onSetFilter, activeSectors = [], onClearSectors, onOwnSelect }) {
   const { totalNok, totalUsd, avgOwn, countries, sectorCount } = React.useMemo(() => {
     let totalNok = 0, totalUsd = 0, ownSum = 0;
     const countrySet = new Set();
@@ -162,7 +162,14 @@ export function Summary({ data, filtered, onPickCompany, onSetFilter }) {
           </Card>
 
           <Card title="Sector weight*" eyebrow="By USD value"
-            rightSlot={<span className="eyebrow">{sectors.length} sectors</span>}
+            rightSlot={activeSectors.length ? (
+              <button onClick={onClearSectors} className="eyebrow" style={{
+                cursor: 'pointer', border: '1px solid var(--line)', borderRadius: 6,
+                background: 'var(--surface)', color: 'var(--ink)', padding: '3px 9px',
+              }}>← All sectors</button>
+            ) : (
+              <span className="eyebrow">{sectors.length} sectors</span>
+            )}
           >
             <Treemap items={sectors} height={300}
               onClick={(it) => onSetFilter && it.label !== '—' && onSetFilter({ sector: it.label })}
@@ -179,7 +186,7 @@ export function Summary({ data, filtered, onPickCompany, onSetFilter }) {
         >
           <div style={{ paddingTop: 6 }}>
             <Histogram data={owns} bins={28} height={130} accent="var(--accent)"
-              xFmt={v => v.toFixed(1) + '%'}/>
+              xFmt={v => v.toFixed(1) + '%'} onSelect={onOwnSelect}/>
             <div style={{
               display:'flex', justifyContent:'space-between', alignItems:'baseline',
               marginTop: 12, paddingTop: 12, borderTop: '1px solid var(--line)'
