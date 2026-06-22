@@ -18,10 +18,28 @@ load_dotenv(ENV_PATH)
 # models your specific key has free quota for.
 GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 # Hard caps on tokens => hard cap on per-request cost.
-MAX_OUTPUT_TOKENS = int(os.getenv("MAX_OUTPUT_TOKENS", "512"))
+# NOTE: on 2.5/3 "thinking" models this budget must cover BOTH the internal thinking
+# AND the visible answer, so it is set well above the answer length (see THINKING_BUDGET).
+MAX_OUTPUT_TOKENS = int(os.getenv("MAX_OUTPUT_TOKENS", "1536"))
 MAX_INPUT_CHARS = int(os.getenv("MAX_INPUT_CHARS", "2000"))
 MAX_HISTORY_MESSAGES = int(os.getenv("MAX_HISTORY_MESSAGES", "10"))
 GEMINI_TIMEOUT = float(os.getenv("GEMINI_TIMEOUT", "30"))
+# gemini-2.5/3 "thinking" budget, in output tokens (applied to thinking-capable models
+# only). This is a CEILING on the internal reasoning, which is counted against
+# MAX_OUTPUT_TOKENS. Do NOT set 0: with thinking off, flash-lite returns an empty reply
+# after a tool call. A small budget (≈512) is enough to phrase tool results and keeps
+# cost bounded; MAX_OUTPUT_TOKENS is sized to leave ample room for the answer on top.
+THINKING_BUDGET = int(os.getenv("THINKING_BUDGET", "512"))
+# Max tool (function-call) round-trips per question. Each round-trip is one extra
+# Gemini call, so this also bounds per-question cost. Needs >=2: one to call a data
+# tool, one to phrase the answer.
+MAX_TOOL_CALLS = int(os.getenv("MAX_TOOL_CALLS", "3"))
+
+# ── Dataset for the in-app data tools ─────────────────────────────────────────
+# The chatbot answers data questions by querying this holdings file (the same one
+# the frontend uses). For a standalone deploy, ship the file with the service and
+# point DATA_PATH at it.
+DATA_PATH = os.getenv("DATA_PATH", str(BASE_DIR.parent / "frontend" / "public" / "data.json"))
 
 # ── Rate limits (charge protection) ───────────────────────────────────────────
 # Per-IP sliding minute window AND a global daily ceiling. The daily ceiling is

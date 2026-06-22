@@ -113,6 +113,13 @@ A floating assistant (bottom-right) backed by Google **Gemini**, served by a
 **separate, self-contained** FastAPI service in [chatbot/](chatbot/) (port `8001`). It is
 decoupled from the main backend — it does not touch `nbim.db`.
 
+**Answers data questions, not just definitions.** Via Gemini **function calling**, the
+service loads the holdings dataset into memory and exposes two read-only tools
+(`query_holdings`, `aggregate`), so it can answer things like *"the largest Canadian
+holding"* or *"the 5 financial-sector countries with the lowest average P/E"* — the model
+phrases the answer but the numbers come from the data, never from the model. See
+[chatbot/README.md](chatbot/README.md#answering-data-questions).
+
 **Security model (the repo is public, the key stays private):**
 - The Gemini key lives **only** in `chatbot/.env` (gitignored) and is read at startup.
   It is **never** entered in the browser, never in the frontend bundle, and there is

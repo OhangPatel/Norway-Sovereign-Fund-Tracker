@@ -5,9 +5,15 @@ decoupled from the main backend (it does **not** touch `nbim.db`) — the fronte
 to it, and it talks to Google Gemini. Lives on its own port (`8001`).
 
 ```
-frontend  ──>  chatbot backend (:8001)  ──>  Gemini API
- chat.jsx       this folder                 holds YOUR key server-side
+frontend  ──>  chatbot backend (:8001)  ──>  Gemini API (function calling)
+ chat.jsx       this folder                 │
+                holds YOUR key + data.json  └─ tools run here, against the data
 ```
+
+The assistant can answer **data questions** about the holdings (rankings, counts,
+averages by country/sector) by calling read-only tools — see "Answering data
+questions" below. It phrases the answer, but every number comes from the dataset,
+not the model.
 
 ## How the key is handled
 
@@ -29,6 +35,31 @@ cp .env.example .env                    # then paste YOUR key into .env
 
 Get a **free** Gemini key at <https://aistudio.google.com/apikey>.
 
+## Answering data questions
+
+On startup the service loads the holdings dataset (`config.DATA_PATH`, default
+`../frontend/public/data.json`) into memory in [data_store.py](data_store.py) — pure
+Python, no database. The model is given two read-only **tools** (declared in
+[gemini_client.py](gemini_client.py)) and decides when to call them:
+
+| Tool | Answers questions like |
+|---|---|
+| `query_holdings` | "the largest Canadian holding", "companies in tech sorted by P/E" |
+| `aggregate` | "average P/E by country", "total USD invested per sector", "how many holdings per country" |
+
+Flow: the model picks a tool + arguments → we run it deterministically against the
+data → the model phrases the result. So **numbers are never hallucinated**. General
+finance questions (e.g. "what is a P/E ratio?") are answered directly, with no tool call.
+
+- **Cost:** a data question makes **2 Gemini calls** (pick tool → phrase answer);
+  `MAX_TOOL_CALLS` (default 3) caps the round-trips, so cost per question stays bounded.
+- **Result size:** tools return at most 20 rows (default 5) to keep tokens small. Asking
+  "all countries" may need an explicit higher limit since the default is 5.
+- **Freshness:** `data.json` has no embedded date, so the "as of" date is the file's
+  modified time, surfaced as `data_as_of` in `/api/chat/health`.
+- **Deploy note:** for a standalone deployment, ship a copy of the data file with the
+  service and set `DATA_PATH` to it (the default path assumes the repo layout).
+
 ## Endpoints
 
 | Method | Path | Purpose |
@@ -44,7 +75,7 @@ Get a **free** Gemini key at <https://aistudio.google.com/apikey>.
 | Per-IP rate limit (proxy-aware) | 6 / minute | One client flooding the endpoint |
 | Memory pruning of per-IP state | — | Floods of unique/spoofed IPs bloating RAM |
 | Max input length | 2000 chars | Token-cost inflation |
-| Max output tokens | 512 | Token-cost inflation |
+| Max output tokens | 1536 | Token-cost inflation (must cover thinking + answer on 2.5/3 models) |
 | Max history kept | 10 messages | Token-cost inflation |
 | Max body size | 64 KB | Oversized payloads / cheap DoS |
 | CORS allow-list | frontend origin | Other *sites* calling your backend from a browser |

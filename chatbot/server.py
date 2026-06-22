@@ -17,6 +17,7 @@ from pydantic import BaseModel, Field
 import config
 import key_store
 import gemini_client
+import data_store
 from security import RateLimiter, validate_message
 
 app = FastAPI(title="Sovereign Insights — Chatbot")
@@ -84,6 +85,8 @@ def health():
         "key_configured": key_store.has_key(),
         "model": config.GEMINI_MODEL,
         "requests_remaining_today": limiter.remaining_today(),
+        "holdings_loaded": data_store.META["count"],
+        "data_as_of": data_store.META["as_of"],
     }
 
 
