@@ -558,6 +558,7 @@ export function App() {
           onClose={() => setSelected(null)}
           onPickCompany={setSelected}
           pinned={pinned} togglePin={togglePin}
+          lastFetched={lastFetched}
         />
       )}
 

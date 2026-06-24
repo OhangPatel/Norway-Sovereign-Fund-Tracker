@@ -8,7 +8,7 @@ import { PIPELINE_API } from './app.jsx';
 
 const RANGE_LABEL = { '1y': '1 year ago', '5y': '5 years ago', 'max': 'All time' };
 
-export function Detail({ company, allData, onClose, onPickCompany, pinned, togglePin }) {
+export function Detail({ company, allData, onClose, onPickCompany, pinned, togglePin, lastFetched }) {
   const [entered, setEntered] = React.useState(false);
   React.useEffect(() => {
     const onKey = (e) => { if (e.key === 'Escape') onClose(); };
@@ -40,9 +40,52 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
     return () => ctrl.abort();
   }, [company?.ticker, range]);
 
+  // Transient "current price" — fetched live on demand, shown inline only, never
+  // stored and never fed into the chart, the headline, or any other field. Each
+  // value is tagged with its ticker so it's treated as stale (rather than reset
+  // via an effect) when the company changes.
+  const [quote, setQuote] = React.useState({ ticker: null, loading: false, price: null, at: null, error: null });
+  const [cooldown, setCooldown] = React.useState({ ticker: null, active: false });
+
+  // Trim the live series so the chart ends at the snapshot moment (point-in-time
+  // model): drop any points dated after this company's snapshot date.
+  const snapshotDate = company?.fetchedAt || lastFetched;
+  const chart = React.useMemo(() => {
+    const { points, dates } = history;
+    if (!points || !dates) return { points, dates };
+    const cutoff = snapshotDate ? new Date(snapshotDate) : null;
+    if (!cutoff || isNaN(cutoff)) return { points, dates };
+    const pts = [], dts = [];
+    for (let i = 0; i < dates.length; i++) {
+      if (new Date(dates[i]) <= cutoff) { pts.push(points[i]); dts.push(dates[i]); }
+    }
+    return pts.length >= 2 ? { points: pts, dates: dts } : { points, dates };
+  }, [history, snapshotDate]);
+
   if (!company) return null;
 
   const loading = history.key !== `${company.ticker}|${range}`;
+
+  // Quote/cooldown only apply to the company they were fetched for.
+  const q = quote.ticker === company.ticker ? quote : { loading: false, price: null, at: null, error: null };
+  const onCooldown = cooldown.ticker === company.ticker && cooldown.active;
+
+  const fetchQuote = () => {
+    if (q.loading || onCooldown) return;
+    const ticker = company.ticker;
+    setQuote({ ticker, loading: true, price: null, at: null, error: null });
+    fetch(`${PIPELINE_API}/api/quote/${encodeURIComponent(ticker)}`)
+      .then(r => r.json().then(j => ({ ok: r.ok, j })))
+      .then(({ ok, j }) => setQuote(ok
+        ? { ticker, loading: false, price: j.price, at: j.fetched_at, error: null }
+        : { ticker, loading: false, price: null, at: null, error: j.error || 'Unavailable' }))
+      .catch(() => setQuote({ ticker, loading: false, price: null, at: null, error: 'Cannot reach backend' }))
+      .finally(() => {
+        // Brief client-side cooldown so the button can't be hammered into a burst.
+        setCooldown({ ticker, active: true });
+        setTimeout(() => setCooldown(c => (c.ticker === ticker ? { ticker, active: false } : c)), 5000);
+      });
+  };
 
   const peerSet = allData
     .filter(c => (c.sector || c.industry) === (company.sector || company.industry) && c.ticker !== company.ticker)
@@ -140,7 +183,37 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
                 </div>
               )}
             </div>
-            <div style={{ alignSelf:'stretch' }}>
+            <div style={{ alignSelf:'stretch', minWidth: 0 }}>
+              {/* Live spot-check — temporary, shown inline only; never touches the
+                  chart, the headline price, or any stored data. */}
+              <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap: 8, marginBottom: 6, minHeight: 22 }}>
+                <button onClick={fetchQuote} disabled={q.loading || onCooldown}
+                  className="mono"
+                  title="Fetch the latest live price (display only)"
+                  style={{
+                    fontSize: 10, padding: '3px 9px', borderRadius: 5,
+                    textTransform: 'uppercase', letterSpacing: '0.04em', whiteSpace: 'nowrap',
+                    background: 'transparent',
+                    color: (q.loading || onCooldown) ? 'var(--soft)' : 'var(--accent-text)',
+                    border: '1px solid var(--line)',
+                    cursor: (q.loading || onCooldown) ? 'not-allowed' : 'pointer',
+                    transition: 'all .12s',
+                  }}>
+                  {q.loading ? 'Fetching…' : 'Get current price'}
+                </button>
+                <span className="mono" style={{ fontSize: 11, textAlign:'right', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis', minWidth: 0 }}>
+                  {q.error ? (
+                    <span style={{ color:'var(--bear)' }}>{q.error}</span>
+                  ) : q.price != null ? (
+                    <>
+                      <span style={{ color:'var(--ink)' }}>{fmt.price(q.price)}</span>
+                      <span style={{ color:'var(--soft)', marginLeft: 6, fontSize: 9.5 }}>live · not saved</span>
+                    </>
+                  ) : (
+                    <span style={{ color:'var(--soft)', fontSize: 9.5 }}>live spot price</span>
+                  )}
+                </span>
+              </div>
               <div style={{ display:'flex', gap: 4, justifyContent:'flex-end', marginBottom: 6 }}>
                 {['1y', '5y', 'max'].map(r => (
                   <button key={r} onClick={() => setRange(r)}
@@ -158,14 +231,15 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
               <div style={{ height: 84, display:'grid', placeItems:'center' }}>
                 {loading ? (
                   <span className="mono" style={{ fontSize: 11, color:'var(--soft)' }}>Loading price history…</span>
-                ) : (history.error || !history.points || history.points.length < 2) ? (
+                ) : (history.error || !chart.points || chart.points.length < 2) ? (
                   <span className="mono" style={{ fontSize: 11, color:'var(--soft)' }}>{history.error || 'No price history'}</span>
                 ) : (
-                  <PriceChart points={history.points} dates={history.dates} valueFmt={fmt.price} width={320} height={84} color="auto"/>
+                  <PriceChart points={chart.points} dates={chart.dates} valueFmt={fmt.price} height={84} color="auto"/>
                 )}
               </div>
               <div className="mono" style={{ display:'flex', justifyContent:'space-between', marginTop: 6, fontSize: 10, color:'var(--soft)' }}>
-                <span>{RANGE_LABEL[range]}</span><span>Today</span>
+                <span>{RANGE_LABEL[range]}</span>
+                <span>{(chart.dates && chart.dates.length) ? chart.dates[chart.dates.length - 1] : 'Snapshot'}</span>
               </div>
             </div>
           </div>
