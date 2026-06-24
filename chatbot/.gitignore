@@ -1,0 +1,6 @@
+# Never commit the real key. (The repo-root .gitignore also ignores .env, but
+# this is here as belt-and-suspenders so the secret can't leak from this folder.)
+.env
+rate_state.json
+__pycache__/
+*.pyc

@@ -262,54 +262,76 @@ function fmtDay(s) {
   return `${_MONTHS[+m - 1]} ${+d}, ${y}`;
 }
 
-export function PriceChart({ points, dates, width = 320, height = 84, color = 'auto', valueFmt = (v) => v }) {
+export function PriceChart({ points, dates, height = 84, color = 'auto', valueFmt = (v) => v }) {
+  const ref = useRef(null);
+  const [width, setWidth] = useState(0);
   const [hover, setHover] = useState(null);
-  if (!points || points.length < 2) return null;
 
-  const min = Math.min(...points);
-  const max = Math.max(...points);
-  const range = Math.max(max - min, 0.0001);
-  const sx = (i) => (i / (points.length - 1)) * width;
-  const sy = (v) => height - ((v - min) / range) * (height - 2) - 1;
-  const d = points.map((p, i) => `${i ? 'L' : 'M'} ${sx(i).toFixed(1)} ${sy(p).toFixed(1)}`).join(' ');
-  const stroke = color === 'auto' ? (points[points.length - 1] >= points[0] ? 'var(--bull)' : 'var(--bear)') : color;
+  // Fill the available width responsively so the chart can never overflow its
+  // grid column (the column shrinks/grows; the chart follows).
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const ro = new ResizeObserver(entries => { for (const e of entries) setWidth(e.contentRect.width); });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
-  const onMove = (e) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const rel = rect.width ? (e.clientX - rect.left) / rect.width : 0;
-    setHover(Math.max(0, Math.min(points.length - 1, Math.round(rel * (points.length - 1)))));
-  };
+  // Always render the measuring container so width is known; draw once we have a
+  // measured width and enough points.
+  let body = null;
+  if (points && points.length >= 2 && width > 0) {
+    const min = Math.min(...points);
+    const max = Math.max(...points);
+    const range = Math.max(max - min, 0.0001);
+    const sx = (i) => (i / (points.length - 1)) * width;
+    const sy = (v) => height - ((v - min) / range) * (height - 2) - 1;
+    const d = points.map((p, i) => `${i ? 'L' : 'M'} ${sx(i).toFixed(1)} ${sy(p).toFixed(1)}`).join(' ');
+    const stroke = color === 'auto' ? (points[points.length - 1] >= points[0] ? 'var(--bull)' : 'var(--bear)') : color;
 
-  const hx = hover != null ? sx(hover) : 0;
-  const hy = hover != null ? sy(points[hover]) : 0;
+    const onMove = (e) => {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const rel = rect.width ? (e.clientX - rect.left) / rect.width : 0;
+      setHover(Math.max(0, Math.min(points.length - 1, Math.round(rel * (points.length - 1)))));
+    };
+
+    const hx = hover != null ? sx(hover) : 0;
+    const hy = hover != null ? sy(points[hover]) : 0;
+
+    body = (
+      <>
+        <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} style={{ display: 'block' }}
+          onMouseMove={onMove} onMouseLeave={() => setHover(null)}>
+          <path d={`${d} L ${width} ${height} L 0 ${height} Z`} fill={stroke} opacity={0.12}/>
+          <path d={d} fill="none" stroke={stroke} strokeWidth={1.25} strokeLinejoin="round" strokeLinecap="round"/>
+          {hover != null && (
+            <g>
+              <line x1={hx} y1={0} x2={hx} y2={height} stroke="var(--soft)" strokeWidth={0.75} strokeDasharray="3 3"/>
+              <circle cx={hx} cy={hy} r={3} fill={stroke} stroke="var(--bg)" strokeWidth={1.5}/>
+            </g>
+          )}
+        </svg>
+        {hover != null && (
+          <div className="mono" style={{
+            position: 'absolute', top: 0,
+            left: Math.max(0, Math.min(hx - 40, width - 96)),
+            transform: 'translateY(-100%)',
+            pointerEvents: 'none',
+            background: 'var(--surface)', border: '1px solid var(--line)',
+            borderRadius: 6, padding: '4px 8px', whiteSpace: 'nowrap',
+            boxShadow: '0 6px 16px rgba(0,0,0,.28)',
+          }}>
+            <div style={{ fontSize: 10, color: 'var(--soft)' }}>{dates ? fmtDay(dates[hover]) : ''}</div>
+            <div style={{ fontSize: 12, color: 'var(--ink)', marginTop: 1 }}>{valueFmt(points[hover])}</div>
+          </div>
+        )}
+      </>
+    );
+  }
 
   return (
-    <div style={{ position: 'relative', width, height }}>
-      <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} style={{ display: 'block' }}
-        onMouseMove={onMove} onMouseLeave={() => setHover(null)}>
-        <path d={`${d} L ${width} ${height} L 0 ${height} Z`} fill={stroke} opacity={0.12}/>
-        <path d={d} fill="none" stroke={stroke} strokeWidth={1.25} strokeLinejoin="round" strokeLinecap="round"/>
-        {hover != null && (
-          <g>
-            <line x1={hx} y1={0} x2={hx} y2={height} stroke="var(--soft)" strokeWidth={0.75} strokeDasharray="3 3"/>
-            <circle cx={hx} cy={hy} r={3} fill={stroke} stroke="var(--bg)" strokeWidth={1.5}/>
-          </g>
-        )}
-      </svg>
-      {hover != null && (
-        <div className="mono" style={{
-          position: 'absolute', top: 0,
-          left: Math.max(0, Math.min(hx - 40, width - 96)),
-          transform: 'translateY(-100%)',
-          pointerEvents: 'none',
-          background: 'var(--surface)', border: '1px solid var(--line)',
-          borderRadius: 6, padding: '4px 8px', whiteSpace: 'nowrap',
-          boxShadow: '0 6px 16px rgba(0,0,0,.28)',
-        }}>
-          <div style={{ fontSize: 10, color: 'var(--soft)' }}>{dates ? fmtDay(dates[hover]) : ''}</div>
-          <div style={{ fontSize: 12, color: 'var(--ink)', marginTop: 1 }}>{valueFmt(points[hover])}</div>
-        </div>
-      )}
+    <div ref={ref} style={{ position: 'relative', width: '100%', height }}>
+      {body}
     </div>
   );
 }

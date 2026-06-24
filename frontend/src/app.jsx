@@ -6,6 +6,7 @@ import { Summary } from './summary.jsx';
 import { DataTable } from './table.jsx';
 import { Detail } from './detail.jsx';
 import { CompareDock, CompareModal } from './compare.jsx';
+import { ChatWidget } from './chat.jsx';
 
 // ── Pipeline Controls ─────────────────────────────────────────────────────────
 
@@ -557,6 +558,7 @@ export function App() {
           onClose={() => setSelected(null)}
           onPickCompany={setSelected}
           pinned={pinned} togglePin={togglePin}
+          lastFetched={lastFetched}
         />
       )}
 
@@ -577,6 +579,8 @@ export function App() {
           allData={data}
         />
       )}
+
+      <ChatWidget />
     </>
   );
 }

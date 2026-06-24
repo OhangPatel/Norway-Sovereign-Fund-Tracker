@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 import sqlite3
@@ -7,7 +7,9 @@ import json
 import subprocess
 import sys
 import os
+import time
 import threading
+from contextlib import contextmanager
 from datetime import datetime, date, timedelta, timezone
 import yfinance as yf
 
@@ -78,6 +80,51 @@ def _record_metrics_run():
     cutoff = (date.today() - timedelta(days=30)).isoformat()
     data["metrics_merge_runs"] = [r for r in data["metrics_merge_runs"] if r >= cutoff]
     _save_rate_limits(data)
+
+
+# ── Live yfinance throttle ──────────────────────────────────────────────────────
+# Protects us from getting blocked by Yahoo: every live call (history + quote) is
+# serialized through one lock with a minimum spacing, and each client IP is capped
+# by a sliding window. Bursts from the frontend or a script can never fan out into
+# many simultaneous yfinance requests.
+MIN_YF_INTERVAL = 1.5          # seconds enforced between any two yfinance calls
+IP_WINDOW = 60.0              # sliding window length, seconds
+IP_MAX_CALLS = 30            # max live requests per IP per window
+
+_yf_lock = threading.Lock()
+_yf_last_call = 0.0
+_ip_calls: dict = {}
+_ip_lock = threading.Lock()
+
+
+def _check_ip_rate(ip: str) -> bool:
+    """Sliding-window per-IP limiter. Returns False when the caller is over budget."""
+    now = time.time()
+    with _ip_lock:
+        recent = [t for t in _ip_calls.get(ip, []) if now - t < IP_WINDOW]
+        if len(recent) >= IP_MAX_CALLS:
+            _ip_calls[ip] = recent
+            return False
+        recent.append(now)
+        _ip_calls[ip] = recent
+        return True
+
+
+@contextmanager
+def _yf_slot():
+    """Serialize a yfinance call and keep at least MIN_YF_INTERVAL between calls.
+    Raises TimeoutError if it can't get the slot promptly (caller returns 429)."""
+    global _yf_last_call
+    if not _yf_lock.acquire(timeout=10):
+        raise TimeoutError("yfinance slot busy")
+    try:
+        wait = MIN_YF_INTERVAL - (time.time() - _yf_last_call)
+        if wait > 0:
+            time.sleep(wait)
+        yield
+    finally:
+        _yf_last_call = time.time()
+        _yf_lock.release()
 
 
 # ── Subprocess runner with progress parsing ───────────────────────────────────
@@ -273,9 +320,9 @@ _HISTORY_RANGES = {"1y": "1d", "5y": "1wk", "max": "1mo"}
 
 
 @app.get("/api/history/{ticker}")
-def get_price_history(ticker: str, range: str = Query("1y")):
+def get_price_history(ticker: str, request: Request, range: str = Query("1y")):
     """Live daily/weekly/monthly close prices from Yahoo. Fetched on demand,
-    not stored — each request hits yfinance directly."""
+    not stored — each request hits yfinance directly (throttled, see _yf_slot)."""
     interval = _HISTORY_RANGES.get(range)
     if interval is None:
         return JSONResponse(
@@ -283,8 +330,14 @@ def get_price_history(ticker: str, range: str = Query("1y")):
             content={"error": f"range must be one of {', '.join(_HISTORY_RANGES)}"},
         )
 
+    if not _check_ip_rate(request.client.host):
+        return JSONResponse(status_code=429, content={"error": "Too many requests — slow down"})
+
     try:
-        hist = yf.Ticker(ticker).history(period=range, interval=interval)
+        with _yf_slot():
+            hist = yf.Ticker(ticker).history(period=range, interval=interval)
+    except TimeoutError:
+        return JSONResponse(status_code=429, content={"error": "Server busy fetching prices — try again shortly"})
     except Exception as e:
         return JSONResponse(status_code=502, content={"error": f"Failed to fetch history: {e}"})
 
@@ -301,6 +354,40 @@ def get_price_history(ticker: str, range: str = Query("1y")):
         "interval": interval,
         "points": [round(float(v), 2) for v in closes.tolist()],
         "dates": [d.strftime("%Y-%m-%d") for d in closes.index],
+    }
+
+
+@app.get("/api/quote/{ticker}")
+def get_quote(ticker: str, request: Request):
+    """Live current price for one ticker. On-demand and throttled; the result is
+    transient (the frontend shows it inline and never stores it)."""
+    if not _check_ip_rate(request.client.host):
+        return JSONResponse(status_code=429, content={"error": "Too many requests — slow down"})
+
+    try:
+        with _yf_slot():
+            t = yf.Ticker(ticker)
+            try:
+                price = float(t.fast_info["last_price"])
+            except Exception:
+                price = None
+            if price is None:
+                h = t.history(period="1d")
+                if h is not None and not h.empty and "Close" in h:
+                    closes = h["Close"].dropna()
+                    price = float(closes.iloc[-1]) if not closes.empty else None
+    except TimeoutError:
+        return JSONResponse(status_code=429, content={"error": "Server busy fetching prices — try again shortly"})
+    except Exception as e:
+        return JSONResponse(status_code=502, content={"error": f"Failed to fetch quote: {e}"})
+
+    if price is None:
+        return JSONResponse(status_code=404, content={"error": "No live price available (invalid ticker or rate limited)"})
+
+    return {
+        "ticker": ticker,
+        "price": round(price, 2),
+        "fetched_at": datetime.now(timezone.utc).isoformat(),
     }
 
 

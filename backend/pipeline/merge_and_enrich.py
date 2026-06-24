@@ -110,6 +110,7 @@ def merge_and_save():
             "beta":        get(row, "beta"),
             "price":       get(row, "price"),
             "change":      get(row, "change"),
+            "fetchedAt":   get(row, "fetched_at"),
         })
 
     FRONTEND_DATA.write_text(json.dumps(records, allow_nan=False, default=lambda _: None))
