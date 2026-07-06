@@ -61,6 +61,8 @@ nbim-tracker/
 ├── frontend/
 │   ├── index.html          # Vite entry → /src/main.jsx
 │   ├── vite.config.js
+│   ├── .env.development    # local API URLs + admin pipeline tools ON
+│   ├── .env.production     # deployed HTTPS API URLs + pipeline tools OFF
 │   ├── public/             # data.json, favicon.svg, icons.svg
 │   └── src/                # main, app, topbar, summary, table, detail,
 │                           #   filters, compare, charts, format, chat (.jsx)
@@ -115,6 +117,30 @@ cd frontend
 npm install
 npm run dev                              # Vite dev server on http://localhost:8080
 ```
+
+## Deployment
+
+The frontend is a static Vite build; the two backends are **Python** (FastAPI/Uvicorn). They
+deploy to different places:
+
+| Piece | Where | Notes |
+|-------|-------|-------|
+| Frontend (`frontend/dist/`) | **Hostinger** (static hosting) | Free SSL → served over **HTTPS** |
+| Data/pipeline API (`backend/app/main.py`) | A Python host (Render / Railway / Fly) | Hostinger shared/Business runs Node + PHP, **not** Python |
+| Chatbot API (`chatbot/server.py`) | Same Python host | Already `$PORT`-aware (see `chatbot/run.sh`) |
+
+Because the site is HTTPS, both APIs **must** be HTTPS too (browsers block `http://` calls
+from an HTTPS page). Build-time config is inlined by Vite from `VITE_*` env vars:
+
+1. **Deploy the two FastAPI services** over HTTPS. Set each service's CORS / allowed origins
+   to your Hostinger domain (chatbot: `ALLOWED_ORIGINS` in `chatbot/config.py`).
+2. **Fill in `frontend/.env.production`** — set `VITE_PIPELINE_API` and `VITE_CHAT_API` to the
+   deployed HTTPS URLs (placeholders ship as `REPLACE-ME-…`).
+3. **Build and upload:** `cd frontend && npm run build`, then upload `frontend/dist/` to
+   Hostinger (File Manager or FTP).
+4. **Pipeline tools are dev-only.** `VITE_ENABLE_PIPELINE` is `false` in the production build,
+   so the Refresh Holdings / Update Prices buttons don't ship publicly. To refresh data, run
+   the pipeline locally, then rebuild + re-upload (which republishes `public/data.json`).
 
 ## Chatbot (in-app assistant)
 

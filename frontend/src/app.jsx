@@ -10,7 +10,15 @@ import { ChatWidget } from './chat.jsx';
 
 // ── Pipeline Controls ─────────────────────────────────────────────────────────
 
-export var PIPELINE_API = 'http://127.0.0.1:8000';
+// Base URL for the data/pipeline API (FastAPI). Set VITE_PIPELINE_API to the deployed
+// HTTPS URL at build time (see .env.production); falls back to localhost for `npm run dev`.
+export var PIPELINE_API = import.meta.env.VITE_PIPELINE_API || 'http://127.0.0.1:8000';
+
+// The pipeline tools (Refresh Holdings / Update Prices) trigger local scrape + merge jobs,
+// so they are admin-only and must NOT ship in the public production build. Enabled via
+// VITE_ENABLE_PIPELINE=true (set in .env.development); off by default, so a build without
+// that var set stays safe.
+export var PIPELINE_ENABLED = import.meta.env.VITE_ENABLE_PIPELINE === 'true';
 
 // A single row inside the Data Tools dropdown: icon tile · title + caption · chip.
 export function ToolRow(props) {
@@ -499,7 +507,9 @@ export function App() {
         lastFetched={lastFetched}
       />
 
-      <PipelineControls onComplete={() => setDataKey(k => k + 1)} lastFetched={lastFetched} />
+      {PIPELINE_ENABLED && (
+        <PipelineControls onComplete={() => setDataKey(k => k + 1)} lastFetched={lastFetched} />
+      )}
 
       <main style={{
         maxWidth: 1680, margin: '0 auto',
