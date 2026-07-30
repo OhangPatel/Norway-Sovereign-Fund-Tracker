@@ -1,0 +1,62 @@
+name: Deploy frontend to Hostinger
+
+# Auto-deploy: every push to main that touches the frontend builds the Vite
+# bundle and uploads it to invest.learnbasecase.com over FTP.
+# The two FastAPI services deploy separately (Render watches this same repo).
+on:
+  push:
+    branches: [main]
+    # Backend/chatbot changes are Render's job — don't rebuild the site for them.
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/deploy-frontend.yml'
+  workflow_dispatch:
+
+# If you push twice quickly, cancel the older run so only the latest ships.
+concurrency:
+  group: deploy-frontend-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      # Vite inlines the VITE_* values from frontend/.env.production at build
+      # time — that committed file is what points the bundle at the Render APIs.
+      - name: Build
+        working-directory: frontend
+        run: npm run build
+
+      - name: Deploy frontend/dist/ to Hostinger via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          # Hostinger's FTP can be slow to open the control socket; the default
+          # 30s timeout intermittently trips. Give it 2 minutes.
+          timeout: 120000
+          # REQUIRED for Hostinger: incremental sync uploads to a temp filename
+          # then renames, which Hostinger's FTP rejects with "550 No such file or
+          # directory". Clean-slate (wipe + full re-upload) is the only reliable
+          # mode here. This FTP account is scoped to the invest document root, so
+          # the wipe can never reach the main learnbasecase.com site.
+          dangerous-clean-slate: true
+          # Trailing slashes matter: upload the CONTENTS of dist/ into the web
+          # root. The FTP account logs in AT the invest document root, so ./ is it.
+          local-dir: ./frontend/dist/
+          server-dir: ./
