@@ -556,7 +556,12 @@ export function App() {
             padding: '4px 6px'
           }}>
             <span>Press <kbd style={kbd}>/</kbd> to search · <kbd style={kbd}>Esc</kbd> to close</span>
-            <span>Norway GPFG · {data.length.toLocaleString()} positions · USD values estimated at acquisition FX</span>
+            <span>Norway GPFG · {data.length.toLocaleString()} positions · USD values estimated at acquisition FX · <a
+              href="https://learnbasecase.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: 'var(--accent-text)', textDecoration: 'underline' }}
+            >Basecase</a></span>
           </div>
         </section>
       </main>
