@@ -4,10 +4,154 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>Sovereign Insights</title>
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <title>Sovereign Insights — Norway GPFG Equity Holdings Tracker</title>
+    <meta name="description" content="Explore all 1,430 public equity positions held by Norway's Government Pension Fund Global. Filter by country, sector, and ownership stake; compare companies side by side." />
+    <link rel="canonical" href="https://invest.learnbasecase.com/" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+    <meta name="author" content="Basecase" />
+    <meta name="theme-color" content="#F4F3EE" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#08080A" media="(prefers-color-scheme: dark)" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Sovereign Insights" />
+    <meta property="og:title" content="Sovereign Insights — Norway GPFG Equity Holdings Tracker" />
+    <meta property="og:description" content="Explore all 1,430 public equity positions held by Norway's Government Pension Fund Global. Filter by country, sector, and ownership stake; compare companies side by side." />
+    <meta property="og:url" content="https://invest.learnbasecase.com/" />
+    <meta property="og:locale" content="en_US" />
+    <!-- TODO: add a 1200x630 PNG at frontend/public/og-image.png (see audit report). -->
+    <meta property="og:image" content="https://invest.learnbasecase.com/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Sovereign Insights dashboard showing Norway GPFG equity holdings." />
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Sovereign Insights — Norway GPFG Equity Holdings Tracker" />
+    <meta name="twitter:description" content="All 1,430 public equity positions held by Norway's sovereign wealth fund, filterable and comparable." />
+    <meta name="twitter:image" content="https://invest.learnbasecase.com/og-image.png" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Structured data. One @graph so entities can cross-reference by @id. -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://learnbasecase.com/#organization",
+          "name": "Basecase",
+          "url": "https://learnbasecase.com",
+          "description": "Investment research and education."
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://invest.learnbasecase.com/#website",
+          "url": "https://invest.learnbasecase.com/",
+          "name": "Sovereign Insights",
+          "description": "Equity holdings of Norway's Government Pension Fund Global, tracked position by position.",
+          "publisher": { "@id": "https://learnbasecase.com/#organization" },
+          "inLanguage": "en"
+        },
+        {
+          "@type": "WebApplication",
+          "@id": "https://invest.learnbasecase.com/#app",
+          "name": "Sovereign Insights",
+          "url": "https://invest.learnbasecase.com/",
+          "applicationCategory": "FinanceApplication",
+          "operatingSystem": "Any (web browser)",
+          "browserRequirements": "Requires JavaScript.",
+          "isAccessibleForFree": true,
+          "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+          "publisher": { "@id": "https://learnbasecase.com/#organization" },
+          "featureList": [
+            "Filter 1,430 holdings by country, sector, and analyst recommendation",
+            "Sort by market value, ownership percentage, and valuation metrics",
+            "Company detail view with 1-year, 5-year, and all-time price history",
+            "Side-by-side comparison of up to six companies",
+            "Natural-language assistant that queries the holdings dataset"
+          ]
+        },
+        {
+          "@type": "Dataset",
+          "@id": "https://invest.learnbasecase.com/#dataset",
+          "name": "Norway GPFG Equity Holdings Snapshot",
+          "description": "Public equity positions held by Norway's Government Pension Fund Global, joined with market and valuation data. 1,430 companies across six markets.",
+          "url": "https://invest.learnbasecase.com/",
+          "license": "https://invest.learnbasecase.com/",
+          "creator": { "@id": "https://learnbasecase.com/#organization" },
+          "temporalCoverage": "2026-07-06",
+          "spatialCoverage": "Canada, Germany, India, Singapore, United Kingdom, United States",
+          "variableMeasured": [
+            "Market value (USD)", "Market value (NOK)", "Ownership percentage",
+            "Voting rights percentage", "Price/earnings ratio", "Forward P/E",
+            "Price/book", "Dividend yield", "Beta", "Market capitalisation",
+            "Analyst recommendation"
+          ],
+          "isBasedOn": "https://www.nbim.no/en/responsible-investment/holdings/"
+        },
+        {
+          "@type": "BreadcrumbList",
+          "@id": "https://invest.learnbasecase.com/#breadcrumb",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Basecase", "item": "https://learnbasecase.com" },
+            { "@type": "ListItem", "position": 2, "name": "Sovereign Insights", "item": "https://invest.learnbasecase.com/" }
+          ]
+        },
+        {
+          "@type": "FAQPage",
+          "@id": "https://invest.learnbasecase.com/#faq",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "What is Norway's Government Pension Fund Global?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "The Government Pension Fund Global (GPFG) is Norway's sovereign wealth fund, funded by state petroleum revenue and managed by Norges Bank Investment Management (NBIM) on behalf of the Norwegian Ministry of Finance. It is the world's largest sovereign wealth fund."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How many companies does this dashboard track?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "1,430 listed companies across six markets: Canada, Germany, India, Singapore, the United Kingdom, and the United States."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Is the data live?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "No. The holdings table is a point-in-time snapshot dated 2026-07-06. Price history charts and the optional spot-price check are fetched live from Yahoo Finance when you open a company, but they are not stored."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Where does the holdings data come from?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "NBIM's published GPFG equity holdings disclosure, joined with market and valuation data from Yahoo Finance."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Is this site affiliated with NBIM or the Norwegian government?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "No. Sovereign Insights is an independent research tool published by Basecase. It is not affiliated with, endorsed by, or operated by NBIM, Norges Bank, or the Norwegian government, and nothing on it is investment advice."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
     <style>
       /* ============================================================
          "LIME" DESIGN SYSTEM — see STYLE_GUIDE.md (single source of truth)
@@ -131,10 +275,161 @@
         100% { transform: translateX(400%);  }
       }
       @keyframes spin { to { transform: rotate(360deg); } }
+
+      /* Visually hidden but exposed to screen readers. */
+      .sr-only {
+        position: absolute; width: 1px; height: 1px;
+        padding: 0; margin: -1px; overflow: hidden;
+        clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+      }
+
+      /* Skip link — first tab stop, becomes visible on focus. */
+      .skip-link {
+        position: absolute; left: 8px; top: -60px; z-index: 200;
+        padding: 10px 16px; border-radius: 8px;
+        background: var(--accent); color: #1B1A17;
+        font-family: var(--font-mono); font-size: 13px; text-decoration: none;
+        transition: top .15s ease;
+      }
+      .skip-link:focus { top: 8px; }
+
+      /* Always show a focus ring for keyboard users. */
+      :focus-visible { outline: 2px solid var(--accent-text); outline-offset: 2px; }
+
+      /* WCAG 2.2 — respect the OS "reduce motion" setting. */
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+          animation-duration: .001ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: .001ms !important;
+          scroll-behavior: auto !important;
+        }
+      }
+
+      /* ============================================================
+         RESPONSIVE LAYOUT
+         Components style themselves with inline style={{}} objects,
+         which cannot express media queries. So every grid whose COLUMN
+         COUNT changes with viewport lives here as a class instead.
+         Breakpoints: 900px (tablet) · 640px (phone).
+         Anything that does not change with viewport stays inline.
+         ============================================================ */
+
+      /* Hero bento — summary.jsx */
+      .r-bento { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: minmax(118px, auto); gap: 14px; }
+      .r-bento-lead { grid-column: span 3; grid-row: span 2; }
+      .r-bento-feature { grid-row: span 3; }
+
+      /* Two-pane split — top holdings beside the sector treemap */
+      .r-split { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 14px; }
+
+      /* Metric groups — summary.jsx + detail.jsx */
+      .r-metrics3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+      .r-kv2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; }
+
+      /* Filter strip, top bar, detail price block, loading skeleton */
+      .r-filterbar { display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: center; }
+      .r-topbar { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 16px; }
+      .r-priceblock { display: grid; grid-template-columns: auto 1fr; gap: 28px; align-items: flex-end; }
+      .r-skel4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+
+      /* Data table. Column templates are computed in JS because the visible
+         columns are user-configurable, then handed to CSS as custom properties
+         so the BREAKPOINT still lives here rather than in a JS media listener.
+         --cols = fixed px (desktop) · --cols-m = minmax()/fr (phone). */
+      .r-trow { display: grid; grid-template-columns: var(--cols); }
+      .r-twrap { min-width: var(--tmin); position: relative; }
+      .r-tscroll { height: 640px; overflow: auto; position: relative; }
+
+      /* Compare modal — label column stays put while companies scroll. */
+      .r-cmp-row { display: grid; grid-template-columns: 180px repeat(var(--cmp-n), minmax(180px, 1fr)); }
+      .r-cmp-label { position: sticky; left: 0; z-index: 2; background: var(--bg); }
+
+      @media (max-width: 900px) {
+        .r-bento { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .r-bento-lead { grid-column: span 2; grid-row: auto; }
+        .r-bento-feature { grid-column: span 2; grid-row: auto; }
+        .r-split { grid-template-columns: minmax(0, 1fr); }
+        .r-skel4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        /* Brand and actions share row 1; search gets its own full-width row. */
+        .r-topbar { grid-template-columns: auto auto; grid-template-areas: "brand actions" "search search"; row-gap: 12px; justify-content: space-between; }
+        .r-brand { grid-area: brand; }
+        .r-search { grid-area: search; max-width: none !important; }
+        .r-actions { grid-area: actions; }
+      }
+
+      @media (max-width: 640px) {
+        .r-bento { grid-template-columns: minmax(0, 1fr); }
+        .r-bento-lead, .r-bento-feature { grid-column: span 1; }
+        .r-metrics3 { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+        .r-kv2 { grid-template-columns: minmax(0, 1fr); }
+        .r-filterbar { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+        .r-priceblock { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+        .r-skel4 { grid-template-columns: minmax(0, 1fr); }
+
+        /* Table fits the viewport instead of scrolling sideways. */
+        .r-trow { grid-template-columns: var(--cols-m, var(--cols)); }
+        .r-twrap { min-width: 0; }
+        .r-tscroll { height: 68vh; }
+        /* These cells are styled inline, so overriding them needs !important.
+           Remove once the inline styles move into classes (see audit Q5). */
+        .r-trow > * { padding-left: 9px !important; padding-right: 9px !important; }
+        .r-thead > * { font-size: 9px !important; letter-spacing: .03em !important; }
+
+        .r-cmp-row { grid-template-columns: 108px repeat(var(--cmp-n), minmax(136px, 1fr)); }
+
+        /* Utility: drop non-essential chrome on the smallest screens. */
+        .r-hide-sm { display: none !important; }
+      }
     </style>
   </head>
   <body>
+    <a class="skip-link" href="#app">Skip to dashboard</a>
     <div id="app"></div>
+
+    <!--
+      The dashboard is client-rendered, so a crawler that does not execute
+      JavaScript sees an empty #app. This block gives search engines and LLM
+      crawlers real, indexable prose describing what the page contains.
+    -->
+    <noscript>
+      <main style="max-width: 760px; margin: 0 auto; padding: 48px 24px;">
+        <h1>Sovereign Insights — Norway GPFG Equity Holdings</h1>
+        <p>
+          Sovereign Insights is an interactive dashboard tracking the public equity
+          holdings of Norway's Government Pension Fund Global (GPFG), the world's
+          largest sovereign wealth fund, managed by Norges Bank Investment
+          Management (NBIM).
+        </p>
+        <p>
+          <strong>This dashboard requires JavaScript.</strong> Please enable it to
+          filter, sort, and compare holdings.
+        </p>
+        <h2>What the dataset covers</h2>
+        <ul>
+          <li>1,430 listed companies, as of the 2026-07-06 snapshot.</li>
+          <li>Six markets: Canada, Germany, India, Singapore, the United Kingdom, and the United States.</li>
+          <li>Eleven sectors, from Technology and Financial Services to Utilities and Real Estate.</li>
+          <li>
+            Per holding: market value in USD and NOK, the fund's ownership and voting
+            percentage, share price and 52-week range, P/E and forward P/E,
+            price-to-book, dividend yield, beta, market capitalisation, and the
+            aggregated analyst recommendation.
+          </li>
+        </ul>
+        <h2>Source and disclaimer</h2>
+        <p>
+          Holdings come from NBIM's published GPFG equity disclosure, joined with
+          market data from Yahoo Finance. Sovereign Insights is an independent
+          research tool published by
+          <a href="https://learnbasecase.com">Basecase</a>; it is not affiliated with
+          or endorsed by NBIM, Norges Bank, or the Norwegian government. Nothing here
+          is investment advice.
+        </p>
+        <p><a href="/llms.txt">Machine-readable summary of this site (llms.txt)</a></p>
+      </main>
+    </noscript>
+
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

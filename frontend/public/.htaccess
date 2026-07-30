@@ -1,0 +1,63 @@
+# Sovereign Insights — Hostinger (LiteSpeed) server config.
+#
+# IMPORTANT: this file lives in frontend/public/ on purpose. Vite copies public/
+# into dist/, and the GitHub Actions deploy runs with `dangerous-clean-slate: true`,
+# which wipes the document root on every deploy. Anything placed on the server by
+# hand is destroyed on the next push — config must ship from the repo.
+
+# ── Security headers ─────────────────────────────────────────────────────────
+<IfModule mod_headers.c>
+    # Force HTTPS for a year, including subdomains. Only enable includeSubDomains
+    # once every subdomain of learnbasecase.com is HTTPS-only.
+    Header always set Strict-Transport-Security "max-age=31536000"
+
+    # Never let a browser MIME-sniff a response into something executable.
+    Header always set X-Content-Type-Options "nosniff"
+
+    # Don't leak the full URL to third parties (fonts, APIs).
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+    # Turn off browser features this app never uses.
+    Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), interest-cohort=(), payment=(), usb=()"
+
+    # Content Security Policy.
+    #   'unsafe-inline' for style-src is currently REQUIRED: the app styles every
+    #   element with inline React style={{...}} props and has a large inline <style>
+    #   block in index.html. Removing it is a real refactor (see audit report).
+    #   connect-src must list both Render APIs plus 'self' for /data.json.
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://nbim-data-api.onrender.com https://nbim-chatbot.onrender.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests"
+
+    # Long-lived immutable caching for content-hashed build assets.
+    <FilesMatch "\.(js|css|woff2)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+
+    # The HTML shell must always revalidate, or users get a stale bundle reference.
+    <FilesMatch "\.(html)$">
+        Header set Cache-Control "no-cache, must-revalidate"
+    </FilesMatch>
+
+    # The dataset changes when the pipeline runs — revalidate rather than cache hard.
+    <FilesMatch "^data\.json$">
+        Header set Cache-Control "public, max-age=0, must-revalidate"
+    </FilesMatch>
+</IfModule>
+
+# ── Compression ──────────────────────────────────────────────────────────────
+# LiteSpeed already brotli-compresses data.json, but make it explicit so the
+# behaviour survives a host/plan change.
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml
+    AddOutputFilterByType DEFLATE application/javascript application/json
+    AddOutputFilterByType DEFLATE image/svg+xml
+</IfModule>
+
+# ── Correct content types ────────────────────────────────────────────────────
+<IfModule mod_mime.c>
+    AddType application/manifest+json .webmanifest
+    AddType image/svg+xml .svg
+    AddType text/plain .txt
+</IfModule>
+
+# Directory listings off.
+Options -Indexes

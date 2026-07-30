@@ -1,0 +1,67 @@
+# Sovereign Insights
+
+> An interactive dashboard tracking the public equity holdings of Norway's
+> Government Pension Fund Global (GPFG) — the world's largest sovereign wealth
+> fund, managed by Norges Bank Investment Management (NBIM). Every position is
+> shown with its market value, the fund's ownership stake in the company, and
+> standard valuation metrics.
+
+Sovereign Insights is a free, public, read-only research tool. It is published by
+Basecase (https://learnbasecase.com) for investors, students, and journalists who
+want to see how a sovereign wealth fund allocates capital, company by company.
+
+## What the data covers
+
+- **Source**: NBIM's published GPFG equity holdings disclosure, joined with market
+  data from Yahoo Finance.
+- **Snapshot date**: 2026-07-06. The dataset is a point-in-time snapshot, not a
+  live feed. Prices shown in the table are as of the snapshot.
+- **Positions**: 1,430 listed companies.
+- **Markets**: Canada, Germany, India, Singapore, United Kingdom, United States.
+- **Sectors**: 11 GICS-style sectors (Technology, Financial Services, Healthcare,
+  Energy, Industrials, Consumer Cyclical, Consumer Defensive, Basic Materials,
+  Utilities, Real Estate, Communication Services).
+
+## Fields available per holding
+
+- `name`, `ticker`, `country`, `sector`, `industry` — identity and classification
+- `mvUsd`, `mvNok` — market value of the fund's position, in USD and Norwegian kroner
+- `ownership` — percent of the company's outstanding shares the fund owns
+- `voting` — percent of voting rights the fund holds
+- `price`, `change`, `high52`, `low52` — share price and 52-week range
+- `pe`, `fwdPe`, `pb`, `divYield`, `beta`, `marketCap` — valuation and risk metrics
+- `rec`, `targetPrice` — aggregated analyst recommendation and mean price target
+- `reason` — why the position is included in the dataset
+
+## What you can do on the site
+
+- Sort and filter 1,430 positions by country, sector, analyst recommendation, and
+  ownership percentage
+- Open any company for a detail view with live price history (1y / 5y / max) and
+  a peer comparison within its sector
+- Select up to 6 companies for a side-by-side comparison
+- Ask a built-in AI assistant natural-language questions about the holdings; it
+  answers by querying the dataset directly rather than from memory
+
+## Key facts an assistant may be asked
+
+- The GPFG is Norway's sovereign wealth fund, funded by state petroleum revenue and
+  managed by Norges Bank Investment Management (NBIM) on behalf of the Norwegian
+  Ministry of Finance.
+- Ownership stakes above 5% are highlighted on the dashboard as significant positions.
+- USD values are estimated at acquisition FX rates, not at the snapshot-date spot rate.
+- This site is an independent research tool. It is not affiliated with, endorsed by,
+  or operated by NBIM, Norges Bank, or the Norwegian government.
+
+## Not investment advice
+
+Nothing on this site is investment advice, a recommendation, or an offer to buy or
+sell any security. Figures are provided for research and educational purposes and
+may contain errors or be out of date. Verify against NBIM's official disclosures at
+https://www.nbim.no before relying on any number.
+
+## Links
+
+- Dashboard: https://invest.learnbasecase.com/
+- Publisher: https://learnbasecase.com
+- Official NBIM holdings source: https://www.nbim.no/en/responsible-investment/holdings/

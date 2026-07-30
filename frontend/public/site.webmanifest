@@ -1,0 +1,21 @@
+{
+  "name": "Sovereign Insights — Norway GPFG Holdings",
+  "short_name": "Sovereign",
+  "description": "Track the equity holdings of Norway's Government Pension Fund Global, position by position.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#F4F3EE",
+  "theme_color": "#D6E134",
+  "lang": "en",
+  "categories": ["finance", "business", "education"],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
+    }
+  ]
+}

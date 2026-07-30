@@ -367,20 +367,27 @@ export function App() {
   const [compared, setCompared] = React.useState(new Set());
   const [compareModal, setCompareModal] = React.useState(false);
   const [showColumns, setShowColumns] = React.useState(false);
-  const [columns, setColumns] = React.useState({
-    rank:      { label: 'Rank',           visible: true },
-    name:      { label: 'Company',        visible: true },
-    ticker:    { label: 'Ticker',         visible: true },
-    country:   { label: 'Country',        visible: true },
-    sector:    { label: 'Sector',         visible: true },
-    price:     { label: 'Price',          visible: true },
-    change:    { label: '24h change',     visible: true },
-    range:     { label: '52-week range',  visible: true },
-    mvUsd:     { label: 'Fund value',     visible: true },
-    ownership: { label: 'Ownership %',    visible: true },
-    rec:       { label: 'Analyst rec',    visible: true },
-    pe:        { label: 'P/E ratio',      visible: false },
-    pin:       { label: 'Pin',            visible: true },
+  // On a phone there is no width for 13 columns, so start with the four that
+  // answer "what does the fund own and how much of it" — the rest stay one tap
+  // away in the Columns menu or in the detail drawer. Evaluated once at mount:
+  // a later resize must not clobber a choice the user has since made.
+  const [columns, setColumns] = React.useState(() => {
+    const wide = window.innerWidth > 640;
+    return {
+      rank:      { label: 'Rank',           visible: wide },
+      name:      { label: 'Company',        visible: true },
+      ticker:    { label: 'Ticker',         visible: wide },
+      country:   { label: 'Country',        visible: wide },
+      sector:    { label: 'Sector',         visible: wide },
+      price:     { label: 'Price',          visible: wide },
+      change:    { label: '24h change',     visible: true },
+      range:     { label: '52-week range',  visible: wide },
+      mvUsd:     { label: 'Fund value',     visible: true },
+      ownership: { label: 'Ownership %',    visible: true },
+      rec:       { label: 'Analyst rec',    visible: wide },
+      pe:        { label: 'P/E ratio',      visible: false },
+      pin:       { label: 'Pin',            visible: true },
+    };
   });
 
   // Load (or reload) data — re-runs when dataKey increments after pipeline completes.
@@ -617,7 +624,7 @@ export function LoadingState() {
       <div className="display" style={{ fontSize: 48, lineHeight: 1.05, marginTop: 10, letterSpacing:'-0.02em' }}>
         Loading <span className="display-italic">sovereign holdings</span>…
       </div>
-      <div style={{ marginTop: 32, display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
+      <div className="r-skel4" style={{ marginTop: 32 }}>
         {[1,2,3,4].map(i => (
           <div key={i} style={{
             height: 110,

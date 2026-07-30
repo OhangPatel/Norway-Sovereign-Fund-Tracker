@@ -56,12 +56,12 @@ export function Filters({ data, filters, setFilters, columns, setColumns, showCo
   const dirty = filters.countries.length || filters.sectors.length || filters.recs.length || filters.ownMin > 0 || filters.ownMax < maxOwn || filters.pinned;
 
   return (
-    <div style={{
-      display:'grid', gridTemplateColumns: '1fr auto', gap: 16, alignItems: 'center',
+    <div className="r-filterbar" style={{
       padding: '14px 18px',
       background: 'var(--surface)',
       border: '1px solid var(--line)',
       borderRadius: 16,
+      position: 'relative',
     }}>
       <div style={{ display:'flex', flexWrap:'wrap', alignItems:'center', gap: 8 }}>
         <FilterMenu

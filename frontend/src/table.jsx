@@ -4,21 +4,36 @@ import { SECTOR_COLORS } from './summary.jsx';
 
 // Core data table — sortable, virtualized scroll, sticky header, compare/pin support
 
+// `width` is the fixed desktop width. `min`/`fr` describe how the column behaves
+// on a phone, where the grid switches to minmax(min, fr) so the columns always
+// fit the viewport instead of forcing a ~1,566px horizontal scroll. fr: 0 means
+// the column stays fixed at `min` (narrow, non-textual columns).
 export var ALL_COLUMNS = {
-  rank:    { label: '#',         width: 48,  align: 'right', sortable: false },
-  name:    { label: 'Company',   width: 280, align: 'left',  sortable: true,  sortKey: 'name' },
-  ticker:  { label: 'Ticker',    width: 86,  align: 'left',  sortable: true,  sortKey: 'ticker' },
-  country: { label: 'Country',   width: 120, align: 'left',  sortable: true,  sortKey: 'country' },
-  sector:  { label: 'Sector',    width: 150, align: 'left',  sortable: true,  sortKey: 'sector' },
-  price:   { label: 'Price',     width: 100, align: 'right', sortable: true,  sortKey: 'price' },
-  change:  { label: '24h',       width: 78,  align: 'right', sortable: true,  sortKey: 'change' },
-  range:   { label: '52-week range',  width: 200, align: 'left',  sortable: false },
-  mvUsd:   { label: 'Fund value',    width: 132, align: 'right', sortable: true,  sortKey: 'mvUsd' },
-  ownership: { label: 'Ownership %', width: 154, align: 'left',  sortable: true,  sortKey: 'ownership' },
-  rec:     { label: 'Rec',       width: 110, align: 'left',  sortable: true,  sortKey: 'rec' },
-  pe:      { label: 'P/E',       width: 70,  align: 'right', sortable: true,  sortKey: 'pe' },
-  pin:     { label: '',          width: 38,  align: 'center', sortable: false },
+  rank:    { label: '#',         width: 48,  min: 34,  fr: 0,   align: 'right', sortable: false },
+  name:    { label: 'Company',   width: 280, min: 96,  fr: 2.2, align: 'left',  sortable: true,  sortKey: 'name' },
+  ticker:  { label: 'Ticker',    width: 86,  min: 60,  fr: 0.8, align: 'left',  sortable: true,  sortKey: 'ticker' },
+  country: { label: 'Country',   width: 120, min: 70,  fr: 1,   align: 'left',  sortable: true,  sortKey: 'country' },
+  sector:  { label: 'Sector',    width: 150, min: 84,  fr: 1.1, align: 'left',  sortable: true,  sortKey: 'sector' },
+  price:   { label: 'Price',     width: 100, min: 62,  fr: 0.8, align: 'right', sortable: true,  sortKey: 'price' },
+  change:  { label: '24h',       width: 78,  min: 52,  fr: 0.7, align: 'right', sortable: true,  sortKey: 'change' },
+  range:   { label: '52-week range',  width: 200, min: 108, fr: 1.4, align: 'left',  sortable: false },
+  mvUsd:   { label: 'Fund value',    width: 132, min: 72,  fr: 1,   align: 'right', sortable: true,  sortKey: 'mvUsd' },
+  ownership: { label: 'Ownership %', width: 154, min: 68,  fr: 1,   align: 'left',  sortable: true,  sortKey: 'ownership' },
+  rec:     { label: 'Rec',       width: 110, min: 72,  fr: 0.9, align: 'left',  sortable: true,  sortKey: 'rec' },
+  pe:      { label: 'P/E',       width: 70,  min: 46,  fr: 0.6, align: 'right', sortable: true,  sortKey: 'pe' },
+  pin:     { label: '',          width: 38,  min: 28,  fr: 0,   align: 'center', sortable: false },
 };
+
+// Grid template for a set of visible columns. `fluid` builds the phone track
+// list (minmax/fr); otherwise the fixed desktop widths.
+function colTemplate(visibleCols, compareOn, fluid) {
+  var lead = compareOn ? (fluid ? '30px ' : '40px ') : '';
+  return lead + visibleCols.map(function (k) {
+    var c = ALL_COLUMNS[k];
+    if (!fluid) return c.width + 'px';
+    return c.fr ? 'minmax(' + c.min + 'px, ' + c.fr + 'fr)' : c.min + 'px';
+  }).join(' ');
+}
 
 export const REC_TONE = {
   strong_buy: 'pos',
@@ -59,13 +74,26 @@ export function DataTable({
   const visibleCols = Object.entries(columns).filter(([k, v]) => v.visible).map(([k]) => k);
   const minTableWidth = visibleCols.reduce((s, k) => s + (ALL_COLUMNS[k]?.width || 0), 0) + (compareOn ? 40 : 0);
 
-  // Virtualization
+  // Virtualization. The viewport height is set in CSS (.r-tscroll: 640px on
+  // desktop, 68vh on a phone) and measured here, so the row window always
+  // matches what is actually on screen — a hardcoded height would render too
+  // few rows on tall screens and too many on short ones.
   const ROW_H = 50;
-  const VIEW_H = 640;
   const scrollRef = React.useRef(null);
+  const [viewH, setViewH] = React.useState(640);
+  React.useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(entries => {
+      for (const e of entries) setViewH(e.contentRect.height);
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
   const [scrollTop, setScrollTop] = React.useState(0);
   const startIdx = Math.max(0, Math.floor(scrollTop / ROW_H) - 8);
-  const endIdx = Math.min(data.length, Math.ceil((scrollTop + VIEW_H) / ROW_H) + 8);
+  const endIdx = Math.min(data.length, Math.ceil((scrollTop + viewH) / ROW_H) + 8);
   const visible = data.slice(startIdx, endIdx);
 
   const onScroll = (e) => setScrollTop(e.target.scrollTop);
@@ -76,7 +104,7 @@ export function DataTable({
     color: 'var(--soft)', textTransform: 'uppercase', letterSpacing: '0.08em',
     textAlign: col.align,
     cursor: col.sortable ? 'pointer' : 'default',
-    userSelect: 'none', whiteSpace: 'nowrap',
+    userSelect: 'none', whiteSpace: 'nowrap', overflow: 'hidden',
     background: 'var(--surface)',
     borderBottom: '1px solid var(--line)',
     position: 'sticky', top: 0, zIndex: 2,
@@ -110,18 +138,16 @@ export function DataTable({
         </div>
       </div>
 
-      <div ref={scrollRef} onScroll={onScroll} style={{
-        height: VIEW_H,
-        overflow: 'auto',
-        position: 'relative',
-      }}>
-        <div style={{ minWidth: minTableWidth, position: 'relative' }}>
+      <div ref={scrollRef} onScroll={onScroll} className="r-tscroll">
+        {/* Both templates are published as custom properties; the media query in
+            index.html picks which one applies, and rows inherit them. */}
+        <div className="r-twrap" style={{
+          '--cols': colTemplate(visibleCols, compareOn, false),
+          '--cols-m': colTemplate(visibleCols, compareOn, true),
+          '--tmin': minTableWidth + 'px',
+        }}>
           {/* Header row */}
-          <div style={{
-            display:'grid',
-            gridTemplateColumns: (compareOn ? '40px ' : '') + visibleCols.map(k => `${ALL_COLUMNS[k].width}px`).join(' '),
-            position: 'sticky', top: 0, zIndex: 3,
-          }}>
+          <div className="r-trow r-thead" style={{ position: 'sticky', top: 0, zIndex: 3 }}>
             {compareOn && <div style={headerCellStyle({ align:'center', sortable: false })}></div>}
             {visibleCols.map(k => {
               const col = ALL_COLUMNS[k];
@@ -220,12 +246,11 @@ export function Row({ row, rank, visibleCols, onOpen, pinned, togglePin, compare
 
   return (
     <div
+      className="r-trow"
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       onClick={onRowClick}
       style={{
-        display:'grid',
-        gridTemplateColumns: (compareOn ? '40px ' : '') + visibleCols.map(k => `${ALL_COLUMNS[k].width}px`).join(' '),
         background: bg,
         cursor: 'pointer',
         transition: 'background .1s',

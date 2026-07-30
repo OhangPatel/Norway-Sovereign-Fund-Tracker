@@ -80,14 +80,12 @@ export function Summary({ data, filtered, onPickCompany, onSetFilter, activeSect
 
   return (
     <section style={{ display:'grid', gridTemplateColumns:'1fr', gap: 20 }}>
-      {/* Hero bento (STYLE_GUIDE §6) */}
-      <div style={{
-        display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)',
-        gridAutoRows: 'minmax(118px, auto)', gap: 14,
-      }}>
-        {/* Lead card — spans 3×2 */}
-        <div className="card" style={{
-          gridColumn: 'span 3', gridRow: 'span 2', borderRadius: 24,
+      {/* Hero bento (STYLE_GUIDE §6) — column counts come from .r-bento so they
+          can collapse 4→2→1 with viewport; see index.html. */}
+      <div className="r-bento">
+        {/* Lead card — spans 3×2 on desktop */}
+        <div className="card r-bento-lead" style={{
+          borderRadius: 24,
           padding: 'clamp(28px, 3vw, 44px)',
           display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
         }}>
@@ -107,9 +105,9 @@ export function Summary({ data, filtered, onPickCompany, onSetFilter, activeSect
           </p>
         </div>
 
-        {/* Feature card — spans 1×3, inverts between themes */}
-        <div style={{
-          gridRow: 'span 3', background: 'var(--feature)', color: 'var(--feature-ink)',
+        {/* Feature card — spans 1×3 on desktop, inverts between themes */}
+        <div className="r-bento-feature" style={{
+          background: 'var(--feature)', color: 'var(--feature-ink)',
           borderRadius: 24, padding: '32px 30px',
           display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
           transition: 'transform .18s',
@@ -142,7 +140,7 @@ export function Summary({ data, filtered, onPickCompany, onSetFilter, activeSect
 
       {/* Detail row: holdings table + sector treemap (STYLE_GUIDE §6) */}
       <div style={{ display: 'grid', gap: 14 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.5fr) minmax(0, 1fr)', gap: 14 }}>
+        <div className="r-split">
           <Card title="Top holdings" eyebrow="Market value · NOK"
             rightSlot={<span className="eyebrow">Top 8 / {filtered.length.toLocaleString()}</span>}
           >

@@ -8,3 +8,13 @@ __pycache__/
 
 cache/
 data/snapshots/
+
+# macOS
+.DS_Store
+
+# Runtime state written by the services (not source)
+backend/app/rate_limits.json
+chatbot/rate_state.json
+
+# Build output
+frontend/dist/

@@ -134,7 +134,7 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
           </div>
         </div>
 
-        <div style={{ padding: '28px 32px 48px' }}>
+        <div style={{ padding: 'clamp(20px, 4vw, 28px) clamp(16px, 4vw, 32px) 48px' }}>
           {/* Title block */}
           <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap: 24 }}>
             <div style={{ minWidth: 0 }}>
@@ -161,10 +161,7 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
           </div>
 
           {/* Price block */}
-          <div style={{
-            marginTop: 28,
-            display:'grid', gridTemplateColumns: 'auto 1fr', gap: 28, alignItems: 'flex-end',
-          }}>
+          <div className="r-priceblock" style={{ marginTop: 28 }}>
             <div>
               <div className="eyebrow" style={{ fontSize: 9.5 }}>Last price</div>
               <div style={{ display:'flex', alignItems:'baseline', gap: 10, marginTop: 6 }}>
@@ -259,13 +256,13 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
             borderRadius: 20,
           }}>
             <div className="eyebrow" style={{ marginBottom: 10 }}>Norway GPFG holding</div>
-            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap: 16 }}>
+            <div className="r-metrics3">
               <Metric label="USD value" value={fmt.money(company.mvUsd, 'USD', 2)}/>
               <Metric label="NOK value" value={fmt.money(company.mvNok, 'NOK', 2)}/>
               <Metric label="Ownership" value={fmt.pct(company.ownership, 3)}
                 accent={company.ownership >= 5}/>
             </div>
-            <div style={{ marginTop: 16, paddingTop: 16, borderTop: '1px solid var(--line)', display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap: 16 }}>
+            <div className="r-metrics3" style={{ marginTop: 16, paddingTop: 16, borderTop: '1px solid var(--line)' }}>
               <Metric label="Voting rights" value={fmt.pct(company.voting, 3)}/>
               <Metric label="Mkt cap (USD)" value={fmt.money(company.marketCap, 'USD', 1)}/>
               <Metric label="% of mkt cap"
@@ -276,8 +273,7 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
           {/* Financial metrics */}
           <div style={{ marginTop: 28 }}>
             <div className="eyebrow" style={{ marginBottom: 10 }}>Financials</div>
-            <div style={{
-              display:'grid', gridTemplateColumns:'1fr 1fr', gap: 1,
+            <div className="r-kv2" style={{
               background:'var(--line)', borderRadius: 12, overflow:'hidden',
               border:'1px solid var(--line)'
             }}>

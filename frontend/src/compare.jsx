@@ -25,6 +25,7 @@ export function CompareDock({ companies, onRemove, onClear, onExpand, onOpenComp
       }}>
         <div style={{
           display:'flex', alignItems:'center', justifyContent:'space-between',
+          gap: 10, flexWrap: 'wrap',
           padding: '10px 16px',
           borderBottom: '1px solid var(--line)'
         }}>
@@ -139,7 +140,7 @@ export function CompareModal({ companies, onClose, allData }) {
         animation:'fadeIn .15s ease'
       }}/>
       <div style={{
-        position: 'fixed', inset: 32,
+        position: 'fixed', inset: 'clamp(8px, 3vw, 32px)',
         zIndex: 91,
         background: 'var(--bg)',
         border: '1px solid var(--line)',
@@ -148,8 +149,8 @@ export function CompareModal({ companies, onClose, allData }) {
         display:'flex', flexDirection:'column',
         animation: 'rise .25s cubic-bezier(.22,.61,.36,1)'
       }}>
-        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between',
-          padding: '20px 28px', borderBottom: '1px solid var(--line)' }}>
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap: 12,
+          padding: 'clamp(14px, 3vw, 20px) clamp(16px, 3vw, 28px)', borderBottom: '1px solid var(--line)' }}>
           <div>
             <div className="eyebrow">Side-by-side</div>
             <div className="display" style={{ fontSize: 26, marginTop: 2, letterSpacing:'-0.01em' }}>
@@ -159,15 +160,16 @@ export function CompareModal({ companies, onClose, allData }) {
           <IconBtn onClick={onClose} title="Close"><Icon name="x" size={14}/></IconBtn>
         </div>
 
-        <div style={{ overflow:'auto', padding: '24px 28px 32px' }}>
+        {/* Comparison is inherently wide, so on a phone it scrolls sideways with
+            the row-label column pinned — otherwise the labels scroll away and
+            the numbers lose their meaning. --cmp-n feeds the grid in index.html. */}
+        <div style={{ overflow:'auto', padding: 'clamp(16px, 3vw, 24px) clamp(16px, 3vw, 28px) 32px' }}>
           {/* Company headers */}
-          <div style={{
-            display:'grid',
-            gridTemplateColumns: `180px repeat(${companies.length}, minmax(180px, 1fr))`,
-            gap: 0, alignItems:'end',
-            marginBottom: 16,
+          <div className="r-cmp-row" style={{
+            '--cmp-n': companies.length,
+            alignItems:'end', marginBottom: 16,
           }}>
-            <div></div>
+            <div className="r-cmp-label"></div>
             {companies.map(c => (
               <div key={c.ticker} style={{ padding: '0 14px', borderLeft: '1px solid var(--line)' }}>
                 <span className="mono" style={{
@@ -184,14 +186,13 @@ export function CompareModal({ companies, onClose, allData }) {
 
           {rows.map((row, i) => {
             return (
-              <div key={i} style={{
-                display:'grid',
-                gridTemplateColumns: `180px repeat(${companies.length}, minmax(180px, 1fr))`,
+              <div key={i} className="r-cmp-row" style={{
+                '--cmp-n': companies.length,
                 alignItems:'center',
                 padding: '12px 0',
                 borderTop: row.divider ? '1px solid var(--line)' : '1px solid var(--line)',
               }}>
-                <div className="mono" style={{ fontSize: 10.5, color:'var(--soft)', letterSpacing:'0.06em', textTransform:'uppercase' }}>
+                <div className="mono r-cmp-label" style={{ fontSize: 10.5, color:'var(--soft)', letterSpacing:'0.06em', textTransform:'uppercase', paddingRight: 10 }}>
                   {row.label}
                 </div>
                 {companies.map(c => {

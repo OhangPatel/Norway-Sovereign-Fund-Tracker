@@ -47,14 +47,12 @@ export function TopBar({ data, query, setQuery, theme, setTheme, onPick, compare
       WebkitBackdropFilter: 'blur(14px) saturate(140%)',
       borderBottom: '1px solid var(--line)',
     }}>
-      <div style={{
-        display: 'grid', gridTemplateColumns: 'auto 1fr auto',
-        alignItems: 'center', gap: 16,
+      <div className="r-topbar" style={{
         padding: '14px clamp(16px, 3vw, 32px)',
         maxWidth: 1680, margin: '0 auto',
       }}>
         {/* Brand */}
-        <div style={{ display:'flex', alignItems:'center', gap: 12 }}>
+        <div className="r-brand" style={{ display:'flex', alignItems:'center', gap: 12 }}>
           <div style={{
             width: 28, height: 28, borderRadius: 7,
             background: 'var(--accent)',
@@ -65,14 +63,14 @@ export function TopBar({ data, query, setQuery, theme, setTheme, onPick, compare
             <div className="display" style={{ fontSize: 18, lineHeight: 1, letterSpacing: '-0.015em', fontWeight: 600 }}>
               Sovereign <span style={{ color: 'var(--accent-text)' }}>Insights</span>
             </div>
-            <div className="eyebrow" style={{ marginTop: 3, fontSize: 9.5 }}>
-              Norway GPFG · Equity Holdings · {lastFetched}
+            <div className="eyebrow" style={{ marginTop: 3, fontSize: 9.5, whiteSpace: 'nowrap' }}>
+              Norway GPFG<span className="r-hide-sm"> · Equity Holdings</span> · {lastFetched}
             </div>
           </div>
         </div>
 
         {/* Search */}
-        <div ref={wrapRef} style={{ position: 'relative', maxWidth: 540, width: '100%', justifySelf:'center' }}>
+        <div ref={wrapRef} className="r-search" style={{ position: 'relative', maxWidth: 540, width: '100%', justifySelf:'center' }}>
           <div style={{
             display:'flex', alignItems:'center', gap: 10,
             padding: '9px 16px',
@@ -142,10 +140,10 @@ export function TopBar({ data, query, setQuery, theme, setTheme, onPick, compare
           )}
         </div>
 
-        {/* Right actions */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        {/* Right actions — labels collapse to icons on the smallest screens. */}
+        <div className="r-actions" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <TopBtn onClick={onOpenColumns} title="Columns">
-            <Icon name="columns" size={14}/> <span>Columns</span>
+            <Icon name="columns" size={14}/> <span className="r-hide-sm">Columns</span>
           </TopBtn>
           <TopBtn
             active={compareOn}
@@ -153,7 +151,7 @@ export function TopBar({ data, query, setQuery, theme, setTheme, onPick, compare
             title="Compare mode (multi-select rows to compare)"
           >
             <Icon name="compare" size={14}/>
-            <span>Compare</span>
+            <span className="r-hide-sm">Compare</span>
             {compareCount > 0 && (
               <span className="mono" style={{
                 padding: '1px 6px', borderRadius: 999,

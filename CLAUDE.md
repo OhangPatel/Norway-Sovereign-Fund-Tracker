@@ -42,6 +42,8 @@ When your changes create orphans:
 
 The test: Every changed line should trace directly to the user's request.
 
+**Exception:** when the true cause of a bug lies outside the file you're editing, §5 takes precedence over this section. Scope follows the root cause, not the symptom.
+
 ## 4. Goal-Driven Execution
 
 **Define success criteria. Loop until verified.**
@@ -60,6 +62,40 @@ For multi-step tasks, state a brief plan:
 
 Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
 
+## 5. Root Cause Over Symptom
+
+**Prefer the permanent fix. A patch that hides a problem is not a fix.**
+
+- Find *why* it breaks, not just *where* it surfaces. Fix the origin.
+- If only a mitigation is possible right now, say so explicitly: name the root cause and what the real fix would be. Never present a workaround as though it were a fix.
+- A permanent fix touching three files beats a one-line patch that leaves the cause in place. The extra scope must be what the root cause actually requires — §2 still forbids speculative work.
+
+Symptom vs. cause, concretely:
+
+| Symptom patch | Root-cause fix |
+|---|---|
+| Guard against a null | Find what produces the null |
+| Raise a timeout | Find what got slow |
+| Wrap a failing call in try/except | Find why it throws |
+| Dedupe in the consumer | Fix the producer emitting duplicates |
+| Cast/coerce a wrong type | Fix where the wrong type originates |
+
+**If the root cause needs a decision only the user can make** — a schema change, a breaking API change, a data-model or product call — stop and ask. Do not quietly ship the patch instead.
+
+## 6. Working Agreement
+
+**One problem at a time. Ask rather than guess.**
+
+- Work the single problem given. Don't fold in unrelated fixes — flag them and move on.
+- If you don't know, say you don't know. A confidently wrong answer costs far more than a question.
+- Verify before claiming. "Should work" is not verification: run it, or state plainly that you didn't.
+
+When presenting options, always give all three:
+
+1. **Advantages** — what it buys.
+2. **Downsides** — the real cost, including what it forecloses later.
+3. **Recommendation** — pick one and say why. Don't lay out a menu and abstain.
+
 ---
 
-**These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
+**These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, root causes get fixed instead of papered over, and clarifying questions come before implementation rather than after mistakes.

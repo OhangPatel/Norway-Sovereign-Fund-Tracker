@@ -1,0 +1,14 @@
+/* TEAM */
+    Developer: Ohang Patel
+    Site: https://learnbasecase.com
+    Location: Winnipeg, Canada
+
+/* SITE */
+    Name: Sovereign Insights
+    Description: Equity holdings of Norway's Government Pension Fund Global,
+                 tracked position by position.
+    Standards: HTML5, CSS3, ES2022
+    Components: React 19, Vite
+    Backend: FastAPI (Python), SQLite, yfinance
+    Data source: NBIM public holdings disclosure + Yahoo Finance
+    Hosting: Hostinger (static frontend), Render (APIs)
