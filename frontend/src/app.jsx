@@ -564,6 +564,9 @@ export function App() {
           }}>
             <span>Press <kbd style={kbd}>/</kbd> to search · <kbd style={kbd}>Esc</kbd> to close</span>
             <span>Norway GPFG · {data.length.toLocaleString()} positions · USD values estimated at acquisition FX · <a
+              href="/holdings/"
+              style={{ color: 'var(--accent-text)', textDecoration: 'underline' }}
+            >Browse by sector</a> · <a
               href="https://learnbasecase.com"
               target="_blank"
               rel="noopener noreferrer"

@@ -7,7 +7,7 @@
   "display": "standalone",
   "orientation": "any",
   "background_color": "#F4F3EE",
-  "theme_color": "#D6E134",
+  "theme_color": "#16181B",
   "lang": "en",
   "categories": ["finance", "business", "education"],
   "icons": [
@@ -15,6 +15,18 @@
       "src": "/favicon.svg",
       "type": "image/svg+xml",
       "sizes": "any",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
       "purpose": "any"
     }
   ]

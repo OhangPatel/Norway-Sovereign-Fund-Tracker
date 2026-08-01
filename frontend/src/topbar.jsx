@@ -1,5 +1,5 @@
 import React from 'react';
-import { fmt, Icon } from './format.jsx';
+import { fmt, Icon, BrandMark } from './format.jsx';
 
 // Top navigation bar with brand, search, theme toggle, compare toggle
 
@@ -53,12 +53,7 @@ export function TopBar({ data, query, setQuery, theme, setTheme, onPick, compare
       }}>
         {/* Brand */}
         <div className="r-brand" style={{ display:'flex', alignItems:'center', gap: 12 }}>
-          <div style={{
-            width: 28, height: 28, borderRadius: 7,
-            background: 'var(--accent)',
-            display:'grid', placeItems:'center',
-            color: 'var(--treemap-cell-fg)', fontFamily: 'var(--font-display)', fontSize: 16, fontWeight: 700,
-          }}>S</div>
+          <BrandMark size={28}/>
           <div>
             <div className="display" style={{ fontSize: 18, lineHeight: 1, letterSpacing: '-0.015em', fontWeight: 600 }}>
               Sovereign <span style={{ color: 'var(--accent-text)' }}>Insights</span>

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="64" viewBox="0 0 360 64" fill="none">
+  <rect y="8" width="48" height="48" rx="5" fill="#16181B"></rect>
+  <path d="M9 40V24l7.5 8L24 22l7.5 10L39 24v16z" fill="#F7F6F2"></path>
+  <rect x="9" y="43" width="30" height="4" fill="#C9A227"></rect>
+  <text x="66" y="34" font-family="IBM Plex Sans, Helvetica, Arial, sans-serif" font-size="22" font-weight="600" letter-spacing="-0.33" fill="#15171A">Sovereign Insights</text>
+  <text x="66" y="50" font-family="IBM Plex Mono, monospace" font-size="9" letter-spacing="1.26" fill="#6F7069">NORWAY GPFG · EQUITY HOLDINGS</text>
+</svg>

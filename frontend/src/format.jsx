@@ -141,6 +141,22 @@ export function MicroBar({ value, max, tone = 'accent', height = 4 }) {
   );
 }
 
+// Crown Ridge brand mark — geometry from logo/crown-ridge-mark.svg.
+// Inlined rather than an <img> so it can follow the theme (on the onyx ground the
+// tile darkens and gains a hairline, matching logo/crown-ridge-dark.svg) and so it
+// costs no extra request. Decorative: the adjacent wordmark carries the name.
+export function BrandMark({ size = 28 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none"
+      aria-hidden="true" focusable="false" style={{ flexShrink: 0 }}>
+      <rect x="0.5" y="0.5" width="47" height="47" rx="5"
+        fill="var(--logo-tile)" stroke="var(--logo-stroke)"/>
+      <path d="M9 32V16l7.5 8L24 14l7.5 10L39 16v16z" fill="var(--logo-crown)"/>
+      <rect x="9" y="35" width="30" height="4" fill="var(--logo-gold)"/>
+    </svg>
+  );
+}
+
 // Icon (24px stroke) — minimal, sketched glyphs
 export function Icon({ name, size = 16, color = 'currentColor', strokeWidth = 1.5 }) {
   const props = {

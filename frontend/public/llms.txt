@@ -14,7 +14,7 @@ want to see how a sovereign wealth fund allocates capital, company by company.
 
 - **Source**: NBIM's published GPFG equity holdings disclosure, joined with market
   data from Yahoo Finance.
-- **Snapshot date**: 2026-07-06. The dataset is a point-in-time snapshot, not a
+- **Snapshot date**: 2026-06-22. The dataset is a point-in-time snapshot, not a
   live feed. Prices shown in the table are as of the snapshot.
 - **Positions**: 1,430 listed companies.
 - **Markets**: Canada, Germany, India, Singapore, United Kingdom, United States.

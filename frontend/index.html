@@ -4,10 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
 
     <title>Sovereign Insights — Norway GPFG Equity Holdings Tracker</title>
-    <meta name="description" content="Explore all 1,430 public equity positions held by Norway's Government Pension Fund Global. Filter by country, sector, and ownership stake; compare companies side by side." />
+    <meta name="description" content="All 1,430 equity positions held by Norway's Government Pension Fund Global — filter by country, sector, and ownership stake, and compare side by side." />
     <link rel="canonical" href="https://invest.learnbasecase.com/" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
     <meta name="author" content="Basecase" />
@@ -18,10 +20,9 @@
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Sovereign Insights" />
     <meta property="og:title" content="Sovereign Insights — Norway GPFG Equity Holdings Tracker" />
-    <meta property="og:description" content="Explore all 1,430 public equity positions held by Norway's Government Pension Fund Global. Filter by country, sector, and ownership stake; compare companies side by side." />
+    <meta property="og:description" content="All 1,430 equity positions held by Norway's Government Pension Fund Global — filter by country, sector, and ownership stake, and compare side by side." />
     <meta property="og:url" content="https://invest.learnbasecase.com/" />
     <meta property="og:locale" content="en_US" />
-    <!-- TODO: add a 1200x630 PNG at frontend/public/og-image.png (see audit report). -->
     <meta property="og:image" content="https://invest.learnbasecase.com/og-image.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -85,7 +86,7 @@
           "url": "https://invest.learnbasecase.com/",
           "license": "https://invest.learnbasecase.com/",
           "creator": { "@id": "https://learnbasecase.com/#organization" },
-          "temporalCoverage": "2026-07-06",
+          "temporalCoverage": "2026-06-22",
           "spatialCoverage": "Canada, Germany, India, Singapore, United Kingdom, United States",
           "variableMeasured": [
             "Market value (USD)", "Market value (NOK)", "Ownership percentage",
@@ -128,7 +129,7 @@
               "name": "Is the data live?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "No. The holdings table is a point-in-time snapshot dated 2026-07-06. Price history charts and the optional spot-price check are fetched live from Yahoo Finance when you open a company, but they are not stored."
+                "text": "No. The holdings table is a point-in-time snapshot dated 2026-06-22. Price history charts and the optional spot-price check are fetched live from Yahoo Finance when you open a company, but they are not stored."
               }
             },
             {
@@ -197,6 +198,14 @@
 
         --font-display: 'Space Grotesk', sans-serif;
         --font-mono: 'JetBrains Mono', monospace;
+
+        /* Crown Ridge logo — its own palette, kept separate from --accent on
+           purpose. The mark is the brand; lime stays the UI accent. On a light
+           ground the tile is solid dark and needs no edge. */
+        --logo-tile: #16181B;
+        --logo-stroke: transparent;
+        --logo-crown: #F7F6F2;
+        --logo-gold: #C9A227;
       }
 
       :root[data-theme="dark"] {
@@ -237,6 +246,13 @@
 
         --font-display: 'Space Grotesk', sans-serif;
         --font-mono: 'JetBrains Mono', monospace;
+
+        /* On the onyx ground the tile would disappear, so it darkens slightly
+           and takes a hairline edge — this is logo/crown-ridge-dark.svg. */
+        --logo-tile: #0F1113;
+        --logo-stroke: #2B2F33;
+        --logo-crown: #F7F6F2;
+        --logo-gold: #C9A227;
       }
 
       * { box-sizing: border-box; }
@@ -402,12 +418,15 @@
           Management (NBIM).
         </p>
         <p>
-          <strong>This dashboard requires JavaScript.</strong> Please enable it to
-          filter, sort, and compare holdings.
+          <strong>The interactive dashboard requires JavaScript</strong> to filter,
+          sort, and compare. Every holding is also published as plain HTML that needs
+          no JavaScript: <a href="/holdings/"><strong>browse all 1,430 holdings by
+          sector</strong></a>, with fund value, ownership stake, and valuation
+          metrics for each company.
         </p>
         <h2>What the dataset covers</h2>
         <ul>
-          <li>1,430 listed companies, as of the 2026-07-06 snapshot.</li>
+          <li>1,430 listed companies, as of the 2026-06-22 snapshot.</li>
           <li>Six markets: Canada, Germany, India, Singapore, the United Kingdom, and the United States.</li>
           <li>Eleven sectors, from Technology and Financial Services to Utilities and Real Estate.</li>
           <li>
