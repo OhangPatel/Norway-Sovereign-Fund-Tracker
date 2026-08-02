@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  body { margin:0; background:#E3E8CE; font-family:'Space Grotesk',system-ui,sans-serif; }
+  a { color:#5A6B12; } a:hover { color:#16170F; }
+  @keyframes sweep { 0% { background-position:-140% 0; } 60%,100% { background-position:240% 0; } }
+  @keyframes marquee { from { transform:translateX(0); } to { transform:translateX(-50%); } }
+  @keyframes pulseDot { 0%,100% { opacity:1; transform:scale(1);} 50% { opacity:.35; transform:scale(.7);} }
+</style>
+</helmet>
+
+<div style="max-width:1040px; margin:0 auto; padding:56px 48px 96px; display:flex; flex-direction:column; gap:34px">
+
+  <div style="background:#14150F; border-radius:20px; padding:34px 36px; display:flex; flex-direction:column; gap:16px">
+    <div style="display:flex; align-items:center; gap:10px; font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.16em; color:#8F9180">
+      <span style="width:6px; height:6px; border-radius:50%; background:#D8F34A; animation:pulseDot 1.8s infinite"></span>UI-ONLY REDESIGN BRIEF · SOVEREIGN INSIGHTS
+    </div>
+    <div style="font-size:44px; line-height:1.05; font-weight:600; letter-spacing:-.03em; color:#F4F2EC; text-wrap:balance">Restyle the existing app. Do not rebuild it.</div>
+    <div style="font-size:16px; line-height:1.6; color:#95978A; max-width:640px; text-wrap:pretty">Every route, component, prop, handler, data fetch and piece of state stays exactly as it is today. This document changes only what things look like: page background, navbar, cards, type, and a short list of animations. Two themes ship: <strong style="color:#D8F34A">Light = Olive wash</strong> and <strong style="color:#D8F34A">Dark = Ink field</strong>.</div>
+    <div style="font-size:34px; font-weight:600; letter-spacing:-.03em; background:linear-gradient(100deg,#D8F34A 30%,#FFFFFF 50%,#D8F34A 70%); background-size:220% 100%; -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; animation:sweep 5s 1s infinite">$ 955.8B</div>
+  </div>
+
+  <div style="background:#FFFFFF; border:1px solid #E3E8D3; border-radius:18px; padding:30px 34px; display:flex; flex-direction:column; gap:14px">
+    <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.14em; color:#6C8118">01 · RULES OF ENGAGEMENT</div>
+    <div style="font-size:26px; font-weight:600; letter-spacing:-.02em; color:#16170F">What must not change</div>
+    <ul style="margin:0; padding-left:20px; display:flex; flex-direction:column; gap:9px; font-size:15px; line-height:1.55; color:#4B4C40">
+      <li>All button behaviour, links, routing, keyboard shortcuts (<code style="font-family:'JetBrains Mono',monospace; font-size:13px; background:#F1F4E4; padding:1px 5px; border-radius:4px">/</code> focuses search), sort/filter/compare logic, API calls, and state management.</li>
+      <li>Component tree and DOM structure — restyle in place; no re-parenting, no renaming props, no new libraries.</li>
+      <li>Copy, numbers, labels, and column order stay as-is.</li>
+      <li><strong>The existing logo asset in the project is kept unchanged</strong> — same file, same mark. It is only re-mounted in a 26–30px rounded ink tile (radius 8–9px) inside the navbar; do not redraw, recolour, or replace it.</li>
+      <li>Accessibility: keep existing focus outlines, aria labels, and tab order. New hover styles must not remove focus rings.</li>
+    </ul>
+  </div>
+
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px">
+    <div style="background:#FFFFFF; border:1px solid #E3E8D3; border-radius:18px; padding:26px 28px; display:flex; flex-direction:column; gap:12px">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.14em; color:#6C8118">02A · LIGHT THEME “OLIVE WASH”</div>
+      <div style="display:flex; flex-direction:column; gap:8px; font-family:'JetBrains Mono',monospace; font-size:13px; color:#4B4C40">
+        <div style="display:flex; align-items:center; gap:10px"><span style="width:22px; height:22px; border-radius:6px; background:#E3E8CE; border:1px solid #CFD6B4"></span>#E3E8CE — page field</div>
+        <div style="display:flex; align-items:center; gap:10px"><span style="width:22px; height:22px; border-radius:6px; background:#FFFFFF; border:1px solid #E3E8D3"></span>#FFFFFF — cards / tiles</div>
+        <div style="display:flex; align-items:center; gap:10px"><span style="width:22px; height:22px; border-radius:6px; background:#E3E8D3"></span>#E3E8D3 — card border</div>
+        <div style="display:flex; align-items:center; gap:10px"><span style="width:22px; height:22px; border-radius:6px; background:#16170F"></span>#16170F — primary text, ink buttons</div>
+        <div style="display:flex; align-items:center; gap:10px"><span style="width:22px; height:22px; border-radius:6px; background:#6F6D5F"></span>#6F6D5F body · #A3A88F meta labels</div>
+        <div style="display:flex; align-items:center; gap:10px"><span style="width:22px; height:22px; border-radius:6px; background:#D8F34A"></span>#D8F34A — lime accent (indicator, bars)</div>
+      </div>
+      <div style="font-size:14px; line-height:1.55; color:#4B4C40">Total-holdings card stays ink #14150F with lime numerals. Ticker band on this theme is <strong>ink</strong> with lime/coral deltas.</div>
+    </div>
+    <div style="background:#14150F; border-radius:18px; padding:26px 28px; display:flex; flex-direction:column; gap:12px">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.14em; color:#D8F34A">02B · DARK THEME “INK FIELD”</div>
+      <div style="display:flex; flex-direction:column; gap:8px; font-family:'JetBrains Mono',monospace; font-size:13px; color:#95978A">
+        <div style="display:flex; align-items:center; gap:10px"><span style="width:22px; height:22px; border-radius:6px; background:#14150F; border:1px solid #2C2E20"></span>#14150F — page field</div>
+        <div style="display:flex; align-items:center; gap:10px"><span style="width:22px; height:22px; border-radius:6px; background:#1D1F14; border:1px solid #2C2E20"></span>#1D1F14 — tiles · #2C2E20 border</div>
+        <div style="display:flex; align-items:center; gap:10px"><span style="width:22px; height:22px; border-radius:6px; background:#FFFDF7"></span>#FFFDF7 — hero card stays cream</div>
+        <div style="display:flex; align-items:center; gap:10px"><span style="width:22px; height:22px; border-radius:6px; background:#D8F34A"></span>#D8F34A — total-holdings card fill</div>
+        <div style="display:flex; align-items:center; gap:10px"><span style="width:22px; height:22px; border-radius:6px; background:#F4F2EC"></span>#F4F2EC text · #6E7060 meta labels</div>
+      </div>
+      <div style="font-size:14px; line-height:1.55; color:#95978A">Page carries one soft lime glow: <code style="font-family:'JetBrains Mono',monospace; font-size:12px">radial-gradient(90% 60% at 85% -10%, rgba(216,243,74,.13), transparent 60%)</code>. Ticker band stays lime with dark-green / dark-red deltas.</div>
+    </div>
+  </div>
+
+  <div style="background:#FFFFFF; border:1px solid #E3E8D3; border-radius:18px; padding:30px 34px; display:flex; flex-direction:column; gap:14px">
+    <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.14em; color:#6C8118">03 · NAVBAR</div>
+    <div style="font-size:26px; font-weight:600; letter-spacing:-.02em; color:#16170F">Floating card nav with a live ticker band</div>
+    <ul style="margin:0; padding-left:20px; display:flex; flex-direction:column; gap:9px; font-size:15px; line-height:1.55; color:#4B4C40">
+      <li><strong>Not full-bleed.</strong> The bar floats: 14–18px inset from the page edges, sticky at top, radius 14–16px on the top corners only — the ticker band below it carries the bottom corners, so nav + band read as one card.</li>
+      <li>Height 62–68px. Contents in one flex row, gap 16–20px: logo tile + wordmark (divider hairline after it) · tab group · search (flex:1) · COLUMNS (outline) · COMPARE (ink fill, lime text).</li>
+      <li>Search field: inner tint (#F4F6EA light / #F2EFE4 dark-theme nav), 1px border, radius 10px, mono <code style="font-family:'JetBrains Mono',monospace; font-size:13px">/</code> key hint at the right.</li>
+      <li>Tabs are mono 11–12px, letter-spacing .1em, uppercase. Active tab sits on a solid lime #D8F34A block (radius 8px); inactive #8A8877.</li>
+      <li>Ticker band: 26–28px tall, one continuous marquee line of the tickers.</li>
+      <li>Same nav in both themes; only the band and surface colours flip.</li>
+    </ul>
+  </div>
+
+  <div style="background:#FFFFFF; border:1px solid #E3E8D3; border-radius:18px; padding:30px 34px; display:flex; flex-direction:column; gap:14px">
+    <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.14em; color:#6C8118">04 · TICKER DIRECTION COLOURS</div>
+    <div style="font-size:26px; font-weight:600; letter-spacing:-.02em; color:#16170F">Up is green, down is red — on both bands</div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px">
+      <div style="border-radius:12px; overflow:hidden; border:1px solid #E3E8D3">
+        <div style="background:#D8F34A; height:30px; overflow:hidden"><div style="display:flex; gap:28px; width:max-content; font-family:'JetBrains Mono',monospace; font-size:11px; color:#2C3505; padding-top:9px; animation:marquee 20s linear infinite"><span>NVDA <span style="color:#15490A; font-weight:600">▲ 573.9B</span></span><span>MSFT <span style="color:#8E1104; font-weight:600">▼ 458.6B</span></span><span>OSEBX <span style="color:#15490A; font-weight:600">▲ 0.61%</span></span><span>NVDA <span style="color:#15490A; font-weight:600">▲ 573.9B</span></span><span>MSFT <span style="color:#8E1104; font-weight:600">▼ 458.6B</span></span><span>OSEBX <span style="color:#15490A; font-weight:600">▲ 0.61%</span></span></div></div>
+        <div style="padding:12px 14px; font-family:'JetBrains Mono',monospace; font-size:12px; color:#4B4C40">On lime: up #15490A · down #8E1104</div>
+      </div>
+      <div style="border-radius:12px; overflow:hidden; border:1px solid #E3E8D3">
+        <div style="background:#16170F; height:30px; overflow:hidden"><div style="display:flex; gap:28px; width:max-content; font-family:'JetBrains Mono',monospace; font-size:11px; color:#8F9180; padding-top:9px; animation:marquee 20s linear infinite"><span>NVDA <span style="color:#9BE04A; font-weight:600">▲ 573.9B</span></span><span>MSFT <span style="color:#FF7A6B; font-weight:600">▼ 458.6B</span></span><span>OSEBX <span style="color:#9BE04A; font-weight:600">▲ 0.61%</span></span><span>NVDA <span style="color:#9BE04A; font-weight:600">▲ 573.9B</span></span><span>MSFT <span style="color:#FF7A6B; font-weight:600">▼ 458.6B</span></span><span>OSEBX <span style="color:#9BE04A; font-weight:600">▲ 0.61%</span></span></div></div>
+        <div style="padding:12px 14px; font-family:'JetBrains Mono',monospace; font-size:12px; color:#4B4C40">On ink: up #9BE04A · down #FF7A6B</div>
+      </div>
+    </div>
+    <div style="font-size:15px; line-height:1.55; color:#4B4C40">Arrow glyph + value share one coloured span, weight 600; the ticker symbol stays neutral. Direction comes from the same field the table already sorts on — no new data.</div>
+  </div>
+
+  <div style="background:#FFFFFF; border:1px solid #E3E8D3; border-radius:18px; padding:30px 34px; display:flex; flex-direction:column; gap:14px">
+    <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.14em; color:#6C8118">05 · CARDS, TYPE, GRID</div>
+    <ul style="margin:0; padding-left:20px; display:flex; flex-direction:column; gap:9px; font-size:15px; line-height:1.55; color:#4B4C40">
+      <li>Grid: 16px gutters, 22px page padding. Hero row is <code style="font-family:'JetBrains Mono',monospace; font-size:13px">1fr 380px</code> (hero card + total holdings), then a 3-up stat row, then the two analysis cards.</li>
+      <li>Cards: radius 16–18px, 1px border, no drop shadow at rest. Padding 22–28px; hero card 38–40px.</li>
+      <li>Type: Space Grotesk 600 for numbers and headings (hero 54px / stat 38px / card title 24px, letter-spacing −.02 to −.03em); JetBrains Mono 10–12px uppercase, letter-spacing .14em for every label, meta and value cell.</li>
+      <li>Bars in Top holdings: 4px, radius 3px, lime; rail behind them is the card border colour.</li>
+    </ul>
+  </div>
+
+  <div style="background:#14150F; border-radius:18px; padding:30px 34px; display:flex; flex-direction:column; gap:16px">
+    <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.14em; color:#D8F34A">06 · ANIMATION SET</div>
+    <div style="font-size:26px; font-weight:600; letter-spacing:-.02em; color:#F4F2EC">Seven motions, nothing else</div>
+    <div style="display:flex; flex-direction:column; gap:10px; font-size:15px; line-height:1.5; color:#95978A">
+      <div><strong style="color:#F4F2EC">1 · Ticker marquee</strong> — single row, translateX 0 → −50% over 22s, linear, infinite (content duplicated once). Pauses on hover.</div>
+      <div><strong style="color:#F4F2EC">2 · Total-holdings shimmer</strong> — the big figure is a clipped gradient sweeping across the numerals, 5s infinite with a 1s delay. Light theme: lime → white → lime on ink. Dark theme: ink → white → ink on the lime card.</div>
+      <div><strong style="color:#F4F2EC">3 · Tab indicator</strong> — lime block slides between tabs, 350ms <code style="font-family:'JetBrains Mono',monospace; font-size:12px">cubic-bezier(.34,1.3,.44,1)</code> on transform + width (slight overshoot).</div>
+      <div><strong style="color:#F4F2EC">4 · Nav condense on scroll</strong> — past 40px the bar goes 68px → 56px and the ticker band collapses to 0 height, 300–320ms <code style="font-family:'JetBrains Mono',monospace; font-size:12px">cubic-bezier(.2,.7,.3,1)</code>.</div>
+      <div><strong style="color:#F4F2EC">5 · Card entry</strong> — opacity 0 / translateY 14px → rest, 600ms, staggered 60ms per card, once on mount only.</div>
+      <div><strong style="color:#F4F2EC">6 · Card hover</strong> — translateY(−4px) + soft shadow, 250ms. Buttons: translateY(−1px). Search: border to ink + 4px lime ring.</div>
+      <div><strong style="color:#F4F2EC">7 · Live dot</strong> — 6px lime dot pulsing opacity/scale, 1.8s infinite.</div>
+      <div style="padding-top:6px; color:#6E7060">All of it honours <code style="font-family:'JetBrains Mono',monospace; font-size:12px">prefers-reduced-motion: reduce</code> — marquee, shimmer and entry animations stop; hover and indicator transitions drop to 0ms.</div>
+    </div>
+  </div>
+
+  <div style="background:#FFFFFF; border:1px solid #E3E8D3; border-radius:18px; padding:30px 34px; display:flex; flex-direction:column; gap:14px">
+    <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.14em; color:#6C8118">07 · ORDER OF WORK</div>
+    <ol style="margin:0; padding-left:20px; display:flex; flex-direction:column; gap:9px; font-size:15px; line-height:1.55; color:#4B4C40">
+      <li>Swap the two theme palettes in at the root; verify nothing else moved.</li>
+      <li>Restyle the navbar shell to the floating card + ticker band (markup order unchanged).</li>
+      <li>Apply direction colours in the ticker row.</li>
+      <li>Card, type and grid pass.</li>
+      <li>Add the seven animations last, then the reduced-motion overrides.</li>
+    </ol>
+    <div style="font-size:14px; line-height:1.55; color:#8A8877">Reference frames: light = <a href="Sovereign Insights - Navbar Options.dc.html#3c">3C Olive wash</a>, dark = <a href="Sovereign Insights - Navbar Options.dc.html#3b">3B Ink field</a>, navbar = <a href="Sovereign Insights - Navbar Options.dc.html#2b">2B Lime Rail</a>.</div>
+  </div>
+
+</div>
+
+</x-dc>
+</body>
+</html>
