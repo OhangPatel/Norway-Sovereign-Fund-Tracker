@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+import hmac
 import sqlite3
 from pathlib import Path
 import json
@@ -13,7 +14,16 @@ from contextlib import contextmanager
 from datetime import datetime, date, timedelta, timezone
 import yfinance as yf
 
-app = FastAPI(title="NBIM Tracker API")
+# /docs, /redoc and /openapi.json publish a machine-readable index of every
+# endpoint — including the pipeline triggers below, which launch a browser and
+# multi-minute jobs on this host. Off unless ENABLE_API_DOCS is explicitly set.
+_DOCS = os.getenv("ENABLE_API_DOCS", "").strip().lower() in ("1", "true", "yes")
+app = FastAPI(
+    title="NBIM Tracker API",
+    docs_url="/docs" if _DOCS else None,
+    redoc_url="/redoc" if _DOCS else None,
+    openapi_url="/openapi.json" if _DOCS else None,
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -24,7 +34,10 @@ app.add_middleware(
         "ALLOWED_ORIGINS",
         "http://localhost:5173,http://127.0.0.1:5173,http://localhost:8080,http://127.0.0.1:8080",
     ).split(","),
-    allow_credentials=True,
+    # This API has no cookies or session auth, so credentials are never needed.
+    # Leaving it on is a live footgun: with ALLOWED_ORIGINS="*" during debugging,
+    # Starlette would echo the caller's origin AND allow credentials.
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -33,6 +46,43 @@ DB_PATH = Path(__file__).resolve().parent.parent / "nbim.db"
 PIPELINE_DIR = Path(__file__).resolve().parent.parent / "pipeline"
 RATE_LIMIT_FILE = Path(__file__).resolve().parent / "rate_limits.json"
 MAX_METRICS_RUNS_PER_DAY = 2
+
+# ── Admin gate for the pipeline triggers ──────────────────────────────────────
+# POST /api/pipeline/* starts a Playwright scrape or a 10-20 minute yfinance job
+# ON THIS SERVER. Those must never be reachable anonymously. Fail closed: with no
+# token configured the endpoints return 404 and are effectively absent, which is
+# the correct default for the public deployment. Set PIPELINE_ADMIN_TOKEN only
+# where an operator actually drives the pipeline (i.e. your local .env).
+# The frontend's VITE_ENABLE_PIPELINE flag only hides the buttons; it has never
+# had any bearing on whether these endpoints answer.
+PIPELINE_ADMIN_TOKEN = os.getenv("PIPELINE_ADMIN_TOKEN", "").strip()
+
+
+def _deny_admin(request: Request):
+    """Returns a JSONResponse to short-circuit with, or None when authorised."""
+    if not PIPELINE_ADMIN_TOKEN:
+        return JSONResponse(status_code=404, content={"detail": "Not Found"})
+    supplied = request.headers.get("x-admin-token", "")
+    # compare_digest so a wrong token can't be narrowed down by response timing.
+    if not hmac.compare_digest(supplied, PIPELINE_ADMIN_TOKEN):
+        return JSONResponse(status_code=401, content={"error": "Unauthorized"})
+    return None
+
+
+# Behind a reverse proxy (Render) request.client.host is the PROXY, so every
+# visitor would share one rate-limit bucket. Mirrors chatbot/server.py.
+TRUST_PROXY = os.getenv("TRUST_PROXY", "").strip().lower() in ("1", "true", "yes")
+
+
+def _client_ip(request: Request) -> str:
+    """Best-effort real client IP. X-Forwarded-For is client-spoofable, so this
+    bounds accidental bursts rather than a determined attacker. request.client is
+    Optional in Starlette — reading .host blindly raises and becomes a 500."""
+    if TRUST_PROXY:
+        xff = request.headers.get("x-forwarded-for")
+        if xff and xff.split(",")[0].strip():
+            return xff.split(",")[0].strip()
+    return request.client.host if request.client else "unknown"
 
 # ── Pipeline state ────────────────────────────────────────────────────────────
 _lock = threading.Lock()
@@ -104,6 +154,12 @@ def _check_ip_rate(ip: str) -> bool:
     """Sliding-window per-IP limiter. Returns False when the caller is over budget."""
     now = time.time()
     with _ip_lock:
+        # Drop buckets that are entirely expired. Without this the dict keeps one
+        # permanent entry per unique visitor forever — a slow leak that eventually
+        # OOMs a 512 MB instance. (chatbot/security.py already prunes this way.)
+        for stale in [k for k, v in _ip_calls.items()
+                      if not v or now - v[-1] >= IP_WINDOW]:
+            del _ip_calls[stale]
         recent = [t for t in _ip_calls.get(ip, []) if now - t < IP_WINDOW]
         if len(recent) >= IP_MAX_CALLS:
             _ip_calls[ip] = recent
@@ -244,15 +300,27 @@ def get_pipeline_status():
 
 
 @app.post("/api/pipeline/fetch-clean")
-def trigger_fetch_clean():
+def trigger_fetch_clean(request: Request):
+    deny = _deny_admin(request)
+    if deny:
+        return deny
     if not _lock.acquire(blocking=False):
         return JSONResponse(status_code=409, content={"error": "A pipeline job is already running"})
-    threading.Thread(target=_fetch_clean_worker, daemon=True).start()
+    try:
+        threading.Thread(target=_fetch_clean_worker, daemon=True).start()
+    except Exception:
+        # The worker releases this lock in its finally; if the thread never starts,
+        # nothing ever would, and every later run returns 409 until a restart.
+        _lock.release()
+        raise
     return {"message": "Fetch & clean started"}
 
 
 @app.post("/api/pipeline/metrics-merge")
-def trigger_metrics_merge():
+def trigger_metrics_merge(request: Request):
+    deny = _deny_admin(request)
+    if deny:
+        return deny
     today_runs = _count_today_metrics_runs()
     if today_runs >= MAX_METRICS_RUNS_PER_DAY:
         return JSONResponse(
@@ -261,7 +329,11 @@ def trigger_metrics_merge():
         )
     if not _lock.acquire(blocking=False):
         return JSONResponse(status_code=409, content={"error": "A pipeline job is already running"})
-    threading.Thread(target=_metrics_merge_worker, daemon=True).start()
+    try:
+        threading.Thread(target=_metrics_merge_worker, daemon=True).start()
+    except Exception:
+        _lock.release()
+        raise
     return {"message": "Metrics fetch & merge started"}
 
 
@@ -333,7 +405,7 @@ def get_price_history(ticker: str, request: Request, range: str = Query("1y")):
             content={"error": f"range must be one of {', '.join(_HISTORY_RANGES)}"},
         )
 
-    if not _check_ip_rate(request.client.host):
+    if not _check_ip_rate(_client_ip(request)):
         return JSONResponse(status_code=429, content={"error": "Too many requests — slow down"})
 
     try:
@@ -364,7 +436,7 @@ def get_price_history(ticker: str, request: Request, range: str = Query("1y")):
 def get_quote(ticker: str, request: Request):
     """Live current price for one ticker. On-demand and throttled; the result is
     transient (the frontend shows it inline and never stores it)."""
-    if not _check_ip_rate(request.client.host):
+    if not _check_ip_rate(_client_ip(request)):
         return JSONResponse(status_code=429, content={"error": "Too many requests — slow down"})
 
     try:
