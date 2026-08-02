@@ -88,11 +88,11 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
   };
 
   const peerSet = allData
-    .filter(c => (c.sector || c.industry) === (company.sector || company.industry) && c.ticker !== company.ticker)
+    .filter(c => (c.sector || c.industry) === (company.sector || company.industry) && c.id !== company.id)
     .sort((a, b) => b.mvUsd - a.mvUsd)
     .slice(0, 5);
 
-  const isPinned = pinned.has(company.ticker);
+  const isPinned = pinned.has(company.id);
 
   return (
     <>
@@ -125,7 +125,7 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
         }}>
           <div className="eyebrow">Position detail</div>
           <div style={{ display:'flex', gap: 6 }}>
-            <IconBtn onClick={() => togglePin(company.ticker)} active={isPinned} title={isPinned ? 'Unpin' : 'Pin'}>
+            <IconBtn onClick={() => togglePin(company.id)} active={isPinned} title={isPinned ? 'Unpin' : 'Pin'}>
               <Icon name={isPinned ? 'pinned' : 'pin'} size={14}/>
             </IconBtn>
             <IconBtn onClick={onClose} title="Close (Esc)">
@@ -253,7 +253,7 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
             padding: 22,
             border:'1px solid var(--line)',
             background: 'color-mix(in oklch, var(--accent) 7%, var(--surface))',
-            borderRadius: 20,
+            borderRadius: 18,
           }}>
             <div className="eyebrow" style={{ marginBottom: 10 }}>Norway GPFG holding</div>
             <div className="r-metrics3">

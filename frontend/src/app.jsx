@@ -359,7 +359,7 @@ export function App() {
   });
   const [sort, setSort] = React.useState({ key: 'mvNok', dir: 'desc' });
   const [pinned, setPinned] = React.useState(() => {
-    try { return new Set(JSON.parse(localStorage.getItem('sov-pinned') || '[]')); }
+    try { return new Set(JSON.parse(localStorage.getItem('sov-pinned-v2') || '[]')); }
     catch { return new Set(); }
   });
   const [selected, setSelected] = React.useState(null);
@@ -395,8 +395,15 @@ export function App() {
   React.useEffect(() => {
     const bust = dataKey === 0 ? Date.now() : dataKey;
     fetch('data.json?v=' + bust)
-      .then(r => r.json())
-      .then(setData)
+      .then(r => {
+        if (!r.ok) throw new Error(`data.json returned ${r.status}`);
+        return r.json();
+      })
+      // Identity is `id`, not `ticker`. Unlisted holdings legitimately have no
+      // ticker, so keying rows or the pin/compare Sets off it would make every
+      // tickerless company the same company — the bug that used to alias
+      // George Weston with Canada Packers, just via null instead of a collision.
+      .then(rows => setData(rows.map((row, i) => ({ ...row, id: `${row.ticker || 'x'}#${i}` }))))
       .catch(e => setErr(e.message));
   }, [dataKey]);
 
@@ -433,7 +440,7 @@ export function App() {
       if (filters.recs.length && !filters.recs.includes(c.rec)) return false;
       const o = c.ownership || 0;
       if (o < filters.ownMin || o > filters.ownMax) return false;
-      if (filters.pinned && !pinned.has(c.ticker)) return false;
+      if (filters.pinned && !pinned.has(c.id)) return false;
       if (q && !((c.name || '').toLowerCase().includes(q) || (c.ticker || '').toLowerCase().includes(q))) return false;
       return true;
     });
@@ -481,7 +488,7 @@ export function App() {
 
   const comparedRows = React.useMemo(() => {
     if (!data) return [];
-    return data.filter(d => compared.has(d.ticker));
+    return data.filter(d => compared.has(d.id));
   }, [data, compared]);
 
   const lastFetched = React.useMemo(() => {
@@ -520,8 +527,8 @@ export function App() {
 
       <main style={{
         maxWidth: 1680, margin: '0 auto',
-        padding: '32px clamp(16px, 3vw, 32px) 120px',
-        display: 'grid', gap: 28,
+        padding: '22px clamp(14px, 2vw, 22px) 120px',
+        display: 'grid', gap: 16,
       }}>
         <Summary
           data={data}
@@ -533,7 +540,7 @@ export function App() {
           onOwnSelect={setOwnSel}
         />
 
-        <section style={{ display:'grid', gap: 14, position: 'relative' }}>
+        <section style={{ display:'grid', gap: 16, position: 'relative' }}>
           <Filters
             data={data}
             filters={filters}

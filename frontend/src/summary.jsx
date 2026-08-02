@@ -79,45 +79,47 @@ export function Summary({ data, filtered, onPickCompany, onSetFilter, activeSect
   }), [owns]);
 
   return (
-    <section style={{ display:'grid', gridTemplateColumns:'1fr', gap: 20 }}>
+    <section style={{ display:'grid', gridTemplateColumns:'1fr', gap: 16 }}>
       {/* Hero bento (STYLE_GUIDE §6) — column counts come from .r-bento so they
           can collapse 4→2→1 with viewport; see index.html. */}
       <div className="r-bento">
-        {/* Lead card — spans 3×2 on desktop */}
-        <div className="card r-bento-lead" style={{
-          borderRadius: 24,
-          padding: 'clamp(28px, 3vw, 44px)',
+        {/* Lead card — hero half of the top row. Keeps its own cream surface so
+            it stays cream on the ink field (spec 02B). */}
+        <div className="r-bento-lead enter lift" style={{
+          '--i': 0,
+          background: 'var(--hero-surface)', border: '1px solid var(--hero-line)',
+          color: 'var(--hero-ink)',
+          borderRadius: 18,
+          padding: 'clamp(28px, 3vw, 40px)',
           display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <div className="eyebrow" style={{ color: 'var(--accent-text)' }}>Portfolio · Quarterly cut</div>
-            <div className="mono" style={{ fontSize: 11, color: 'var(--soft)' }}>[ 01 / 04 ]</div>
+            <div className="eyebrow" style={{ color: 'var(--nav-accent-text)' }}>Portfolio · Quarterly cut</div>
+            <div className="mono" style={{ fontSize: 11, color: 'var(--hero-sub)' }}>[ 01 / 04 ]</div>
           </div>
           <h1 className="display" style={{
-            fontSize: 'clamp(32px, 4.2vw, 58px)', fontWeight: 600,
+            fontSize: 'clamp(32px, 4.2vw, 54px)', fontWeight: 600,
             lineHeight: 0.99, letterSpacing: '-0.03em', margin: '20px 0', maxWidth: 760, textWrap: 'balance',
           }}>
             The world&apos;s largest sovereign wealth fund, tracked equity by equity.
           </h1>
-          <p style={{ fontSize: 15, lineHeight: 1.6, color: 'var(--sub)', maxWidth: 560, margin: 0 }}>
+          <p style={{ fontSize: 15, lineHeight: 1.6, color: 'var(--hero-sub)', maxWidth: 560, margin: 0 }}>
             Norway&apos;s Government Pension Fund Global holds positions in {fmt.short(data.length, 0)}+ public companies across six markets.
             Filter, compare, and click through to see how every krone is allocated.
           </p>
         </div>
 
-        {/* Feature card — spans 1×3 on desktop, inverts between themes */}
-        <div className="r-bento-feature" style={{
+        {/* Feature card — total holdings; ink on the olive wash, lime on the ink field */}
+        <div className="r-bento-feature enter lift" style={{
+          '--i': 1,
           background: 'var(--feature)', color: 'var(--feature-ink)',
-          borderRadius: 24, padding: '32px 30px',
+          borderRadius: 18, padding: '28px 26px',
           display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
-          transition: 'transform .18s',
-        }}
-          onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; }}
-          onMouseLeave={e => { e.currentTarget.style.transform = 'none'; }}
-        >
-          <div className="mono" style={{ fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--feature-sub)' }}>Total holdings</div>
+        }}>
+          <div className="mono" style={{ fontSize: 10, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--feature-sub)' }}>Total holdings</div>
           <div>
-            <div className="display" style={{ fontSize: 'clamp(34px, 3vw, 46px)', fontWeight: 600, letterSpacing: '-0.03em', lineHeight: 0.95, color: 'var(--feature-num)' }}>
+            {/* Animation 2 — gradient sweeps across the numerals */}
+            <div className="display shimmer" style={{ fontSize: 'clamp(34px, 3vw, 46px)', fontWeight: 600, letterSpacing: '-0.03em', lineHeight: 0.95 }}>
               {fmt.money(totalUsd, 'USD', 1)}
             </div>
             <div className="mono" style={{ fontSize: 10.5, color: 'var(--feature-sub)', marginTop: 10 }}>
@@ -126,10 +128,11 @@ export function Summary({ data, filtered, onPickCompany, onSetFilter, activeSect
           </div>
         </div>
 
-        {/* Stat cells — single cells fill the bottom row */}
-        <StatCell label="Avg ownership" value={fmt.pct(avgOwn, 2)} sub={`${ownStats.above5} positions above 5%`} />
-        <StatCell label="Markets covered" value={countries.toString()} sub={`${sectorCount} sectors`} />
+        {/* Stat cells — 3-up row under the hero */}
+        <StatCell i={2} label="Avg ownership" value={fmt.pct(avgOwn, 2)} sub={`${ownStats.above5} positions above 5%`} />
+        <StatCell i={3} label="Markets covered" value={countries.toString()} sub={`${sectorCount} sectors`} />
         <StatCell
+          i={4}
           label="Top position"
           value={top10[0] ? top10[0].name : '—'}
           sub={top10[0] ? `${top10[0].ticker} · ${fmt.money(top10[0].mvUsd, 'USD', 1)}` : ''}
@@ -139,9 +142,9 @@ export function Summary({ data, filtered, onPickCompany, onSetFilter, activeSect
       </div>
 
       {/* Detail row: holdings table + sector treemap (STYLE_GUIDE §6) */}
-      <div style={{ display: 'grid', gap: 14 }}>
+      <div style={{ display: 'grid', gap: 16 }}>
         <div className="r-split">
-          <Card title="Top holdings" eyebrow="Market value · NOK"
+          <Card i={5} title="Top holdings" eyebrow="Market value · NOK"
             rightSlot={<span className="eyebrow">Top 8 / {filtered.length.toLocaleString()}</span>}
           >
             <TopBarList
@@ -159,7 +162,7 @@ export function Summary({ data, filtered, onPickCompany, onSetFilter, activeSect
             />
           </Card>
 
-          <Card title="Sector weight*" eyebrow="By USD value"
+          <Card i={6} title="Sector weight*" eyebrow="By USD value"
             rightSlot={activeSectors.length ? (
               <button onClick={onClearSectors} className="eyebrow" style={{
                 cursor: 'pointer', border: '1px solid var(--line)', borderRadius: 6,
@@ -179,7 +182,7 @@ export function Summary({ data, filtered, onPickCompany, onSetFilter, activeSect
         </div>
 
         {/* Ownership distribution — full-width histogram panel */}
-        <Card title="Ownership distribution" eyebrow="% per holding"
+        <Card i={7} title="Ownership distribution" eyebrow="% per holding"
           rightSlot={<span className="eyebrow">{owns.length.toLocaleString()} cos</span>}
         >
           <div style={{ paddingTop: 6 }}>
@@ -213,20 +216,21 @@ export function percentile(arr, p) {
   return s[Math.min(s.length-1, Math.floor(p * s.length))];
 }
 
-export function StatCell({ label, value, sub, clickable, onClick }) {
+export function StatCell({ label, value, sub, clickable, onClick, i = 0 }) {
   return (
     <div
-      className="card"
+      className="card enter lift"
       onClick={clickable ? onClick : undefined}
       style={{
-        padding: '20px 22px',
+        '--i': i,
+        padding: '22px 24px',
         display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
         cursor: clickable ? 'pointer' : 'default',
       }}
     >
-      <div className="mono" style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--soft)' }}>{label}</div>
+      <div className="mono" style={{ fontSize: 10, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--soft)' }}>{label}</div>
       <div className="display" style={{
-        fontSize: 32, fontWeight: 600, lineHeight: 1.1, marginTop: 8, letterSpacing: '-0.02em',
+        fontSize: 38, fontWeight: 600, lineHeight: 1.1, marginTop: 8, letterSpacing: '-0.03em',
         overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap'
       }}>{value}</div>
       <div className="mono" style={{ fontSize: 11, color:'var(--soft)', marginTop: 4 }}>{sub}</div>
@@ -243,16 +247,19 @@ export function StatMini({ label, value }) {
   );
 }
 
-export function Card({ title, eyebrow, rightSlot, children, padding = 22 }) {
+export function Card({ title, eyebrow, rightSlot, children, padding = 24, i = 0 }) {
   return (
-    <div style={{ background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: 24, padding }}>
+    <div className="enter lift" style={{
+      '--i': i,
+      background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: 18, padding,
+    }}>
       <div style={{
         display:'flex', justifyContent:'space-between', alignItems:'baseline',
         marginBottom: 14, gap: 10
       }}>
         <div>
           {eyebrow && <div className="eyebrow">{eyebrow}</div>}
-          <div className="display" style={{ fontSize: 19, marginTop: 2, letterSpacing: '-0.01em' }}>
+          <div className="display" style={{ fontSize: 24, marginTop: 2, letterSpacing: '-0.02em' }}>
             {title}
           </div>
         </div>

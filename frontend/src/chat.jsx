@@ -103,7 +103,7 @@ export function ChatWidget() {
           boxShadow: '0 8px 24px rgba(0,0,0,.18)',
         }}
       >
-        <Icon name="sparkle" size={22} color="#1B1A17" />
+        <Icon name="sparkle" size={22} color="var(--treemap-cell-fg)" />
       </button>
     );
   }
@@ -126,7 +126,7 @@ export function ChatWidget() {
         padding: '13px 14px', borderBottom: '1px solid var(--line)',
       }}>
         <span style={{ width: 30, height: 30, borderRadius: 8, display: 'grid', placeItems: 'center', background: 'var(--accent)' }}>
-          <Icon name="sparkle" size={16} color="#1B1A17" />
+          <Icon name="sparkle" size={16} color="var(--treemap-cell-fg)" />
         </span>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div className="mono" style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--ink)' }}>Assistant</div>
@@ -157,7 +157,7 @@ export function ChatWidget() {
                 borderBottomRightRadius: isUser ? 4 : 13,
                 borderBottomLeftRadius: isUser ? 13 : 4,
                 background: isUser ? 'var(--accent)' : 'var(--row-hover)',
-                color: isUser ? '#1B1A17' : 'var(--ink)',
+                color: isUser ? 'var(--treemap-cell-fg)' : 'var(--ink)',
                 border: isUser ? 'none' : '1px solid var(--line)',
                 fontSize: 13, lineHeight: 1.5, whiteSpace: 'pre-wrap', wordBreak: 'break-word',
               }}>{m.text}</div>
@@ -190,7 +190,7 @@ export function ChatWidget() {
           ...primaryBtn, width: 40, height: 40, padding: 0, display: 'grid', placeItems: 'center',
           opacity: busy || !input.trim() || !available ? 0.5 : 1, cursor: busy || !input.trim() || !available ? 'not-allowed' : 'pointer',
         }}>
-          <Icon name="arrow-up" size={17} color="#1B1A17" />
+          <Icon name="arrow-up" size={17} color="var(--treemap-cell-fg)" />
         </button>
       </div>
     </div>
@@ -198,7 +198,7 @@ export function ChatWidget() {
 }
 
 var primaryBtn = {
-  background: 'var(--accent)', color: '#1B1A17', border: 'none', borderRadius: 10,
+  background: 'var(--accent)', color: 'var(--treemap-cell-fg)', border: 'none', borderRadius: 10,
   padding: '8px 14px', fontFamily: 'var(--font-mono)', fontSize: 12, fontWeight: 600,
   cursor: 'pointer', flexShrink: 0,
 };

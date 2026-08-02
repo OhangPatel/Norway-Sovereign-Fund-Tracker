@@ -19,6 +19,42 @@ def merge_and_save():
 
     df_original = pd.read_csv(INPUT_CSV)
 
+    # ── Ticker invariant ──────────────────────────────────────────────────────
+    # Last gate before export. resolve_tickers.py should already guarantee this,
+    # but the CSV is hand-editable and this is where a bad ticker would leak into
+    # data.json. Two rules, both learned the hard way:
+    #
+    #   1. Placeholders are not tickers. "N/A-PRIVATE" was written for 12 unlisted
+    #      companies, so the frontend — which keys rows by ticker — treated twelve
+    #      different businesses as one holding.
+    #   2. A ticker identifies exactly one holding. Duplicates aliased pinning and
+    #      comparison in the UI, and made this merge produce ambiguous joins.
+    if "Yahoo_Ticker" in df_original.columns:
+        SENTINELS = {"N/A-PRIVATE", "N/A", "NA", "UNKNOWN", "ERROR", "ERROR_TIMEOUT", "NONE", "NULL"}
+        tick = df_original["Yahoo_Ticker"].astype(str).str.strip()
+        bad = tick.str.upper().isin(SENTINELS) | tick.eq("") | tick.eq("nan")
+        if bad.any():
+            print(f"Blanked {int(bad.sum())} placeholder ticker(s) — unlisted or unresolved.", flush=True)
+        df_original["Yahoo_Ticker"] = tick.mask(bad, None)
+
+        real = df_original["Yahoo_Ticker"].notna()
+        dup = real & df_original.duplicated(subset=["Yahoo_Ticker"], keep=False)
+        if dup.any():
+            # Keep the ticker on the largest position and blank the rest, so the
+            # join stays 1:1. Loud, because it means resolve_tickers.py needs a rerun.
+            names = df_original.loc[dup, "Yahoo_Ticker"].unique().tolist()
+            print(f"WARNING: {len(names)} ticker(s) claimed by multiple holdings: {names}", flush=True)
+            print("         Keeping the largest position for each; run resolve_tickers.py to fix properly.", flush=True)
+            order = df_original["Market Value(NOK)"] if "Market Value(NOK)" in df_original.columns else df_original.index
+            keep = (
+                df_original.loc[dup]
+                .assign(_o=pd.to_numeric(order.loc[dup], errors="coerce").fillna(0))
+                .sort_values("_o", ascending=False)
+                .drop_duplicates(subset=["Yahoo_Ticker"], keep="first")
+                .index
+            )
+            df_original.loc[dup & ~df_original.index.isin(keep), "Yahoo_Ticker"] = None
+
     conn = sqlite3.connect(str(DB_PATH))
     df_metrics = pd.read_sql("SELECT * FROM financial_metrics", conn)
 

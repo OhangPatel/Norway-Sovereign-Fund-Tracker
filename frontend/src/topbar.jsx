@@ -1,11 +1,14 @@
 import React from 'react';
 import { fmt, Icon, BrandMark } from './format.jsx';
 
-// Top navigation bar with brand, search, theme toggle, compare toggle
+// Top navigation bar with brand, search, theme toggle, compare toggle.
+// UI 2.0: the bar floats inset from the page edges and the ticker band below it
+// carries the bottom corners, so nav + band read as one card.
 
 export function TopBar({ data, query, setQuery, theme, setTheme, onPick, compareOn, setCompareOn, compareCount, onOpenColumns, lastFetched }) {
   const [focused, setFocused] = React.useState(false);
   const [active, setActive] = React.useState(0);
+  const [condensed, setCondensed] = React.useState(false);
   const wrapRef = React.useRef(null);
 
   const matches = React.useMemo(() => {
@@ -16,6 +19,15 @@ export function TopBar({ data, query, setQuery, theme, setTheme, onPick, compare
       .slice(0, 8);
     return list;
   }, [query, data]);
+
+  // Ticker band content — the biggest positions and their 24h move. Direction
+  // comes from the same `change` field the table sorts on; no new data.
+  const ticks = React.useMemo(() => {
+    return data
+      .filter(c => c.ticker && c.change != null)
+      .sort((a, b) => b.mvUsd - a.mvUsd)
+      .slice(0, 16);
+  }, [data]);
 
   React.useEffect(() => { setActive(0); }, [query]);
 
@@ -31,6 +43,14 @@ export function TopBar({ data, query, setQuery, theme, setTheme, onPick, compare
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
+  // Animation 4 — past 40px the bar condenses and the band collapses to 0.
+  React.useEffect(() => {
+    const onScroll = () => setCondensed(window.scrollY > 40);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
   const handleKey = (e) => {
     if (!matches.length) return;
     if (e.key === 'ArrowDown') { e.preventDefault(); setActive(a => (a + 1) % matches.length); }
@@ -42,146 +62,209 @@ export function TopBar({ data, query, setQuery, theme, setTheme, onPick, compare
   return (
     <header style={{
       position: 'sticky', top: 0, zIndex: 50,
-      background: 'color-mix(in oklch, var(--bg) 86%, transparent)',
-      backdropFilter: 'blur(14px) saturate(140%)',
-      WebkitBackdropFilter: 'blur(14px) saturate(140%)',
-      borderBottom: '1px solid var(--line)',
+      padding: '16px clamp(14px, 2vw, 22px) 0',
     }}>
-      <div className="r-topbar" style={{
-        padding: '14px clamp(16px, 3vw, 32px)',
-        maxWidth: 1680, margin: '0 auto',
-      }}>
-        {/* Brand */}
-        <div className="r-brand" style={{ display:'flex', alignItems:'center', gap: 12 }}>
-          <BrandMark size={28}/>
-          <div>
-            <div className="display" style={{ fontSize: 18, lineHeight: 1, letterSpacing: '-0.015em', fontWeight: 600 }}>
-              Sovereign <span style={{ color: 'var(--accent-text)' }}>Insights</span>
-            </div>
-            <div className="eyebrow" style={{ marginTop: 3, fontSize: 9.5, whiteSpace: 'nowrap' }}>
-              Norway GPFG<span className="r-hide-sm"> · Equity Holdings</span> · {lastFetched}
-            </div>
-          </div>
-        </div>
-
-        {/* Search */}
-        <div ref={wrapRef} className="r-search" style={{ position: 'relative', maxWidth: 540, width: '100%', justifySelf:'center' }}>
-          <div style={{
-            display:'flex', alignItems:'center', gap: 10,
-            padding: '9px 16px',
-            background: 'var(--surface)',
-            border: `1px solid ${focused ? 'var(--accent-text)' : 'var(--line)'}`,
-            borderRadius: 999,
-            transition: 'border-color .15s ease',
+      <div style={{ maxWidth: 1680, margin: '0 auto' }}>
+        {/* Nav shell — top corners only; the band below carries the bottom. */}
+        <div className="nav-shell" style={{
+          '--nav-h': condensed ? '56px' : '68px',
+          background: 'var(--nav-surface)',
+          border: '1px solid var(--nav-line)',
+          borderBottom: condensed ? '1px solid var(--nav-line)' : 'none',
+          borderRadius: condensed ? 16 : '16px 16px 0 0',
+        }}>
+          <div className="r-topbar" style={{
+            height: '100%',
+            padding: '0 18px',
+            gap: 18,
           }}>
-            <Icon name="search" size={15} color="var(--soft)"/>
-            <input
-              value={query}
-              onChange={e => setQuery(e.target.value)}
-              onFocus={() => setFocused(true)}
-              onBlur={() => setTimeout(() => setFocused(false), 120)}
-              onKeyDown={handleKey}
-              placeholder="Search companies — by name, ticker, or country"
-              style={{
-                flex: 1,
-                border: 'none', outline: 'none', background: 'transparent',
-                color: 'var(--ink)', fontFamily: 'var(--font-display)', fontSize: 13,
-              }}
-            />
-            <span className="mono" style={{
-              fontSize: 10.5, color: 'var(--soft)',
-              padding: '2px 6px', border: '1px solid var(--line)', borderRadius: 4,
-            }}>/</span>
-          </div>
-
-          {focused && query && matches.length > 0 && (
-            <div style={{
-              position: 'absolute', top: 'calc(100% + 8px)', left: 0, right: 0,
-              background: 'var(--surface)', border: '1px solid var(--line)',
-              borderRadius: 16, overflow: 'hidden',
-              boxShadow: '0 24px 48px -24px rgba(0,0,0,.45)',
-              animation: 'rise .12s ease-out'
-            }}>
-              {matches.map((m, i) => (
-                <div key={m.ticker}
-                  onMouseDown={() => { onPick(m); setQuery(''); }}
-                  onMouseEnter={() => setActive(i)}
-                  style={{
-                    padding: '11px 16px',
-                    display: 'grid', gridTemplateColumns: '1fr auto auto', alignItems:'center', gap: 12,
-                    background: i === active ? 'var(--row-hover)' : 'transparent',
-                    cursor: 'pointer',
-                    borderBottom: i < matches.length - 1 ? '1px solid var(--line)' : 'none',
-                  }}>
-                  <div>
-                    <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--ink)' }}>{m.name}</div>
-                    <div className="mono" style={{ fontSize: 10.5, color: 'var(--soft)' }}>{m.country} · {m.sector || m.industry}</div>
-                  </div>
-                  <span className="mono" style={{ fontSize: 11, color: 'var(--sub)' }}>{m.ticker}</span>
-                  <span className="mono" style={{ fontSize: 11, color: 'var(--soft)' }}>{fmt.money(m.mvUsd, 'USD', 1)}</span>
+            {/* Brand — the existing mark, re-mounted with a hairline divider after it */}
+            <div className="r-brand" style={{ display:'flex', alignItems:'center', gap: 12 }}>
+              <BrandMark size={28}/>
+              <div>
+                <div className="display" style={{ fontSize: 17, lineHeight: 1, letterSpacing: '-0.02em', fontWeight: 600, color: 'var(--nav-ink)', whiteSpace: 'nowrap' }}>
+                  Sovereign <span style={{ color: 'var(--nav-accent-text)' }}>Insights</span>
                 </div>
-              ))}
+                <div className="eyebrow" style={{
+                  marginTop: 4, fontSize: 9.5, whiteSpace: 'nowrap', color: 'var(--nav-soft)',
+                  display: 'flex', alignItems: 'center', gap: 6,
+                }}>
+                  {/* Animation 7 — live dot */}
+                  <span className="live-dot"/>
+                  Norway GPFG<span className="r-hide-sm"> · Equity Holdings · {lastFetched}</span>
+                </div>
+              </div>
+              <span className="r-hide-sm" style={{
+                width: 1, height: 30, marginLeft: 6,
+                background: 'var(--nav-line)', flexShrink: 0,
+              }}/>
             </div>
-          )}
-          {focused && query && matches.length === 0 && (
-            <div style={{
-              position: 'absolute', top: 'calc(100% + 8px)', left: 0, right: 0,
-              background: 'var(--surface)', border: '1px solid var(--line)',
-              borderRadius: 16, padding: '16px',
-              color: 'var(--soft)', fontSize: 12,
-            }}>
-              No companies matched &ldquo;{query}&rdquo;. Try a ticker, country, or partial name.
+
+            {/* Search */}
+            <div ref={wrapRef} className="r-search" style={{ position: 'relative', width: '100%', justifySelf:'stretch' }}>
+              <div style={{
+                display:'flex', alignItems:'center', gap: 10,
+                padding: '8px 14px',
+                background: 'var(--nav-field)',
+                border: `1px solid ${focused ? 'var(--nav-ink)' : 'var(--nav-line)'}`,
+                borderRadius: 10,
+                boxShadow: focused ? '0 0 0 4px color-mix(in oklch, var(--accent) 55%, transparent)' : 'none',
+                transition: 'border-color .15s ease, box-shadow .15s ease',
+              }}>
+                <Icon name="search" size={15} color="var(--nav-soft)"/>
+                <input
+                  value={query}
+                  onChange={e => setQuery(e.target.value)}
+                  onFocus={() => setFocused(true)}
+                  onBlur={() => setTimeout(() => setFocused(false), 120)}
+                  onKeyDown={handleKey}
+                  placeholder="Search companies — by name, ticker, or country"
+                  style={{
+                    flex: 1, minWidth: 0,
+                    border: 'none', outline: 'none', background: 'transparent',
+                    color: 'var(--nav-ink)', fontFamily: 'var(--font-display)', fontSize: 13,
+                  }}
+                />
+                <span className="mono" style={{
+                  fontSize: 10.5, color: 'var(--nav-soft)',
+                  padding: '2px 6px', border: '1px solid var(--nav-line)', borderRadius: 4,
+                }}>/</span>
+              </div>
+
+              {focused && query && matches.length > 0 && (
+                <div style={{
+                  position: 'absolute', top: 'calc(100% + 8px)', left: 0, right: 0,
+                  background: 'var(--surface)', border: '1px solid var(--line)',
+                  borderRadius: 16, overflow: 'hidden',
+                  boxShadow: '0 24px 48px -24px rgba(0,0,0,.45)',
+                  animation: 'rise .12s ease-out'
+                }}>
+                  {matches.map((m, i) => (
+                    <div key={m.id}
+                      onMouseDown={() => { onPick(m); setQuery(''); }}
+                      onMouseEnter={() => setActive(i)}
+                      style={{
+                        padding: '11px 16px',
+                        display: 'grid', gridTemplateColumns: '1fr auto auto', alignItems:'center', gap: 12,
+                        background: i === active ? 'var(--row-hover)' : 'transparent',
+                        cursor: 'pointer',
+                        borderBottom: i < matches.length - 1 ? '1px solid var(--line)' : 'none',
+                      }}>
+                      <div>
+                        <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--ink)' }}>{m.name}</div>
+                        <div className="mono" style={{ fontSize: 10.5, color: 'var(--soft)' }}>{m.country} · {m.sector || m.industry}</div>
+                      </div>
+                      <span className="mono" style={{ fontSize: 11, color: 'var(--sub)' }}>{m.ticker}</span>
+                      <span className="mono" style={{ fontSize: 11, color: 'var(--soft)' }}>{fmt.money(m.mvUsd, 'USD', 1)}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {focused && query && matches.length === 0 && (
+                <div style={{
+                  position: 'absolute', top: 'calc(100% + 8px)', left: 0, right: 0,
+                  background: 'var(--surface)', border: '1px solid var(--line)',
+                  borderRadius: 16, padding: '16px',
+                  color: 'var(--soft)', fontSize: 12,
+                }}>
+                  No companies matched &ldquo;{query}&rdquo;. Try a ticker, country, or partial name.
+                </div>
+              )}
             </div>
-          )}
+
+            {/* Right actions — labels collapse to icons on the smallest screens. */}
+            <div className="r-actions" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <TopBtn onClick={onOpenColumns} title="Columns">
+                <Icon name="columns" size={14}/> <span className="r-hide-sm">Columns</span>
+              </TopBtn>
+              <TopBtn
+                fill
+                active={compareOn}
+                onClick={() => setCompareOn(!compareOn)}
+                title="Compare mode (multi-select rows to compare)"
+              >
+                <Icon name="compare" size={14}/>
+                <span className="r-hide-sm">Compare</span>
+                {compareCount > 0 && (
+                  <span className="mono" style={{
+                    padding: '1px 6px', borderRadius: 999,
+                    background: 'var(--accent)', color: 'var(--nav-ink)',
+                    fontSize: 10, fontWeight: 600
+                  }}>{compareCount}</span>
+                )}
+              </TopBtn>
+              <TopBtn onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} title="Toggle theme">
+                <Icon name={theme === 'dark' ? 'sun' : 'moon'} size={14}/>
+              </TopBtn>
+            </div>
+          </div>
         </div>
 
-        {/* Right actions — labels collapse to icons on the smallest screens. */}
-        <div className="r-actions" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <TopBtn onClick={onOpenColumns} title="Columns">
-            <Icon name="columns" size={14}/> <span className="r-hide-sm">Columns</span>
-          </TopBtn>
-          <TopBtn
-            active={compareOn}
-            onClick={() => setCompareOn(!compareOn)}
-            title="Compare mode (multi-select rows to compare)"
-          >
-            <Icon name="compare" size={14}/>
-            <span className="r-hide-sm">Compare</span>
-            {compareCount > 0 && (
-              <span className="mono" style={{
-                padding: '1px 6px', borderRadius: 999,
-                background: 'var(--accent)', color: 'var(--treemap-cell-fg)',
-                fontSize: 10, fontWeight: 600
-              }}>{compareCount}</span>
-            )}
-          </TopBtn>
-          <TopBtn onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} title="Toggle theme">
-            <Icon name={theme === 'dark' ? 'sun' : 'moon'} size={14}/>
-          </TopBtn>
+        {/* Ticker band — one continuous marquee line; carries the bottom corners. */}
+        <div className="tick-band" style={{
+          height: condensed ? 0 : 27,
+          opacity: condensed ? 0 : 1,
+          background: 'var(--nav-band)',
+          borderRadius: '0 0 16px 16px',
+          overflow: 'hidden',
+        }}>
+          <div className="tick-track">
+            {[0, 1].map(copy => (
+              <div key={copy} aria-hidden={copy === 1 ? 'true' : undefined}
+                style={{ display: 'flex', gap: 28, paddingRight: 28, paddingLeft: copy === 0 ? 18 : 0 }}>
+                {ticks.map(t => <Tick key={t.id} row={t}/>)}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </header>
   );
 }
 
-// Ghost pill button (STYLE_GUIDE §5): mono/uppercase, rounded, inverts on hover/active.
-export function TopBtn({ children, onClick, active, title }) {
+// One ticker cell: neutral symbol, then arrow + value sharing a single
+// coloured span at weight 600.
+function Tick({ row }) {
+  const up = row.change >= 0;
+  return (
+    <span className="mono" style={{
+      fontSize: 11, lineHeight: '27px', whiteSpace: 'nowrap',
+      color: 'var(--nav-band-ink)',
+    }}>
+      {row.ticker}{' '}
+      <span style={{ color: up ? 'var(--tick-up)' : 'var(--tick-down)', fontWeight: 600 }}>
+        {up ? '▲' : '▼'} {fmt.signedPct(row.change)}
+      </span>
+    </span>
+  );
+}
+
+// Nav pill button (STYLE_GUIDE §5): mono/uppercase. `fill` is the ink-filled
+// primary (lime text); the rest are outlines. Both lift 1px on hover.
+export function TopBtn({ children, onClick, active, title, fill }) {
+  const solid = fill || active;
   return (
     <button onClick={onClick} title={title}
       style={{
         display:'inline-flex', alignItems:'center', gap: 6,
         padding: '7px 13px',
-        background: active ? 'var(--ink)' : 'transparent',
-        color: active ? 'var(--bg)' : 'var(--ink)',
-        border: `1px solid ${active ? 'var(--ink)' : 'var(--line)'}`,
-        borderRadius: 999,
+        background: solid ? 'var(--nav-ink)' : 'transparent',
+        color: solid ? 'var(--accent)' : 'var(--nav-ink)',
+        border: `1px solid ${solid ? 'var(--nav-ink)' : 'var(--nav-line)'}`,
+        borderRadius: 10,
         cursor: 'pointer',
         fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 500,
-        letterSpacing: '0.04em', textTransform: 'uppercase',
-        transition: 'all .14s ease'
+        letterSpacing: '0.06em', textTransform: 'uppercase',
+        transition: 'transform .25s cubic-bezier(.2,.7,.3,1), background .14s ease, color .14s ease, border-color .14s ease',
       }}
-      onMouseEnter={e => { if (!active) { e.currentTarget.style.background = 'var(--ink)'; e.currentTarget.style.color = 'var(--bg)'; } }}
-      onMouseLeave={e => { if (!active) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--ink)'; } }}
+      onMouseEnter={e => {
+        e.currentTarget.style.transform = 'translateY(-1px)';
+        if (!solid) { e.currentTarget.style.background = 'var(--nav-ink)'; e.currentTarget.style.color = 'var(--accent)'; }
+      }}
+      onMouseLeave={e => {
+        e.currentTarget.style.transform = 'none';
+        if (!solid) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--nav-ink)'; }
+      }}
     >
       {children}
     </button>

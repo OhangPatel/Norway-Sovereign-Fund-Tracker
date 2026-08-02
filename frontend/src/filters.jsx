@@ -56,12 +56,17 @@ export function Filters({ data, filters, setFilters, columns, setColumns, showCo
   const dirty = filters.countries.length || filters.sectors.length || filters.recs.length || filters.ownMin > 0 || filters.ownMax < maxOwn || filters.pinned;
 
   return (
-    <div className="r-filterbar" style={{
+    <div className="r-filterbar enter" style={{
+      '--i': 8,
       padding: '14px 18px',
       background: 'var(--surface)',
       border: '1px solid var(--line)',
       borderRadius: 16,
-      position: 'relative',
+      // The entry animation leaves every .enter card a permanent stacking
+      // context, so the table below would otherwise paint over these popovers
+      // no matter how high their own z-index is. Stays under the sticky
+      // header (50) so it still slides beneath the nav on scroll.
+      position: 'relative', zIndex: 20,
     }}>
       <div style={{ display:'flex', flexWrap:'wrap', alignItems:'center', gap: 8 }}>
         <FilterMenu

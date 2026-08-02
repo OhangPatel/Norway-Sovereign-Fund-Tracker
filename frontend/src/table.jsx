@@ -120,7 +120,7 @@ export function DataTable({
   };
 
   return (
-    <div style={{ background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: 24, padding: 0, overflow: 'hidden' }}>
+    <div className="enter" style={{ '--i': 9, background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: 18, padding: 0, overflow: 'hidden' }}>
       <div style={{
         display:'flex', alignItems:'baseline', justifyContent:'space-between',
         padding: '16px 20px', borderBottom: '1px solid var(--line)',
@@ -189,15 +189,15 @@ export function DataTable({
           <div style={{ height: data.length * ROW_H, position: 'relative' }}>
             <div style={{ position: 'absolute', top: startIdx * ROW_H, left: 0, right: 0 }}>
               {visible.map((row, i) => (
-                <Row key={row.ticker}
+                <Row key={row.id}
                   row={row}
                   rank={startIdx + i + 1}
                   visibleCols={visibleCols}
                   onOpen={onOpen}
-                  pinned={pinned.has(row.ticker)}
+                  pinned={pinned.has(row.id)}
                   togglePin={togglePin}
                   compareOn={compareOn}
-                  compared={compared.has(row.ticker)}
+                  compared={compared.has(row.id)}
                   toggleCompare={toggleCompare}
                   maxOwnership={maxOwnership}
                 />
@@ -235,7 +235,7 @@ export function Row({ row, rank, visibleCols, onOpen, pinned, togglePin, compare
   };
 
   const onRowClick = (e) => {
-    if (compareOn) { toggleCompare(row.ticker); return; }
+    if (compareOn) { toggleCompare(row.id); return; }
     onOpen(row);
   };
 
@@ -392,7 +392,7 @@ export function Cell({ colKey, row, rank, cellBase, pinned, togglePin, hover, ma
     case 'pin':
       return <div style={style}>
         <button
-          onClick={(e) => { e.stopPropagation(); togglePin(row.ticker); }}
+          onClick={(e) => { e.stopPropagation(); togglePin(row.id); }}
           style={{
             background:'transparent', border:'none', padding: 6,
             cursor:'pointer', display:'grid', placeItems:'center',

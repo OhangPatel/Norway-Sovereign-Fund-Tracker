@@ -34,10 +34,10 @@ export function TopBarList({ items, max, valueFmt, height = 280, onClick, accent
                 <span style={{ overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', color: 'var(--ink)' }}>{it.label}</span>
                 <span className="mono" style={{ fontSize: 11, color:'var(--soft)' }}>{it.sub}</span>
               </div>
-              <div style={{ position: 'relative', height: 4, background:'var(--track)', borderRadius:2 }}>
+              <div style={{ position: 'relative', height: 4, background:'var(--track)', borderRadius:3 }}>
                 <div style={{
                   position:'absolute', left:0, top:0, bottom:0, width: pct + '%',
-                  background: accent, borderRadius: 2
+                  background: accent, borderRadius: 3
                 }}/>
               </div>
             </div>

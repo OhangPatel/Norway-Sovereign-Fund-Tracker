@@ -13,8 +13,8 @@
     <link rel="canonical" href="https://invest.learnbasecase.com/" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
     <meta name="author" content="Basecase" />
-    <meta name="theme-color" content="#F4F3EE" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#08080A" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#E3E8CE" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#14150F" media="(prefers-color-scheme: dark)" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
@@ -157,30 +157,60 @@
       /* ============================================================
          "LIME" DESIGN SYSTEM — see STYLE_GUIDE.md (single source of truth)
          Light is default; [data-theme="dark"] inverts.
-         Canonical tokens first, then back-compat aliases that map the
-         app's legacy token names onto Lime values during migration.
+         UI 2.0: light = "Olive wash", dark = "Ink field".
          ============================================================ */
+      /* The nav card keeps the same look in both themes — only its surface and
+         the ticker band flip — so its text colours are theme-independent and
+         cannot inherit --ink, which is cream on the ink field. */
+      :root {
+        --nav-ink: #16170F;
+        --nav-sub: #6F6D5F;
+        --nav-soft: #A3A88F;
+        --nav-accent-text: #6C8118;
+      }
+
       :root[data-theme="light"] {
-        /* — canonical Lime tokens — */
-        --bg: #F4F3EE;
+        /* — canonical Lime tokens — OLIVE WASH */
+        --bg: #E3E8CE;
         --surface: #FFFFFF;
-        --line: #E4E2DA;
-        --track: #ECEAE2;
+        --line: #E3E8D3;
+        /* Bar rails read as the card border, not a separate grey. */
+        --track: #E3E8D3;
 
-        --ink: #1B1A17;
-        --sub: #7C786E;
-        --soft: #9C988C;
+        --ink: #16170F;
+        --sub: #6F6D5F;
+        --soft: #A3A88F;
 
-        --accent: #D6E134;
-        --accent-text: #8E9612;
+        --accent: #D8F34A;
+        --accent-text: #6C8118;
 
-        --feature: #1B1A17;
-        --feature-ink: #FCFEE7;
-        --feature-sub: #9A968A;
-        --feature-num: #D6E134;
+        --feature: #14150F;
+        --feature-ink: #F4F2EC;
+        --feature-sub: #8F9180;
+        --feature-num: #D8F34A;
 
-        --row-hover: #FAF9F5;
-        --card-hover-border: #1B1A17;
+        --row-hover: #F4F6EA;
+        --card-hover-border: #16170F;
+
+        /* Nav shell — the floating card sits above the olive field. */
+        --nav-surface: #FFFFFF;
+        --nav-line: #E3E8D3;
+        --nav-field: #F4F6EA;
+        --nav-band: #16170F;
+        --nav-band-ink: #8F9180;
+        --tick-up: #9BE04A;
+        --tick-down: #FF7A6B;
+
+        /* Shimmer across the total-holdings figure: lime → white → lime. */
+        --shimmer: linear-gradient(100deg, #D8F34A 30%, #FFFFFF 50%, #D8F34A 70%);
+        --page-glow: none;
+
+        /* Hero card carries its own surface so it can stay cream on the ink
+           field (spec 02B) without dragging the other cards with it. */
+        --hero-surface: #FFFFFF;
+        --hero-line: #E3E8D3;
+        --hero-ink: #16170F;
+        --hero-sub: #6F6D5F;
 
         --sector-tech: #60A5FA;
         --sector-financials: #D6E134;
@@ -194,7 +224,7 @@
         --bull: #4ADE80;
         --bear: #F87171;
 
-        --treemap-cell-fg: #1B1A17;
+        --treemap-cell-fg: #16170F;
 
         --font-display: 'Space Grotesk', sans-serif;
         --font-mono: 'JetBrains Mono', monospace;
@@ -209,26 +239,46 @@
       }
 
       :root[data-theme="dark"] {
-        /* — canonical Lime tokens — ONYX palette (pure neutral black) */
-        --bg: #08080A;
-        --surface: #131316;
-        --line: #1C1C20;
-        --track: #1C1C20;
+        /* — canonical Lime tokens — INK FIELD */
+        --bg: #14150F;
+        --surface: #1D1F14;
+        --line: #2C2E20;
+        --track: #2C2E20;
 
-        --ink: #F6F6F2;
-        --sub: #A0A0A4;
-        --soft: #74747A;
+        --ink: #F4F2EC;
+        --sub: #95978A;
+        --soft: #6E7060;
 
-        --accent: #D6E134;
-        --accent-text: #D6E134;
+        --accent: #D8F34A;
+        --accent-text: #D8F34A;
 
-        --feature: #D6E134;
-        --feature-ink: #08080A;
-        --feature-sub: #5F6A12;
-        --feature-num: #08080A;
+        /* Total-holdings card flips to a solid lime fill with ink numerals. */
+        --feature: #D8F34A;
+        --feature-ink: #14150F;
+        --feature-sub: #5A6B12;
+        --feature-num: #14150F;
 
-        --row-hover: #1C1C20;
-        --card-hover-border: #D6E134;
+        --row-hover: #23261A;
+        --card-hover-border: #D8F34A;
+
+        /* Nav shell — the floating card stays cream so nav + band read as one
+           card in both themes; only the surfaces flip. */
+        --nav-surface: #FFFDF7;
+        --nav-line: #E3E8D3;
+        --nav-field: #F2EFE4;
+        --nav-band: #D8F34A;
+        --nav-band-ink: #2C3505;
+        --tick-up: #15490A;
+        --tick-down: #8E1104;
+
+        /* Shimmer across the total-holdings figure: ink → white → ink. */
+        --shimmer: linear-gradient(100deg, #14150F 30%, #FFFFFF 50%, #14150F 70%);
+        --page-glow: radial-gradient(90% 60% at 85% -10%, rgba(216,243,74,.13), transparent 60%);
+
+        --hero-surface: #FFFDF7;
+        --hero-line: #FFFDF7;
+        --hero-ink: #16170F;
+        --hero-sub: #6F6D5F;
 
         --sector-tech: #60A5FA;
         --sector-financials: #D6E134;
@@ -242,7 +292,7 @@
         --bull: #4ADE80;
         --bear: #F87171;
 
-        --treemap-cell-fg: #08080A;
+        --treemap-cell-fg: #14150F;
 
         --font-display: 'Space Grotesk', sans-serif;
         --font-mono: 'JetBrains Mono', monospace;
@@ -264,12 +314,20 @@
         line-height: 1.5;
         transition: background .25s, color .25s;
       }
+      /* One soft lime glow over the ink field; `none` on the olive wash. */
+      body::before {
+        content: '';
+        position: fixed; inset: 0; z-index: 0;
+        background: var(--page-glow);
+        pointer-events: none;
+      }
+      #app { position: relative; z-index: 1; }
 
       .display { font-family: var(--font-display); font-size: 32px; font-weight: 600; letter-spacing: -0.02em; }
       .display-italic { font-style: italic; }
-      .eyebrow { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--soft); font-weight: 500; }
+      .eyebrow { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--soft); font-weight: 500; }
       .mono { font-family: var(--font-mono); }
-      .card { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; }
+      .card { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; }
 
       @keyframes pulse {
         0%, 100% { opacity: 1; }
@@ -285,6 +343,66 @@
       }
 
       svg { display: block; }
+
+      /* ============================================================
+         ANIMATION SET (spec §06) — seven motions, nothing else.
+         Reduced-motion overrides live in the media query further down.
+         ============================================================ */
+
+      /* 1 · Ticker marquee — content is duplicated once, so −50% loops seamlessly. */
+      @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+      .tick-track { display: flex; width: max-content; animation: marquee 22s linear infinite; }
+      .tick-band:hover .tick-track { animation-play-state: paused; }
+
+      /* 2 · Total-holdings shimmer — gradient clipped to the numerals. */
+      @keyframes sweep { 0% { background-position: -140% 0; } 60%, 100% { background-position: 240% 0; } }
+      .shimmer {
+        background-image: var(--shimmer);
+        background-size: 220% 100%;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        color: transparent;
+        animation: sweep 5s 1s infinite;
+      }
+
+      /* 4 · Nav condense on scroll — --nav-h is set from topbar.jsx (68 → 56).
+         Below 900px the bar wraps to two rows, so it sizes to its content. */
+      .nav-shell {
+        height: var(--nav-h);
+        transition: height .32s cubic-bezier(.2,.7,.3,1), border-radius .32s cubic-bezier(.2,.7,.3,1);
+        /* The marquee leaves .tick-track a permanent stacking context, and the
+           band is a later sibling — without this the scrolling tickers paint
+           over the search dropdown that hangs down from the bar. */
+        position: relative;
+        z-index: 1;
+      }
+      .tick-band { transition: height .32s cubic-bezier(.2,.7,.3,1), opacity .2s linear; }
+
+      /* 5 · Card entry — once on mount, staggered 60ms per card via --i. */
+      @keyframes cardIn {
+        from { opacity: 0; transform: translateY(14px); }
+        to   { opacity: 1; transform: none; }
+      }
+      .enter {
+        animation: cardIn 600ms cubic-bezier(.2,.7,.3,1) both;
+        animation-delay: calc(var(--i, 0) * 60ms);
+      }
+
+      /* 6 · Card hover — lift plus a soft shadow; no shadow at rest. */
+      .lift { transition: transform .25s cubic-bezier(.2,.7,.3,1), box-shadow .25s ease, border-color .25s ease; }
+      .lift:hover { transform: translateY(-4px); box-shadow: 0 18px 34px -22px rgba(22,23,15,.55); }
+
+      /* 7 · Live dot. */
+      @keyframes pulseDot {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50%      { opacity: .35; transform: scale(.7); }
+      }
+      .live-dot {
+        width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+        background: var(--accent);
+        animation: pulseDot 1.8s infinite;
+      }
 
       @keyframes pipeShimmer {
         0%   { transform: translateX(-100%); }
@@ -312,7 +430,9 @@
       /* Always show a focus ring for keyboard users. */
       :focus-visible { outline: 2px solid var(--accent-text); outline-offset: 2px; }
 
-      /* WCAG 2.2 — respect the OS "reduce motion" setting. */
+      /* WCAG 2.2 — respect the OS "reduce motion" setting.
+         Marquee, shimmer and card entry stop outright; hover and the nav
+         condense drop to 0ms (spec §06). */
       @media (prefers-reduced-motion: reduce) {
         *, *::before, *::after {
           animation-duration: .001ms !important;
@@ -320,6 +440,14 @@
           transition-duration: .001ms !important;
           scroll-behavior: auto !important;
         }
+        /* The shimmer clips its colour to a moving gradient, so with the
+           animation stopped the numerals need a solid fill to stay legible. */
+        .shimmer {
+          background-image: none;
+          -webkit-text-fill-color: currentColor;
+          color: var(--feature-num);
+        }
+        .lift:hover { transform: none; box-shadow: none; }
       }
 
       /* ============================================================
@@ -331,13 +459,15 @@
          Anything that does not change with viewport stays inline.
          ============================================================ */
 
-      /* Hero bento — summary.jsx */
-      .r-bento { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: minmax(118px, auto); gap: 14px; }
-      .r-bento-lead { grid-column: span 3; grid-row: span 2; }
-      .r-bento-feature { grid-row: span 3; }
+      /* Hero bento — summary.jsx. Hero row is hero card + total holdings
+         (spec §05 "1fr 380px", held as 2:1 so it scales with the page),
+         then a 3-up stat row underneath. */
+      .r-bento { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: minmax(118px, auto); gap: 16px; }
+      .r-bento-lead { grid-column: span 2; }
+      .r-bento-feature { grid-column: span 1; }
 
       /* Two-pane split — top holdings beside the sector treemap */
-      .r-split { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 14px; }
+      .r-split { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 16px; }
 
       /* Metric groups — summary.jsx + detail.jsx */
       .r-metrics3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
@@ -363,15 +493,21 @@
 
       @media (max-width: 900px) {
         .r-bento { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-        .r-bento-lead { grid-column: span 2; grid-row: auto; }
-        .r-bento-feature { grid-column: span 2; grid-row: auto; }
+        .r-bento-lead { grid-column: span 2; }
+        .r-bento-feature { grid-column: span 2; }
         .r-split { grid-template-columns: minmax(0, 1fr); }
         .r-skel4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-        /* Brand and actions share row 1; search gets its own full-width row. */
-        .r-topbar { grid-template-columns: auto auto; grid-template-areas: "brand actions" "search search"; row-gap: 12px; justify-content: space-between; }
-        .r-brand { grid-area: brand; }
-        .r-search { grid-area: search; max-width: none !important; }
+        /* Brand and actions share row 1; search gets its own full-width row.
+           The brand column is 1fr rather than auto so it can shrink below its
+           content instead of pushing the whole bar past the viewport. */
+        .r-topbar { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "brand actions" "search search"; row-gap: 12px; }
+        .r-brand { grid-area: brand; min-width: 0; }
+        .r-brand > div { min-width: 0; overflow: hidden; }
+        .r-search { grid-area: search; min-width: 0; }
         .r-actions { grid-area: actions; }
+        /* Two rows will not fit the condensed height, so the shell sizes to
+           its content and supplies the vertical padding itself. */
+        .nav-shell { height: auto !important; padding: 12px 0; }
       }
 
       @media (max-width: 640px) {
@@ -393,6 +529,12 @@
         .r-thead > * { font-size: 9px !important; letter-spacing: .03em !important; }
 
         .r-cmp-row { grid-template-columns: 108px repeat(var(--cmp-n), minmax(136px, 1fr)); }
+
+        /* The nav's three icon buttons are styled inline, so trimming them to
+           free up room for the wordmark needs !important — same debt as the
+           table cells above. Without it the brand column clips "Insights". */
+        .r-actions { gap: 6px !important; }
+        .r-actions > button { padding-left: 9px !important; padding-right: 9px !important; }
 
         /* Utility: drop non-essential chrome on the smallest screens. */
         .r-hide-sm { display: none !important; }

@@ -43,7 +43,7 @@ export function CompareDock({ companies, onRemove, onClear, onExpand, onOpenComp
           display:'flex', overflowX:'auto', padding: 14, gap: 12,
         }}>
           {companies.map(c => (
-            <div key={c.ticker}
+            <div key={c.id}
               onClick={() => onOpenCompany(c)}
               style={{
                 minWidth: 180,
@@ -58,7 +58,7 @@ export function CompareDock({ companies, onRemove, onClear, onExpand, onOpenComp
               onMouseEnter={e => e.currentTarget.style.background = 'var(--row-hover)'}
               onMouseLeave={e => e.currentTarget.style.background = 'var(--bg)'}
             >
-              <button onClick={(e) => { e.stopPropagation(); onRemove(c.ticker); }}
+              <button onClick={(e) => { e.stopPropagation(); onRemove(c.id); }}
                 style={{
                   position:'absolute', top: 6, right: 6,
                   width: 20, height: 20, padding:0,
@@ -171,7 +171,7 @@ export function CompareModal({ companies, onClose, allData }) {
           }}>
             <div className="r-cmp-label"></div>
             {companies.map(c => (
-              <div key={c.ticker} style={{ padding: '0 14px', borderLeft: '1px solid var(--line)' }}>
+              <div key={c.id} style={{ padding: '0 14px', borderLeft: '1px solid var(--line)' }}>
                 <span className="mono" style={{
                   fontSize: 10.5, color:'var(--sub)',
                   background:'var(--surface)', padding:'2px 6px', borderRadius:3,
@@ -198,7 +198,7 @@ export function CompareModal({ companies, onClose, allData }) {
                 {companies.map(c => {
                   const isHi = row.hi && row.hi(c);
                   return (
-                    <div key={c.ticker} style={{ padding: '0 14px', borderLeft:'1px solid var(--line)' }}>
+                    <div key={c.id} style={{ padding: '0 14px', borderLeft:'1px solid var(--line)' }}>
                       {row.html ? (
                         row.val(c)
                       ) : (

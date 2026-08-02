@@ -21,7 +21,7 @@ Canada,Linamar Corp,Consumer Discretionary,312794471,31010124,0.86%,0.86,,Owners
 Canada,Magna International Inc,Consumer Discretionary,1967377001,195043745,1.3%,1.3,,Both,MG.TO
 Canada,RB Global Inc,Consumer Discretionary,2571577693,254943584,1.33%,1.33,,Both,RBA.TO
 Canada,Restaurant Brands International Inc,Consumer Discretionary,2593021729,257069524,0.83%,0.83,,Market Value,QSR.TO
-Canada,Canada Packers Inc,Consumer Staples,25198221,2498126,0%,0.72,,Both,WN.TO
+Canada,Canada Packers Inc,Consumer Staples,25198221,2498126,0%,0.72,,Both,CPKR.TO
 Canada,George Weston Ltd,Consumer Staples,1429597569,141728842,0.54%,0.54,,Both,WN.TO
 Canada,Loblaw Cos Ltd,Consumer Staples,4525875237,448690646,0.84%,0.84,,Both,L.TO
 Canada,Maple Leaf Foods Inc,Consumer Staples,185711638,18411262,0.81%,0.81,,Both,MFI.TO
@@ -282,8 +282,8 @@ India,ITC Hotels Ltd,Consumer Discretionary,228279390,22631386,0.49%,0.49,,Both,
 India,Jubilant Foodworks Ltd,Consumer Discretionary,287748310,28527075,0.7%,0.7,,Both,JUBLFOOD.NS
 India,Kalyan Jewellers India Ltd,Consumer Discretionary,196186139,19449694,0.35%,0.35,,Market Value,KALYANKJIL.NS
 India,Lemon Tree Hotels Ltd,Consumer Discretionary,163412385,16200538,1.15%,1.15,,Both,LEMONTREE.NS
-India,Lenskart Solutions Ltd,Consumer Discretionary,104555616,10365537,0.12%,0.12,,Market Value,N/A-PRIVATE
-India,LG Electronics India Ltd,Consumer Discretionary,383314402,38001400,0.33%,0.33,,Market Value,N/A-PRIVATE
+India,Lenskart Solutions Ltd,Consumer Discretionary,104555616,10365537,0.12%,0.12,,Market Value,LENSKART.NS
+India,LG Electronics India Ltd,Consumer Discretionary,383314402,38001400,0.33%,0.33,,Market Value,LGEINDIA.NS
 India,Mahindra & Mahindra Ltd,Consumer Discretionary,6067066728,601482819,1.17%,1.17,,Both,M&M.NS
 India,Mahindra Holidays & Resorts India Ltd,Consumer Discretionary,182177261,18060868,2.6%,2.6,,Both,MHRIL.NS
 India,Maruti Suzuki India Ltd,Consumer Discretionary,2357192960,233689711,0.4%,0.4,,Both,MARUTI.NS
@@ -301,9 +301,9 @@ India,SKF India Ltd,Consumer Discretionary,50250823,4981815,0.49%,0.49,,Ownershi
 India,Sona Blw Precision Forgings Ltd,Consumer Discretionary,255558166,25335776,0.76%,0.76,,Both,SONACOMS.NS
 India,Sundram Fasteners Ltd,Consumer Discretionary,120661291,11962238,0.55%,0.55,,Both,SUNDRMFAST.NS
 India,Swiggy Ltd,Consumer Discretionary,2242307363,222300069,1.87%,1.87,,Both,SWIGGY.NS
-India,Tata Motors Passenger Vehicles Limited,Consumer Discretionary,857188566,84980802,0.56%,0.56,,Both,TATAMOTORS.NS
+India,Tata Motors Passenger Vehicles Limited,Consumer Discretionary,857188566,84980802,0.56%,0.56,,Both,TMPV.NS
 India,Tbo Tek Ltd,Consumer Discretionary,403722392,40024627,1.99%,1.99,,Both,TBO.NS
-India,Tenneco Clean Air India Ltd,Consumer Discretionary,149427004,14814041,0.65%,0.65,,Both,N/A-PRIVATE
+India,Tenneco Clean Air India Ltd,Consumer Discretionary,149427004,14814041,0.65%,0.65,,Both,TENNIND.NS
 India,Thomas Cook India Ltd,Consumer Discretionary,242951823,24085996,3.09%,3.09,,Both,THOMASCOOK.NS
 India,Titan Co Ltd,Consumer Discretionary,1883725257,186750604,0.47%,0.47,,Both,TITAN.NS
 India,Trent Ltd,Consumer Discretionary,904392480,89660550,0.53%,0.53,,Both,TRENT.NS
@@ -334,13 +334,13 @@ India,Hindustan Unilever Ltd,Consumer Staples,2294854368,227509526,0.38%,0.38,,B
 India,Jyothy Labs Ltd,Consumer Staples,36218798,3590695,0.31%,0.31,,Both,JYOTHYLAB.NS
 India,Kaveri Seed Co Ltd,Consumer Staples,9922462,983703,0.17%,0.17,,Both,KSCL.NS
 India,KRBL Ltd,Consumer Staples,48311213,4789524,0.48%,0.48,,Both,KRBL.NS
-India,Kwality Wall's India Ltd,Consumer Staples,114353417,11336881,0%,0.0,,Both,N/A-PRIVATE
+India,Kwality Wall's India Ltd,Consumer Staples,114353417,11336881,0%,0.0,,Both,KWIL.NS
 India,LT Foods Ltd,Consumer Staples,102085739,10120676,0.67%,0.67,,Both,LTFOODS.NS
 India,Marico Ltd,Consumer Staples,1735864426,172091832,1.59%,1.59,,Both,MARICO.NS
 India,Medplus Health Services Ltd,Consumer Staples,62709461,6216952,0.58%,0.58,,Both,MEDPLUS.NS
 India,Mrs Bectors Food Specialities Ltd,Consumer Staples,47709496,4729871,0.6%,0.6,,Both,BECTORFOOD.NS
 India,Nestle India Ltd,Consumer Staples,1069692872,106048262,0.38%,0.38,,Both,NESTLEIND.NS
-India,Orkla India Ltd,Consumer Staples,32576403,3229591,0.33%,0.33,,Both,N/A-PRIVATE
+India,Orkla India Ltd,Consumer Staples,32576403,3229591,0.33%,0.33,,Both,ORKLAINDIA.NS
 India,Patanjali Foods Ltd,Consumer Staples,159687279,15831234,0.24%,0.24,,Both,PATANJALI.NS
 India,Procter & Gamble Health Ltd,Consumer Staples,53668240,5320615,0.51%,0.51,,Both,PGHL.NS
 India,Radico Khaitan Ltd,Consumer Staples,317660655,31492554,0.64%,0.64,,Both,RADICO.NS
@@ -352,7 +352,7 @@ India,United Spirits Ltd,Consumer Staples,797686035,79081781,0.68%,0.68,,Both,UN
 India,Varun Beverages Ltd,Consumer Staples,3518926154,348862757,1.89%,1.89,,Both,VBL.NS
 India,Zydus Wellness Ltd,Consumer Staples,45183470,4479443,0.28%,0.28,,Both,ZYDUSWELL.NS
 India,Aegis Logistics Ltd,Energy,94577362,9376303,0.33%,0.33,,Both,AEGISLOG.NS
-India,Aegis Vopak Terminals Ltd,Energy,559673506,55485462,1.81%,1.81,,Both,AEGISLOG.NS
+India,Aegis Vopak Terminals Ltd,Energy,559673506,55485462,1.81%,1.81,,Both,AEGISVOPAK.NS
 India,Bharat Petroleum Corp Ltd,Energy,895329592,88762064,0.48%,0.48,,Both,BPCL.NS
 India,Castrol India Ltd,Energy,117146859,11613820,0.55%,0.55,,Both,CASTROLIND.NS
 India,Hindustan Petroleum Corp Ltd,Energy,562367443,55752536,0.47%,0.47,,Both,HINDPETRO.NS
@@ -419,7 +419,7 @@ India,Shriram Finance Ltd,Financials,2703837424,268055690,1.29%,1.29,,Both,SHRIR
 India,Star Health & Allied Insurance Co Ltd,Financials,736363436,73002321,2.45%,2.45,,Both,STARHEALTH.NS
 India,State Bank of India,Financials,4583383285,454391953,0.45%,0.45,,Market Value,SBIN.NS
 India,Sundaram Finance Ltd,Financials,444734985,44090574,0.68%,0.68,,Both,SUNDARMFIN.NS
-India,Tata Capital Ltd,Financials,660052565,65436939,0.41%,0.41,,Market Value,N/A-PRIVATE
+India,Tata Capital Ltd,Financials,660052565,65436939,0.41%,0.41,,Market Value,TATACAP.NS
 India,Union Bank of India Ltd,Financials,362106327,35898853,0.27%,0.27,,Market Value,UNIONBANK.NS
 India,UTI Asset Management Co Ltd,Financials,134442480,13328491,0.83%,0.83,,Ownership,UTIAMC.NS
 India,Yes Bank Ltd,Financials,519967592,51549058,0.68%,0.68,,Both,YESBANK.NS
@@ -466,7 +466,7 @@ India,Poly Medicure Ltd,Health Care,71947642,7132816,0.36%,0.36,,Both,POLYMED.NS
 India,Rainbow Children's Medicare Ltd,Health Care,94008396,9319897,0.62%,0.62,,Both,RAINBOW.NS
 India,Sagility Ltd,Health Care,291901100,28938778,1.07%,1.07,,Both,SAGILITY.NS
 India,SAI Life Sciences Ltd,Health Care,134140141,13298517,0.62%,0.62,,Both,SAILIFE.NS
-India,Sanofi Consumer Healthcare India Ltd,Health Care,53064700,5260780,0.45%,0.45,,Both,SANOFI.NS
+India,Sanofi Consumer Healthcare India Ltd,Health Care,53064700,5260780,0.45%,0.45,,Both,SANOFICONR.BO
 India,Sanofi India Ltd,Health Care,41279079,4092366,0.39%,0.39,,Ownership,SANOFI.NS
 India,Strides Pharma Science Ltd,Health Care,68546036,6795584,0.74%,0.74,,Both,STAR.NS
 India,Sun Pharma Advanced Research Co Ltd,Health Care,28829695,2858147,0.59%,0.59,,Ownership,SPARC.NS
@@ -538,11 +538,11 @@ India,Praj Industries Ltd,Industrials,48692275,4827303,0.73%,0.73,,Ownership,PRA
 India,Ramco Cements Ltd/The,Industrials,125769703,12468680,0.45%,0.45,,Market Value,RAMCOCEM.NS
 India,RR Kabel Ltd,Industrials,618969173,61363974,3.36%,3.36,,Both,RRKABEL.NS
 India,Shree Cement Ltd,Industrials,295495089,29295082,0.27%,0.27,,Market Value,SHREECEM.NS
-India,Siemens Energy India Ltd,Industrials,235998148,23396616,0.23%,0.23,,Market Value,SIEMENS.NS
+India,Siemens Energy India Ltd,Industrials,235998148,23396616,0.23%,0.23,,Market Value,ENRIN.NS
 India,Siemens Ltd,Industrials,293217337,29069268,0.24%,0.24,,Market Value,SIEMENS.NS
 India,Sterling and Wilson Renewable,Industrials,49838833,4940971,0.89%,0.89,,Ownership,SWSOLAR.NS
 India,Supreme Industries Ltd,Industrials,811571935,80458416,1.7%,1.7,,Both,SUPREMEIND.NS
-India,Tata Motors Ltd /new,Industrials,1512517359,149949431,0.88%,0.88,,Both,TATAMOTORS.NS
+India,Tata Motors Ltd /new,Industrials,1512517359,149949431,0.88%,0.88,,Both,TMCV.NS
 India,Thermax Ltd,Industrials,131578751,13044583,0.33%,0.33,,Market Value,THERMAX.NS
 India,Timken India Ltd,Industrials,120963168,11992165,0.48%,0.48,,Market Value,TIMKEN.NS
 India,Titagarh Rail System Ltd,Industrials,103541570,10265006,0.77%,0.77,,Ownership,TITAGARH.NS
@@ -553,7 +553,7 @@ India,Voltas Ltd,Industrials,357413233,35433584,0.71%,0.71,,Both,VOLTAS.NS
 India,Anant Raj Ltd,Real Estate,71292432,7067859,0.32%,0.32,,Both,ANANTRAJ.NS
 India,Brigade Enterprises Ltd,Real Estate,68614734,6802395,0.28%,0.28,,Both,BRIGADE.NS
 India,Brookfield India Real Estate Trust,Real Estate,599051827,59389388,2.15%,2.15,,Both,BIRET.NS
-India,Embassy Developments Ltd,Real Estate,7,1,0%,0.0,,Both,EMBASSY.NS
+India,Embassy Developments Ltd,Real Estate,7,1,0%,0.0,,Both,EMBDL.NS
 India,Embassy Office Parks REIT,Real Estate,826028501,81891625,1.78%,1.78,,Both,EMBASSY.NS
 India,Godrej Properties Ltd,Real Estate,379635027,37636630,0.56%,0.56,,Both,GODREJPROP.NS
 India,Lodha Developers Ltd,Real Estate,374834242,37160685,0.32%,0.32,,Both,LODHA.NS
@@ -1011,7 +1011,7 @@ United States,Targa Resources Corp,Energy,7210974151,714888608,1.81%,1.81,,Both,
 United States,TechnipFMC PLC,Energy,1884692135,186846452,1.04%,1.04,,Both,FTI
 United States,Valaris Ltd,Energy,400032391,39658802,1.13%,1.13,,Both,VAL
 United States,Valero Energy Corp,Energy,10378491654,1028913055,2.07%,2.07,,Both,VLO
-United States,WaterBridge Infrastructure LLC,Energy,40367574,4002000,0.16%,0.16,,Both,N/A-PRIVATE
+United States,WaterBridge Infrastructure LLC,Energy,40367574,4002000,0.16%,0.16,,Both,WBI
 United States,Weatherford International PLC,Energy,619322112,61398961,1.09%,1.09,,Both,WFRD
 United States,Williams Cos Inc/The,Energy,7255374229,719290386,0.98%,0.98,,Both,WMB
 United States,Allstate Corp/The,Financials,4169727972,413382570,0.76%,0.76,,Market Value,ALL
@@ -1128,7 +1128,7 @@ United States,Intuitive Surgical Inc,Health Care,26510337232,2628207739,1.31%,1.
 United States,IQVIA Holdings Inc,Health Care,4698607796,465815175,1.21%,1.21,,Market Value,IQV
 United States,Johnson & Johnson,Health Care,64007764857,6345664391,1.27%,1.27,,Both,JNJ
 United States,Labcorp Holdings Inc,Health Care,2400579922,237991040,1.14%,1.14,,Market Value,LH
-United States,Medline Inc,Health Care,2118238500,210000000,0.37%,0.37,,Market Value,N/A-PRIVATE
+United States,Medline Inc,Health Care,2118238500,210000000,0.37%,0.37,,Market Value,MDLN
 United States,Medtronic PLC,Health Care,16137596207,1599864795,1.3%,1.3,,Both,MDT
 United States,Merck & Co Inc,Health Care,37355115258,3703347949,1.42%,1.42,,Both,MRK
 United States,Natera Inc,Health Care,4091979180,405674634,1.27%,1.27,,Both,NTRA
@@ -1166,7 +1166,7 @@ United States,ADT Inc,Industrials,1946724581,192996285,3.13%,2.92,,Ownership,ADT
 United States,Advanced Drainage Systems Inc,Industrials,1680990508,166651681,1.48%,1.48,,Ownership,WMS
 United States,AECOM,Industrials,1761374047,174620823,1.39%,1.39,,Ownership,ACM
 United States,AerCap Holdings NV,Industrials,4940893916,489835173,2%,2.0,,Both,AER
-United States,Alliance Laundry Holdings Inc,Industrials,564485343,55962500,0%,1.39,,Ownership,N/A-PRIVATE
+United States,Alliance Laundry Holdings Inc,Industrials,564485343,55962500,0%,1.39,,Ownership,ALH
 United States,Amcor PLC,Industrials,3261258301,323317815,1.68%,1.68,,Ownership,AMCR
 United States,American Express Co,Industrials,22837621343,2264098439,0.89%,0.89,,Market Value,AXP
 United States,AMETEK Inc,Industrials,7154694437,709309094,1.5%,1.5,,Both,AME
@@ -1185,7 +1185,7 @@ United States,Cummins Inc,Industrials,8019625975,795057523,1.13%,1.13,,Market Va
 United States,Curtiss-Wright Corp,Industrials,2892595890,286769000,1.41%,1.41,,Ownership,CW
 United States,Deere & Co,Industrials,15956263685,1581887674,1.25%,1.25,,Market Value,DE
 United States,Dow Inc,Industrials,2410594116,238983837,1.45%,1.45,,Ownership,DOW
-United States,DY POWER Corp,Industrials,22228593,2203721,2.14%,2.14,,Ownership,N/A-PRIVATE
+United States,DY POWER Corp,Industrials,22228593,2203721,2.14%,2.14,,Ownership,
 United States,Eagle Materials Inc,Industrials,925547765,91757859,1.38%,1.38,,Ownership,EXP
 United States,Eaton Corp PLC,Industrials,15105384843,1497532415,1.21%,1.21,,Market Value,ETN
 United States,EMCOR Group Inc,Industrials,3845023157,381191666,1.39%,1.39,,Ownership,EME
@@ -1355,7 +1355,7 @@ United States,Science Applications International Corp,Technology,635530173,63005
 United States,Seagate Technology Holdings PLC,Technology,4415568890,437754987,0.74%,0.74,,Market Value,STX
 United States,ServiceNow Inc,Technology,18941072581,1877798577,1.18%,1.18,,Market Value,NOW
 United States,Silicon Laboratories Inc,Technology,564945170,56008087,1.3%,1.3,,Ownership,SLAB
-United States,Silvair Inc,Technology,6979292,691920,1.17%,1.5,,Ownership,N/A-PRIVATE
+United States,Silvair Inc,Technology,6979292,691920,1.17%,1.5,,Ownership,
 United States,Snowflake Inc,Technology,10384774075,1029535888,1.37%,1.37,,Both,SNOW
 United States,Strategy Inc,Technology,5125609579,508147695,0.72%,1.16,,Market Value,MSTR
 United States,Synopsys Inc,Technology,7007419066,694708364,0.77%,0.77,,Market Value,SNPS
@@ -1378,8 +1378,8 @@ United States,Comcast Corp,Telecommunications,23865639758,2366015134,1.42%,2.17,
 United States,EchoStar Corp,Telecommunications,1650741752,163652850,0.1%,0.52,,Both,SATS
 United States,Extreme Networks Inc,Telecommunications,2872549,284782,0.01%,0.01,,Both,EXTR
 United States,Frontier Communications Parent Inc,Telecommunications,2182304415,216351429,2.27%,2.27,,Both,FYBR
-United States,GCI Liberty Inc,Telecommunications,457443,45350,0.02%,0.0,,Both,GLIBA
-United States,GCI Liberty Inc/DEL,Telecommunications,99025,9817,0.67%,0.93,,Both,GLIBA
+United States,GCI Liberty Inc,Telecommunications,457443,45350,0.02%,0.0,,Both,
+United States,GCI Liberty Inc/DEL,Telecommunications,99025,9817,0.67%,0.93,,Both,
 United States,InterDigital Inc,Telecommunications,995418234,98684746,1.2%,1.2,,Both,IDCC
 United States,Liberty Broadband Corp,Telecommunications,1818140591,180248600,0.96%,2.59,,Both,LBRDA
 United States,Liberty Global Ltd,Telecommunications,488878175,48466883,1.23%,1.28,,Both,LBTYA
@@ -1387,7 +1387,7 @@ United States,Liberty Latin America Ltd,Telecommunications,5445615,539873,0%,0.0
 United States,Lumen Technologies Inc,Telecommunications,931557521,92353661,1.16%,1.16,,Both,LUMN
 United States,Lumentum Holdings Inc,Telecommunications,4058461631,402351738,1.54%,1.54,,Both,LITE
 United States,Motorola Solutions Inc,Telecommunications,8304867685,823336095,1.29%,1.29,,Both,MSI
-United States,Optimum Communications Inc,Telecommunications,20033144,1986065,0.02%,0.26,,Both,N/A-PRIVATE
+United States,Optimum Communications Inc,Telecommunications,20033144,1986065,0.02%,0.26,,Both,OPTU
 United States,Roku Inc,Telecommunications,34416438,3412011,0.01%,0.02,,Both,ROKU
 United States,T-Mobile US Inc,Telecommunications,12578238530,1246993713,0.55%,0.55,,Both,TMUS
 United States,Ubiquiti Inc,Telecommunications,282929198,28049312,0.08%,0.08,,Both,UI

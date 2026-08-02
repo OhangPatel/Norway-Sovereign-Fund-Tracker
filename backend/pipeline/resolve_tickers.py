@@ -62,7 +62,8 @@ COUNTRY_SUFFIX = {
 }
 
 MATCH_THRESHOLD = 0.72   # below this we refuse to guess
-SEARCH_PAUSE = 1.5       # seconds between searches, matching the API's yfinance throttle
+SEARCH_PAUSE = 8.0       # Yahoo silently returns EMPTY result sets when throttled,
+                         # so pace conservatively: a repair run is rare and slow is fine
 
 # Legal-form noise that carries no identifying signal.
 _NOISE = re.compile(
@@ -80,17 +81,22 @@ def norm(name: str) -> str:
 
 
 def similarity(a: str, b: str) -> float:
-    """0..1 name agreement. Token containment is rewarded because exchanges
-    abbreviate ('Tata Motors Passenger Vehicles' vs 'Tata Motors PV')."""
+    """0..1 name agreement.
+
+    Token overlap is measured against the LONGER name on purpose. Dividing by the
+    shorter one makes a parent's name score ~1.0 against its subsidiary — "Siemens
+    Energy India" vs "Siemens" shares one token out of one, which is precisely the
+    false match that put two companies on SIEMENS.NS in the first place. Scoring
+    against the longer name means unexplained extra words cost you.
+    """
     na, nb = norm(a), norm(b)
     if not na or not nb:
         return 0.0
-    ratio = SequenceMatcher(None, na, nb).ratio()
     ta, tb = set(na.split()), set(nb.split())
-    if ta and tb:
-        overlap = len(ta & tb) / min(len(ta), len(tb))
-        ratio = max(ratio, overlap * 0.95 if ta <= tb or tb <= ta else overlap * 0.85)
-    return ratio
+    if not ta or not tb:
+        return 0.0
+    coverage = len(ta & tb) / max(len(ta), len(tb))
+    return max(SequenceMatcher(None, na, nb).ratio(), coverage)
 
 
 def suffix_ok(symbol: str, country: str) -> bool:
@@ -102,13 +108,35 @@ def suffix_ok(symbol: str, country: str) -> bool:
     return any(symbol.endswith(s) for s in allowed)
 
 
+# Registry bookkeeping, not part of the company's name: "Tata Motors Ltd /new",
+# "GCI Liberty Inc/DEL". Left in the query it derails the search.
+_QUERY_CRUFT = re.compile(r"\s*/\s*(new|del|old|de|cl\s*[a-z])\b.*$", re.I)
+
+
+def _search_raw(query: str):
+    """Yahoo's search returns an EMPTY LIST when it throttles you — the same shape
+    as a genuine no-match. Taking that at face value silently marks real companies
+    as unlisted (it hid TATACAP.NS, TENNIND.NS and SANOFICONR.BO on the first run).
+    So retry an empty result with backoff; only a repeated empty means 'no match'."""
+    delay = 4.0
+    for attempt in range(3):
+        try:
+            quotes = yf.Search(query, max_results=12).quotes or []
+        except Exception as e:
+            print(f"    search error ({type(e).__name__}), retrying", flush=True)
+            quotes = []
+        if quotes:
+            return quotes
+        if attempt < 2:
+            time.sleep(delay)
+            delay *= 2
+    return []
+
+
 def search_candidates(name: str, country: str):
     """Yahoo hits for `name`, filtered to the country's exchange, best first."""
-    try:
-        quotes = yf.Search(name, max_results=12).quotes or []
-    except Exception as e:                                   # network/rate-limit
-        print(f"    search failed for {name!r}: {type(e).__name__}", flush=True)
-        return []
+    query = _QUERY_CRUFT.sub("", name or "").strip() or name
+    quotes = _search_raw(query)
     out = []
     for q in quotes:
         sym = (q.get("symbol") or "").strip()
@@ -177,13 +205,25 @@ def main() -> int:
             claimed[t] = i
 
     changes = []
+    unverified_overrides = []
     for n, i in enumerate(targets, 1):
         name = df.at[i, "Name"]
         country = df.at[i, "Country"]
         current = df.at[i, "Yahoo_Ticker"]
 
         if name in overrides:
-            chosen, why = overrides[name], "override"
+            # A human asserted this, so it wins over the search — that is the whole
+            # point of the file. But it still gets checked: an override was the one
+            # path into this script that nothing validated, which is exactly the
+            # unverified-trust hole that produced the original bad tickers. A typo
+            # here is honoured, but never silently.
+            chosen = overrides[name]
+            score = verify(chosen, name, country)
+            if score >= MATCH_THRESHOLD:
+                why = f"override (verified {score:.2f})"
+            else:
+                why = f"override (UNVERIFIED {score:.2f} — CHECK THIS)"
+                unverified_overrides.append((name, chosen, score))
         else:
             # An existing ticker keeps its row only if it actually verifies.
             score = verify(current, name, country) if current else 0.0
@@ -211,6 +251,11 @@ def main() -> int:
     if len(still_dup):
         print(f"\nERROR: {len(still_dup)} ticker(s) still duplicated: {list(still_dup.index)}", file=sys.stderr)
         return 1
+
+    if unverified_overrides:
+        print(f"\nWARNING: {len(unverified_overrides)} override(s) did not match the exchange's own name:", file=sys.stderr)
+        for nm, sym, sc in unverified_overrides:
+            print(f"    {nm} -> {sym} (score {sc:.2f}) — verify data/ticker_overrides.csv", file=sys.stderr)
 
     print(f"\n{len(changes)} row(s) changed. Every non-blank ticker is unique.", flush=True)
     blanks = int((df["Yahoo_Ticker"] == "").sum())
