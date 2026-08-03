@@ -43,12 +43,32 @@ export function TopBar({ data, query, setQuery, theme, setTheme, onPick, compare
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
-  // Animation 4 — past 40px the bar condenses and the band collapses to 0.
+  // Animation 4 — past ~64px the bar condenses and the band collapses to 0.
+  //
+  // Two thresholds, not one. The band lives inside a position:sticky header and
+  // animates its height over 320ms, so collapsing it changes layout enough to
+  // nudge scrollY back across a single boundary. That flips the state, which
+  // restores the band, which flips it again — a feedback loop that reads as
+  // flicker for the whole length of the transition. Condensing at 64 but only
+  // expanding again below 24 leaves a 40px dead zone, wider than any shift the
+  // collapse itself can cause, so the state cannot oscillate.
+  //
+  // Coalesced into one read per frame: scroll fires far faster than paint, and
+  // re-evaluating mid-transition is what made the loop so easy to hit.
   React.useEffect(() => {
-    const onScroll = () => setCondensed(window.scrollY > 40);
-    onScroll();
+    let frame = 0;
+    const read = () => {
+      frame = 0;
+      const y = window.scrollY;
+      setCondensed(isCondensed => (isCondensed ? y > 24 : y > 64));
+    };
+    const onScroll = () => { if (!frame) frame = requestAnimationFrame(read); };
+    read();
     window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      if (frame) cancelAnimationFrame(frame);
+    };
   }, []);
 
   const handleKey = (e) => {
