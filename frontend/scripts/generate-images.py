@@ -92,6 +92,16 @@ for px, name in ((180, "apple-touch-icon.png"), (192, "icon-192.png"), (512, "ic
     icon.save(f"{OUT_PUBLIC}/{name}", "PNG", optimize=True)
     print("wrote", name, icon.size)
 
+# favicon.ico — browsers hit /favicon.ico at the root whether or not the page
+# declares a <link>, and Safari's support for SVG favicons is poor. Without this
+# those contexts fall back to a blank icon. Multi-resolution so the OS picks the
+# right one instead of downscaling 48px into a 16px tab.
+_ico = Image.new("RGBA", (256, 256), (0, 0, 0, 0))
+draw_mark(_ico, 0, 0, 256, crown=CROWN_FAVICON, bar=BAR_FAVICON, tile=LOGO_TILE)
+_ico.save(f"{OUT_PUBLIC}/favicon.ico", "ICO",
+          sizes=[(16, 16), (32, 32), (48, 48), (64, 64), (128, 128), (256, 256)])
+print("wrote favicon.ico (16/32/48/64/128/256)")
+
 # ── Social card ────────────────────────────────────────────────────────────
 W, H, PAD = 1200, 630, 76
 img = Image.new("RGB", (W, H), BG)

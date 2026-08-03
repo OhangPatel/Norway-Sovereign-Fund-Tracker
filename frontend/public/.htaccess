@@ -41,6 +41,14 @@
     <FilesMatch "^data\.json$">
         Header set Cache-Control "public, max-age=0, must-revalidate"
     </FilesMatch>
+
+    # Brand assets. Their URLs are versioned (?v=N) so a change propagates
+    # immediately for anyone loading the page; this shorter TTL is the safety net
+    # for direct /favicon.ico hits, which carry no query string. The host default
+    # of 7 days is why the old placeholder icon lingered after it was replaced.
+    <FilesMatch "\.(ico|png|svg|webmanifest)$">
+        Header set Cache-Control "public, max-age=86400"
+    </FilesMatch>
 </IfModule>
 
 # ── Compression ──────────────────────────────────────────────────────────────
