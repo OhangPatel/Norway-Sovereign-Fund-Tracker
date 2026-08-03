@@ -85,7 +85,7 @@ export function Summary({ data, filtered, onPickCompany, onSetFilter, activeSect
       <div className="r-bento">
         {/* Lead card — hero half of the top row. Keeps its own cream surface so
             it stays cream on the ink field (spec 02B). */}
-        <div className="r-bento-lead enter lift" style={{
+        <div className="r-bento-lead enter" style={{
           '--i': 0,
           background: 'var(--hero-surface)', border: '1px solid var(--hero-line)',
           color: 'var(--hero-ink)',
@@ -110,7 +110,7 @@ export function Summary({ data, filtered, onPickCompany, onSetFilter, activeSect
         </div>
 
         {/* Feature card — total holdings; ink on the olive wash, lime on the ink field */}
-        <div className="r-bento-feature enter lift" style={{
+        <div className="r-bento-feature enter" style={{
           '--i': 1,
           background: 'var(--feature)', color: 'var(--feature-ink)',
           borderRadius: 18, padding: '28px 26px',
@@ -219,7 +219,7 @@ export function percentile(arr, p) {
 export function StatCell({ label, value, sub, clickable, onClick, i = 0 }) {
   return (
     <div
-      className="card enter lift"
+      className="card enter"
       onClick={clickable ? onClick : undefined}
       style={{
         '--i': i,
