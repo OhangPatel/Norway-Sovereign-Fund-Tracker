@@ -193,6 +193,15 @@ export function ChatWidget() {
           <Icon name="arrow-up" size={17} color="var(--treemap-cell-fg)" />
         </button>
       </div>
+
+      {/* The assistant is also told to append a disclaimer to any answer that ranks or
+          allocates, but a model can drop an instruction. This line cannot, so it is the
+          one that actually guarantees the notice is on screen. */}
+      <div className="mono" style={{
+        padding: '0 12px 10px', fontSize: 10, lineHeight: 1.4, color: 'var(--soft)', textAlign: 'center',
+      }}>
+        Not financial advice · figures are a historical snapshot of NBIM&apos;s disclosed holdings
+      </div>
     </div>
   );
 }

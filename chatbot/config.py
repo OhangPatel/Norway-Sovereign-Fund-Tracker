@@ -12,15 +12,24 @@ ENV_PATH = BASE_DIR / ".env"
 load_dotenv(ENV_PATH)
 
 # ── Model + cost controls ─────────────────────────────────────────────────────
-# gemini-2.5-flash is current and works on the free tier. (gemini-1.5-flash was
-# retired — it 404s; gemini-2.0-flash has free-tier quota of 0 on some projects.)
+# The model has to be strong enough to follow the analyst prompt in gemini_client:
+# pick a scoring methodology, apply it, and render nulls as unavailable rather than 0.
+# Measured on the "split 100 CAD across Canadian holdings" question:
+#   gemini-3.6-flash        8.3s  score-weighted split, nulls as N/A   <- default
+#   gemini-2.5-flash        7.9s  score-weighted split, nulls as N/A   <- good fallback
+#   gemini-3-flash-preview 43.3s  equal-weight only, printed a null divYield as "0.00%"
+#   gemini-2.5-flash-lite    —    stalls: asks the user for criteria instead of answering
 # Override via GEMINI_MODEL in .env; the README has a diagnostic that lists the
 # models your specific key has free quota for.
-GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.6-flash")
 # Hard caps on tokens => hard cap on per-request cost.
 # NOTE: on 2.5/3 "thinking" models this budget must cover BOTH the internal thinking
 # AND the visible answer, so it is set well above the answer length (see THINKING_BUDGET).
-MAX_OUTPUT_TOKENS = int(os.getenv("MAX_OUTPUT_TOKENS", "1536"))
+# 1536 was sized for one-line lookups and truncated analytical answers mid-table —
+# which also swallowed the trailing "not financial advice" line. This is a CEILING,
+# not a charge: you are billed for tokens actually generated, so raising it costs
+# nothing on short answers and only spends more where the answer genuinely is longer.
+MAX_OUTPUT_TOKENS = int(os.getenv("MAX_OUTPUT_TOKENS", "3072"))
 MAX_INPUT_CHARS = int(os.getenv("MAX_INPUT_CHARS", "2000"))
 MAX_HISTORY_MESSAGES = int(os.getenv("MAX_HISTORY_MESSAGES", "10"))
 GEMINI_TIMEOUT = float(os.getenv("GEMINI_TIMEOUT", "30"))
