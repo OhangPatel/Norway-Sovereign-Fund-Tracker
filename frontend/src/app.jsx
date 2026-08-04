@@ -7,6 +7,7 @@ import { DataTable } from './table.jsx';
 import { Detail } from './detail.jsx';
 import { CompareDock, CompareModal } from './compare.jsx';
 import { ChatWidget } from './chat.jsx';
+import { AdminLogin, useSession } from './auth.jsx';
 
 // ── Pipeline Controls ─────────────────────────────────────────────────────────
 
@@ -14,10 +15,13 @@ import { ChatWidget } from './chat.jsx';
 // HTTPS URL at build time (see .env.production); falls back to localhost for `npm run dev`.
 export var PIPELINE_API = import.meta.env.VITE_PIPELINE_API || 'http://127.0.0.1:8000';
 
-// The pipeline tools (Refresh Holdings / Update Prices) trigger local scrape + merge jobs,
-// so they are admin-only and must NOT ship in the public production build. Enabled via
-// VITE_ENABLE_PIPELINE=true (set in .env.development); off by default, so a build without
-// that var set stays safe.
+// The pipeline tools (Refresh Holdings / Update Prices) trigger local scrape + merge jobs.
+// Two independent ways to reveal them:
+//   * VITE_ENABLE_PIPELINE=true — the local dev build (.env.development), no sign-in needed.
+//   * an admin Supabase session — see auth.jsx, used on the deployed build.
+// Both only control VISIBILITY. Authorisation lives server-side in backend/app/main.py,
+// which requires PIPELINE_ADMIN_TOKEN and 404s without it. Revealing a button has never
+// been the same as being allowed to press it.
 export var PIPELINE_ENABLED = import.meta.env.VITE_ENABLE_PIPELINE === 'true';
 
 // A single row inside the Data Tools dropdown: icon tile · title + caption · chip.
@@ -347,6 +351,8 @@ export function PipelineControls(props) {
 // ── Main app composition ──────────────────────────────────────────────────────
 
 export function App() {
+  // Reveals the pipeline tools on the deployed build; see the note on PIPELINE_ENABLED.
+  const { isAdmin } = useSession();
   const [data, setData] = React.useState(null);
   const [err, setErr] = React.useState(null);
   const [dataKey, setDataKey] = React.useState(0);
@@ -521,7 +527,7 @@ export function App() {
         lastFetched={lastFetched}
       />
 
-      {PIPELINE_ENABLED && (
+      {(PIPELINE_ENABLED || isAdmin) && (
         <PipelineControls onComplete={() => setDataKey(k => k + 1)} lastFetched={lastFetched} />
       )}
 
@@ -569,7 +575,10 @@ export function App() {
             fontSize: 10.5, color: 'var(--soft)',
             padding: '4px 6px'
           }}>
-            <span>Press <kbd style={kbd}>/</kbd> to search · <kbd style={kbd}>Esc</kbd> to close</span>
+            <span>
+              Press <kbd style={kbd}>/</kbd> to search · <kbd style={kbd}>Esc</kbd> to close
+              {' · '}<AdminLogin />
+            </span>
             <span>Norway GPFG · {data.length.toLocaleString()} positions · USD values estimated at acquisition FX · <a
               href="/holdings/"
               style={{ color: 'var(--accent-text)', textDecoration: 'underline' }}
