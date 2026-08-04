@@ -7,7 +7,7 @@ answer but never invents the numbers. Pure Python: no pandas, no database.
 import json
 import logging
 import math
-from datetime import datetime
+import re
 from pathlib import Path
 
 import config
@@ -45,6 +45,27 @@ def _clean_str(v):
     return s or None
 
 
+# Rows carry fetchedAt as a naive local timestamp ("2026-06-22 21:19:53"). Take the
+# LATEST date across rows as the snapshot date, comparing the date portion as a plain
+# string — no parsing, so no timezone can roll it onto the neighbouring day. This is the
+# same rule frontend/scripts/build-static.mjs uses, so the static pages and the assistant
+# always cite one date.
+# The file's mtime is NOT a usable source: it moves whenever the file is copied, deployed
+# or rewritten, which had the assistant citing 2026-08-02 for a 2026-06-22 snapshot.
+_DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+
+
+def _snapshot_date(rows):
+    """Latest valid fetchedAt date across rows, or None if none is usable."""
+    best = None
+    for r in rows:
+        v = r.get("fetchedAt")
+        d = v[:10] if isinstance(v, str) else None
+        if d and _DATE_RE.match(d) and (best is None or d > best):
+            best = d
+    return best
+
+
 def _load():
     path = Path(config.DATA_PATH)
     try:
@@ -60,11 +81,10 @@ def _load():
         for f in (*GROUP_FIELDS, "name", "ticker"):
             row[f] = _clean_str(r.get(f))
         rows.append(row)
-    # data.json carries no embedded date; use the file's mtime as the "as of" date.
-    try:
-        as_of = datetime.fromtimestamp(path.stat().st_mtime).date().isoformat()
-    except OSError:
-        as_of = None
+    as_of = _snapshot_date(rows)
+    if as_of is None:
+        # Better to say "an unspecified date" than to cite a confidently wrong one.
+        log.warning("No usable fetchedAt in %s — the assistant will not cite a date", path)
     log.info("Loaded %d holdings from %s (as of %s)", len(rows), path, as_of)
     return rows, as_of
 

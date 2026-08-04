@@ -55,8 +55,14 @@ finance questions (e.g. "what is a P/E ratio?") are answered directly, with no t
   `MAX_TOOL_CALLS` (default 3) caps the round-trips, so cost per question stays bounded.
 - **Result size:** tools return at most 20 rows (default 5) to keep tokens small. Asking
   "all countries" may need an explicit higher limit since the default is 5.
-- **Freshness:** `data.json` has no embedded date, so the "as of" date is the file's
-  modified time, surfaced as `data_as_of` in `/api/chat/health`.
+- **Freshness:** the "as of" date is the latest `fetchedAt` across rows (same rule as
+  `frontend/scripts/build-static.mjs`), surfaced as `data_as_of` in `/api/chat/health`.
+  It is NOT the file's modified time — that moves on every copy/deploy and used to make
+  the assistant cite a date six weeks after the real snapshot.
+- **Data is loaded once, at startup.** `data.json` is read at import and cached in memory.
+  Replacing the file on disk changes nothing until the service restarts, and running the
+  pipeline elsewhere never touches this service's copy — commit the new `data.json` and
+  redeploy.
 - **Deploy note:** for a standalone deployment, ship a copy of the data file with the
   service and set `DATA_PATH` to it (the default path assumes the repo layout).
 
