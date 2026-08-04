@@ -12,7 +12,15 @@ import time
 import threading
 from contextlib import contextmanager
 from datetime import datetime, date, timedelta, timezone
+from dotenv import load_dotenv
 import yfinance as yf
+
+# Load the repo-root .env BEFORE any os.getenv below — every setting in this file is
+# read once at import. Without this the service silently saw no configuration at all:
+# PIPELINE_ADMIN_TOKEN stayed empty, so the admin gate 404'd even on a developer's own
+# machine. chatbot/config.py has always done this; the two services must not disagree
+# about whether .env is real.
+load_dotenv(Path(__file__).resolve().parent.parent.parent / ".env")
 
 # /docs, /redoc and /openapi.json publish a machine-readable index of every
 # endpoint — including the pipeline triggers below, which launch a browser and

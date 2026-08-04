@@ -15,6 +15,11 @@ import { AdminLogin, useSession } from './auth.jsx';
 // HTTPS URL at build time (see .env.production); falls back to localhost for `npm run dev`.
 export var PIPELINE_API = import.meta.env.VITE_PIPELINE_API || 'http://127.0.0.1:8000';
 
+// Shared secret for POST /api/pipeline/*, matching PIPELINE_ADMIN_TOKEN in the repo-root
+// .env. Lives in frontend/.env.development.local (gitignored) and has NO production
+// counterpart on purpose — a secret inlined into a public bundle is not a secret.
+export var ADMIN_TOKEN = import.meta.env.VITE_PIPELINE_ADMIN_TOKEN || '';
+
 // The pipeline tools (Refresh Holdings / Update Prices) trigger local scrape + merge jobs.
 // Two independent ways to reveal them:
 //   * VITE_ENABLE_PIPELINE=true — the local dev build (.env.development), no sign-in needed.
@@ -153,10 +158,27 @@ export function PipelineControls(props) {
 
   function trigger(endpoint) {
     setOpen(false);
-    fetch(PIPELINE_API + '/api/pipeline/' + endpoint, { method: 'POST' })
+    fetch(PIPELINE_API + '/api/pipeline/' + endpoint, {
+      method: 'POST',
+      // Set only in .env.development.local (gitignored), so the public bundle sends
+      // nothing and the deployed API keeps refusing. Signing in with Google reveals
+      // these buttons but is NOT authorisation — the server only accepts this header.
+      headers: ADMIN_TOKEN ? { 'x-admin-token': ADMIN_TOKEN } : {},
+    })
       .then(function(res) {
         return res.json().then(function(data) {
-          if (!res.ok) { alert(data.error || 'Failed to start pipeline'); return; }
+          if (!res.ok) {
+            // The gate answers 404 {"detail": ...} when no token is configured server-side,
+            // which has no `error` key — without this branch it surfaced as a bare
+            // "Failed to start pipeline" that said nothing about the actual cause.
+            if (res.status === 404) {
+              alert('The pipeline is local-only. These tools run against a backend on your '
+                  + 'own machine and are disabled on the deployed API.');
+              return;
+            }
+            alert(data.error || ('Failed to start pipeline (HTTP ' + res.status + ')'));
+            return;
+          }
           prevRunning.current = true;
           setElapsed(0);
           setStatus(function(s) {
