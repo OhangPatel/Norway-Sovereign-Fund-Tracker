@@ -25,8 +25,15 @@ RETURN_FIELDS = (
     "pe", "fwdPe", "pb", "divYield", "marketCap", "rec", "price",
 )
 GROUP_FIELDS = ("country", "sector", "industry")
-# Large money values are rounded to whole numbers; everything else to 3 decimals.
-MONEY_FIELDS = {"mvUsd", "mvNok", "marketCap", "targetPrice", "high52", "low52", "price"}
+# Money comes in two sizes and they cannot share a rounding rule.
+# Aggregates run to billions and trillions, where cents are noise and the extra digits
+# only cost tokens.
+AGGREGATE_MONEY_FIELDS = {"mvUsd", "mvNok", "marketCap"}
+# Per-share values are tens or hundreds of dollars and the cents ARE the number. Rounding
+# these to whole units had the assistant answer "$309.00" for a holding the site listed at
+# $309.38 — which reads as the two disagreeing about the data rather than as a display
+# choice, and is exactly the kind of doubt this assistant must not create.
+SHARE_PRICE_FIELDS = {"price", "targetPrice", "high52", "low52"}
 
 
 def _num(v):
@@ -103,7 +110,11 @@ META = {"count": len(_ROWS), "as_of": AS_OF, "sectors": SECTORS, "countries": CO
 def _round(field, v):
     if v is None:
         return None
-    return round(v) if field in MONEY_FIELDS else round(v, 3)
+    if field in AGGREGATE_MONEY_FIELDS:
+        return round(v)
+    if field in SHARE_PRICE_FIELDS:
+        return round(v, 2)
+    return round(v, 3)
 
 
 def _match(row, field, value):
