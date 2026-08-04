@@ -94,6 +94,35 @@ jobs:
               sys.exit(1)
           PY
 
+      - name: Check both snapshot-date implementations agree
+        # frontend/src/snapshot.js is the single source for JS (the header and the static
+        # pages both import it). chatbot/data_store.py is the one copy that cannot import
+        # it, because it is Python. Running both against the same data.json is what stops
+        # that copy drifting — the failure mode here has already shipped twice, and each
+        # time the wrong date looked entirely authoritative.
+        # Node is preinstalled on ubuntu-latest, so this needs no extra setup step.
+        run: |
+          JS=$(node -e "
+            const fs = require('fs');
+            import('./frontend/src/snapshot.js').then(m => {
+              const rows = JSON.parse(fs.readFileSync('frontend/public/data.json','utf8'));
+              process.stdout.write(m.snapshotDate(rows) || '');
+            });
+          ")
+          PY=$(python -c "
+          import sys; sys.path.insert(0, 'chatbot')
+          import data_store; print(data_store.AS_OF or '', end='')
+          ")
+          echo "  snapshot.js      -> '$JS'"
+          echo "  data_store.py    -> '$PY'"
+          if [ -z "$JS" ]; then
+            echo "FAIL: snapshot.js found no usable date in data.json"; exit 1
+          fi
+          if [ "$JS" != "$PY" ]; then
+            echo "FAIL: the site and the assistant would show different dates."; exit 1
+          fi
+          echo "  agree ✓"
+
       - name: Commit and push
         id: commit
         # merge_and_enrich.py rewrites BOTH of these and both are tracked. Committing

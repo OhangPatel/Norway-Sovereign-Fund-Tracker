@@ -45,11 +45,16 @@ def _clean_str(v):
     return s or None
 
 
+# PORT OF frontend/src/snapshot.js — keep the two in step.
+#
+# That file is the single source for everything JavaScript (the site header and the
+# static holdings pages both import it). This is the one unavoidable second copy, since
+# Python cannot import it. The weekly CI workflow runs both against the same data.json
+# and fails the run if they disagree, so this cannot drift unnoticed.
+#
 # Rows carry fetchedAt as a naive local timestamp ("2026-06-22 21:19:53"). Take the
-# LATEST date across rows as the snapshot date, comparing the date portion as a plain
-# string — no parsing, so no timezone can roll it onto the neighbouring day. This is the
-# same rule frontend/scripts/build-static.mjs uses, so the static pages and the assistant
-# always cite one date.
+# LATEST date across rows, comparing the date portion as a plain string — no parsing, so
+# no timezone can roll it onto the neighbouring day.
 # The file's mtime is NOT a usable source: it moves whenever the file is copied, deployed
 # or rewritten, which had the assistant citing 2026-08-02 for a 2026-06-22 snapshot.
 _DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")

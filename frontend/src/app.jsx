@@ -8,6 +8,7 @@ import { Detail } from './detail.jsx';
 import { CompareDock, CompareModal } from './compare.jsx';
 import { ChatWidget } from './chat.jsx';
 import { AdminLogin, useSession } from './auth.jsx';
+import { snapshotDate, formatSnapshot } from './snapshot.js';
 
 // ── Pipeline Controls ─────────────────────────────────────────────────────────
 
@@ -19,8 +20,6 @@ export var PIPELINE_API = import.meta.env.VITE_PIPELINE_API || 'http://127.0.0.1
 // .env. Lives in frontend/.env.development.local (gitignored) and has NO production
 // counterpart on purpose — a secret inlined into a public bundle is not a secret.
 export var ADMIN_TOKEN = import.meta.env.VITE_PIPELINE_ADMIN_TOKEN || '';
-
-var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
 // The pipeline tools (Refresh Holdings / Update Prices) trigger local scrape + merge jobs.
 // Two independent ways to reveal them:
@@ -521,25 +520,12 @@ export function App() {
     return data.filter(d => compared.has(d.id));
   }, [data, compared]);
 
-  // Snapshot date shown in the header, the company drawer and the admin panel.
-  // Latest fetchedAt across rows, comparing the DATE PORTION AS A STRING: fetchedAt is a
-  // naive local timestamp ("2026-08-04 14:03:07") with no zone, so Date.parse would read
-  // it as local and could roll the day. Same rule as scripts/build-static.mjs and
-  // chatbot/data_store.py — the site, the static pages and the assistant must not
-  // disagree about which snapshot they are showing.
-  const lastFetched = React.useMemo(() => {
-    if (!data) return '—';
-    let best = '';
-    for (const r of data) {
-      const d = typeof r.fetchedAt === 'string' ? r.fetchedAt.slice(0, 10) : '';
-      if (/^\d{4}-\d{2}-\d{2}$/.test(d) && d > best) best = d;
-    }
-    if (!best) return '—';
-    const [y, m, d] = best.split('-').map(Number);
-    // Built by hand rather than via toLocaleDateString, which inserts a comma
-    // ("Aug 4, 2026") and would need a timeZone guard to avoid the same day-roll.
-    return `${MONTHS[m - 1]} ${d} ${y}`;
-  }, [data]);
+  // Snapshot date for the header, the company drawer, the table and the admin panel.
+  // Derived in snapshot.js so this cannot drift from the static pages or the assistant.
+  const lastFetched = React.useMemo(
+    () => (data ? formatSnapshot(snapshotDate(data)) : '—'),
+    [data]
+  );
 
   if (err) {
     return <div style={{ padding: 60, color: 'var(--bear)' }}>

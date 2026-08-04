@@ -17,6 +17,7 @@
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { snapshotDate, formatSnapshot } from '../src/snapshot.js';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = resolve(ROOT, 'dist');
@@ -60,19 +61,12 @@ const rec = (r) => (!r ? '—' : String(r).replace(/_/g, ' ').replace(/\b\w/g, (
 // ── Load + group ────────────────────────────────────────────────────────────
 const rows = JSON.parse(readFileSync(resolve(ROOT, 'public/data.json'), 'utf8'));
 
-// fetchedAt is a naive local timestamp ("2026-06-22 21:19:53") with no zone, so
-// Date.parse would read it as local and toISOString() would roll it to the next
-// day west of UTC. Compare the date portion as a string instead — no parsing,
-// no timezone, no drift.
-let AS_OF = null;
-for (const r of rows) {
-  const d = typeof r.fetchedAt === 'string' ? r.fetchedAt.slice(0, 10) : null;
-  if (d && /^\d{4}-\d{2}-\d{2}$/.test(d) && (AS_OF === null || d > AS_OF)) AS_OF = d;
-}
+// Shared with the app bundle so the static pages and the header cannot disagree.
+const AS_OF = snapshotDate(rows);
+// A build is the right place to be strict: unlike the running app, there is nobody to
+// show "unknown" to, and a wrong date would be baked into every generated page.
 if (!AS_OF) throw new Error('No usable fetchedAt in data.json — refusing to guess the snapshot date.');
-const [Y, M, D] = AS_OF.split('-').map(Number);
-const AS_OF_LABEL = new Date(Date.UTC(Y, M - 1, D))
-  .toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+const AS_OF_LABEL = formatSnapshot(AS_OF, 'long');
 
 const sectorOf = (r) => {
   const s = r.sector || r.industry || 'Unclassified';
