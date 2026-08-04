@@ -11,11 +11,31 @@ on:
       - 'frontend/**'
       - '.github/workflows/deploy-frontend.yml'
   workflow_dispatch:
+  # Callable by weekly-prices.yml. That workflow commits a new data.json, but a push
+  # made with the default GITHUB_TOKEN deliberately does NOT trigger other workflows
+  # (GitHub's infinite-loop guard), so the push trigger above would never fire for it.
+  # Calling this workflow directly is what keeps the site and the data in step, and
+  # keeps the FTP deploy defined in exactly one place.
+  workflow_call:
+    inputs:
+      ref:
+        description: >-
+          Commit to build. The caller must pass the SHA it just created: a called
+          workflow otherwise checks out the SHA that started the CALLER, which for a
+          scheduled refresh is the commit from before the new data was written — it
+          would build and ship the previous week's prices.
+        required: false
+        type: string
+        default: ''
 
 # If you push twice quickly, cancel the older run so only the latest ships.
 concurrency:
   group: deploy-frontend-${{ github.ref }}
   cancel-in-progress: true
+
+# Only ever reads the repo; the FTP credentials are what do the writing.
+permissions:
+  contents: read
 
 jobs:
   build-deploy:
@@ -23,6 +43,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # Empty for push/workflow_dispatch, so this falls back to normal behaviour.
+          ref: ${{ inputs.ref || github.sha }}
 
       - name: Set up Node
         uses: actions/setup-node@v4

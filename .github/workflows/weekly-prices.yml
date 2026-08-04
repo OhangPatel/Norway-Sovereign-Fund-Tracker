@@ -1,0 +1,133 @@
+name: Weekly price refresh
+
+# Refreshes market prices and commits the new frontend/public/data.json. That push is
+# what actually ships the data: it triggers deploy-frontend.yml (Hostinger) and Render's
+# auto-deploy for the chatbot, so the website and the assistant always come from one
+# committed file and cannot drift apart.
+#
+# PRICES ONLY — deliberately does NOT run fetch_and_clean_holding.py. That script scrapes
+# NBIM with Playwright, and NBIM publishes holdings quarterly; scraping them weekly would
+# add ban risk for zero new data. Run "Refresh Holdings" by hand when NBIM publishes.
+
+on:
+  schedule:
+    # 06:00 UTC every Sunday. Markets are closed all weekend, so this captures a stable
+    # Friday close rather than a moving intraday price, and it lands before Monday traffic.
+    - cron: '0 6 * * 0'
+  # Lets you run it on demand from the Actions tab without waiting for Sunday.
+  workflow_dispatch:
+
+# Needed for the bot to push the refreshed data.json back to main.
+permissions:
+  contents: write
+
+concurrency:
+  # Never let two refreshes race: they would both rewrite data.json and one would clobber
+  # the other's commit.
+  group: weekly-prices
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    # A normal run is ~20 min (72 batches). This ceiling stops a Yahoo stall from burning
+    # the monthly Actions minutes.
+    timeout-minutes: 45
+    outputs:
+      committed: ${{ steps.commit.outputs.committed }}
+      sha: ${{ steps.commit.outputs.sha }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # The commit step rebases before pushing, which needs real history — the
+          # default shallow clone cannot rebase.
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r backend/requirements.txt
+
+      - name: Create the metrics table
+        # nbim.db is gitignored, so every run starts with no database. setup_database.py
+        # is CREATE TABLE IF NOT EXISTS, so this builds the schema from scratch here and
+        # is a no-op on a machine that already has one.
+        run: python backend/pipeline/setup_database.py
+
+      - name: Fetch prices from Yahoo
+        # The script paces itself (2s between batches, 30s backoff on HTTP 429) and skips
+        # batches it cannot fetch rather than aborting, so a partial failure still produces
+        # usable data. The guard below decides whether that partial result is good enough.
+        run: python backend/pipeline/fetch_yahoo_metrics.py
+
+      - name: Merge and export data.json
+        run: python backend/pipeline/merge_and_enrich.py
+
+      - name: Verify the result before committing
+        # Without this a heavily rate-limited run would quietly commit degraded data and
+        # look like a success. Yahoo throttles shared CI IP ranges harder than a home
+        # connection, so this is the check that turns "silently stale" into an email.
+        run: |
+          python - <<'PY'
+          import json, sys, collections
+          rows = json.load(open("frontend/public/data.json"))
+          n = len(rows)
+          priced = sum(1 for r in rows if r.get("price"))
+          tickers = [r["ticker"] for r in rows if r.get("ticker")]
+          dupes = [t for t, c in collections.Counter(tickers).items() if c > 1]
+
+          print(f"rows={n} priced={priced} ({priced/n:.1%}) duplicate_tickers={len(dupes)}")
+
+          fail = []
+          if n < 1000:
+              fail.append(f"only {n} rows — expected ~1430, the source data looks truncated")
+          if priced / n < 0.80:
+              fail.append(f"only {priced/n:.1%} of rows have a price — Yahoo likely rate-limited this run")
+          if dupes:
+              fail.append(f"duplicate tickers reappeared: {dupes[:5]}")
+          if fail:
+              print("REFUSING TO COMMIT:", *fail, sep="\n  - ")
+              sys.exit(1)
+          PY
+
+      - name: Commit and push
+        id: commit
+        # merge_and_enrich.py rewrites BOTH of these and both are tracked. Committing
+        # only data.json would leave mega_portfolio_dataset.csv permanently stale in the
+        # repo and dirty in every run.
+        run: |
+          FILES="frontend/public/data.json data/mega_portfolio_dataset.csv"
+          if git diff --quiet -- $FILES; then
+            echo "No price changes — nothing to commit."
+            echo "committed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add $FILES
+          git commit -m "chore(data): weekly price refresh"
+          # Rebase onto anything pushed while this ~20-minute job was running, rather
+          # than failing the run and skipping the deploy.
+          git pull --rebase --autostash
+          git push
+          echo "committed=true" >> "$GITHUB_OUTPUT"
+          # The deploy job must build THIS commit, not the one that started this run.
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+  # Ships the commit above to Hostinger. Reuses deploy-frontend.yml rather than copying
+  # its FTP steps, so there is one definition of how the site is deployed.
+  # Render redeploys the two FastAPI services on its own: it watches the repo through a
+  # webhook, which — unlike an Actions workflow — does fire for a GITHUB_TOKEN push.
+  deploy-site:
+    needs: refresh
+    if: needs.refresh.outputs.committed == 'true'
+    uses: ./.github/workflows/deploy-frontend.yml
+    with:
+      ref: ${{ needs.refresh.outputs.sha }}
+    # FTP_SERVER / FTP_USERNAME / FTP_PASSWORD live on the repo; a called workflow
+    # receives no secrets unless they are passed explicitly.
+    secrets: inherit
