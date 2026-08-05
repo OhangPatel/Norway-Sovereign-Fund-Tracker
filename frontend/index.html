@@ -171,7 +171,11 @@
       :root {
         --nav-ink: #16170F;
         --nav-sub: #6F6D5F;
-        --nav-soft: #A3A88F;
+        /* Was #A3A88F — 2.25:1 light, 2.13:1 dark: the worst contrast in the app, and
+           on the masthead ("Norway GPFG · Equity Holdings · <date>"). Because this token
+           is shared by both themes, one value has to clear all four nav backgrounds;
+           this does, at 5.01-5.77:1. Hue and saturation unchanged. */
+        --nav-soft: #646851;
         --nav-accent-text: #6C8118;
       }
 
@@ -184,8 +188,16 @@
         --track: #E3E8D3;
 
         --ink: #16170F;
-        --sub: #6F6D5F;
-        --soft: #A3A88F;
+        /* Was #6F6D5F — 4.15:1 on --bg, a marginal AA failure alongside --soft below.
+           Hue and saturation unchanged; now 5.03:1 on --bg. */
+        --sub: #626054;
+        /* Secondary text: eyebrows, captions, table meta — mostly 9-11px, so WCAG's
+           4.5:1 "normal text" bar applies, not the 3:1 large-text one. #A3A88F scored
+           1.95:1 on --bg, which is close to invisible with low vision or in sunlight.
+           Hue (72deg) and saturation (13%) are unchanged — only lightness moved — so
+           the palette keeps its character. Now 5.02:1 on --bg, 5.78 on --row-hover,
+           6.31 on --surface. Re-check all three if any of those backgrounds change. */
+        --soft: #5E624C;
 
         --accent: #D8F34A;
         --accent-text: #6C8118;
@@ -253,7 +265,10 @@
 
         --ink: #F4F2EC;
         --sub: #95978A;
-        --soft: #6E7060;
+        /* Same fix as the light theme, lightened instead of darkened. #6E7060 scored
+           3.04:1 on --row-hover. Hue (67deg) and saturation (8%) unchanged.
+           Now 5.02:1 on --row-hover, 5.44 on --surface, 5.99 on --bg. */
+        --soft: #929583;
 
         --accent: #D8F34A;
         --accent-text: #D8F34A;
