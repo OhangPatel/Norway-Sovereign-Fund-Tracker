@@ -71,7 +71,7 @@ def main():
         # The period must be recorded in the data, not merely in the directory name.
         recorded = set(csv["As_Of"]) if "As_Of" in csv.columns else set()
         check(f"{p}: As_Of matches its directory", recorded == {p},
-              f"file says {sorted(recorded) or 'nothing'}")
+              "" if recorded == {p} else f"file says {sorted(recorded) or 'nothing'}")
 
         tickers = [t.strip() for t in csv["Yahoo_Ticker"] if t.strip()]
         all_tickers |= set(tickers)
@@ -84,9 +84,9 @@ def main():
             continue
         rows = json.loads(jpath.read_text())
         check(f"{p}: JSON row count matches holdings", len(rows) == len(csv),
-              f"{len(rows)} JSON vs {len(csv)} CSV")
+              "" if len(rows) == len(csv) else f"{len(rows)} JSON vs {len(csv)} CSV")
         check(f"{p}: JSON carries only NBIM fields", set(rows[0]) == HOLDING_FIELDS,
-              f"unexpected {sorted(set(rows[0]) - HOLDING_FIELDS)}" if rows else "")
+              "" if set(rows[0]) == HOLDING_FIELDS else f"unexpected {sorted(set(rows[0]) ^ HOLDING_FIELDS)}")
 
         # Coverage is reported, not enforced. Yahoo genuinely serves no data for some
         # valid symbols — production ships 62 such holdings today — so demanding full
@@ -114,6 +114,39 @@ def main():
                   f"{min(stamps)[:10]} → {max(stamps)[:10]}")
             print(f"        {len(metrics)} tickers, fetched {min(stamps)[:16]} → {max(stamps)[:16]}")
         print(f"        {len(all_tickers - set(metrics))} ticker(s) Yahoo returned nothing for")
+
+    print("\n── period-over-period changes ──")
+    for prev, curr in zip(periods, periods[1:]):
+        path = FRONTEND / f"changes-{curr}.json"
+        if not path.exists():
+            check(f"{curr}: changes file exists", False, f"{path.name} missing")
+            continue
+        d = json.loads(path.read_text())
+        check(f"{curr}: compares against the previous period", d.get("previous") == prev,
+              "" if d.get("previous") == prev else f"says {d.get('previous')}, expected {prev}")
+
+        for level in ("raw", "filtered"):
+            lv = d[level]
+            # A company cannot be bought and sold in the same step. When this fired it
+            # was "SK Hynix Inc" vs "SK hynix Inc" — one capital letter reported as a
+            # $2.6B sale and a $4.9B purchase, neither of which happened.
+            added = {r["name"].strip().lower() for r in lv["addedTop"]}
+            removed = {r["name"].strip().lower() for r in lv["removedTop"]}
+            both = sorted(added & removed)
+            check(f"{curr}/{level}: nothing both added and removed", not both,
+                  f"{both[:3]}" if both else "")
+            check(f"{curr}/{level}: listed rows do not exceed the count",
+                  len(lv["addedTop"]) <= lv["added"] and len(lv["removedTop"]) <= lv["removed"])
+
+        # The net must reconcile: held_before + added - removed == held_now.
+        r = d["raw"]
+        net = r["heldBefore"] + r["added"] - r["removed"]
+        check(f"{curr}: raw counts reconcile", net == r["heldNow"],
+              "" if net == r["heldNow"] else
+              f"{r['heldBefore']} + {r['added']} - {r['removed']} = {net}, but holds {r['heldNow']}")
+        print(f"        raw +{r['added']} -{r['removed']} "
+              f"({r['heldBefore']} → {r['heldNow']}) | "
+              f"tracked +{d['filtered']['added']} -{d['filtered']['removed']}")
 
     # The check that matters most: restructuring must not move a single NBIM figure.
     print("\n── data.json vs the committed version ──")

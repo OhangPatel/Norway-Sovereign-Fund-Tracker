@@ -162,7 +162,41 @@ def fetch_portfolio(period=None):
 
     raw_df = pd.read_csv(StringIO(csv_text), sep=";", decimal=",")
     print(f"Raw rows for {period.isoformat()}: {len(raw_df)}", flush=True)
+    _write_roster(raw_df, period)
     return raw_df, period
+
+
+def _write_roster(raw_df, period):
+    """Every company NBIM held this period, names only, committed.
+
+    The selection filter keeps ~1,430 of 7,000-9,000 companies, and a diff over the
+    filtered set is close to meaningless: a company crossing the top-50 boundary looks
+    identical to one NBIM actually sold. Real buying and selling is only visible on the
+    full list, so it has to survive somewhere.
+
+    The full snapshot is gitignored (600-750 KB each, and re-downloadable byte-for-byte),
+    but this trimmed copy is ~375 KB and makes every added/removed number checkable
+    without scraping NBIM again — which matters when the claim is "this is what they
+    bought". Written once per period and never touched again.
+
+    Country, industry and market value ride along because a bare list of 1,652 exited
+    companies says nothing; the same list with "$340M, Japan, Financials" on each row is
+    the actual story.
+    """
+    df = raw_df.copy()
+    df["Name"] = df["Name"].astype(str).str.strip()
+    df = df[df["Name"].ne("") & df["Name"].ne("nan")]
+    out_df = pd.DataFrame({
+        "Name": df["Name"],
+        "Country": df["Country"],
+        "Industry": df["Industry"],
+        "mvUsd": pd.to_numeric(df["Market Value(USD)"], errors="coerce").round().astype("Int64"),
+    }).drop_duplicates(subset=["Name"]).sort_values("Name")
+
+    out = ROOT_DIR / "data" / "periods" / period.isoformat() / "roster.csv"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out_df.to_csv(out, index=False)
+    print(f"Roster: {len(out_df)} companies → {out.relative_to(ROOT_DIR)}", flush=True)
 
 
 def apply_custom_filters(df):

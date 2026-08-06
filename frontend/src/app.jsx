@@ -9,6 +9,7 @@ import { CompareDock, CompareModal } from './compare.jsx';
 import { ChatWidget } from './chat.jsx';
 import { AdminLogin, useSession } from './auth.jsx';
 import { PeriodBar } from './period.jsx';
+import { ChangesPanel } from './changes.jsx';
 import { MARKET_FIELDS, assertSplit } from './origin.js';
 import { snapshotDate, formatSnapshot, periodLabel } from './snapshot.js';
 
@@ -653,6 +654,8 @@ export function App() {
           loading={switching}
           marketAsOf={marketAsOf}
         />
+
+        <ChangesPanel period={period} manifest={manifest} />
 
         <Summary
           data={data}
