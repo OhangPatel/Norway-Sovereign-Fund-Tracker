@@ -1,7 +1,12 @@
-# pipeline/: fetch_yahoo_metrics.py + merge_and_enrich.py
+# pipeline/: fetch_yahoo_metrics.py, merge_and_enrich.py, resolve_tickers.py
 yfinance==1.3.0
 pandas
 fastapi
 uvicorn[standard]
 # app/main.py loads the repo-root .env at import.
 python-dotenv
+# pipeline/fetch_and_clean_holding.py scrapes nbim.no with a headless browser.
+# pip install is not enough — the browser itself is a separate download:
+#     playwright install chromium
+# Without it a fresh clone cannot run "Refresh Holdings" at all.
+playwright==1.59.0

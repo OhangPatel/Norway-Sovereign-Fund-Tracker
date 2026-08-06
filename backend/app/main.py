@@ -239,14 +239,25 @@ def _fetch_clean_worker():
             "started_at": datetime.now(timezone.utc).isoformat(),
             "completed_at": None,
         })
-        ret = _run_script("fetch_and_clean_holding.py")
+        ret = _run_script("fetch_and_clean_holding.py", progress_scale=0.85)
         if ret != 0:
             raise RuntimeError("fetch_and_clean_holding.py exited with non-zero status")
+
+        # Without this the fetch was a no-op: it wrote an intermediate CSV that nothing
+        # downstream read, so "Refresh Holdings" reported success and left the site on
+        # whatever holdings_with_tickers.csv already contained.
+        _status.update({"step": "Attaching tickers...", "progress": 85,
+                        "message": "Matching companies against the known-ticker map..."})
+        ret = _run_script("build_holdings.py", progress_offset=85, progress_scale=0.15)
+        if ret != 0:
+            raise RuntimeError("build_holdings.py exited with non-zero status")
+
         _status.update({
             "is_running": False,
             "progress": 100,
             "step": "Done",
-            "message": "Holdings data fetched and cleaned successfully!",
+            "message": "Holdings fetched and tickers attached. Run 'Update Prices' next "
+                       "to fetch metrics and publish the new data.",
             "completed_at": datetime.now(timezone.utc).isoformat(),
         })
     except Exception as e:
