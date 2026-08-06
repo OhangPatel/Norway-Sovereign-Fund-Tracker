@@ -5,9 +5,27 @@ name: Weekly price refresh
 # auto-deploy for the chatbot, so the website and the assistant always come from one
 # committed file and cannot drift apart.
 #
-# PRICES ONLY — deliberately does NOT run fetch_and_clean_holding.py. That script scrapes
-# NBIM with Playwright, and NBIM publishes holdings quarterly; scraping them weekly would
-# add ban risk for zero new data. Run "Refresh Holdings" by hand when NBIM publishes.
+# PRICES ONLY — deliberately does NOT run fetch_and_clean_holding.py. NBIM publishes
+# holdings TWICE A YEAR, not quarterly: with the annual report (late Jan/Feb, the date
+# moves) and with the half-year report (12 August 2026 for H1 2026). Scraping weekly
+# would add ban risk for zero new data.
+#
+# Adding a new period stays a manual sequence, on purpose. Ticker resolution is the step
+# most likely to attach the WRONG company — this repo has already paid for that once —
+# and a new period brings 40-80 names that have never been looked up. That wants eyes on
+# it twice a year, not a cron job at 6am. The sequence:
+#
+#   python backend/pipeline/fetch_and_clean_holding.py --period 2026-06-30
+#   python backend/pipeline/build_holdings.py            # reports unresolved names
+#   python backend/pipeline/resolve_tickers.py --names   # only if it reported any
+#   python backend/pipeline/build_holdings.py            # re-run to bank them
+#   python backend/pipeline/fetch_yahoo_metrics.py       # new tickers need prices
+#   python backend/pipeline/merge_and_enrich.py --all
+#   python backend/pipeline/build_changes.py
+#   python backend/pipeline/verify_periods.py            # must exit 0 before committing
+#
+# Everything after that is automatic: this workflow keeps prices fresh, and the new
+# period appears in the year picker on its own because periods.json is generated.
 
 on:
   schedule:
@@ -30,9 +48,13 @@ concurrency:
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    # A normal run is ~20 min (72 batches). This ceiling stops a Yahoo stall from burning
-    # the monthly Actions minutes.
-    timeout-minutes: 45
+    # Historical periods show CURRENT market data, so the fetch covers the UNION of every
+    # period's tickers — ~1,960 rather than the ~1,430 of the newest period alone, about
+    # 99 batches. That took 14 min locally; CI shares its IP ranges with everyone else on
+    # GitHub and Yahoo throttles them harder, so budget roughly 30. The ceiling only exists
+    # to stop a Yahoo stall burning the monthly Actions minutes, and 45 left too little
+    # head-room once the ticker count grew by 37%.
+    timeout-minutes: 75
     outputs:
       committed: ${{ steps.commit.outputs.committed }}
       sha: ${{ steps.commit.outputs.sha }}
@@ -59,12 +81,18 @@ jobs:
         run: python backend/pipeline/setup_database.py
 
       - name: Fetch prices from Yahoo
+        # Collects the union of tickers across data/periods/*/holdings_with_tickers.csv,
+        # which are committed, so this needs nothing that is not in the repo.
         # The script paces itself (2s between batches, 30s backoff on HTTP 429) and skips
         # batches it cannot fetch rather than aborting, so a partial failure still produces
         # usable data. The guard below decides whether that partial result is good enough.
         run: python backend/pipeline/fetch_yahoo_metrics.py
 
-      - name: Merge and export data.json
+      - name: Merge and export
+        # No --all: the per-period files hold NBIM's own figures, which never change once
+        # published. Only data.json, metrics.json and the newest period are rewritten.
+        # merge_and_enrich refuses to run if the local metrics are older than what is
+        # already published; here they never are, because the fetch above just ran.
         run: python backend/pipeline/merge_and_enrich.py
 
       - name: Verify the result before committing
@@ -73,14 +101,22 @@ jobs:
         # connection, so this is the check that turns "silently stale" into an email.
         run: |
           python - <<'PY'
-          import json, sys, collections
+          import json, sys, collections, pathlib
           rows = json.load(open("frontend/public/data.json"))
           n = len(rows)
           priced = sum(1 for r in rows if r.get("price"))
           tickers = [r["ticker"] for r in rows if r.get("ticker")]
           dupes = [t for t, c in collections.Counter(tickers).items() if c > 1]
 
+          # metrics.json is what every historical period joins against. If the fetch
+          # failed badly it can end up thin or missing while data.json still looks fine,
+          # and the site would then render five of six periods with no market data at all.
+          mpath = pathlib.Path("frontend/public/metrics.json")
+          metrics = json.loads(mpath.read_text()) if mpath.exists() else {}
+          m_priced = sum(1 for v in metrics.values() if v.get("price"))
+
           print(f"rows={n} priced={priced} ({priced/n:.1%}) duplicate_tickers={len(dupes)}")
+          print(f"metrics.json tickers={len(metrics)} with a price={m_priced}")
 
           fail = []
           if n < 1000:
@@ -89,10 +125,25 @@ jobs:
               fail.append(f"only {priced/n:.1%} of rows have a price — Yahoo likely rate-limited this run")
           if dupes:
               fail.append(f"duplicate tickers reappeared: {dupes[:5]}")
+          if not mpath.exists():
+              fail.append("metrics.json was not written — every historical period would lose its market data")
+          elif len(metrics) < 1500:
+              fail.append(f"metrics.json holds only {len(metrics)} tickers — expected ~1950")
+          elif m_priced / len(metrics) < 0.80:
+              fail.append(f"only {m_priced/len(metrics):.1%} of metrics.json has a price")
           if fail:
               print("REFUSING TO COMMIT:", *fail, sep="\n  - ")
               sys.exit(1)
           PY
+
+      - name: Check the multi-period data is sound
+        # The same script you run locally. Covers what the ad-hoc checks above cannot:
+        # per-period row counts, one ticker never claimed by two companies, added/removed
+        # counts reconciling, and — the important one — that NBIM's own disclosed figures
+        # are byte-identical to the committed version. Prices are meant to move each week;
+        # holdings are not, and a pipeline change that quietly rewrote them would otherwise
+        # ship looking exactly like a normal refresh.
+        run: python backend/pipeline/verify_periods.py
 
       - name: Check both snapshot-date implementations agree
         # frontend/src/snapshot.js is the single source for JS (the header and the static
@@ -125,11 +176,18 @@ jobs:
 
       - name: Commit and push
         id: commit
-        # merge_and_enrich.py rewrites BOTH of these and both are tracked. Committing
-        # only data.json would leave mega_portfolio_dataset.csv permanently stale in the
-        # repo and dirty in every run.
+        # Everything merge_and_enrich.py rewrites and that is tracked. metrics.json is the
+        # one that matters most now: it holds the market data for all six periods, and
+        # committing data.json without it would leave the site serving this week's prices
+        # on the newest period and last week's on every historical one.
+        #
+        # data-*.json and periods.json are listed defensively. They only change when a new
+        # period is back-filled, so on a normal week they contribute nothing to the diff —
+        # but leaving them out would make that one week silently ship a half-update.
         run: |
-          FILES="frontend/public/data.json data/mega_portfolio_dataset.csv"
+          FILES="frontend/public/data.json frontend/public/metrics.json \
+                 frontend/public/periods.json data/mega_portfolio_dataset.csv \
+                 $(ls frontend/public/data-*.json 2>/dev/null | tr '\n' ' ')"
           if git diff --quiet -- $FILES; then
             echo "No price changes — nothing to commit."
             echo "committed=false" >> "$GITHUB_OUTPUT"
@@ -139,7 +197,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add $FILES
           git commit -m "chore(data): weekly price refresh"
-          # Rebase onto anything pushed while this ~20-minute job was running, rather
+          # Rebase onto anything pushed while this ~30-minute job was running, rather
           # than failing the run and skipping the deploy.
           git pull --rebase --autostash
           git push

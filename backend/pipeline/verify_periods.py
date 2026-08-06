@@ -163,12 +163,19 @@ def main():
         check("NBIM figures unchanged", not moved,
               f"{len(moved)} row(s) moved, e.g. {moved[:3]}" if moved else "")
 
-        # Prices are meant to move; how MANY holdings have one is not. A drop here means
-        # the restructuring lost market data rather than refreshed it.
+        # Prices are meant to move; how MANY holdings have one should stay roughly put.
+        # A tolerance rather than an exact match because Yahoo genuinely drops and regains
+        # symbols week to week, and this check runs in CI — demanding zero drift would fail
+        # the weekly refresh on noise. 5% of rows is far wider than that noise and far
+        # narrower than a broken join, which would strand hundreds at once.
         was = sum(1 for r in json.loads(old_raw) if r.get("price") is None)
         now = sum(1 for r in new.values() if r.get("price") is None)
-        check("price coverage did not regress", now <= was,
-              f"{was} unpriced before, {now} now")
+        budget = max(10, int(0.05 * len(new)))
+        check("price coverage did not collapse", now - was <= budget,
+              "" if now - was <= budget else
+              f"{was} unpriced before, {now} now — {now - was} worse, tolerance {budget}")
+        print(f"        {now} of {len(new)} unpriced ({now - was:+d} vs committed, "
+              f"tolerance {budget})")
 
     print()
     for n in notes:

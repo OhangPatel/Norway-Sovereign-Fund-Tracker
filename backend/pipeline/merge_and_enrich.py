@@ -296,13 +296,67 @@ def merge_and_save(period=None, is_latest=True):
           f"{' for ' + period if period else ''}.", flush=True)
 
 
+def stale_check(allow_stale):
+    """Refuse to publish market data older than what is already published.
+
+    nbim.db is gitignored, so a local database drifts behind whatever the weekly CI run
+    last committed. Running this script locally then rebuilds data.json from the older
+    database and silently rolls every price BACKWARDS — it happened during development
+    and moved 1,389 rows, taking Apple from 309.38 to 308.845 with nothing on screen or
+    in the output to indicate a regression.
+
+    CI is unaffected: it starts from an empty database and always fetches first, so its
+    data is newer by construction. This only ever fires on a laptop that has not
+    re-fetched, which is exactly when it should.
+    """
+    conn = sqlite3.connect(str(DB_PATH))
+    try:
+        row = conn.execute("SELECT COUNT(*), MAX(fetched_at) FROM financial_metrics").fetchone()
+        count, db_at = row[0], row[1]
+    except sqlite3.Error:
+        count, db_at = 0, None
+    finally:
+        conn.close()
+
+    # No metrics at all means the fetch has not run or failed outright. Continuing would
+    # write a data.json where every price is null and leave the committed metrics.json
+    # untouched — so the site would show last week's prices on historical periods and
+    # none at all on the newest, while this script reported success.
+    if not count:
+        print("\nREFUSING TO WRITE — financial_metrics is empty.\n"
+              "  Run  python backend/pipeline/fetch_yahoo_metrics.py  first.",
+              file=sys.stderr)
+        return False
+    if not db_at or not FRONTEND_DATA.exists():
+        return True
+
+    published = [r.get("fetchedAt") for r in json.loads(FRONTEND_DATA.read_text())]
+    published_at = max((f for f in published if f), default=None)
+    if not published_at or db_at >= published_at:
+        return True
+
+    print(f"\nREFUSING TO WRITE — the local metrics are older than what is published.\n"
+          f"    nbim.db newest fetch : {db_at}\n"
+          f"    data.json newest     : {published_at}\n"
+          f"  Writing now would roll every price backwards to the older run.\n"
+          f"  Fetch first:  python backend/pipeline/fetch_yahoo_metrics.py\n"
+          f"  Or, if you genuinely mean to publish older data:  --allow-stale",
+          file=sys.stderr)
+    return bool(allow_stale)
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     g = ap.add_mutually_exclusive_group()
     g.add_argument("--period", help="one period, e.g. 2024-12-31")
     g.add_argument("--all", action="store_true", help="every period under data/periods/")
+    ap.add_argument("--allow-stale", action="store_true",
+                    help="publish even when the local metrics are older than data.json")
     args = ap.parse_args()
+
+    if not stale_check(args.allow_stale):
+        return 1
 
     periods = available_periods()
     if not periods:
