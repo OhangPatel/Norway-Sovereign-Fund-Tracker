@@ -1,0 +1,41 @@
+{
+  "latest": "2025-12-31",
+  "periods": [
+    {
+      "period": "2025-12-31",
+      "label": "2025",
+      "half": false,
+      "rows": 1430
+    },
+    {
+      "period": "2025-06-30",
+      "label": "H1 2025",
+      "half": true,
+      "rows": 1427
+    },
+    {
+      "period": "2024-12-31",
+      "label": "2024",
+      "half": false,
+      "rows": 1446
+    },
+    {
+      "period": "2024-06-30",
+      "label": "H1 2024",
+      "half": true,
+      "rows": 1421
+    },
+    {
+      "period": "2023-12-31",
+      "label": "2023",
+      "half": false,
+      "rows": 1438
+    },
+    {
+      "period": "2022-12-31",
+      "label": "2022",
+      "half": false,
+      "rows": 1491
+    }
+  ]
+}

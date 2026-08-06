@@ -3,12 +3,18 @@ import { fmt, Chip, Delta, RangeBar, Icon } from './format.jsx';
 import { PriceChart } from './charts.jsx';
 import { REC_TONE } from './table.jsx';
 import { PIPELINE_API } from './app.jsx';
+import { formatPeriod, periodLabel } from './snapshot.js';
 
 // Slide-over detail drawer for a single company
 
 const RANGE_LABEL = { '1y': '1 year ago', '5y': '5 years ago', 'max': 'All time' };
 
-export function Detail({ company, allData, onClose, onPickCompany, pinned, togglePin, lastFetched }) {
+export function Detail({ company, allData, onClose, onPickCompany, pinned, togglePin, lastFetched,
+                         period, isLatestPeriod = true }) {
+  // On the latest period NBIM's figures and the market data describe roughly the same
+  // moment, so labelling every cell would be noise. On a past period they are years
+  // apart and the labels are the only thing telling them apart.
+  const historical = !isLatestPeriod && !!period;
   const [entered, setEntered] = React.useState(false);
   React.useEffect(() => {
     const onKey = (e) => { if (e.key === 'Escape') onClose(); };
@@ -255,7 +261,8 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
             background: 'color-mix(in oklch, var(--accent) 7%, var(--surface))',
             borderRadius: 18,
           }}>
-            <div className="eyebrow" style={{ marginBottom: 10 }}>Norway GPFG holding</div>
+            <SectionLabel text="Norway GPFG holding"
+              tag={historical ? `disclosed as of ${formatPeriod(period)}` : null}/>
             <div className="r-metrics3">
               <Metric label="USD value" value={fmt.money(company.mvUsd, 'USD', 2)}/>
               <Metric label="NOK value" value={fmt.money(company.mvNok, 'NOK', 2)}/>
@@ -264,15 +271,22 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
             </div>
             <div className="r-metrics3" style={{ marginTop: 16, paddingTop: 16, borderTop: '1px solid var(--line)' }}>
               <Metric label="Voting rights" value={fmt.pct(company.voting, 3)}/>
-              <Metric label="Mkt cap (USD)" value={fmt.money(company.marketCap, 'USD', 1)}/>
+              <Metric label="Mkt cap (USD)" value={fmt.money(company.marketCap, 'USD', 1)}
+                note={historical ? 'today' : null}/>
+              {/* The only figure on this screen built from BOTH sides: a market value
+                  disclosed for the period over a market cap read today. On the latest
+                  period that is one moment; on 2022 it divides a 2022 numerator by a
+                  2026 denominator, so it says so rather than presenting a clean number. */}
               <Metric label="% of mkt cap"
-                value={company.marketCap ? fmt.pct((company.mvUsd / company.marketCap) * 100, 3) : '—'}/>
+                value={company.marketCap ? fmt.pct((company.mvUsd / company.marketCap) * 100, 3) : '—'}
+                note={historical ? `${periodLabel(period)} holding ÷ today's cap` : null}/>
             </div>
           </div>
 
           {/* Financial metrics */}
           <div style={{ marginTop: 28 }}>
-            <div className="eyebrow" style={{ marginBottom: 10 }}>Financials</div>
+            <SectionLabel text="Financials"
+              tag={historical ? 'current market data, not the period’s' : null}/>
             <div className="r-kv2" style={{
               background:'var(--line)', borderRadius: 12, overflow:'hidden',
               border:'1px solid var(--line)'
@@ -320,7 +334,7 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
   );
 }
 
-export function Metric({ label, value, accent }) {
+export function Metric({ label, value, accent, note }) {
   return (
     <div>
       <div className="eyebrow" style={{ fontSize: 9.5 }}>{label}</div>
@@ -328,6 +342,26 @@ export function Metric({ label, value, accent }) {
         fontSize: 22, marginTop: 4, letterSpacing: '-0.01em',
         color: accent ? 'var(--accent-text)' : 'var(--ink)'
       }}>{value}</div>
+      {note && (
+        <div className="mono" style={{ fontSize: 9, color: 'var(--sub)', marginTop: 3 }}>{note}</div>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Section heading with an optional provenance tag. The tag is what stops a reader
+ * assuming every number under one heading belongs to the same date.
+ */
+export function SectionLabel({ text, tag }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, flexWrap: 'wrap', marginBottom: 10 }}>
+      <span className="eyebrow">{text}</span>
+      {tag && (
+        <span className="mono" style={{ fontSize: 9, color: 'var(--sub)', fontWeight: 400 }}>
+          · {tag}
+        </span>
+      )}
     </div>
   );
 }

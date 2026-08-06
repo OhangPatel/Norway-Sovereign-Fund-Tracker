@@ -8,7 +8,9 @@ import { Detail } from './detail.jsx';
 import { CompareDock, CompareModal } from './compare.jsx';
 import { ChatWidget } from './chat.jsx';
 import { AdminLogin, useSession } from './auth.jsx';
-import { snapshotDate, formatSnapshot } from './snapshot.js';
+import { PeriodBar } from './period.jsx';
+import { MARKET_FIELDS, assertSplit } from './origin.js';
+import { snapshotDate, formatSnapshot, periodLabel } from './snapshot.js';
 
 // ── Pipeline Controls ─────────────────────────────────────────────────────────
 
@@ -29,6 +31,12 @@ export var ADMIN_TOKEN = import.meta.env.VITE_PIPELINE_ADMIN_TOKEN || '';
 // which requires PIPELINE_ADMIN_TOKEN and 404s without it. Revealing a button has never
 // been the same as being allowed to press it.
 export var PIPELINE_ENABLED = import.meta.env.VITE_ENABLE_PIPELINE === 'true';
+
+// One cache-busting value per page load. At module scope rather than in a ref so it is
+// genuinely constant for the session: re-running the loader effect (when the manifest
+// arrives, say) must reuse the same URL, or the browser refetches data.json instead of
+// serving it from cache.
+var LOAD_ID = Date.now();
 
 // A single row inside the Data Tools dropdown: icon tile · title + caption · chip.
 export function ToolRow(props) {
@@ -419,22 +427,88 @@ export function App() {
     };
   });
 
-  // Load (or reload) data — re-runs when dataKey increments after pipeline completes.
-  // ?v= includes Date.now() on first load so a stale browser cache never serves old data.
+  // Identity is `id`, not `ticker`. Unlisted holdings legitimately have no ticker, so
+  // keying rows or the pin/compare Sets off it would make every tickerless company the
+  // same company — the bug that used to alias George Weston with Canada Packers, just
+  // via null instead of a collision.
+  const withIds = (rows) => rows.map((row, i) => ({ ...row, id: `${row.ticker || 'x'}#${i}` }));
+
+  // period -> rows. Switching back to a period already seen costs nothing.
+  const cacheRef = React.useRef(new Map());
+  // metrics.json is shared by every period, so it is fetched at most once per session.
+  const metricsRef = React.useRef(null);
+
+  // Which reporting period is on screen. null until periods.json loads, and null
+  // forever on a deploy that predates it — in which case the app behaves exactly as
+  // it did before: one data.json, no picker.
+  const [manifest, setManifest] = React.useState(null);
+  const [period, setPeriod] = React.useState(null);
+  const [switching, setSwitching] = React.useState(false);
+
   React.useEffect(() => {
-    const bust = dataKey === 0 ? Date.now() : dataKey;
-    fetch('data.json?v=' + bust)
-      .then(r => {
-        if (!r.ok) throw new Error(`data.json returned ${r.status}`);
-        return r.json();
+    fetch('periods.json?v=' + LOAD_ID)
+      .then(r => (r.ok ? r.json() : null))
+      .then(m => { if (m?.periods?.length) { setManifest(m); setPeriod(m.latest); } })
+      .catch(() => { /* no manifest: single-period site, nothing to select */ });
+  }, []);
+
+  // Load (or reload) data — re-runs when dataKey increments after pipeline completes,
+  // and when the visitor picks a different period.
+  React.useEffect(() => {
+    const bust = dataKey === 0 ? LOAD_ID : dataKey;
+    const latest = !manifest || !period || period === manifest.latest;
+    let cancelled = false;
+
+    const cached = cacheRef.current.get(period ?? '__latest__');
+    if (cached) { setData(cached); setSwitching(false); return; }
+
+    const fail = (e) => { if (!cancelled) setErr(e.message); };
+    const done = (rows) => {
+      if (cancelled) return;
+      cacheRef.current.set(period ?? '__latest__', rows);
+      setData(rows);
+      setSwitching(false);
+    };
+
+    if (latest) {
+      // data.json is already joined, so the first paint is one request — exactly as
+      // fast as before any of this existed.
+      fetch('data.json?v=' + bust)
+        .then(r => { if (!r.ok) throw new Error(`data.json returned ${r.status}`); return r.json(); })
+        .then(rows => done(withIds(rows)))
+        .catch(fail);
+      return;
+    }
+
+    // A past period: NBIM's figures come from its own file, market data from the one
+    // shared metrics.json. Joining here is what keeps the current price in a single
+    // place instead of copied into all six period files.
+    setSwitching(true);
+    const holdings = fetch(`data-${period}.json?v=${bust}`)
+      .then(r => { if (!r.ok) throw new Error(`data-${period}.json returned ${r.status}`); return r.json(); });
+    const metrics = metricsRef.current
+      ? Promise.resolve(metricsRef.current)
+      : fetch('metrics.json?v=' + bust)
+          .then(r => { if (!r.ok) throw new Error(`metrics.json returned ${r.status}`); return r.json(); });
+
+    Promise.all([holdings, metrics])
+      .then(([hold, mets]) => {
+        metricsRef.current = mets;
+        assertSplit(hold[0]);
+        done(withIds(hold.map(h => {
+          const m = mets[h.ticker] || {};
+          const row = { ...h };
+          // Every market field is set even when Yahoo has nothing, so a period row has
+          // the identical shape to a data.json row and no component needs to care
+          // which path loaded it.
+          for (const f of MARKET_FIELDS) row[f] = m[f] ?? null;
+          return row;
+        })));
       })
-      // Identity is `id`, not `ticker`. Unlisted holdings legitimately have no
-      // ticker, so keying rows or the pin/compare Sets off it would make every
-      // tickerless company the same company — the bug that used to alias
-      // George Weston with Canada Packers, just via null instead of a collision.
-      .then(rows => setData(rows.map((row, i) => ({ ...row, id: `${row.ticker || 'x'}#${i}` }))))
-      .catch(e => setErr(e.message));
-  }, [dataKey]);
+      .catch(fail);
+
+    return () => { cancelled = true; };
+  }, [dataKey, period, manifest]);
 
   // Theme effect
   React.useEffect(() => {
@@ -447,12 +521,21 @@ export function App() {
     localStorage.setItem('sov-pinned', JSON.stringify([...pinned]));
   }, [pinned]);
 
-  // Max ownership (set ownMax dynamically once data is loaded)
+  // The ownership slider's ceiling is derived from the loaded data, so it has to be
+  // recalibrated when the period changes. Leaving one period's ceiling in place while
+  // showing another silently drops every holding above it: 2022's largest position is
+  // 25.74% against 2025's 25.19%, so one company vanished from the table with no filter
+  // chip to explain it — a filter that hides rows without saying so is worse than none.
+  //
+  // Only an untouched ceiling is moved. Once the visitor has dragged the slider, that is
+  // their filter and switching period must not overwrite it.
+  const autoOwnMax = React.useRef(null);
   React.useEffect(() => {
-    if (data && data.length && filters.ownMax === 100) {
-      const max = Math.max(...data.map(d => d.ownership || 0));
-      setFilters(f => ({ ...f, ownMax: max }));
-    }
+    if (!data || !data.length) return;
+    const max = Math.max(...data.map(d => d.ownership || 0));
+    const prevAuto = autoOwnMax.current;
+    autoOwnMax.current = max;
+    setFilters(f => (f.ownMax === 100 || f.ownMax === prevAuto ? { ...f, ownMax: max } : f));
   }, [data]);
 
   // Ownership-histogram bar selection ({ lo, hi, last } | null) — narrows the
@@ -520,12 +603,15 @@ export function App() {
     return data.filter(d => compared.has(d.id));
   }, [data, compared]);
 
-  // Snapshot date for the header, the company drawer, the table and the admin panel.
-  // Derived in snapshot.js so this cannot drift from the static pages or the assistant.
-  const lastFetched = React.useMemo(
-    () => (data ? formatSnapshot(snapshotDate(data)) : '—'),
-    [data]
-  );
+  // When the MARKET data was fetched — not the reporting period. Derived in snapshot.js
+  // so this cannot drift from the static pages or the assistant.
+  const marketAsOf = React.useMemo(() => (data ? snapshotDate(data) : null), [data]);
+  const lastFetched = React.useMemo(() => formatSnapshot(marketAsOf), [marketAsOf]);
+
+  // The header must follow the picker. Showing the fetch date there instead would put
+  // "Aug 2026" above a table of 2022 holdings — the same class of mismatch that has
+  // already produced three date bugs in this project.
+  const headerDate = period ? periodLabel(period) : lastFetched;
 
   if (err) {
     return <div style={{ padding: 60, color: 'var(--bear)' }}>
@@ -548,7 +634,7 @@ export function App() {
         compareOn={compareOn} setCompareOn={(v) => { setCompareOn(v); if (!v) setCompared(new Set()); }}
         compareCount={compared.size}
         onOpenColumns={() => setShowColumns(o => !o)}
-        lastFetched={lastFetched}
+        lastFetched={headerDate}
       />
 
       {(PIPELINE_ENABLED || isAdmin) && (
@@ -560,6 +646,14 @@ export function App() {
         padding: '22px clamp(14px, 2vw, 22px) 120px',
         display: 'grid', gap: 16,
       }}>
+        <PeriodBar
+          manifest={manifest}
+          period={period}
+          onChange={setPeriod}
+          loading={switching}
+          marketAsOf={marketAsOf}
+        />
+
         <Summary
           data={data}
           filtered={baseFiltered}
@@ -624,6 +718,8 @@ export function App() {
           onPickCompany={setSelected}
           pinned={pinned} togglePin={togglePin}
           lastFetched={lastFetched}
+          period={period}
+          isLatestPeriod={!manifest || period === manifest.latest}
         />
       )}
 

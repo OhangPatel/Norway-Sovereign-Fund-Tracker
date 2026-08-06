@@ -102,6 +102,34 @@ def available_periods():
                   if d.is_dir() and (d / "holdings_with_tickers.csv").exists())
 
 
+def write_manifest(periods):
+    """List the available periods for the frontend, newest first.
+
+    Exists so the year picker is never a hardcoded list of years. Adding a period is
+    then purely a pipeline action: back-fill it, re-export, and it appears in the UI
+    with no frontend change at all.
+
+    `half` drives NBIM's own "show historical half-year holdings" toggle — H1 periods
+    stay hidden until it is ticked.
+    """
+    manifest = {
+        "latest": periods[-1],
+        "periods": [
+            {
+                "period": p,
+                # NBIM's own naming: "2025" for the annual, "H1 2025" for the June one.
+                "label": (f"H1 {p[:4]}" if p.endswith("-06-30") else p[:4]),
+                "half": p.endswith("-06-30"),
+                "rows": len(pd.read_csv(PERIODS_DIR / p / "holdings_with_tickers.csv")),
+            }
+            for p in reversed(periods)
+        ],
+    }
+    path = FRONTEND_DIR / "periods.json"
+    path.write_text(json.dumps(manifest, indent=2))
+    print(f"Saved JSON → {path.name} ({len(periods)} periods, latest {periods[-1]})", flush=True)
+
+
 def merge_and_save(period=None, is_latest=True):
     print("STEP:Loading holdings data...", flush=True)
     print("PROGRESS:1/4", flush=True)
@@ -297,9 +325,10 @@ def main():
         print(f"\n=== {p}{' (latest)' if p == newest else ''} ===", flush=True)
         merge_and_save(period=p, is_latest=(p == newest))
 
-    # Once, after the periods: it is shared by all of them and depends on none.
+    # Once, after the periods: shared by all of them and dependent on none.
     print("\n=== shared market data ===", flush=True)
     write_metrics()
+    write_manifest(periods)
     return 0
 
 

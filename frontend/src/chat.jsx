@@ -201,6 +201,10 @@ export function ChatWidget() {
         padding: '0 12px 10px', fontSize: 10, lineHeight: 1.4, color: 'var(--soft)', textAlign: 'center',
       }}>
         Not financial advice · figures are a historical snapshot of NBIM&apos;s disclosed holdings
+        {/* The assistant reads data.json, which is always the newest period. Someone
+            browsing 2022 who asks about it would get 2025 answers, so the limit is
+            stated here rather than left to be discovered. */}
+        <br/>The assistant always answers from the latest period, whichever one the page is showing.
       </div>
     </div>
   );
