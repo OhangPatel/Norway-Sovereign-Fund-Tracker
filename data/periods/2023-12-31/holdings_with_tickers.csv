@@ -1,0 +1,1439 @@
+As_Of,Country,Name,Industry,Market Value(NOK),Market Value(USD),Voting,Ownership,Incorporation Country,Selection Reason,Yahoo_Ticker
+2023-12-31,Canada,Agnico Eagle Mines Ltd,Basic Materials,3341515008,329028527,1.2%,1.2,,Both,AEM.TO
+2023-12-31,Canada,Alamos Gold Inc,Basic Materials,654310923,64427949,1.2%,1.2,,Both,AGI.TO
+2023-12-31,Canada,Argonaut Gold Inc,Basic Materials,148415243,14613985,3.77%,3.77,,Ownership,
+2023-12-31,Canada,B2Gold Corp,Basic Materials,511518530,50367629,1.22%,1.22,,Ownership,BTO.TO
+2023-12-31,Canada,Capstone Copper Corp,Basic Materials,414866389,40850595,1.2%,1.2,,Ownership,CS.TO
+2023-12-31,Canada,Franco-Nevada Corp,Basic Materials,2206693073,217286162,1.02%,1.02,,Market Value,FNV.TO
+2023-12-31,Canada,Interfor Corp,Basic Materials,103939510,10234598,1.12%,1.12,,Ownership,IFP.TO
+2023-12-31,Canada,Ivanhoe Mines Ltd,Basic Materials,596414334,58727053,0.48%,0.48,,Market Value,IVN.TO
+2023-12-31,Canada,Kinross Gold Corp,Basic Materials,2771468203,272897802,3.66%,3.66,,Both,K.TO
+2023-12-31,Canada,Nutrien Ltd,Basic Materials,3322742538,327180060,1.17%,1.17,,Both,NTR.TO
+2023-12-31,Canada,Pan American Silver Corp,Basic Materials,640810040,63098559,1.06%,1.06,,Market Value,PAAS.TO
+2023-12-31,Canada,SSR Mining Inc,Basic Materials,274767206,27055467,1.23%,1.23,,Ownership,SSRM.TO
+2023-12-31,Canada,Teck Resources Ltd,Basic Materials,1791132165,176367179,0.32%,0.8,,Market Value,TECK-B.TO
+2023-12-31,Canada,West Fraser Timber Co Ltd,Basic Materials,779784701,76782959,1.07%,1.07,,Market Value,WFG.TO
+2023-12-31,Canada,Wheaton Precious Metals Corp,Basic Materials,4068452038,400607741,1.78%,1.78,,Both,WPM.TO
+2023-12-31,Canada,Air Canada,Consumer Discretionary,303200007,29855156,0.59%,0.59,,Market Value,AC.TO
+2023-12-31,Canada,Alimentation Couche-Tard Inc,Consumer Discretionary,5375618631,529320345,0.93%,0.93,,Both,ATD.TO
+2023-12-31,Canada,Boyd Group Services Inc,Consumer Discretionary,553735132,54524566,1.2%,1.2,,Both,
+2023-12-31,Canada,BRP Inc,Consumer Discretionary,312939760,30814199,0.15%,0.57,,Market Value,DOO.TO
+2023-12-31,Canada,Canadian Tire Corp Ltd,Consumer Discretionary,693739423,68310350,0%,1.15,,Both,CTC-A.TO
+2023-12-31,Canada,Dollarama Inc,Consumer Discretionary,2587743646,254807019,1.25%,1.25,,Both,DOL.TO
+2023-12-31,Canada,Gildan Activewear Inc,Consumer Discretionary,723704702,71260937,1.26%,1.26,,Both,GIL.TO
+2023-12-31,Canada,Linamar Corp,Consumer Discretionary,282226422,27789953,0.93%,0.93,,Ownership,LNR.TO
+2023-12-31,Canada,Magna International Inc,Consumer Discretionary,1908619965,187935835,1.11%,1.11,,Both,MG.TO
+2023-12-31,Canada,North West Co Inc/The,Consumer Discretionary,108463224,10680034,0.75%,0.75,,Ownership,
+2023-12-31,Canada,RB Global Inc,Consumer Discretionary,1445880657,142371344,1.16%,1.16,,Both,RBA.TO
+2023-12-31,Canada,Restaurant Brands International Inc,Consumer Discretionary,2437855445,240047997,0.66%,0.66,,Both,QSR.TO
+2023-12-31,Canada,George Weston Ltd,Consumer Staples,1038160459,102224412,0.6%,0.6,,Both,WN.TO
+2023-12-31,Canada,Loblaw Cos Ltd,Consumer Staples,1863677028,183510445,0.6%,0.6,,Both,L.TO
+2023-12-31,Canada,Maple Leaf Foods Inc,Consumer Staples,104157676,10256080,0.44%,0.44,,Both,MFI.TO
+2023-12-31,Canada,Metro Inc/CN,Consumer Staples,1507068633,148396332,1.25%,1.25,,Both,MRU.TO
+2023-12-31,Canada,Molson Coors Canada Inc,Consumer Staples,17069297,1680760,0.2%,0.2,,Both,TPX-B.TO
+2023-12-31,Canada,Premium Brands Holdings Corp,Consumer Staples,329172021,32412539,1.02%,1.02,,Both,PBH.TO
+2023-12-31,Canada,Primo Water Corp,Consumer Staples,188483588,18559389,0.77%,0.77,,Both,
+2023-12-31,Canada,Saputo Inc,Consumer Staples,610475703,60111632,0.7%,0.7,,Both,SAP.TO
+2023-12-31,Canada,Ballard Power Systems Inc,Energy,28471967,2803546,0.25%,0.25,,Both,BLDP.TO
+2023-12-31,Canada,Cameco Corp,Energy,1128195327,111089864,0.59%,0.59,,Both,CCO.TO
+2023-12-31,Canada,Enbridge Inc,Energy,7101306946,699243474,0.91%,0.91,,Both,ENB.TO
+2023-12-31,Canada,Gibson Energy Inc,Energy,267501414,26340027,1.07%,1.07,,Both,GEI.TO
+2023-12-31,Canada,Keyera Corp,Energy,676269008,66590093,1.2%,1.2,,Both,KEY.TO
+2023-12-31,Canada,Parkland Corp,Energy,552736445,54426228,0.95%,0.95,,Both,
+2023-12-31,Canada,Pembina Pipeline Corp,Energy,1319348324,129912101,0.68%,0.68,,Both,PPL.TO
+2023-12-31,Canada,TC Energy Corp,Energy,3381145651,332930832,0.82%,0.82,,Both,TRP.TO
+2023-12-31,Canada,Bank of Montreal,Financials,8114106564,798970683,1.11%,1.11,,Both,BMO.TO
+2023-12-31,Canada,Bank of Nova Scotia/The,Financials,6509348975,640955225,1.08%,1.08,,Both,BNS.TO
+2023-12-31,Canada,Brookfield Asset Management Ltd,Financials,2409274441,237233715,1.43%,1.43,,Ownership,BAM.TO
+2023-12-31,Canada,Brookfield Corp,Financials,6107356038,601372238,0.91%,0.91,,Market Value,BN.TO
+2023-12-31,Canada,Canadian Imperial Bank of Commerce,Financials,4012036004,395052631,0.88%,0.88,,Market Value,CM.TO
+2023-12-31,Canada,iA Financial Corp Inc,Financials,886277931,87269015,1.27%,1.27,,Ownership,IAG.TO
+2023-12-31,Canada,Intact Financial Corp,Financials,3353052752,330164612,1.2%,1.2,,Both,IFC.TO
+2023-12-31,Canada,Manulife Financial Corp,Financials,4731473452,465893385,1.16%,1.16,,Both,MFC.TO
+2023-12-31,Canada,National Bank of Canada,Financials,3079963501,303274368,1.17%,1.17,,Both,NA.TO
+2023-12-31,Canada,Royal Bank of Canada,Financials,19021085227,1872946742,1.31%,1.31,,Both,RY.TO
+2023-12-31,Canada,Sun Life Financial Inc,Financials,3350876563,329950330,1.08%,1.08,,Market Value,SLF.TO
+2023-12-31,Canada,TMX Group Ltd,Financials,842111435,82920078,1.23%,1.23,,Ownership,
+2023-12-31,Canada,Toronto-Dominion Bank/The,Financials,14795726676,1456888907,1.25%,1.25,,Both,TD.TO
+2023-12-31,Canada,Bausch Health Cos Inc,Health Care,315457261,31062089,1.06%,1.06,,Both,BHC.TO
+2023-12-31,Canada,AbCellera Biologics Inc,Health Care,53478311,5265842,0.32%,0.32,,Both,ABCL.TO
+2023-12-31,Canada,ATS Corp,Industrials,415185617,40882028,0.95%,0.95,,Ownership,ATS.TO
+2023-12-31,Canada,CAE Inc,Industrials,759373627,74773145,1.08%,1.08,,Both,CAE.TO
+2023-12-31,Canada,Canadian National Railway Co,Industrials,7667065953,754951993,0.93%,0.93,,Market Value,CNR.TO
+2023-12-31,Canada,Canadian Pacific Kansas City Ltd,Industrials,9793421639,964327583,1.3%,1.3,,Both,CP.TO
+2023-12-31,Canada,Element Fleet Management Corp,Industrials,755436646,74385483,1.17%,1.17,,Both,EFN.TO
+2023-12-31,Canada,Finning International Inc,Industrials,548593322,54018268,1.29%,1.29,,Both,FTT.TO
+2023-12-31,Canada,SNC-Lavalin Group Inc,Industrials,622561693,61301702,1.08%,1.08,,Both,
+2023-12-31,Canada,Stantec Inc,Industrials,1117582891,110044890,1.2%,1.2,,Both,STN.TO
+2023-12-31,Canada,TFI International Inc,Industrials,1889187842,186022415,1.61%,1.61,,Both,TFII.TO
+2023-12-31,Canada,Toromont Industries Ltd,Industrials,855603237,84248573,1.16%,1.16,,Both,TIH.TO
+2023-12-31,Canada,WSP Global Inc,Industrials,2034874905,200367764,1.14%,1.14,,Both,WSP.TO
+2023-12-31,Canada,Canadian Apartment Properties REIT,Real Estate,709467972,69859091,1.13%,1.13,,Both,CAR-UN.TO
+2023-12-31,Canada,Chartwell Retirement Residences,Real Estate,158283221,15585653,0.76%,0.76,,Ownership,CSH-UN.TO
+2023-12-31,Canada,Choice Properties Real Estate Investment Trust,Real Estate,272088701,26791723,0.35%,0.35,,Market Value,CHP-UN.TO
+2023-12-31,Canada,Colliers International Group Inc,Real Estate,487091325,47962359,0.52%,0.8,,Both,CIGI.TO
+2023-12-31,Canada,Dream Industrial Real Estate Investment Trust,Real Estate,200345109,19727356,0.65%,0.65,,Market Value,DIR-UN.TO
+2023-12-31,Canada,First Capital Real Estate Investment Trust,Real Estate,185057666,18222049,0.74%,0.74,,Both,FCR-UN.TO
+2023-12-31,Canada,FirstService Corp,Real Estate,841695111,82879084,0.72%,1.11,,Both,FSV.TO
+2023-12-31,Canada,Granite Real Estate Investment Trust,Real Estate,388349484,38239559,1.04%,1.04,,Both,GRT-UN.TO
+2023-12-31,Canada,Primaris Real Estate Investment Trust,Real Estate,76143896,7497651,0.75%,0.75,,Ownership,PMZ-UN.TO
+2023-12-31,Canada,RioCan Real Estate Investment Trust,Real Estate,525811897,51775052,1.22%,1.22,,Both,REI-UN.TO
+2023-12-31,Canada,SmartCentres Real Estate Investment Trust,Real Estate,267128705,26303328,0.81%,0.81,,Both,SRU-UN.TO
+2023-12-31,Canada,Tricon Residential Inc,Real Estate,281930925,27760856,1.11%,1.11,,Both,
+2023-12-31,Canada,BlackBerry Ltd,Technology,495971611,48836773,2.35%,2.35,,Both,BB.TO
+2023-12-31,Canada,Celestica Inc,Technology,272894586,26871076,0.77%,0.77,,Both,CLS.TO
+2023-12-31,Canada,CGI Inc,Technology,2731584698,268970598,0.53%,1.07,,Both,GIB-A.TO
+2023-12-31,Canada,Constellation Software Inc/Canada,Technology,6396537190,629847001,1.19%,1.19,,Both,CSU.TO
+2023-12-31,Canada,Descartes Systems Group Inc/The,Technology,944677958,93019482,1.3%,1.3,,Both,DSG.TO
+2023-12-31,Canada,Enghouse Systems Ltd,Technology,90671240,8928113,0.61%,0.61,,Both,
+2023-12-31,Canada,Kinaxis Inc,Technology,379928678,37410388,1.17%,1.17,,Both,KXS.TO
+2023-12-31,Canada,Lightspeed Commerce Inc,Technology,264798707,26073900,0.81%,0.81,,Both,LSPD.TO
+2023-12-31,Canada,Open Text Corp,Technology,1424601379,140276040,1.22%,1.22,,Both,OTEX.TO
+2023-12-31,Canada,Shopify Inc,Technology,10799939575,1063436255,0.68%,1.06,,Both,SHOP.TO
+2023-12-31,Canada,BCE Inc,Telecommunications,968128139,95328548,0.26%,0.26,,Both,BCE.TO
+2023-12-31,Canada,Cogeco Communications Inc,Telecommunications,35905268,3535479,0.04%,0.18,,Both,CCA.TO
+2023-12-31,Canada,Quebecor Inc,Telecommunications,178330266,17559623,0.08%,0.32,,Both,QBR-B.TO
+2023-12-31,Canada,TELUS Corp,Telecommunications,823225001,81060390,0.31%,0.31,,Both,T.TO
+2023-12-31,Canada,Algonquin Power & Utilities Corp,Utilities,289024128,28459301,0.65%,0.65,,Both,AQN.TO
+2023-12-31,Canada,AltaGas Ltd,Utilities,702687693,69191458,1.11%,1.11,,Both,ALA.TO
+2023-12-31,Canada,Atco Ltd/Canada,Utilities,248061367,24425827,0%,0.74,,Both,ACO-X.TO
+2023-12-31,Canada,Boralex Inc,Utilities,199894691,19683005,0.75%,0.75,,Ownership,BLX.TO
+2023-12-31,Canada,Brookfield Infrastructure Corp,Utilities,540257949,53197510,1.14%,1.14,,Both,BIPC.TO
+2023-12-31,Canada,Brookfield Renewable Corp,Utilities,475727716,46843420,0.9%,0.44,,Market Value,BEPC.TO
+2023-12-31,Canada,Fortis Inc/Canada,Utilities,1182333974,116420727,0.58%,0.58,,Market Value,FTS.TO
+2023-12-31,Canada,GFL Environmental Inc,Utilities,863194770,84996088,0.52%,0.67,,Both,GFL.TO
+2023-12-31,Canada,Hydro One Ltd,Utilities,1087420239,107074868,0.59%,0.59,,Both,H.TO
+2023-12-31,Canada,Li-Cycle Holdings Corp,Utilities,11878107,1169600,1.12%,1.12,,Ownership,
+2023-12-31,Canada,Northland Power Inc,Utilities,398713922,39260112,0.84%,0.84,,Both,NPI.TO
+2023-12-31,Canada,Waste Connections Inc,Utilities,5929258044,583835486,1.52%,1.52,,Both,WCN.TO
+2023-12-31,Germany,Aurubis AG,Basic Materials,959578547,94486697,2.56%,2.56,,Both,NDA1.F
+2023-12-31,Germany,BASF SE,Basic Materials,5999661736,590767917,1.23%,1.23,,Market Value,BAS.DE
+2023-12-31,Germany,Brenntag SE,Basic Materials,981702301,96665154,0.71%,0.71,,Market Value,BNR.DE
+2023-12-31,Germany,Covestro AG,Basic Materials,4595598800,452514233,4.11%,4.11,,Both,1COV.DE
+2023-12-31,Germany,Eckert & Ziegler Strahlen- und Medizintechnik AG,Basic Materials,331431732,32635046,3.38%,3.38,,Ownership,
+2023-12-31,Germany,Evonik Industries AG,Basic Materials,1429685571,140776664,1.48%,1.48,,Market Value,EVK.DE
+2023-12-31,Germany,FUCHS SE,Basic Materials,1642192273,161701534,2.88%,2.89,,Both,FPE3.DE
+2023-12-31,Germany,K+S AG,Basic Materials,701012015,69026459,2.44%,2.44,,Both,SDF.DE
+2023-12-31,Germany,LANXESS AG,Basic Materials,843838468,83090133,3.07%,3.07,,Both,LXS.DE
+2023-12-31,Germany,Salzgitter AG,Basic Materials,336069643,33091726,1.78%,1.78,,Ownership,SZG.DE
+2023-12-31,Germany,SGL Carbon SE,Basic Materials,180823319,17805106,2.02%,2.02,,Ownership,SGL.DE
+2023-12-31,Germany,Symrise AG,Basic Materials,8643678359,851115960,5.53%,5.53,,Both,SY1.DE
+2023-12-31,Germany,Wacker Chemie AG,Basic Materials,1644538029,161932514,2.46%,2.46,,Both,WCH.DE
+2023-12-31,Germany,adidas AG,Consumer Discretionary,14537631497,1431475083,3.91%,3.91,,Both,ADS.DE
+2023-12-31,Germany,Bayerische Motoren Werke AG,Consumer Discretionary,3556492214,350196659,0.41%,0.51,,Market Value,BMW.DE
+2023-12-31,Germany,Continental AG,Consumer Discretionary,2380436413,234394125,1.38%,1.38,,Market Value,CON.DE
+2023-12-31,Germany,CTS Eventim AG & Co KGaA,Consumer Discretionary,1115270399,109817186,1.65%,1.65,,Ownership,
+2023-12-31,Germany,Deutsche Lufthansa AG,Consumer Discretionary,1433433834,141145744,1.33%,1.33,,Market Value,LHA.DE
+2023-12-31,Germany,Dr Ing hc F Porsche AG,Consumer Discretionary,4057172968,399497127,0%,0.5,,Market Value,P911.DE
+2023-12-31,Germany,Henkel AG & Co KGaA,Consumer Discretionary,4519362576,445007491,1.95%,1.39,,Market Value,HEN3.DE
+2023-12-31,Germany,HUGO BOSS AG,Consumer Discretionary,976209433,96124288,1.83%,1.83,,Ownership,BOSS.DE
+2023-12-31,Germany,JOST Werke SE,Consumer Discretionary,176376490,17367241,2.39%,2.39,,Ownership,JST.F
+2023-12-31,Germany,Mercedes-Benz Group AG,Consumer Discretionary,2750016911,270785560,0.37%,0.37,,Market Value,MBG.DE
+2023-12-31,Germany,Porsche Automobil Holding SE,Consumer Discretionary,1581082521,155684248,0%,0.99,,Market Value,PAH3.DE
+2023-12-31,Germany,ProSiebenSat.1 Media SE,Consumer Discretionary,314664513,30984030,2.18%,2.18,,Ownership,PSM.DE
+2023-12-31,Germany,Puma SE,Consumer Discretionary,2432843514,239554488,2.85%,2.85,,Both,PUM.DE
+2023-12-31,Germany,SAF-Holland SE,Consumer Discretionary,148386957,14611199,1.92%,1.92,,Ownership,SFQ.F
+2023-12-31,Germany,Schaeffler AG,Consumer Discretionary,651550106,64156100,0%,1.56,,Ownership,SHA.DE
+2023-12-31,Germany,Sixt SE,Consumer Discretionary,986887261,97175700,1.26%,2.38,,Ownership,SIX2.DE
+2023-12-31,Germany,Volkswagen AG,Consumer Discretionary,6568713886,646800702,0%,1.04,,Market Value,VOW3.DE
+2023-12-31,Germany,Zalando SE,Consumer Discretionary,1250033762,123086913,1.97%,1.97,,Ownership,ZAL.DE
+2023-12-31,Germany,Beiersdorf AG,Consumer Staples,3087527534,304019175,0.8%,0.8,,Both,BEI.DE
+2023-12-31,Germany,HelloFresh SE,Consumer Staples,1404441550,138290965,5.05%,5.05,,Both,HFG.DE
+2023-12-31,Germany,KWS Saat SE & Co KGaA,Consumer Staples,140261493,13811110,0.71%,0.71,,Both,KWS.DE
+2023-12-31,Germany,METRO AG,Consumer Staples,226725649,22324965,0.88%,0.87,,Both,B4B.DE
+2023-12-31,Germany,Redcare Pharmacy NV,Consumer Staples,420139291,41369801,1.41%,1.41,,Both,RDC.DE
+2023-12-31,Germany,Suedzucker AG,Consumer Staples,111076714,10937376,0.34%,0.34,,Both,SZU.DE
+2023-12-31,Germany,Nordex SE,Energy,66442329,6542368,0.24%,0.24,,Both,NDX1.DE
+2023-12-31,Germany,SFC Energy AG,Energy,1823269,179532,0.05%,0.05,,Both,F3C.DE
+2023-12-31,Germany,Siemens Energy AG,Energy,2964261772,291881581,2.75%,2.75,,Both,ENR.DE
+2023-12-31,Germany,SMA Solar Technology AG,Energy,144357149,14214397,0.61%,0.61,,Both,S92.DE
+2023-12-31,Germany,Thyssenkrupp Nucera AG & Co KGaa,Energy,915751540,90171189,3.5%,3.5,,Both,NCH2.F
+2023-12-31,Germany,Verbio Vereinigte Bioenergie AG,Energy,231473271,22792449,1.09%,1.09,,Both,
+2023-12-31,Germany,Allianz SE,Financials,22816990157,2246717622,2.15%,2.15,,Both,ALV.DE
+2023-12-31,Germany,Commerzbank AG,Financials,4856977466,478251373,3.24%,3.24,,Both,CBK.DE
+2023-12-31,Germany,Deutsche Bank AG,Financials,3244727251,319498139,1.15%,1.15,,Both,DBK.DE
+2023-12-31,Germany,Deutsche Beteiligungs AG,Financials,54305643,5347307,0.88%,0.88,,Ownership,DBAN.F
+2023-12-31,Germany,Deutsche Boerse AG,Financials,8638015825,850558388,2.17%,2.17,,Both,DB1.DE
+2023-12-31,Germany,Deutsche Pfandbriefbank AG,Financials,153514141,15116057,1.64%,1.64,,Ownership,PBB.F
+2023-12-31,Germany,DWS Group GmbH & Co KGaA,Financials,335206770,33006762,0.43%,0.43,,Market Value,DWS.DE
+2023-12-31,Germany,flatexDEGIRO AG,Financials,177805435,17507945,1.29%,1.29,,Both,FTK.DE
+2023-12-31,Germany,Hannover Rueck SE,Financials,2942429976,289731872,1.01%,1.01,,Both,HNR1.DE
+2023-12-31,Germany,Hypoport SE,Financials,263002783,25897061,1.93%,1.93,,Both,HYQ.DE
+2023-12-31,Germany,Muenchener Rueckversicherungs-Gesellschaft AG in Muenchen,Financials,12716479239,1252151918,2.21%,2.21,,Both,MUV2.DE
+2023-12-31,Germany,Talanx AG,Financials,949631677,93507260,0.51%,0.51,,Market Value,TLX.DE
+2023-12-31,Germany,Bayer AG,Health Care,7627925255,751097931,2.06%,2.06,,Both,BAYN.DE
+2023-12-31,Germany,Carl Zeiss Meditec AG,Health Care,1546649841,152293770,1.56%,1.56,,Both,AFX.DE
+2023-12-31,Germany,CompuGroup Medical SE & Co KgaA,Health Care,585207117,57623514,2.56%,2.56,,Ownership,
+2023-12-31,Germany,Draegerwerk AG & Co KGaA,Health Care,214514081,21122530,1.36%,2.07,,Ownership,DRW3.DE
+2023-12-31,Germany,Evotec SE,Health Care,969534426,95467021,2.29%,2.29,,Both,EVT.F
+2023-12-31,Germany,Fresenius Medical Care AG,Health Care,1240142729,122112974,0.99%,0.99,,Market Value,FME.DE
+2023-12-31,Germany,Fresenius SE & Co KGaA,Health Care,3309215558,325848101,1.87%,1.87,,Both,FRE.DE
+2023-12-31,Germany,Gerresheimer AG,Health Care,712498244,70157473,1.95%,1.95,,Both,GXI.DE
+2023-12-31,Germany,Medios AG,Health Care,91329064,8992887,2.16%,2.16,,Ownership,ILM1.F
+2023-12-31,Germany,Merck KGaA,Health Care,3804532535,374620414,1.82%,0.54,,Market Value,MRK.DE
+2023-12-31,Germany,MorphoSys AG,Health Care,175185669,17249985,1.22%,1.22,,Ownership,
+2023-12-31,Germany,QIAGEN NV,Health Care,2785783697,274307403,2.73%,2.73,,Both,QIA.DE
+2023-12-31,Germany,Sartorius AG,Health Care,2686208912,264502586,0.41%,1.0,,Market Value,SRT3.DE
+2023-12-31,Germany,Siemens Healthineers AG,Health Care,4130441188,406711619,0.62%,0.62,,Market Value,SHL.DE
+2023-12-31,Germany,Bertrandt AG,Industrials,186164033,18330990,3.18%,3.18,,Ownership,BDT.DE
+2023-12-31,Germany,Daimler Truck Holding AG,Industrials,2624536080,258429855,0.84%,0.84,,Market Value,DTG.DE
+2023-12-31,Germany,Deutsche Post AG,Industrials,7954156013,783220853,1.28%,1.28,,Market Value,DHL.DE
+2023-12-31,Germany,Deutz AG,Industrials,230635418,22709948,3.4%,3.4,,Ownership,
+2023-12-31,Germany,Duerr AG,Industrials,373731657,36800187,2.25%,2.25,,Ownership,
+2023-12-31,Germany,GEA Group AG,Industrials,2051078176,201963250,2.81%,2.81,,Both,G1A.DE
+2023-12-31,Germany,Heidelberg Materials AG,Industrials,2068762220,203704542,1.22%,1.22,,Market Value,HEIG.DE
+2023-12-31,Germany,Hensoldt AG,Industrials,679397413,66898137,2.15%,2.15,,Ownership,HAG.DE
+2023-12-31,Germany,KION Group AG,Industrials,1144374173,112682944,2.01%,2.01,,Market Value,
+2023-12-31,Germany,Knorr-Bremse AG,Industrials,1947954743,191809008,1.83%,1.83,,Market Value,KBX.DE
+2023-12-31,Germany,MTU Aero Engines AG,Industrials,5057332520,497979708,4.29%,4.29,,Both,MTX.DE
+2023-12-31,Germany,OSRAM Licht AG,Industrials,1223597450,120483812,2.21%,2.21,,Both,OSR.DE
+2023-12-31,Germany,Rheinmetall AG,Industrials,2244799581,221038390,1.6%,1.6,,Market Value,RHM.DE
+2023-12-31,Germany,Siemens AG,Industrials,36344951371,3578773632,2.38%,2.38,,Both,SIE.DE
+2023-12-31,Germany,Stabilus SE,Industrials,552350811,54388256,3.23%,3.23,,Ownership,STM.F
+2023-12-31,Germany,thyssenkrupp AG,Industrials,1107160548,109018635,2.51%,2.51,,Ownership,TKA.DE
+2023-12-31,Germany,Argo Properties NV,Real Estate,29571254,2911789,0.86%,0.86,,Both,ARND.DE
+2023-12-31,Germany,Aroundtown SA,Real Estate,442632757,43584663,1.04%,1.04,,Both,AT1.DE
+2023-12-31,Germany,BRANICKS Group AG,Real Estate,16807544,1654986,0.53%,0.53,,Both,BRNK.F
+2023-12-31,Germany,Deutsche EuroShop AG,Real Estate,70807262,6972169,0.37%,0.37,,Both,DEQ.DE
+2023-12-31,Germany,Deutsche Wohnen SE,Real Estate,361844024,35629649,0.34%,0.34,,Both,DWNI.DE
+2023-12-31,Germany,Grand City Properties SA,Real Estate,256645087,25271039,1.28%,1.28,,Both,GYC.DE
+2023-12-31,Germany,LEG Immobilien SE,Real Estate,1772133706,174496461,2.69%,2.69,,Both,LEG.DE
+2023-12-31,Germany,PATRIZIA SE,Real Estate,50970274,5018883,0.6%,0.6,,Both,PAT.DE
+2023-12-31,Germany,TAG Immobilien AG,Real Estate,719117645,70809264,2.77%,2.77,,Both,TEG.DE
+2023-12-31,Germany,Vonovia SE,Real Estate,38759066881,3816484032,14.86%,14.86,,Both,VNA.DE
+2023-12-31,Germany,AIXTRON SE,Technology,1938452905,190873392,3.94%,3.94,,Both,AIXA.DE
+2023-12-31,Germany,Atoss Software AG,Technology,386654056,38072615,2.07%,2.07,,Both,
+2023-12-31,Germany,Bechtle AG,Technology,1209044839,119050862,1.88%,1.88,,Market Value,BC8.DE
+2023-12-31,Germany,Exasol AG,Technology,20463655,2014992,2.37%,2.37,,Ownership,EXL.F
+2023-12-31,Germany,GFT Technologies SE,Technology,291039146,28657714,3.16%,3.16,,Ownership,GFT.DE
+2023-12-31,Germany,Infineon Technologies AG,Technology,16563701601,1630975866,2.99%,2.99,,Both,IFX.DE
+2023-12-31,Germany,Jenoptik AG,Technology,729646118,71845970,4%,4.0,,Both,JEN.DE
+2023-12-31,Germany,SAP SE,Technology,51749506131,5095611935,2.69%,2.69,,Both,SAP.DE
+2023-12-31,Germany,Scout24 SE,Technology,1707630763,168145058,3.16%,3.16,,Both,G24.DE
+2023-12-31,Germany,Siltronic AG,Technology,777588988,76566754,2.61%,2.61,,Both,WAF.DE
+2023-12-31,Germany,TeamViewer SE,Technology,971108289,95621994,3.54%,3.54,,Both,TMV.DE
+2023-12-31,Germany,United Internet AG,Technology,632864792,62316216,1.28%,1.28,,Market Value,UTDI.DE
+2023-12-31,Germany,1&1 AG,Telecommunications,212392920,20913666,0.59%,0.59,,Both,1U1.DE
+2023-12-31,Germany,Deutsche Telekom AG,Telecommunications,18628282304,1834268667,1.53%,1.53,,Both,DTE.DE
+2023-12-31,Germany,Freenet AG,Telecommunications,1098746831,108190162,3.25%,3.25,,Both,FNTN.DE
+2023-12-31,Germany,Telefonica Deutschland Holding AG,Telecommunications,509767763,50195237,0.65%,0.65,,Both,
+2023-12-31,Germany,Vantage Towers AG,Telecommunications,971848858,95694916,0.46%,0.46,,Both,VTWR.DE
+2023-12-31,Germany,2G Energy AG,Utilities,30049858,2958915,0.66%,0.66,,Both,2GB.DE
+2023-12-31,Germany,Befesa SA,Utilities,369245188,36358418,2.34%,2.34,,Both,
+2023-12-31,Germany,E.ON SE,Utilities,6295225988,619871204,1.75%,1.75,,Both,EOAN.DE
+2023-12-31,Germany,Encavis AG,Utilities,438762227,43203544,1.56%,1.56,,Both,
+2023-12-31,Germany,Energiekontor AG,Utilities,296411207,29186684,2.29%,2.29,,Both,EKT.F
+2023-12-31,Germany,PNE AG,Utilities,166439236,16388751,1.4%,1.4,,Both,PNE3.DE
+2023-12-31,Germany,Uniper SE,Utilities,5366097,528383,0%,0.0,,Both,UN0.F
+2023-12-31,India,Aarti Industries Ltd,Basic Materials,127299611,12534794,0.44%,0.44,,Both,AARTIIND.NS
+2023-12-31,India,Alkyl Amines Chemicals,Basic Materials,72939737,7182148,0.46%,0.46,,Both,ALKYLAMINE.BO
+2023-12-31,India,APL Apollo Tubes Ltd,Basic Materials,350692950,34531637,0.67%,0.67,,Both,APLAPOLLO.NS
+2023-12-31,India,Astec Lifesciences Ltd,Basic Materials,25069734,2468538,0.96%,0.96,,Both,ASTEC.NS
+2023-12-31,India,Atul Ltd,Basic Materials,340195970,33498033,1.32%,1.32,,Both,ATUL.NS
+2023-12-31,India,Balaji Amines Ltd,Basic Materials,56042814,5518361,0.53%,0.53,,Both,BALAMINES.NS
+2023-12-31,India,BASF India Ltd,Basic Materials,37609932,3703332,0.23%,0.23,,Both,BASF.NS
+2023-12-31,India,Bharat Forge Ltd,Basic Materials,428395194,42182734,0.61%,0.61,,Both,BHARATFORG.NS
+2023-12-31,India,Carborundum Universal Ltd,Basic Materials,153473763,15112081,0.59%,0.59,,Both,CARBORUNIV.NS
+2023-12-31,India,Century Plyboards India Ltd,Basic Materials,540253603,53197082,2.58%,2.58,,Both,CENTURYPLY.NS
+2023-12-31,India,Century Textiles & Industries Ltd,Basic Materials,79840126,7861607,0.48%,0.48,,Both,
+2023-12-31,India,Chambal Fertilisers and Chemicals Ltd,Basic Materials,72083564,7097843,0.38%,0.38,,Both,CHAMBLFERT.NS
+2023-12-31,India,Chemplast Sanmar Ltd,Basic Materials,47897478,4716315,0.5%,0.5,,Both,CHEMPLASTS.NS
+2023-12-31,India,Clean Science & Technology Ltd,Basic Materials,30810155,3033780,0.15%,0.15,,Market Value,CLEAN.NS
+2023-12-31,India,Coromandel International Ltd,Basic Materials,168595795,16601100,0.37%,0.37,,Both,COROMANDEL.NS
+2023-12-31,India,Deepak Fertilisers & Petrochemicals Corp Ltd,Basic Materials,64777422,6378430,0.62%,0.62,,Both,DEEPAKFERT.NS
+2023-12-31,India,Deepak Nitrite Ltd,Basic Materials,201217145,19813223,0.49%,0.49,,Both,DEEPAKNTR.NS
+2023-12-31,India,Fine Organic Industries Ltd,Basic Materials,42468668,4181757,0.23%,0.23,,Both,
+2023-12-31,India,GFL Ltd,Basic Materials,2734384,269246,0.21%,0.21,,Ownership,
+2023-12-31,India,GHCL Ltd,Basic Materials,54832608,5399195,0.81%,0.81,,Both,GHCL.NS
+2023-12-31,India,Grindwell Norton Ltd,Basic Materials,98866113,9735037,0.31%,0.31,,Both,GRINDWELL.NS
+2023-12-31,India,Gujarat Narmada Valley Fertilizers & Chemicals Ltd,Basic Materials,83656255,8237370,0.59%,0.59,,Both,GNFC.NS
+2023-12-31,India,Himadri Speciality Chemical Ltd,Basic Materials,83099440,8182542,0.5%,0.5,,Both,HSCL.NS
+2023-12-31,India,JK Paper Ltd,Basic Materials,33263696,3275372,0.4%,0.4,,Both,JKPAPER.NS
+2023-12-31,India,JSW Steel Ltd,Basic Materials,1078082988,106155458,0.41%,0.41,,Both,JSWSTEEL.NS
+2023-12-31,India,Jubilant Ingrevia Ltd,Basic Materials,55834970,5497895,0.56%,0.56,,Both,JUBLINDS.NS
+2023-12-31,India,KPR Mill Ltd,Basic Materials,75513643,7435592,0.22%,0.22,,Both,KPRMILL.NS
+2023-12-31,India,Linde India Ltd,Basic Materials,117549515,11574733,0.2%,0.2,,Both,LINDEINDIA.NS
+2023-12-31,India,National Aluminium Co Ltd,Basic Materials,172005242,16936818,0.58%,0.58,,Both,NATIONALUM.NS
+2023-12-31,India,Navin Fluorine International Ltd,Basic Materials,318352057,31347131,1.37%,1.37,,Both,NAVINFLUOR.NS
+2023-12-31,India,NOCIL Ltd,Basic Materials,21263980,2093798,0.38%,0.38,,Both,NOCIL.BO
+2023-12-31,India,PI Industries Ltd,Basic Materials,354446997,34901287,0.54%,0.54,,Both,PIIND.NS
+2023-12-31,India,Pidilite Industries Ltd,Basic Materials,1325280843,130496258,0.79%,0.79,,Both,PIDILITIND.NS
+2023-12-31,India,Rain Industries Ltd,Basic Materials,28246975,2781391,0.45%,0.45,,Both,RAIN.NS
+2023-12-31,India,Rallis India Ltd,Basic Materials,27473811,2705260,0.46%,0.46,,Both,RALLIS.BO
+2023-12-31,India,Ramkrishna Forgings Ltd,Basic Materials,69894323,6882275,0.44%,0.44,,Both,RKFORGE.NS
+2023-12-31,India,Ratnamani Metals & Tubes Ltd,Basic Materials,115309701,11354185,0.4%,0.4,,Both,RATNAMANI.NS
+2023-12-31,India,Raymond Ltd,Basic Materials,106073499,10444726,0.76%,0.76,,Both,RAYMOND.NS
+2023-12-31,India,Solar Industries India Ltd,Basic Materials,187400066,18452698,0.25%,0.25,,Both,SOLARINDS.NS
+2023-12-31,India,SRF Ltd,Basic Materials,1278000202,125840681,1.42%,1.42,,Both,SRF.NS
+2023-12-31,India,Sumitomo Chemical India Ltd,Basic Materials,45016147,4432599,0.18%,0.18,,Both,SUMICHEM.NS
+2023-12-31,India,Tata Chemicals Ltd,Basic Materials,196869231,19385097,0.57%,0.57,,Both,TATACHEM.NS
+2023-12-31,India,Tata Steel Ltd,Basic Materials,2075672779,204385003,0.99%,0.99,,Both,TATASTEEL.NS
+2023-12-31,India,Trident Ltd/India,Basic Materials,45859679,4515659,0.2%,0.2,,Both,
+2023-12-31,India,Tube Investments of India Ltd,Basic Materials,417146128,41075074,0.5%,0.5,,Both,TIINDIA.NS
+2023-12-31,India,UPL Ltd,Basic Materials,280817426,27651213,0.52%,0.52,,Both,UPL.NS
+2023-12-31,India,Usha Martin Ltd,Basic Materials,70091135,6901655,0.64%,0.64,,Both,USHAMART.NS
+2023-12-31,India,Vardhman Textiles Ltd,Basic Materials,51651877,5085999,0.38%,0.38,,Both,VTL.NS
+2023-12-31,India,Vinati Organics Ltd,Basic Materials,38236841,3765062,0.17%,0.17,,Both,VINATIORGA.NS
+2023-12-31,India,Welspun Corp Ltd,Basic Materials,81281266,8003512,0.46%,0.46,,Both,WELCORP.NS
+2023-12-31,India,Welspun Living Ltd,Basic Materials,82766516,8149760,0.48%,0.48,,Both,WELSPUNLIV.NS
+2023-12-31,India,Aditya Birla Fashion and Retail Ltd,Consumer Discretionary,68370949,6732273,0.26%,0.26,,Market Value,
+2023-12-31,India,Amber Enterprises India Ltd,Consumer Discretionary,75149289,7399715,0.58%,0.58,,Both,AMBER.NS
+2023-12-31,India,Apollo Tyres Ltd,Consumer Discretionary,301053775,29643823,0.86%,0.86,,Both,APOLLOTYRE.NS
+2023-12-31,India,Avenue Supermarts Ltd,Consumer Discretionary,734851293,72358507,0.23%,0.23,,Market Value,DMART.NS
+2023-12-31,India,Bajaj Auto Ltd,Consumer Discretionary,2471223055,243333601,1.03%,1.03,,Both,BAJAJ-AUTO.NS
+2023-12-31,India,Bajaj Electricals Ltd,Consumer Discretionary,746187693,73474767,5.37%,5.37,,Both,BAJAJELEC.NS
+2023-12-31,India,Balkrishna Industries Ltd,Consumer Discretionary,1031918649,101609800,1.7%,1.7,,Both,BALKRISIND.NS
+2023-12-31,India,Bata India Ltd,Consumer Discretionary,99235991,9771457,0.38%,0.38,,Both,BATAINDIA.NS
+2023-12-31,India,Bombay Burmah Trading Co,Consumer Discretionary,52441393,5163740,0.39%,0.39,,Ownership,BBTC.NS
+2023-12-31,India,Bosch Ltd,Consumer Discretionary,461359419,45428618,0.58%,0.58,,Both,BOSCHLTD.NS
+2023-12-31,India,Ceat Ltd,Consumer Discretionary,56014908,5515613,0.47%,0.47,,Ownership,CEATLTD.NS
+2023-12-31,India,CIE Automotive India Ltd,Consumer Discretionary,95673946,9420714,0.44%,0.44,,Both,CIEINDIA.NS
+2023-12-31,India,CMS Info Systems Ltd,Consumer Discretionary,116734636,11494494,1.6%,1.6,,Both,CMSINFO.NS
+2023-12-31,India,Computer Age Management Services Ltd,Consumer Discretionary,113032548,11129961,0.71%,0.71,,Both,CAMS.NS
+2023-12-31,India,Craftsman Automation Ltd,Consumer Discretionary,66449559,6543080,0.48%,0.48,,Ownership,CRAFTSMAN.NS
+2023-12-31,India,Crompton Greaves Consumer Electricals Ltd,Consumer Discretionary,734477492,72321700,3.05%,3.05,,Both,CROMPTON.NS
+2023-12-31,India,Dixon Technologies India Ltd,Consumer Discretionary,262990644,25895866,0.55%,0.55,,Both,DIXON.NS
+2023-12-31,India,Eicher Motors Ltd,Consumer Discretionary,2016543165,198562695,1.46%,1.46,,Both,EICHERMOT.NS
+2023-12-31,India,EIH Ltd,Consumer Discretionary,70177520,6910161,0.37%,0.37,,Both,EIHOTEL.NS
+2023-12-31,India,Endurance Technologies Ltd,Consumer Discretionary,67984777,6694248,0.2%,0.2,,Market Value,ENDURANCE.NS
+2023-12-31,India,FSN E-Commerce Ventures Ltd,Consumer Discretionary,562395909,55377365,0.93%,0.93,,Both,NYKAA.NS
+2023-12-31,India,GHCL Textiles Ltd,Consumer Discretionary,5355209,527311,0.66%,0.66,,Ownership,
+2023-12-31,India,Hero MotoCorp Ltd,Consumer Discretionary,2570271342,253086576,2.55%,2.55,,Both,HEROMOTOCO.NS
+2023-12-31,India,Honasa Consumer Ltd,Consumer Discretionary,235757053,23214259,1.36%,1.36,,Both,
+2023-12-31,India,Indian Hotels Co Ltd,Consumer Discretionary,471878465,46464396,0.62%,0.62,,Both,INDHOTEL.BO
+2023-12-31,India,Indian Railway Catering & Tourism Corp Ltd,Consumer Discretionary,337624425,33244821,0.39%,0.39,,Both,IRCTC.NS
+2023-12-31,India,Infibeam Avenues Ltd,Consumer Discretionary,30792869,3032077,0.42%,0.42,,Ownership,
+2023-12-31,India,InterGlobe Aviation Ltd,Consumer Discretionary,875590228,86216630,0.63%,0.63,,Both,INDIGO.NS
+2023-12-31,India,JBM Auto Ltd,Consumer Discretionary,62007559,6105690,0.29%,0.29,,Ownership,JBMA.BO
+2023-12-31,India,Jubilant Foodworks Ltd,Consumer Discretionary,582541347,57361024,1.28%,1.28,,Both,JUBLFOOD.NS
+2023-12-31,India,Kalyan Jewellers India Ltd,Consumer Discretionary,86406681,8508196,0.19%,0.19,,Market Value,KALYANKJIL.NS
+2023-12-31,India,Lemon Tree Hotels Ltd,Consumer Discretionary,90883589,8949023,0.78%,0.78,,Both,LEMONTREE.NS
+2023-12-31,India,Mahindra & Mahindra Ltd,Consumer Discretionary,3886514252,382692897,1.48%,1.48,,Both,M&M.NS
+2023-12-31,India,Mahindra Holidays & Resorts India Ltd,Consumer Discretionary,242836114,23911312,2.6%,2.6,,Both,MHRIL.NS
+2023-12-31,India,Maruti Suzuki India Ltd,Consumer Discretionary,2505506864,246709421,0.63%,0.63,,Both,MARUTI.NS
+2023-12-31,India,Motherson Sumi Wiring India Ltd,Consumer Discretionary,84257988,8296620,0.25%,0.25,,Market Value,MSUMI.NS
+2023-12-31,India,MRF Ltd,Consumer Discretionary,420486664,41404006,0.63%,0.63,,Both,MRF.NS
+2023-12-31,India,Network18 Media & Investments Ltd,Consumer Discretionary,278163187,27389859,2.49%,2.49,,Both,NETWORK18.NS
+2023-12-31,India,Orient Electric Ltd,Consumer Discretionary,32346491,3185058,0.55%,0.55,,Ownership,
+2023-12-31,India,PVR Inox Ltd,Consumer Discretionary,439878587,43313468,2.21%,2.21,,Both,PVRINOX.NS
+2023-12-31,India,Rajesh Exports Ltd,Consumer Discretionary,68323985,6727649,0.52%,0.52,,Both,RAJESHEXPO.BO
+2023-12-31,India,Samvardhana Motherson International Ltd,Consumer Discretionary,520683447,51270070,0.62%,0.62,,Both,MOTHERSON.NS
+2023-12-31,India,Sapphire Foods India Ltd,Consumer Discretionary,36421573,3586318,0.33%,0.33,,Ownership,SAPPHIRE.NS
+2023-12-31,India,Schaeffler India Ltd,Consumer Discretionary,147789224,14552342,0.24%,0.24,,Market Value,SCHAEFFLER.NS
+2023-12-31,India,Sona Blw Precision Forgings Ltd,Consumer Discretionary,300170188,29556819,0.65%,0.65,,Both,SONACOMS.NS
+2023-12-31,India,Sun TV Network Ltd,Consumer Discretionary,82716675,8144852,0.24%,0.24,,Market Value,SUNTV.BO
+2023-12-31,India,Sundram Fasteners Ltd,Consumer Discretionary,158018557,15559593,0.49%,0.49,,Both,SUNDRMFAST.NS
+2023-12-31,India,Tata Motors Ltd,Consumer Discretionary,2691777710,265050928,0.55%,0.89,,Both,
+2023-12-31,India,Titan Co Ltd,Consumer Discretionary,1656815249,163141413,0.42%,0.42,,Both,TITAN.NS
+2023-12-31,India,Trent Ltd,Consumer Discretionary,677550500,66716278,0.51%,0.51,,Both,TRENT.NS
+2023-12-31,India,TV18 Broadcast Ltd,Consumer Discretionary,340182585,33496715,3.22%,3.22,,Both,
+2023-12-31,India,TVS Motor Co Ltd,Consumer Discretionary,624703015,61512551,0.53%,0.53,,Both,TVSMOTOR.NS
+2023-12-31,India,UNO Minda Ltd,Consumer Discretionary,137435373,13532831,0.29%,0.29,,Market Value,UNOMINDA.NS
+2023-12-31,India,Vaibhav Global Ltd,Consumer Discretionary,25972425,2557423,0.32%,0.32,,Ownership,VAIBHAVGBL.BO
+2023-12-31,India,Varroc Engineering Ltd,Consumer Discretionary,142253814,14007288,1.38%,1.38,,Both,VARROC.NS
+2023-12-31,India,Vedant Fashions Ltd,Consumer Discretionary,783814889,77179799,2.09%,2.09,,Both,MANYAVAR.NS
+2023-12-31,India,VIP Industries Ltd,Consumer Discretionary,99971866,9843917,0.97%,0.97,,Both,VIPIND.NS
+2023-12-31,India,Zee Entertainment Enterprises Ltd,Consumer Discretionary,900058094,88625904,2.8%,2.8,,Both,ZEEL.NS
+2023-12-31,India,ZF Commercial Vehicle Control Systems India Ltd,Consumer Discretionary,92699313,9127811,0.25%,0.25,,Market Value,ZFCVINDIA.NS
+2023-12-31,India,Avanti Feeds Ltd,Consumer Staples,28081964,2765143,0.4%,0.4,,Both,AVANTIFEED.NS
+2023-12-31,India,Bajaj Consumer Care Ltd,Consumer Staples,14478279,1425631,0.37%,0.37,,Both,BAJAJCON.NS
+2023-12-31,India,Balrampur Chini Mills Ltd,Consumer Staples,68259159,6721266,0.68%,0.68,,Both,BALRAMCHIN.NS
+2023-12-31,India,Britannia Industries Ltd,Consumer Staples,603460410,59420858,0.38%,0.38,,Both,BRITANNIA.NS
+2023-12-31,India,CCL Products India Ltd,Consumer Staples,81256234,8001047,0.78%,0.78,,Both,CCLPROD.NS
+2023-12-31,India,Colgate-Palmolive India Ltd,Consumer Staples,368605591,36295439,0.44%,0.44,,Both,COLPAL.NS
+2023-12-31,India,Dabur India Ltd,Consumer Staples,702609891,69183797,0.58%,0.58,,Both,DABUR.NS
+2023-12-31,India,EID Parry India Ltd,Consumer Staples,89123191,8775682,0.74%,0.74,,Both,EIDPARRY.NS
+2023-12-31,India,Emami Ltd,Consumer Staples,134765102,13269898,0.44%,0.44,,Both,EMAMILTD.NS
+2023-12-31,India,Gillette India Ltd,Consumer Staples,4984419,490800,0.02%,0.02,,Both,GILLETTE.NS
+2023-12-31,India,Godrej Agrovet Ltd,Consumer Staples,26098475,2569835,0.2%,0.2,,Both,GODREJAGRO.NS
+2023-12-31,India,Godrej Consumer Products Ltd,Consumer Staples,783836443,77181922,0.56%,0.56,,Both,GODREJCP.NS
+2023-12-31,India,Hindustan Unilever Ltd,Consumer Staples,2643384430,260285793,0.35%,0.35,,Both,HINDUNILVR.NS
+2023-12-31,India,Kaveri Seed Co Ltd,Consumer Staples,21633373,2130171,0.52%,0.52,,Both,KSCL.NS
+2023-12-31,India,KRBL Ltd,Consumer Staples,50552679,4977764,0.47%,0.47,,Both,KRBL.NS
+2023-12-31,India,Marico Ltd,Consumer Staples,816132854,80362048,0.94%,0.94,,Both,MARICO.NS
+2023-12-31,India,Medplus Health Services Ltd,Consumer Staples,31437447,3095547,0.29%,0.29,,Both,MEDPLUS.NS
+2023-12-31,India,Nestle India Ltd,Consumer Staples,1074232004,105776264,0.34%,0.34,,Both,NESTLEIND.NS
+2023-12-31,India,Patanjali Foods Ltd,Consumer Staples,184722420,18189039,0.27%,0.27,,Both,PATANJALI.NS
+2023-12-31,India,Procter & Gamble Health Ltd,Consumer Staples,41918030,4127537,0.42%,0.42,,Both,PGHL.NS
+2023-12-31,India,Radico Khaitan Ltd,Consumer Staples,147805248,14553920,0.55%,0.55,,Both,RADICO.NS
+2023-12-31,India,Shree Renuka Sugars Ltd,Consumer Staples,28390554,2795529,0.23%,0.23,,Both,RENUKA.NS
+2023-12-31,India,Tata Consumer Products Ltd,Consumer Staples,1798130581,177056292,1.47%,1.47,,Both,TATACONSUM.NS
+2023-12-31,India,United Breweries Ltd,Consumer Staples,93802645,9236453,0.16%,0.16,,Both,UBL.NS
+2023-12-31,India,United Spirits Ltd,Consumer Staples,311981766,30719868,0.31%,0.31,,Both,UNITDSPR.NS
+2023-12-31,India,Varun Beverages Ltd,Consumer Staples,4852990219,477858761,2.47%,2.47,,Both,VBL.NS
+2023-12-31,India,Zydus Wellnes Ltd,Consumer Staples,93530473,9209653,0.72%,0.72,,Both,ZYDUSWELL.BO
+2023-12-31,India,Aegis Logistics Ltd,Energy,61029788,6009412,0.4%,0.4,,Both,AEGISLOG.NS
+2023-12-31,India,Bharat Petroleum Corp Ltd,Energy,542187682,53387524,0.45%,0.45,,Both,BPCL.NS
+2023-12-31,India,Castrol India Ltd,Energy,102682035,10110779,0.47%,0.47,,Both,CASTROLIND.NS
+2023-12-31,India,Hindustan Petroleum Corp Ltd,Energy,295414211,29088513,0.43%,0.43,,Both,HINDPETRO.NS
+2023-12-31,India,Indian Oil Corp Ltd,Energy,645054149,63516464,0.29%,0.29,,Both,IOC.NS
+2023-12-31,India,Inox Wind Energy Ltd,Energy,15082454,1485122,0.19%,0.19,,Both,
+2023-12-31,India,Jio Financial Services Ltd,Energy,1017761896,100215829,0.56%,0.56,,Both,JIOFIN.NS
+2023-12-31,India,Mangalore Refinery & Petrochemicals Ltd,Energy,10710065,1054587,0.04%,0.04,,Both,MRPL.NS
+2023-12-31,India,Petronet LNG Ltd,Energy,196713142,19369728,0.48%,0.48,,Both,PETRONET.NS
+2023-12-31,India,Reliance Industries Ltd,Energy,18123296470,1784544292,0.85%,0.85,,Both,RELIANCE.NS
+2023-12-31,India,Suzlon Energy Ltd,Energy,459018941,45198159,0.71%,0.7,,Both,SUZLON.NS
+2023-12-31,India,360 ONE WAM Ltd,Financials,788909980,77681497,2.54%,2.54,,Both,360ONE.NS
+2023-12-31,India,Aavas Financiers Ltd,Financials,288926202,28449659,1.95%,1.95,,Both,AAVAS.NS
+2023-12-31,India,Aditya Birla Capital Ltd,Financials,144325954,14211325,0.27%,0.27,,Market Value,ABCAPITAL.NS
+2023-12-31,India,Aditya Birla Sun Life Asset Management Co Ltd,Financials,191599483,18866202,1.16%,1.16,,Both,ABSLAMC.NS
+2023-12-31,India,Angel One Ltd,Financials,399025407,39290783,1.13%,1.13,,Both,
+2023-12-31,India,Aptus Value Housing Finance India Ltd,Financials,86119651,8479933,0.44%,0.44,,Ownership,APTUS.NS
+2023-12-31,India,AU Small Finance Bank Ltd,Financials,588002822,57898798,0.92%,0.92,,Both,AUBANK.NS
+2023-12-31,India,Axis Bank Ltd,Financials,7831192544,771113025,1.89%,1.89,,Both,AXISBANK.NS
+2023-12-31,India,Bajaj Finance Ltd,Financials,2433338092,239603188,0.44%,0.44,,Both,BAJFINANCE.NS
+2023-12-31,India,Bajaj Finserv Ltd,Financials,1141328969,112383092,0.35%,0.35,,Market Value,BAJAJFINSV.NS
+2023-12-31,India,Bajaj Holdings & Investment Ltd,Financials,344027073,33875269,0.33%,0.33,,Market Value,BAJAJHLDNG.NS
+2023-12-31,India,Bandhan Bank Ltd,Financials,229842749,22631896,0.48%,0.48,,Both,BANDHANBNK.NS
+2023-12-31,India,Bank of Baroda,Financials,374458396,36871746,0.26%,0.26,,Market Value,BANKBARODA.NS
+2023-12-31,India,BSE Ltd,Financials,174205041,17153425,0.47%,0.47,,Both,BSE.NS
+2023-12-31,India,Can Fin Homes Ltd,Financials,86157756,8483685,0.68%,0.68,,Ownership,CANFINHOME.NS
+2023-12-31,India,Canara Bank,Financials,189825225,18691496,0.2%,0.2,,Market Value,CANBK.NS
+2023-12-31,India,Care Ratings Ltd,Financials,24755915,2437637,0.72%,0.72,,Ownership,
+2023-12-31,India,Central Depository Services India Ltd,Financials,112071335,11035314,0.48%,0.48,,Ownership,
+2023-12-31,India,Cholamandalam Financial Holdings Ltd,Financials,109373845,10769700,0.46%,0.46,,Ownership,CHOLAHLDNG.NS
+2023-12-31,India,Cholamandalam Investment and Finance Co Ltd,Financials,1531527189,150804690,1.19%,1.19,,Both,CHOLAFIN.NS
+2023-12-31,India,City Union Bank Ltd,Financials,62264462,6130987,0.46%,0.46,,Ownership,CUB.NS
+2023-12-31,India,CreditAccess Grameen Ltd,Financials,336292313,33113652,1.08%,1.08,,Both,CREDITACC.NS
+2023-12-31,India,DCB Bank Ltd,Financials,22722110,2237375,0.45%,0.45,,Ownership,
+2023-12-31,India,Edelweiss Financial Services Ltd,Financials,56665776,5579702,0.63%,0.63,,Ownership,EDELWEISS.NS
+2023-12-31,India,Equitas Small Finance Bank Ltd,Financials,156475040,15407608,0.97%,0.97,,Both,
+2023-12-31,India,Federal Bank Ltd,Financials,322830162,31788076,0.7%,0.7,,Both,FEDERALBNK.NS
+2023-12-31,India,Five-Star Business Finance Ltd,Financials,509119071,50131362,1.95%,1.95,,Both,FIVESTAR.NS
+2023-12-31,India,HDFC Asset Management Co Ltd,Financials,730645778,71944403,0.87%,0.87,,Both,HDFCAMC.NS
+2023-12-31,India,HDFC Bank Ltd,Financials,15252883065,1501903666,0.96%,0.96,,Both,HDFCBANK.NS
+2023-12-31,India,HDFC Life Insurance Co Ltd,Financials,1132447639,111508575,0.68%,0.68,,Both,HDFCLIFE.NS
+2023-12-31,India,Home First Finance Co India Ltd,Financials,328440901,32340548,3.3%,3.3,,Both,HOMEFIRST.NS
+2023-12-31,India,ICICI Bank Ltd,Financials,8947781537,881060049,1.05%,1.05,,Both,ICICIBANK.NS
+2023-12-31,India,ICICI Lombard General Insurance Co Ltd,Financials,2378484617,234201938,2.79%,2.79,,Both,ICICIGI.NS
+2023-12-31,India,ICICI Prudential Life Insurance Co Ltd,Financials,590513911,58146057,0.63%,0.63,,Both,ICICIPRULI.NS
+2023-12-31,India,ICICI Securities Ltd,Financials,905526291,89164340,3.2%,3.2,,Both,
+2023-12-31,India,IDFC Ltd,Financials,464413319,45729326,1.88%,1.88,,Both,
+2023-12-31,India,IIFL Finance Ltd,Financials,277734894,27347686,1%,1.0,,Both,
+2023-12-31,India,Indian Energy Exchange Ltd,Financials,90223865,8884062,0.49%,0.49,,Ownership,
+2023-12-31,India,IndusInd Bank Ltd,Financials,2991793794,294592573,1.97%,1.97,,Both,INDUSINDBK.NS
+2023-12-31,India,Karnataka Bank Ltd/The,Financials,53106725,5229253,0.54%,0.54,,Ownership,
+2023-12-31,India,Kotak Mahindra Bank Ltd,Financials,2299283025,226403205,0.5%,0.5,,Both,KOTAKBANK.NS
+2023-12-31,India,L&T Finance Holdings Ltd,Financials,366096886,36048415,0.73%,0.73,,Both,
+2023-12-31,India,LIC Housing Finance Ltd,Financials,1022159681,100648865,2.84%,2.84,,Both,LICHSGFIN.NS
+2023-12-31,India,Mahindra & Mahindra Financial Services Ltd,Financials,194772769,19178665,0.47%,0.47,,Both,M&MFIN.NS
+2023-12-31,India,Manappuram Finance Ltd,Financials,104149977,10255322,0.59%,0.59,,Ownership,MANAPPURAM.NS
+2023-12-31,India,Max Financial Services Ltd,Financials,485906289,47845672,1.21%,1.21,,Both,MFSL.NS
+2023-12-31,India,Multi Commodity Exchange of India Ltd,Financials,682874375,67240503,3.43%,3.43,,Both,MCX.NS
+2023-12-31,India,Muthoot Finance Ltd,Financials,534452710,52625886,0.74%,0.74,,Both,MUTHOOTFIN.NS
+2023-12-31,India,Nippon Life India Asset Management Ltd,Financials,147457460,14519675,0.43%,0.43,,Market Value,NAM-INDIA.NS
+2023-12-31,India,PB Fintech Ltd,Financials,496097771,48849195,1.14%,1.14,,Both,POLICYBZR.NS
+2023-12-31,India,Power Finance Corp Ltd,Financials,871779215,85841371,0.57%,0.57,,Both,PFC.NS
+2023-12-31,India,Punjab National Bank,Financials,165678735,16313867,0.13%,0.13,,Market Value,PNB.NS
+2023-12-31,India,RBL Bank Ltd,Financials,134148402,13209173,0.65%,0.65,,Both,RBLBANK.NS
+2023-12-31,India,REC Ltd,Financials,730587247,71938640,0.55%,0.55,,Both,RECLTD.NS
+2023-12-31,India,SBI Cards & Payment Services Ltd,Financials,517928786,50998827,0.59%,0.59,,Both,SBICARD.NS
+2023-12-31,India,SBI Life Insurance Co Ltd,Financials,755591193,74400700,0.43%,0.43,,Market Value,SBILIFE.NS
+2023-12-31,India,Shriram Finance Ltd,Financials,2171150467,213786393,2.31%,2.31,,Both,SHRIRAMFIN.NS
+2023-12-31,India,Star Health & Allied Insurance Co Ltd,Financials,150926700,14861280,0.4%,0.4,,Market Value,STARHEALTH.NS
+2023-12-31,India,State Bank of India,Financials,2501531409,246317970,0.36%,0.36,,Market Value,SBIN.NS
+2023-12-31,India,Union Bank of India Ltd,Financials,296339234,29179597,0.28%,0.28,,Market Value,UNIONBANK.NS
+2023-12-31,India,UTI Asset Management Co Ltd,Financials,109532631,10785335,0.81%,0.81,,Ownership,UTIAMC.NS
+2023-12-31,India,Yes Bank Ltd,Financials,321462373,31653394,0.43%,0.43,,Market Value,YESBANK.NS
+2023-12-31,India,Aarti Pharmalabs Ltd,Health Care,21042315,2071971,0.38%,0.38,,Both,
+2023-12-31,India,Ajanta Pharma Ltd,Health Care,96132280,9465845,0.3%,0.3,,Both,AJANTPHARM.NS
+2023-12-31,India,Alembic Pharmaceuticals Ltd,Health Care,21410715,2108246,0.12%,0.12,,Both,APLLTD.BO
+2023-12-31,India,Alkem Laboratories Ltd,Health Care,666331475,65611575,0.88%,0.88,,Both,ALKEM.NS
+2023-12-31,India,AMI Organics Ltd,Health Care,149530662,14723816,2.96%,2.96,,Both,
+2023-12-31,India,Apollo Hospitals Enterprise Ltd,Health Care,900096341,88629670,0.9%,0.9,,Both,APOLLOHOSP.NS
+2023-12-31,India,Aster DM Healthcare Ltd,Health Care,97059630,9557158,0.39%,0.39,,Both,ASTERDM.NS
+2023-12-31,India,AstraZeneca Pharma India Ltd,Health Care,33724289,3320725,0.2%,0.2,,Both,ASTRAZEN.NS
+2023-12-31,India,Aurobindo Pharma Ltd,Health Care,342999084,33774047,0.44%,0.44,,Both,AUROPHARMA.NS
+2023-12-31,India,Biocon Ltd,Health Care,127669817,12571247,0.35%,0.35,,Both,BIOCON.NS
+2023-12-31,India,Blue Jet Healthcare Ltd,Health Care,147262997,14500526,1.89%,1.89,,Both,BLUEJET.NS
+2023-12-31,India,Cipla Ltd/India,Health Care,3559969672,350539074,2.9%,2.9,,Both,CIPLA.NS
+2023-12-31,India,Concord Biotech Ltd,Health Care,374515347,36877354,1.99%,1.99,,Both,CONCORDBIO.NS
+2023-12-31,India,Divi's Laboratories Ltd,Health Care,1549014662,152526627,1.22%,1.22,,Both,DIVISLAB.NS
+2023-12-31,India,Dr Lal PathLabs Ltd,Health Care,66677062,6565482,0.25%,0.25,,Both,LALPATHLAB.NS
+2023-12-31,India,Dr Reddy's Laboratories Ltd,Health Care,1091072981,107434542,0.92%,0.92,,Both,DRREDDY.NS
+2023-12-31,India,Eris Lifesciences Ltd,Health Care,1059287,104305,0.01%,0.01,,Both,ERIS.NS
+2023-12-31,India,Fortis Healthcare Ltd,Health Care,308908247,30417228,0.8%,0.8,,Both,FORTIS.NS
+2023-12-31,India,Gland Pharma Ltd,Health Care,254284773,25038626,0.66%,0.66,,Both,GLAND.NS
+2023-12-31,India,GlaxoSmithKline Pharmaceuticals Ltd,Health Care,48478382,4773515,0.12%,0.12,,Both,GLAXO.NS
+2023-12-31,India,Glenmark Life Sciences Ltd,Health Care,7120356,701119,0.07%,0.07,,Both,
+2023-12-31,India,Glenmark Pharmaceuticals Ltd,Health Care,663322505,65315291,2.26%,2.26,,Both,GLENMARK.NS
+2023-12-31,India,Global Health Ltd/India,Health Care,1024803912,100909234,3.26%,3.26,,Both,MEDANTA.NS
+2023-12-31,India,Granules India Ltd,Health Care,138011481,13589559,1.15%,1.15,,Both,GRANULES.BO
+2023-12-31,India,Hikal Ltd,Health Care,124106880,12220416,2.71%,2.71,,Both,HIKAL.BO
+2023-12-31,India,Ipca Laboratories Ltd,Health Care,159389517,15694587,0.46%,0.46,,Both,IPCALAB.NS
+2023-12-31,India,JB Chemicals & Pharmaceuticals Ltd,Health Care,490205131,48268965,1.59%,1.59,,Both,JBCHEPHARM.NS
+2023-12-31,India,Jubilant Pharmova Ltd,Health Care,413594976,40725403,3.9%,3.9,,Both,JUBILANT.NS
+2023-12-31,India,Krishna Institute of Medical Sciences Ltd,Health Care,108924871,10725491,0.56%,0.56,,Both,KIMS.NS
+2023-12-31,India,Laurus Labs Ltd,Health Care,168148613,16557068,0.59%,0.59,,Both,LAURUSLABS.NS
+2023-12-31,India,Lupin Ltd,Health Care,821259002,80866804,1.12%,1.12,,Both,LUPIN.NS
+2023-12-31,India,Mankind Pharma Ltd,Health Care,229954385,22642889,0.24%,0.24,,Both,MANKIND.NS
+2023-12-31,India,Max Healthcare Institute Ltd,Health Care,880741875,86723896,1.08%,1.08,,Both,MAXHEALTH.NS
+2023-12-31,India,Metropolis Healthcare Ltd,Health Care,49201484,4844716,0.47%,0.47,,Both,METROPOLIS.NS
+2023-12-31,India,Narayana Hrudayalaya Ltd,Health Care,41395980,4076133,0.14%,0.14,,Both,NH.NS
+2023-12-31,India,Natco Pharma Ltd,Health Care,76045294,7487942,0.43%,0.43,,Both,NATCOPHARM.NS
+2023-12-31,India,Pfizer Ltd,Health Care,93875455,9243622,0.39%,0.39,,Both,PFIZER.BO
+2023-12-31,India,Piramal Pharma Ltd,Health Care,74643563,7349918,0.33%,0.33,,Both,PPLPHARMA.NS
+2023-12-31,India,Poly Medicure Ltd,Health Care,105615316,10399610,0.61%,0.61,,Both,POLYMED.NS
+2023-12-31,India,Rainbow Children's Medicare Ltd,Health Care,220202367,21682638,1.49%,1.49,,Both,RAINBOW.NS
+2023-12-31,India,Sanofi India Ltd,Health Care,74606495,7346268,0.33%,0.33,,Both,SANOFI.NS
+2023-12-31,India,Strides Pharma Science Ltd,Health Care,52359335,5155660,0.72%,0.72,,Both,STAR.NS
+2023-12-31,India,Sun Pharma Advanced Research Co Ltd,Health Care,21745920,2141253,0.19%,0.19,,Both,SPARC.NS
+2023-12-31,India,Sun Pharmaceutical Industries Ltd,Health Care,3881382868,382187625,1.05%,1.05,,Both,SUNPHARMA.NS
+2023-12-31,India,Suven Pharmaceuticals Ltd,Health Care,59095872,5818986,0.26%,0.26,,Both,
+2023-12-31,India,Syngene International Ltd,Health Care,754363635,74279827,2.19%,2.19,,Both,SYNGENE.NS
+2023-12-31,India,Torrent Pharmaceuticals Ltd,Health Care,741060723,72969930,0.78%,0.78,,Both,TORNTPHARM.NS
+2023-12-31,India,Wockhardt Ltd,Health Care,18162773,1788431,0.24%,0.24,,Both,WOCKPHARMA.NS
+2023-12-31,India,Zydus Lifesciences Ltd,Health Care,375538907,36978141,0.44%,0.44,,Both,ZYDUSLIFE.NS
+2023-12-31,India,3M India Ltd,Industrials,191513496,18857735,0.37%,0.37,,Market Value,3MINDIA.BO
+2023-12-31,India,ABB India Ltd,Industrials,249704998,24587670,0.21%,0.21,,Market Value,ABB.NS
+2023-12-31,India,Adani Ports & Special Economic Zone Ltd,Industrials,648516817,63857422,0.24%,0.24,,Market Value,
+2023-12-31,India,AIA Engineering Ltd,Industrials,179847527,17709023,0.42%,0.42,,Both,AIAENG.NS
+2023-12-31,India,Amara Raja Energy & Mobility Ltd,Industrials,128151412,12618669,0.75%,0.75,,Both,AMARAJABAT.NS
+2023-12-31,India,Apar Industries Ltd,Industrials,238804177,23514300,0.8%,0.8,,Both,APARINDS.NS
+2023-12-31,India,Ashok Leyland Ltd,Industrials,1292204295,127239313,1.99%,1.99,,Both,ASHOKLEY.NS
+2023-12-31,India,Asian Paints Ltd,Industrials,1703302834,167718900,0.43%,0.43,,Both,ASIANPAINT.NS
+2023-12-31,India,Astral Ltd,Industrials,280640031,27633746,0.45%,0.45,,Both,ASTRAL.NS
+2023-12-31,India,Bajel Projects Ltd,Industrials,100147772,9861238,5.37%,5.37,,Both,
+2023-12-31,India,Berger Paints India Ltd,Industrials,203881590,20075582,0.24%,0.24,,Market Value,BERGEPAINT.BO
+2023-12-31,India,Blue Star Ltd,Industrials,453144098,44619681,1.91%,1.91,,Both,BLUESTARCO.NS
+2023-12-31,India,CG Power & Industrial Solutions Ltd,Industrials,288893622,28446451,0.34%,0.34,,Market Value,CGPOWER.NS
+2023-12-31,India,Container Corp Of India Ltd,Industrials,296690332,29214169,0.46%,0.46,,Both,CONCOR.NS
+2023-12-31,India,Cummins India Ltd,Industrials,324183428,31921328,0.49%,0.49,,Both,CUMMINSIND.NS
+2023-12-31,India,Dalmia Bharat Ltd,Industrials,216786041,21346243,0.42%,0.42,,Both,DALBHARAT.NS
+2023-12-31,India,Data Patterns India Ltd,Industrials,60830079,5989747,0.48%,0.48,,Ownership,DATAPATTNS.NS
+2023-12-31,India,Delhivery Ltd,Industrials,300170654,29556865,0.87%,0.87,,Both,DELHIVERY.NS
+2023-12-31,India,eClerx Services Ltd,Industrials,73761527,7263067,0.48%,0.48,,Ownership,ECLERX.NS
+2023-12-31,India,Engineers India Ltd,Industrials,82115341,8085641,0.7%,0.7,,Ownership,ENGINERSIN.NS
+2023-12-31,India,EPL Ltd,Industrials,49385013,4862788,0.63%,0.63,,Ownership,EPL.NS
+2023-12-31,India,Escorts Kubota Ltd,Industrials,146579988,14433273,0.36%,0.36,,Market Value,ESCORTS.NS
+2023-12-31,India,Exide Industries Ltd,Industrials,740059222,72871316,2.24%,2.24,,Both,EXIDEIND.NS
+2023-12-31,India,Finolex Cables Ltd,Industrials,238598312,23494029,1.2%,1.2,,Both,FINCABLES.NS
+2023-12-31,India,Finolex Industries Ltd,Industrials,68675474,6762259,0.43%,0.43,,Ownership,FINPIPE.NS
+2023-12-31,India,Gateway Distriparks Ltd,Industrials,43836960,4316488,0.69%,0.69,,Ownership,GATEWAY.NS
+2023-12-31,India,GMM Pfaudler Ltd,Industrials,48530719,4778668,0.55%,0.55,,Ownership,GMMPFAUDLR.NS
+2023-12-31,India,GMR Airports Infrastructure Ltd,Industrials,291329586,28686313,0.49%,0.49,,Both,
+2023-12-31,India,Grasim Industries Ltd,Industrials,2689491023,264825765,1.57%,1.57,,Both,GRASIM.NS
+2023-12-31,India,Great Eastern Shipping Co Ltd/The,Industrials,171184551,16856007,1.01%,1.01,,Both,GESHIP.NS
+2023-12-31,India,Gujarat Pipavav Port Ltd,Industrials,326106458,32110683,3.61%,3.61,,Both,GPPL.NS
+2023-12-31,India,Havells India Ltd,Industrials,2511189304,247268953,2.4%,2.4,,Both,HAVELLS.NS
+2023-12-31,India,Hindustan Aeronautics Ltd,Industrials,691185609,68058884,0.3%,0.3,,Market Value,HAL.NS
+2023-12-31,India,Hitachi Energy India Ltd,Industrials,99944167,9841189,0.37%,0.37,,Market Value,POWERINDIA.NS
+2023-12-31,India,Honeywell Automation India Ltd,Industrials,89250727,8788240,0.22%,0.22,,Market Value,HONAUT.BO
+2023-12-31,India,India Cements Ltd/The,Industrials,48367784,4762624,0.49%,0.49,,Ownership,
+2023-12-31,India,Indian Railway Finance Corp Ltd,Industrials,172904089,17025325,0.11%,0.11,,Market Value,IRFC.NS
+2023-12-31,India,Indigo Paints Ltd,Industrials,45941058,4523672,0.53%,0.53,,Ownership,
+2023-12-31,India,JK Cement Ltd,Industrials,139408637,13727132,0.39%,0.39,,Market Value,JKCEMENT.NS
+2023-12-31,India,JK Lakshmi Cement Ltd,Industrials,62325985,6137045,0.48%,0.48,,Ownership,JKLAKSHMI.BO
+2023-12-31,India,Kajaria Ceramics Ltd,Industrials,1192614762,117433044,4.71%,4.71,,Both,KAJARIACER.BO
+2023-12-31,India,KEC International Ltd,Industrials,101264293,9971178,0.55%,0.55,,Both,KEC.NS
+2023-12-31,India,KEI Industries Ltd,Industrials,444708560,43789060,1.24%,1.24,,Both,KEI.NS
+2023-12-31,India,Kirloskar Oil Engines Ltd,Industrials,66142969,6512891,0.57%,0.57,,Ownership,KIRLOSENG.NS
+2023-12-31,India,L&T Technology Services Ltd,Industrials,165962780,16341836,0.24%,0.24,,Market Value,LTTS.NS
+2023-12-31,India,Larsen & Toubro Ltd,Industrials,4920355386,484491998,0.81%,0.81,,Both,LT.NS
+2023-12-31,India,NCC Ltd/India,Industrials,88215593,8686313,0.69%,0.69,,Ownership,NCC.NS
+2023-12-31,India,NIIT Learning Systems Ltd,Industrials,40603576,3998107,0.56%,0.56,,Ownership,NIITMTS.NS
+2023-12-31,India,NIIT Ltd,Industrials,10612983,1045027,0.56%,0.56,,Ownership,NIITLTD.BO
+2023-12-31,India,One 97 Communications Ltd,Industrials,321472505,31654392,0.65%,0.65,,Both,PAYTM.NS
+2023-12-31,India,PNC Infratech Ltd,Industrials,91772834,9036584,0.83%,0.83,,Both,PNCINFRA.NS
+2023-12-31,India,Polycab India Ltd,Industrials,672835808,66252037,0.67%,0.67,,Both,POLYCAB.NS
+2023-12-31,India,Praj Industries Ltd,Industrials,172585466,16993951,1.38%,1.38,,Both,PRAJIND.NS
+2023-12-31,India,Prince Pipes & Fittings Ltd,Industrials,237950559,23430247,2.37%,2.37,,Both,PRINCEPIPE.NS
+2023-12-31,India,Rail Vikas Nigam Ltd,Industrials,119189808,11736247,0.26%,0.26,,Market Value,
+2023-12-31,India,Ramco Cements Ltd/The,Industrials,140825598,13866656,0.48%,0.48,,Both,RAMCOCEM.NS
+2023-12-31,India,RR Kabel Ltd,Industrials,657229438,64715326,3.04%,3.04,,Both,RRKABEL.NS
+2023-12-31,India,Siemens Ltd,Industrials,712111472,70119388,0.41%,0.41,,Market Value,SIEMENS.NS
+2023-12-31,India,SKF India Ltd,Industrials,120104087,11826274,0.43%,0.43,,Both,SKFINDIA.NS
+2023-12-31,India,Supreme Industries Ltd,Industrials,1645058104,161983724,2.34%,2.34,,Both,SUPREMEIND.NS
+2023-12-31,India,TeamLease Services Ltd,Industrials,30020416,2956016,0.46%,0.46,,Ownership,TEAMLEASE.NS
+2023-12-31,India,Thermax Ltd,Industrials,128366785,12639876,0.29%,0.29,,Market Value,THERMAX.NS
+2023-12-31,India,Timken India Ltd,Industrials,143382229,14118399,0.48%,0.48,,Both,TIMKEN.NS
+2023-12-31,India,Titagarh Rail System Ltd,Industrials,160303080,15784543,0.93%,0.93,,Both,TITAGARH.NS
+2023-12-31,India,Voltas Ltd,Industrials,276893735,27264860,0.7%,0.7,,Both,VOLTAS.NS
+2023-12-31,India,Brigade Enterprises Ltd,Real Estate,135586168,13350746,0.54%,0.54,,Both,BRIGADE.NS
+2023-12-31,India,Embassy Office Parks REIT,Real Estate,275022582,27080613,0.73%,0.73,,Both,EMBASSY.NS
+2023-12-31,India,Godrej Properties Ltd,Real Estate,244029990,24028869,0.36%,0.36,,Both,GODREJPROP.NS
+2023-12-31,India,Hemisphere Properties India Ltd,Real Estate,10747131,1058236,0.2%,0.2,,Both,
+2023-12-31,India,Indiabulls Real Estate Ltd,Real Estate,128,13,0%,0.0,,Both,
+2023-12-31,India,Macrotech Developers Ltd,Real Estate,293324892,28882784,0.24%,0.24,,Both,
+2023-12-31,India,Mahindra Lifespace Developers Ltd,Real Estate,10901635,1073450,0.11%,0.11,,Both,MAHLIFE.NS
+2023-12-31,India,Mindspace Business Parks REIT,Real Estate,59995962,5907615,0.26%,0.26,,Both,MINDSPACE.NS
+2023-12-31,India,Nexus Select Trust,Real Estate,10589473,1042712,0.04%,0.04,,Both,NEXUSSELECT.NS
+2023-12-31,India,Oberoi Realty Ltd,Real Estate,253802294,24991118,0.4%,0.4,,Both,OBEROIRLTY.NS
+2023-12-31,India,Phoenix Mills Ltd/The,Real Estate,269174531,26504774,0.55%,0.55,,Both,PHOENIXLTD.NS
+2023-12-31,India,Prestige Estates Projects Ltd,Real Estate,179085719,17634010,0.31%,0.31,,Both,PRESTIGE.NS
+2023-12-31,India,Sobha Ltd,Real Estate,47940560,4720557,0.42%,0.42,,Both,SOBHA.NS
+2023-12-31,India,Affle India Ltd,Technology,79318762,7810270,0.35%,0.35,,Both,
+2023-12-31,India,Birlasoft Ltd,Technology,138237515,13611815,0.57%,0.57,,Both,BSOFT.NS
+2023-12-31,India,Cartrade Tech Ltd,Technology,645255,63536,0.02%,0.02,,Both,CARTRADE.NS
+2023-12-31,India,Coforge Ltd,Technology,950146335,93557936,2.01%,2.01,,Both,COFORGE.NS
+2023-12-31,India,Cyient Ltd,Technology,319913236,31500855,1.03%,1.03,,Both,CYIENT.NS
+2023-12-31,India,DRC Systems India Ltd,Technology,249234,24541,0.11%,0.11,,Both,
+2023-12-31,India,Happiest Minds Technologies Ltd,Technology,69495347,6842989,0.42%,0.42,,Both,HAPPSTMNDS.NS
+2023-12-31,India,HCL Technologies Ltd,Technology,2425229022,238804713,0.5%,0.5,,Both,HCLTECH.NS
+2023-12-31,India,IndiaMart InterMesh Ltd,Technology,91980168,9056999,0.45%,0.45,,Both,INDIAMART.NS
+2023-12-31,India,Info Edge India Ltd,Technology,1662181362,163669797,2.05%,2.05,,Both,NAUKRI.NS
+2023-12-31,India,Infosys Ltd,Technology,8719059331,858538489,1.12%,1.12,,Both,INFY.NS
+2023-12-31,India,Intellect Design Arena Ltd,Technology,95921100,9445051,0.69%,0.69,,Both,INTELLECT.NS
+2023-12-31,India,Just Dial Ltd,Technology,23391159,2303254,0.28%,0.28,,Both,JUSTDIAL.NS
+2023-12-31,India,Kaynes Technology India Ltd,Technology,358425829,35293070,1.76%,1.76,,Both,KAYNES.NS
+2023-12-31,India,KPIT Technologies Ltd,Technology,367985115,36234343,0.73%,0.73,,Both,KPITTECH.NS
+2023-12-31,India,LTIMindtree Ltd,Technology,957345400,94266806,0.42%,0.42,,Both,LTIM.NS
+2023-12-31,India,Mastek Ltd,Technology,44067609,4339200,0.42%,0.42,,Both,MASTEK.NS
+2023-12-31,India,Mphasis Ltd,Technology,327573385,32255126,0.52%,0.52,,Both,MPHASIS.NS
+2023-12-31,India,Oracle Financial Services Software Ltd,Technology,145378093,14314926,0.33%,0.33,,Both,OFSS.NS
+2023-12-31,India,Persistent Systems Ltd,Technology,429789800,42320057,0.62%,0.62,,Both,PERSISTENT.NS
+2023-12-31,India,Redington Ltd,Technology,163983933,16146985,0.97%,0.97,,Both,REDINGTON.NS
+2023-12-31,India,Route Mobile Ltd,Technology,189806453,18689648,1.55%,1.55,,Both,ROUTE.NS
+2023-12-31,India,Sonata Software Ltd,Technology,200452995,19737979,0.79%,0.79,,Both,SONATSOFTW.NS
+2023-12-31,India,Syrma SGS Technology Ltd,Technology,204728022,20158928,1.41%,1.41,,Both,SYRMA.NS
+2023-12-31,India,Tanla Platforms Ltd,Technology,84955166,8365269,0.47%,0.47,,Both,TANLA.NS
+2023-12-31,India,Tata Consultancy Services Ltd,Technology,3488058143,343458171,0.21%,0.21,,Both,TCS.NS
+2023-12-31,India,Tata Elxsi Ltd,Technology,371272314,36558023,0.56%,0.56,,Both,TATAELXSI.NS
+2023-12-31,India,Tata Technologies Ltd,Technology,92177550,9076435,0%,0.0,,Both,TATATECH.NS
+2023-12-31,India,Tech Mahindra Ltd,Technology,2149923754,211696265,1.42%,1.42,,Both,TECHM.NS
+2023-12-31,India,Wipro Ltd,Technology,1739129001,171246591,0.58%,0.58,,Both,WIPRO.NS
+2023-12-31,India,Zensar Technologies Ltd,Technology,84944749,8364244,0.5%,0.5,,Both,ZENSARTECH.NS
+2023-12-31,India,Zomato Ltd,Technology,1179172138,116109391,0.9%,0.9,,Both,
+2023-12-31,India,Bharti Airtel Ltd,Telecommunications,7130695915,702137313,0.96%,0.97,,Both,BHARTIARTL.NS
+2023-12-31,India,DEN Networks Ltd,Telecommunications,347006,34169,0.01%,0.01,,Both,DEN.BO
+2023-12-31,India,GTPL Hathway Ltd,Telecommunications,66262261,6524637,2.53%,2.53,,Both,GTPL.NS
+2023-12-31,India,Hathway Cable & Datacom Ltd,Telecommunications,113423620,11168469,2.48%,2.48,,Both,HATHWAY.BO
+2023-12-31,India,HFCL Ltd,Telecommunications,209895451,20667748,1.43%,1.43,,Both,HFCL.NS
+2023-12-31,India,Indus Towers Ltd,Telecommunications,212480310,20922271,0.32%,0.32,,Both,INDUSTOWER.NS
+2023-12-31,India,Sterlite Technologies Ltd,Telecommunications,23769642,2340522,0.34%,0.34,,Both,STLTECH.NS
+2023-12-31,India,Tata Communications Ltd,Telecommunications,964629473,94984046,1.57%,1.57,,Both,TATACOMM.NS
+2023-12-31,India,Tata Teleservices Maharashtra Ltd,Telecommunications,29176000,2872869,0.13%,0.13,,Both,TTML.NS
+2023-12-31,India,Tejas Networks Ltd,Telecommunications,317590884,31272181,1.78%,1.78,,Both,TEJASNET.NS
+2023-12-31,India,Vodafone Idea Ltd,Telecommunications,113769994,11202575,0.12%,0.12,,Both,IDEA.NS
+2023-12-31,India,Adani Green Energy Ltd,Utilities,513453047,50558115,0.17%,0.17,,Both,ADANIGREEN.NS
+2023-12-31,India,Adani Total Gas Ltd,Utilities,164803991,16227733,0.12%,0.12,,Both,ATGL.NS
+2023-12-31,India,GMR Power and Urban Infra Ltd,Utilities,10219628,1006295,0.25%,0.25,,Both,
+2023-12-31,India,Gujarat Gas Ltd,Utilities,100518972,9897789,0.26%,0.26,,Both,GUJGASLTD.NS
+2023-12-31,India,Gujarat State Petronet Ltd,Utilities,620216737,61070801,2.94%,2.94,,Both,GSPL.NS
+2023-12-31,India,Indraprastha Gas Ltd,Utilities,161101300,15863141,0.45%,0.45,,Both,IGL.NS
+2023-12-31,India,ION Exchange India Ltd,Utilities,49957787,4919187,0.5%,0.5,,Both,IONEXCHANG.NS
+2023-12-31,India,Mahanagar Gas Ltd,Utilities,101100887,9955088,0.7%,0.7,,Both,MGL.NS
+2023-12-31,India,Power Grid Corp of India Ltd,Utilities,1360868866,134000499,0.51%,0.51,,Both,POWERGRID.NS
+2023-12-31,India,PTC India Ltd,Utilities,50954813,5017361,0.74%,0.74,,Both,PTC.BO
+2023-12-31,India,ReNew Energy Global PLC,Utilities,10789531,1062411,0.06%,0.04,,Both,RNW
+2023-12-31,India,Torrent Power Ltd,Utilities,264842249,26078188,0.48%,0.48,,Both,TORNTPOWER.NS
+2023-12-31,India,VA Tech Wabag Ltd,Utilities,175102906,17241835,3.67%,3.67,,Both,WABAG.NS
+2023-12-31,Singapore,Keppel Infrastructure Trust,Basic Materials,271408792,26724774,1.25%,1.25,,Both,A7RU.SI
+2023-12-31,Singapore,Nanofilm Technologies International Ltd,Basic Materials,24538984,2416277,0.54%,0.54,,Both,
+2023-12-31,Singapore,Duty Free International Ltd,Consumer Discretionary,4211959,414738,0.43%,0.43,,Ownership,
+2023-12-31,Singapore,Genting Singapore Ltd,Consumer Discretionary,571096362,56234072,0.61%,0.61,,Both,G13.SI
+2023-12-31,Singapore,Hour Glass Ltd/The,Consumer Discretionary,41287959,4065496,0.5%,0.5,,Both,
+2023-12-31,Singapore,Jardine Cycle & Carriage Ltd,Consumer Discretionary,136800414,13470309,0.15%,0.15,,Market Value,
+2023-12-31,Singapore,SATS Ltd,Consumer Discretionary,322035147,31709793,1.02%,1.02,,Both,S58.SI
+2023-12-31,Singapore,Singapore Airlines Ltd,Consumer Discretionary,1037049719,102115041,0.69%,0.69,,Both,C6L.SI
+2023-12-31,Singapore,Sheng Siong Group Ltd,Consumer Staples,127997389,12603502,0.69%,0.69,,Both,OV8.SI
+2023-12-31,Singapore,DBS Group Holdings Ltd,Financials,9715374011,956642478,1.46%,1.46,,Both,D05.SI
+2023-12-31,Singapore,iFAST Corp Ltd,Financials,178475445,17573919,0.95%,0.95,,Both,AIY.SI
+2023-12-31,Singapore,Oversea-Chinese Banking Corp Ltd,Financials,6460722487,636167127,1.44%,1.44,,Both,O39.SI
+2023-12-31,Singapore,RHT Health Trust,Financials,1781402,175409,1.53%,1.53,,Ownership,RHT.SI
+2023-12-31,Singapore,Singapore Exchange Ltd,Financials,1093882580,107711195,1.35%,1.35,,Both,S68.SI
+2023-12-31,Singapore,United Overseas Bank Ltd,Financials,3147604719,309934787,0.86%,0.86,,Market Value,U11.SI
+2023-12-31,Singapore,Raffles Medical Group Ltd,Health Care,138175825,13605741,0.89%,0.89,,Both,BSL.SI
+2023-12-31,Singapore,Riverstone Holdings Ltd,Health Care,52379588,5157654,0.65%,0.65,,Both,AP4.SI
+2023-12-31,Singapore,Thomson Medical Group Ltd,Health Care,9241463,909978,0.07%,0.07,,Both,
+2023-12-31,Singapore,Haw Par Corp Ltd,Health Care,8602435,847055,0.05%,0.05,,Both,
+2023-12-31,Singapore,ComfortDelGro Corp Ltd,Industrials,391410998,38541016,1.68%,1.68,,Both,C52.SI
+2023-12-31,Singapore,Hutchison Port Holdings Trust,Industrials,129926395,12793446,0.99%,0.99,,Both,NS8U.SI
+2023-12-31,Singapore,Seatrium Ltd,Industrials,738800729,72747396,1.19%,1.19,,Both,S51.SI
+2023-12-31,Singapore,Singapore Post Ltd,Industrials,95137029,9367845,1.16%,1.16,,Both,S08.SI
+2023-12-31,Singapore,Singapore Technologies Engineering Ltd,Industrials,805046011,79270362,0.86%,0.86,,Both,S63.SI
+2023-12-31,Singapore,CapitaLand Ascendas REIT,Real Estate,1480048049,145735700,1.44%,1.44,,Both,A17U.SI
+2023-12-31,Singapore,Capitaland India Trust,Real Estate,170774941,16815674,1.46%,1.46,,Ownership,CY6U.SI
+2023-12-31,Singapore,CapitaLand Integrated Commercial Trust,Real Estate,1430186045,140825945,1.35%,1.35,,Both,C38U.SI
+2023-12-31,Singapore,CapitaLand Investment Ltd/Singapore,Real Estate,1137242519,111980712,0.92%,0.92,,Market Value,9CI.SI
+2023-12-31,Singapore,ESR-LOGOS REIT,Real Estate,280695998,27639257,1.48%,1.48,,Ownership,
+2023-12-31,Singapore,Frasers Logistics & Commercial Trust,Real Estate,450369559,44346481,1.36%,1.36,,Ownership,BUOU.SI
+2023-12-31,Singapore,Mapletree Industrial Trust,Real Estate,675415367,66506038,1.23%,1.23,,Market Value,ME8U.SI
+2023-12-31,Singapore,Mapletree Logistics Trust,Real Estate,792937574,78078082,1.19%,1.19,,Market Value,M44U.SI
+2023-12-31,Singapore,AEM Holdings Ltd,Technology,170254047,16764383,2.07%,2.07,,Both,AWX.SI
+2023-12-31,Singapore,Sea Ltd,Technology,7768737903,764963312,2.87%,3.33,,Both,SE
+2023-12-31,Singapore,Silverlake Axis Ltd,Technology,40255498,3963833,0.74%,0.74,,Both,
+2023-12-31,Singapore,UMS Holdings Ltd,Technology,82051081,8079313,1.19%,1.19,,Both,
+2023-12-31,Singapore,Venture Corp Ltd,Technology,487800176,48032157,1.6%,1.6,,Both,V03.SI
+2023-12-31,Singapore,Nera Telecommunications Ltd,Telecommunications,1382133,136094,0.71%,0.71,,Both,N01.SI
+2023-12-31,Singapore,NETLINK NBN TRUST,Telecommunications,336403809,33124630,1.33%,1.33,,Both,CJLU.SI
+2023-12-31,Singapore,Singapore Telecommunications Ltd,Telecommunications,2937324825,289229184,0.94%,0.94,,Both,Z74.SI
+2023-12-31,Singapore,StarHub Ltd,Telecommunications,78796821,7758876,0.54%,0.54,,Both,CC3.SI
+2023-12-31,Singapore,Keppel Corp Ltd,Utilities,1282188143,126253054,1.34%,1.34,,Both,
+2023-12-31,Singapore,Sembcorp Industries Ltd,Utilities,630422548,62075736,0.87%,0.87,,Both,U96.SI
+2023-12-31,Singapore,Gallant Venture Ltd,Utilities,17368110,1710183,0.32%,0.32,,Both,5IG.SI
+2023-12-31,United Kingdom,Anglo American PLC,Basic Materials,9063498289,892454315,2.63%,2.87,,Both,AAL.L
+2023-12-31,United Kingdom,Antofagasta PLC,Basic Materials,3245461992,319570487,1.51%,1.51,,Market Value,ANTO.L
+2023-12-31,United Kingdom,Centamin PLC,Basic Materials,449098676,44221341,3%,3.0,,Ownership,
+2023-12-31,United Kingdom,Croda International PLC,Basic Materials,6327070326,623006816,6.93%,6.93,,Both,CRDA.L
+2023-12-31,United Kingdom,Elementis PLC,Basic Materials,276449875,27221154,2.85%,2.85,,Ownership,ELM.L
+2023-12-31,United Kingdom,Hill & Smith PLC,Basic Materials,498326169,49068618,2.52%,2.52,,Ownership,HILS.L
+2023-12-31,United Kingdom,Johnson Matthey PLC,Basic Materials,1102516318,108561332,2.73%,2.73,,Ownership,JMAT.L
+2023-12-31,United Kingdom,Rio Tinto PLC,Basic Materials,25985255965,2558686842,2.12%,2.12,,Both,RIO.L
+2023-12-31,United Kingdom,SolGold PLC,Basic Materials,101929305,10036660,2.76%,2.76,,Ownership,SOLG.L
+2023-12-31,United Kingdom,Victrex PLC,Basic Materials,1203063999,118461947,7.02%,7.02,,Both,VCT.L
+2023-12-31,United Kingdom,Zotefoams PLC,Basic Materials,62628938,6166876,2.96%,2.96,,Ownership,ZTF.L
+2023-12-31,United Kingdom,B&M European Value Retail SA,Consumer Discretionary,1373350345,135229511,1.89%,1.89,,Market Value,BME.L
+2023-12-31,United Kingdom,Barratt Developments PLC,Consumer Discretionary,1748810883,172199935,2.46%,2.46,,Both,
+2023-12-31,United Kingdom,Berkeley Group Holdings PLC,Consumer Discretionary,1609890077,158520838,2.5%,2.5,,Both,BKG.L
+2023-12-31,United Kingdom,Burberry Group PLC,Consumer Discretionary,1082526117,106592959,1.65%,1.65,,Market Value,BRBY.L
+2023-12-31,United Kingdom,Carnival PLC,Consumer Discretionary,1848270164,181993380,0.86%,0.86,,Market Value,CCL.L
+2023-12-31,United Kingdom,Compass Group PLC,Consumer Discretionary,11257945529,1108534668,2.37%,2.37,,Market Value,CPG.L
+2023-12-31,United Kingdom,Crest Nicholson Holdings plc,Consumer Discretionary,259881718,25589740,3.6%,3.6,,Ownership,CRST.L
+2023-12-31,United Kingdom,Entain PLC,Consumer Discretionary,2207075775,217323845,2.68%,2.68,,Both,ENT.L
+2023-12-31,United Kingdom,Flutter Entertainment PLC,Consumer Discretionary,7650326952,753303756,2.41%,2.41,,Market Value,FLUT
+2023-12-31,United Kingdom,Future PLC,Consumer Discretionary,396739188,39065666,3.32%,3.32,,Ownership,FUTR.L
+2023-12-31,United Kingdom,Games Workshop Group PLC,Consumer Discretionary,1121883493,110468357,2.66%,2.66,,Both,GAW.L
+2023-12-31,United Kingdom,Halfords Group PLC,Consumer Discretionary,193668936,19069974,3.43%,3.43,,Ownership,HFD.L
+2023-12-31,United Kingdom,Howden Joinery Group PLC,Consumer Discretionary,1718324096,169197997,2.97%,2.97,,Both,HWDN.L
+2023-12-31,United Kingdom,Informa PLC,Consumer Discretionary,5856561878,576677322,4.23%,4.23,,Both,INF.L
+2023-12-31,United Kingdom,InterContinental Hotels Group PLC,Consumer Discretionary,3310692842,325993564,2.19%,2.19,,Market Value,IHG.L
+2023-12-31,United Kingdom,JD Sports Fashion PLC,Consumer Discretionary,974745705,95980159,0.88%,0.88,,Market Value,JD.L
+2023-12-31,United Kingdom,Kingfisher PLC,Consumer Discretionary,1465057726,144259650,2.48%,2.48,,Both,KGF.L
+2023-12-31,United Kingdom,ME GROUP INTERNATIONAL PLC,Consumer Discretionary,159403613,15695975,2.61%,2.61,,Ownership,MEGP.L
+2023-12-31,United Kingdom,Persimmon PLC,Consumer Discretionary,1373800607,135273847,2.39%,2.39,,Market Value,PSN.L
+2023-12-31,United Kingdom,Pets at Home Group Plc,Consumer Discretionary,585538450,57656139,3%,3.0,,Ownership,PETS.L
+2023-12-31,United Kingdom,RELX PLC,Consumer Discretionary,18344224913,1806298425,2.42%,2.42,,Both,REL.L
+2023-12-31,United Kingdom,RM PLC,Consumer Discretionary,21170302,2084573,2.99%,2.99,,Ownership,RM.L
+2023-12-31,United Kingdom,Saga PLC,Consumer Discretionary,72956350,7183783,2.73%,2.73,,Ownership,SAGA.L
+2023-12-31,United Kingdom,Shoe Zone PLC,Consumer Discretionary,43236086,4257322,2.99%,2.99,,Ownership,SHOE.L
+2023-12-31,United Kingdom,SSP Group Plc,Consumer Discretionary,617467092,60800052,2.55%,2.55,,Ownership,SSPG.L
+2023-12-31,United Kingdom,Taylor Wimpey PLC,Consumer Discretionary,1700651537,167457835,2.53%,2.53,,Both,TW.L
+2023-12-31,United Kingdom,Vistry Group PLC,Consumer Discretionary,775525256,76363545,1.89%,1.89,,Market Value,VTY.L
+2023-12-31,United Kingdom,WH Smith PLC,Consumer Discretionary,594575214,58545961,2.63%,2.63,,Ownership,SMWH.L
+2023-12-31,United Kingdom,Whitbread PLC,Consumer Discretionary,3973703540,391278153,4.48%,4.48,,Both,WTB.L
+2023-12-31,United Kingdom,WPP PLC,Consumer Discretionary,1326407040,130607151,1.27%,1.27,,Market Value,
+2023-12-31,United Kingdom,Accrol Group Holdings PLC,Consumer Staples,36641280,3607952,2.35%,2.35,,Ownership,
+2023-12-31,United Kingdom,Associated British Foods PLC,Consumer Staples,1868639344,183999069,0.8%,0.8,,Market Value,ABF.L
+2023-12-31,United Kingdom,Britvic PLC,Consumer Staples,528840980,52073316,1.95%,1.95,,Ownership,
+2023-12-31,United Kingdom,Diageo PLC,Consumer Staples,21024021902,2070169649,2.54%,2.54,,Both,DGE.L
+2023-12-31,United Kingdom,Hilton Food Group PLC,Consumer Staples,189882905,18697175,2.05%,2.05,,Ownership,HFG.L
+2023-12-31,United Kingdom,Kitwave Group Plc,Consumer Staples,65401672,6439898,2.83%,2.83,,Ownership,
+2023-12-31,United Kingdom,MP Evans Group PLC,Consumer Staples,110817061,10911809,2.17%,2.17,,Ownership,MPE.L
+2023-12-31,United Kingdom,Reckitt Benckiser Group PLC,Consumer Staples,11194328872,1102270535,2.23%,2.23,,Both,RKT.L
+2023-12-31,United Kingdom,Tate & Lyle PLC,Consumer Staples,1428313970,140641607,4.17%,4.17,,Ownership,TATE.L
+2023-12-31,United Kingdom,Tesco PLC,Consumer Staples,5697097504,560975364,2.14%,2.14,,Both,TSCO.L
+2023-12-31,United Kingdom,Unilever PLC,Consumer Staples,29065968171,2862034933,2.36%,2.36,,Both,ULVR.L
+2023-12-31,United Kingdom,BP PLC,Energy,35326856528,3478525018,3.41%,3.41,,Both,BP.L
+2023-12-31,United Kingdom,Hunting PLC,Energy,85572654,8426072,1.36%,1.36,,Both,HTG.L
+2023-12-31,United Kingdom,ITM Power PLC,Energy,63059746,6209296,1.33%,1.33,,Both,ITM.L
+2023-12-31,United Kingdom,John Wood Group PLC,Energy,54385412,5355161,0.35%,0.35,,Both,
+2023-12-31,United Kingdom,Petrofac Ltd,Energy,30095998,2963459,1.19%,1.19,,Ownership,PFC.L
+2023-12-31,United Kingdom,Pod Point Group Holdings PLC,Energy,4223791,415903,0.97%,0.97,,Ownership,
+2023-12-31,United Kingdom,Shell PLC,Energy,62477880609,6152001399,2.88%,2.88,,Both,SHEL.L
+2023-12-31,United Kingdom,3i Group PLC,Financials,7893009370,777199934,2.59%,2.59,,Both,III.L
+2023-12-31,United Kingdom,Admiral Group PLC,Financials,1961696607,193162126,1.84%,1.84,,Market Value,ADM.L
+2023-12-31,United Kingdom,Aviva PLC,Financials,4567092881,449707345,2.96%,2.96,,Both,AV.L
+2023-12-31,United Kingdom,Barclays PLC,Financials,4848214662,477388527,1.61%,1.61,,Market Value,BARC.L
+2023-12-31,United Kingdom,Beazley PLC,Financials,1223070235,120431899,2.69%,2.69,,Both,BEZ.L
+2023-12-31,United Kingdom,Direct Line Insurance Group PLC,Financials,1079240791,106269464,3.49%,3.49,,Both,
+2023-12-31,United Kingdom,Hiscox Ltd,Financials,2352449278,231638319,4.97%,4.97,,Both,HSX.L
+2023-12-31,United Kingdom,HSBC Holdings PLC,Financials,43459819378,4279352421,2.74%,2.74,,Both,HSBA.L
+2023-12-31,United Kingdom,IG Group Holdings PLC,Financials,956487368,94182318,2.51%,2.51,,Both,IGG.L
+2023-12-31,United Kingdom,Intermediate Capital Group PLC,Financials,1051913205,103578602,1.66%,1.66,,Market Value,
+2023-12-31,United Kingdom,Investec PLC,Financials,1190155270,117190865,1.82%,1.82,,Market Value,INVR.L
+2023-12-31,United Kingdom,JTC PLC,Financials,526376978,51830694,3.01%,3.01,,Ownership,JTC.L
+2023-12-31,United Kingdom,Legal & General Group PLC,Financials,2949257044,290404112,1.52%,1.52,,Market Value,LGEN.L
+2023-12-31,United Kingdom,Lloyds Banking Group PLC,Financials,9831738200,968100495,2.5%,2.5,,Both,LLOY.L
+2023-12-31,United Kingdom,London Stock Exchange Group PLC,Financials,13834842101,1362273610,2.2%,2.13,,Market Value,LSEG.L
+2023-12-31,United Kingdom,M&G PLC,Financials,3220030210,317066299,4.72%,4.72,,Both,MNG.L
+2023-12-31,United Kingdom,Man Group PLC/Jersey,Financials,1013686012,99814490,2.8%,2.8,,Both,EMG.L
+2023-12-31,United Kingdom,Metro Bank Holdings PLC,Financials,93240231,9181074,2.89%,2.89,,Ownership,MTRO.L
+2023-12-31,United Kingdom,NatWest Group PLC,Financials,8066175515,794251062,3.23%,3.23,,Both,NWG.L
+2023-12-31,United Kingdom,OSB Group PLC,Financials,1048406504,103233308,4.44%,4.44,,Both,OSB.L
+2023-12-31,United Kingdom,Paragon Banking Group PLC,Financials,528782802,52067588,2.68%,2.68,,Ownership,PAG.L
+2023-12-31,United Kingdom,Pensionbee Group PLC,Financials,100574820,9903288,3.54%,3.54,,Ownership,PBEE.L
+2023-12-31,United Kingdom,Prudential PLC,Financials,9987858741,983473196,3.16%,3.16,,Both,PRU.L
+2023-12-31,United Kingdom,Quilter PLC,Financials,531577053,52342729,2.82%,2.82,,Ownership,QLT.L
+2023-12-31,United Kingdom,Standard Chartered PLC,Financials,1935173775,190550506,0.84%,0.84,,Market Value,STAN.L
+2023-12-31,United Kingdom,TBC Bank Group PLC,Financials,579919101,57102819,2.86%,2.86,,Ownership,TBCG.L
+2023-12-31,United Kingdom,Vanquis Banking Group PLC,Financials,138079480,13596254,3.22%,3.22,,Ownership,VANQ.L
+2023-12-31,United Kingdom,AstraZeneca PLC,Health Care,48492373848,4774892312,2.28%,2.28,,Both,AZN.L
+2023-12-31,United Kingdom,ConvaTec Group PLC,Health Care,1331124338,131071648,2.05%,2.05,,Ownership,
+2023-12-31,United Kingdom,Dechra Pharmaceuticals PLC,Health Care,2138125510,210534528,3.76%,3.76,,Both,
+2023-12-31,United Kingdom,Genus PLC,Health Care,453855714,44689752,2.45%,2.45,,Ownership,GNS.L
+2023-12-31,United Kingdom,GSK PLC,Health Care,16781133472,1652385702,2.17%,2.17,,Both,GSK.L
+2023-12-31,United Kingdom,Haleon PLC,Health Care,5183315329,510384841,1.35%,1.35,,Market Value,HLN.L
+2023-12-31,United Kingdom,Hikma Pharmaceuticals PLC,Health Care,841804018,82889808,1.64%,1.64,,Ownership,HIK.L
+2023-12-31,United Kingdom,Indivior PLC,Health Care,442416678,43563386,2.11%,2.11,,Ownership,
+2023-12-31,United Kingdom,NMC Health PLC,Health Care,9741,959,2.28%,2.28,,Ownership,NMC.L
+2023-12-31,United Kingdom,Oxford Biomedica PLC,Health Care,39155232,3855493,1.42%,1.42,,Ownership,OXB.L
+2023-12-31,United Kingdom,Smith & Nephew PLC,Health Care,2718863062,267717938,2.23%,2.23,,Both,SN.L
+2023-12-31,United Kingdom,Ashtead Group PLC,Industrials,7313220926,720109980,2.36%,2.36,,Market Value,AHT.L
+2023-12-31,United Kingdom,Bunzl PLC,Industrials,4754472315,468158011,3.41%,3.41,,Both,BNZL.L
+2023-12-31,United Kingdom,Chemring Group PLC,Industrials,378081065,37228459,3.03%,3.03,,Ownership,CHG.L
+2023-12-31,United Kingdom,CRH PLC,Industrials,10304005466,1014603175,2.12%,2.12,,Market Value,CRH
+2023-12-31,United Kingdom,DCC PLC,Industrials,1554904504,153106581,2.1%,2.1,,Market Value,DCC.L
+2023-12-31,United Kingdom,Diploma PLC,Industrials,1673285886,164763225,2.69%,2.69,,Both,DPLM.L
+2023-12-31,United Kingdom,DS Smith PLC,Industrials,1840308240,181209394,3.36%,3.36,,Both,
+2023-12-31,United Kingdom,Equals Group PLC,Industrials,87516203,8617447,2.98%,2.98,,Ownership,
+2023-12-31,United Kingdom,Experian PLC,Industrials,8600992402,846912808,2.26%,2.26,,Market Value,EXPN.L
+2023-12-31,United Kingdom,Ferguson PLC,Industrials,10100870870,994601147,2.54%,2.54,,Market Value,
+2023-12-31,United Kingdom,Galliford Try Holdings PLC,Industrials,79193375,7797924,2.65%,2.65,,Ownership,GFRD.L
+2023-12-31,United Kingdom,Grafton Group PLC,Industrials,660640330,65051186,2.73%,2.73,,Ownership,GFTU.L
+2023-12-31,United Kingdom,Halma PLC,Industrials,2352329110,231626487,2.1%,2.1,,Market Value,HLMA.L
+2023-12-31,United Kingdom,Intertek Group PLC,Industrials,1959702849,192965807,2.21%,2.21,,Market Value,ITRK.L
+2023-12-31,United Kingdom,Invinity Energy Systems PLC,Industrials,25924267,2552681,2.99%,2.99,,Ownership,IES.L
+2023-12-31,United Kingdom,Keller Group PLC,Industrials,226189327,22272155,2.73%,2.73,,Ownership,KLR.L
+2023-12-31,United Kingdom,Knights Group Holdings PLC,Industrials,37143554,3657409,3%,3.0,,Ownership,KGH.L
+2023-12-31,United Kingdom,Melrose Industries PLC,Industrials,6010487161,591833863,6.14%,6.14,,Both,MRO.L
+2023-12-31,United Kingdom,Mitie Group PLC,Industrials,495070566,48748049,2.87%,2.87,,Ownership,MTO.L
+2023-12-31,United Kingdom,Mondi PLC,Industrials,2503330902,246495161,2.58%,2.58,,Market Value,MNDI.L
+2023-12-31,United Kingdom,Network International Holdings PLC,Industrials,1144420768,112687532,4.26%,4.26,,Ownership,
+2023-12-31,United Kingdom,Oxford Instruments PLC,Industrials,620549408,61103558,3.61%,3.61,,Ownership,OXIG.L
+2023-12-31,United Kingdom,Rentokil Initial PLC,Industrials,3488880902,343539185,2.41%,2.41,,Market Value,RTO.L
+2023-12-31,United Kingdom,Rolls-Royce Holdings PLC,Industrials,7805308371,768564291,2.39%,2.39,,Market Value,RR.L
+2023-12-31,United Kingdom,Senior PLC,Industrials,274963655,27074811,2.85%,2.85,,Ownership,SNR.L
+2023-12-31,United Kingdom,Smiths Group PLC,Industrials,1683758983,165794478,2.12%,2.12,,Market Value,SMIN.L
+2023-12-31,United Kingdom,Smurfit Kappa Group PLC,Industrials,6682216491,657976948,6.37%,6.37,,Both,
+2023-12-31,United Kingdom,Spectris PLC,Industrials,1240302657,122128722,2.49%,2.49,,Market Value,
+2023-12-31,United Kingdom,Speedy Hire PLC,Industrials,57927759,5703965,2.94%,2.94,,Ownership,SDY.L
+2023-12-31,United Kingdom,Spirax-Sarco Engineering PLC,Industrials,2094908854,206279119,2.09%,2.09,,Market Value,
+2023-12-31,United Kingdom,Weir Group PLC/The,Industrials,1325674691,130535039,2.09%,2.09,,Market Value,WEIR.L
+2023-12-31,United Kingdom,Wincanton PLC,Industrials,214046745,21076513,4.25%,4.25,,Ownership,
+2023-12-31,United Kingdom,Wise PLC,Industrials,1993947038,196337725,0.46%,1.24,,Market Value,WISE.L
+2023-12-31,United Kingdom,Xaar PLC,Industrials,59015087,5811031,4.97%,4.97,,Ownership,XAR.L
+2023-12-31,United Kingdom,XP Power Ltd,Industrials,115844281,11406824,2.79%,2.79,,Ownership,
+2023-12-31,United Kingdom,British Land Co PLC/The,Real Estate,2951315328,290606785,6.15%,6.15,,Ownership,BLND.L
+2023-12-31,United Kingdom,Derwent London PLC,Real Estate,2960122958,291474045,8.63%,8.63,,Both,DLN.L
+2023-12-31,United Kingdom,Grainger PLC,Real Estate,2317135923,228161124,9.13%,9.13,,Ownership,GRI.L
+2023-12-31,United Kingdom,Great Portland Estates PLC,Real Estate,1662869199,163737527,12.05%,12.05,,Ownership,GPE.L
+2023-12-31,United Kingdom,Land Securities Group PLC,Real Estate,3042300721,299565832,4.48%,4.48,,Both,LAND.L
+2023-12-31,United Kingdom,LondonMetric Property PLC,Real Estate,1531579826,150809873,5.67%,5.67,,Ownership,LMP.L
+2023-12-31,United Kingdom,Segro PLC,Real Estate,12764642358,1256894390,9.06%,9.06,,Both,SGRO.L
+2023-12-31,United Kingdom,Shaftesbury Capital PLC,Real Estate,8218124382,809212992,25.19%,25.19,,Both,SHC.L
+2023-12-31,United Kingdom,UNITE Group PLC/The,Real Estate,4736890704,466426805,8.04%,8.04,,Both,UTG.L
+2023-12-31,United Kingdom,Workspace Group PLC,Real Estate,375634459,36987550,2.66%,2.66,,Ownership,WKP.L
+2023-12-31,United Kingdom,Aptitude Software Group PLC,Technology,58821289,5791948,2.83%,2.83,,Ownership,APTD.L
+2023-12-31,United Kingdom,Ascential PLC,Technology,402463059,39629278,2.38%,2.38,,Both,
+2023-12-31,United Kingdom,Auction Technology Group PLC,Technology,178668462,17592924,2.17%,2.17,,Ownership,ATG.L
+2023-12-31,United Kingdom,Auto Trader Group PLC,Technology,2040090194,200881298,2.4%,2.4,,Both,AUTO.L
+2023-12-31,United Kingdom,Bytes Technology Group PLC,Technology,301678206,29705309,1.59%,1.59,,Ownership,BYIT.L
+2023-12-31,United Kingdom,Computacenter PLC,Technology,470337259,46312638,1.14%,1.14,,Market Value,CCC.L
+2023-12-31,United Kingdom,Deliveroo PLC,Technology,377255696,37147188,0.64%,1.41,,Ownership,
+2023-12-31,United Kingdom,FD Technologies PLC,Technology,125159089,12324024,2.99%,2.99,,Ownership,
+2023-12-31,United Kingdom,IQGEO Group PLC,Technology,73690312,7256054,2.99%,2.99,,Ownership,
+2023-12-31,United Kingdom,Kainos Group PLC,Technology,366942190,36131649,2.02%,2.02,,Ownership,KNOS.L
+2023-12-31,United Kingdom,Moneysupermarket.com Group PLC,Technology,359254540,35374670,1.84%,1.84,,Ownership,
+2023-12-31,United Kingdom,Sage Group PLC/The,Technology,746193203,73475310,0.48%,0.48,,Market Value,SGE.L
+2023-12-31,United Kingdom,Softcat PLC,Technology,414440539,40808663,1.18%,1.18,,Market Value,SCT.L
+2023-12-31,United Kingdom,Airtel Africa PLC,Telecommunications,444223673,43741315,0.7%,0.7,,Both,AAF.L
+2023-12-31,United Kingdom,BT Group PLC,Telecommunications,2287000288,225193762,1.44%,1.44,,Both,BT-A.L
+2023-12-31,United Kingdom,Helios Towers PLC,Telecommunications,169647203,16704629,1.4%,1.4,,Ownership,HTWS.L
+2023-12-31,United Kingdom,Spirent Communications PLC,Telecommunications,260928342,25692797,2.82%,2.82,,Ownership,
+2023-12-31,United Kingdom,Telecom Plus PLC,Telecommunications,390092097,38411148,2.37%,2.37,,Both,TEP.L
+2023-12-31,United Kingdom,Vodafone Group PLC,Telecommunications,4486938877,441814831,1.87%,1.87,,Both,VOD.L
+2023-12-31,United Kingdom,Zegona Communications plc,Telecommunications,383355726,37747839,2.27%,2.27,,Both,ZEG.L
+2023-12-31,United Kingdom,Centrica PLC,Utilities,1442303476,142019110,1.46%,1.46,,Both,CNA.L
+2023-12-31,United Kingdom,Drax Group PLC,Utilities,570326056,56158222,2.34%,2.34,,Ownership,DRX.L
+2023-12-31,United Kingdom,National Grid PLC,Utilities,10178092698,1002204939,2.01%,2.01,,Both,NG.L
+2023-12-31,United Kingdom,Pennon Group PLC,Utilities,484020618,47659996,1.9%,1.9,,Ownership,PNN.L
+2023-12-31,United Kingdom,Severn Trent PLC,Utilities,2184581072,215108862,2.19%,2.19,,Both,SVT.L
+2023-12-31,United Kingdom,SSE PLC,Utilities,4613499820,454276891,1.76%,1.76,,Both,SSE.L
+2023-12-31,United Kingdom,United Utilities Group PLC,Utilities,2287860433,225278458,2.45%,2.45,,Both,UU.L
+2023-12-31,United States,Air Products and Chemicals Inc,Basic Materials,8503429938,837306137,1.38%,1.38,,Both,APD
+2023-12-31,United States,Albemarle Corp,Basic Materials,3789733845,373163233,2.2%,2.2,,Both,ALB
+2023-12-31,United States,Avery Dennison Corp,Basic Materials,1841543753,181331051,1.11%,1.11,,Both,AVY
+2023-12-31,United States,Avient Corp,Basic Materials,412605177,40627941,1.07%,1.07,,Ownership,AVNT
+2023-12-31,United States,Balchem Corp,Basic Materials,530460837,52232819,1.09%,1.09,,Ownership,BCPC
+2023-12-31,United States,Boise Cascade Co,Basic Materials,613226875,60382531,1.18%,1.18,,Both,BCC
+2023-12-31,United States,Cabot Corp,Basic Materials,421163912,41470692,0.9%,0.9,,Ownership,CBT
+2023-12-31,United States,CF Industries Holdings Inc,Basic Materials,1923451684,189396269,1.25%,1.25,,Both,CF
+2023-12-31,United States,Cleveland-Cliffs Inc,Basic Materials,1194153179,117584527,1.14%,1.14,,Both,CLF
+2023-12-31,United States,Commercial Metals Co,Basic Materials,961966864,94721867,1.62%,1.62,,Both,CMC
+2023-12-31,United States,Constellium SE,Basic Materials,275650137,27142406,0.93%,0.93,,Ownership,CSTM
+2023-12-31,United States,Dow Inc,Basic Materials,3529885682,347576797,0.9%,0.9,,Market Value,DOW
+2023-12-31,United States,Eastman Chemical Co,Basic Materials,1209192402,119065392,1.12%,1.12,,Both,EMN
+2023-12-31,United States,Ecolab Inc,Basic Materials,3588397873,353338310,0.62%,0.62,,Market Value,ECL
+2023-12-31,United States,Fastenal Co,Basic Materials,4024439208,396273936,1.07%,1.07,,Both,FAST
+2023-12-31,United States,FMC Corp,Basic Materials,825965240,81330213,1.03%,1.03,,Both,FMC
+2023-12-31,United States,Hexcel Corp,Basic Materials,676334532,66596545,1.07%,1.07,,Both,HXL
+2023-12-31,United States,Huntsman Corp,Basic Materials,444423639,43761005,0.98%,0.98,,Ownership,HUN
+2023-12-31,United States,International Flavors & Fragrances Inc,Basic Materials,759581449,74793608,0.36%,0.36,,Market Value,IFF
+2023-12-31,United States,International Paper Co,Basic Materials,932498453,91820205,0.73%,0.73,,Market Value,IP
+2023-12-31,United States,Linde PLC,Basic Materials,30953423096,3047886713,1.53%,1.53,,Both,LIN
+2023-12-31,United States,LyondellBasell Industries NV,Basic Materials,780802808,76883209,0.25%,0.25,,Market Value,LYB
+2023-12-31,United States,Mosaic Co/The,Basic Materials,1066588001,105023583,0.9%,0.9,,Market Value,MOS
+2023-12-31,United States,Mueller Industries Inc,Basic Materials,605338186,59605757,1.11%,1.11,,Both,MLI
+2023-12-31,United States,Newmont Corp,Basic Materials,6097069771,600359382,1.26%,1.26,,Both,NEM
+2023-12-31,United States,Nucor Corp,Basic Materials,3725958310,366883456,0.86%,0.86,,Market Value,NUE
+2023-12-31,United States,Olin Corp,Basic Materials,773104454,76125176,1.15%,1.15,,Both,OLN
+2023-12-31,United States,Piedmont Lithium Inc,Basic Materials,72592425,7147949,1.32%,1.32,,Ownership,
+2023-12-31,United States,RBC Bearings Inc,Basic Materials,846156265,83318360,1.01%,1.01,,Both,RBC
+2023-12-31,United States,Reliance Steel & Aluminum Co,Basic Materials,1895996400,186692833,1.16%,1.16,,Both,
+2023-12-31,United States,Sensient Technologies Corp,Basic Materials,367515792,36188130,1.3%,1.3,,Ownership,SXT
+2023-12-31,United States,Southern Copper Corp,Basic Materials,710819888,69992210,0.11%,0.11,,Market Value,SCCO
+2023-12-31,United States,Steel Dynamics Inc,Basic Materials,2207350390,217350886,1.14%,1.14,,Both,STLD
+2023-12-31,United States,Timken Co/The,Basic Materials,578821533,56994745,1.01%,1.01,,Ownership,TKR
+2023-12-31,United States,UFP Industries Inc,Basic Materials,882380486,86885245,1.12%,1.12,,Both,UFPI
+2023-12-31,United States,United States Steel Corp,Basic Materials,2040803650,200951549,1.85%,1.85,,Both,
+2023-12-31,United States,Uranium Energy Corp,Basic Materials,974947200,96000000,3.82%,3.82,,Both,UEC
+2023-12-31,United States,Valvoline Inc,Basic Materials,626160249,61656040,1.26%,1.26,,Both,VVV
+2023-12-31,United States,Airbnb Inc,Consumer Discretionary,6218259033,612292509,0.1%,0.69,,Market Value,ABNB
+2023-12-31,United States,Amazon.com Inc,Consumer Discretionary,177282919421,17456494325,1.11%,1.11,,Market Value,AMZN
+2023-12-31,United States,Aptiv PLC,Consumer Discretionary,3016623125,297037440,1.17%,1.17,,Both,APTV
+2023-12-31,United States,Asbury Automotive Group Inc,Consumer Discretionary,684664389,67416760,1.46%,1.46,,Ownership,ABG
+2023-12-31,United States,Autoliv Inc,Consumer Discretionary,1065492745,104915737,1.15%,1.15,,Ownership,ALV
+2023-12-31,United States,AutoZone Inc,Consumer Discretionary,6774975633,667110650,1.49%,1.49,,Both,AZO
+2023-12-31,United States,Birkenstock Holding Plc,Consumer Discretionary,1788603723,176118212,1.92%,1.92,,Ownership,BIRK
+2023-12-31,United States,Booking Holdings Inc,Consumer Discretionary,17375013658,1710863225,1.38%,1.38,,Both,BKNG
+2023-12-31,United States,Capri Holdings Ltd,Consumer Discretionary,1677723395,165200173,2.83%,2.83,,Ownership,CPRI
+2023-12-31,United States,CarMax Inc,Consumer Discretionary,2896618293,285220939,2.35%,2.35,,Both,KMX
+2023-12-31,United States,Chipotle Mexican Grill Inc,Consumer Discretionary,8228068635,810192171,1.29%,1.29,,Both,CMG
+2023-12-31,United States,Copart Inc,Consumer Discretionary,4630327675,455933877,0.97%,0.97,,Market Value,CPRT
+2023-12-31,United States,Costco Wholesale Corp,Consumer Discretionary,36119670301,3556590910,1.21%,1.21,,Both,COST
+2023-12-31,United States,Coupang Inc,Consumer Discretionary,2717570707,267590684,1.02%,0.92,,Market Value,CPNG
+2023-12-31,United States,Coursera Inc,Consumer Discretionary,536257207,52803569,1.79%,1.79,,Ownership,COUR
+2023-12-31,United States,Crocs Inc,Consumer Discretionary,733355836,72211254,1.28%,1.28,,Ownership,CROX
+2023-12-31,United States,Deckers Outdoor Corp,Consumer Discretionary,2127048917,209443851,1.22%,1.22,,Ownership,DECK
+2023-12-31,United States,Dollar General Corp,Consumer Discretionary,3349173311,329782616,1.11%,1.11,,Market Value,DG
+2023-12-31,United States,Dollar Tree Inc,Consumer Discretionary,3311308470,326054183,1.05%,1.05,,Market Value,DLTR
+2023-12-31,United States,Domino's Pizza Inc,Consumer Discretionary,2082562384,205063401,1.43%,1.43,,Ownership,DPZ
+2023-12-31,United States,DR Horton Inc,Consumer Discretionary,5129132237,505049601,1%,1.0,,Market Value,DHI
+2023-12-31,United States,Electronic Arts Inc,Consumer Discretionary,2761179468,271884702,0.74%,0.74,,Market Value,EA
+2023-12-31,United States,elf Beauty Inc,Consumer Discretionary,970999162,95611249,1.2%,1.2,,Ownership,
+2023-12-31,United States,Estee Lauder Cos Inc/The,Consumer Discretionary,5186657370,510713921,0.23%,0.98,,Market Value,EL
+2023-12-31,United States,Expedia Group Inc,Consumer Discretionary,3345248375,329396140,1.15%,1.56,,Both,EXPE
+2023-12-31,United States,Ford Motor Co,Consumer Discretionary,4714743306,464246020,0.58%,0.95,,Market Value,F
+2023-12-31,United States,General Motors Co,Consumer Discretionary,5993255868,590137151,1.2%,1.2,,Both,GM
+2023-12-31,United States,Gentex Corp,Consumer Discretionary,911919264,89793836,1.18%,1.18,,Ownership,GNTX
+2023-12-31,United States,Genuine Parts Co,Consumer Discretionary,2141539385,210870682,1.09%,1.09,,Market Value,GPC
+2023-12-31,United States,Goodyear Tire & Rubber Co/The,Consumer Discretionary,678824619,66841736,1.65%,1.65,,Ownership,
+2023-12-31,United States,Grab Holdings Ltd,Consumer Discretionary,1534154170,151063361,1.18%,1.15,,Ownership,
+2023-12-31,United States,H&R Block Inc,Consumer Discretionary,838913852,82605222,1.19%,1.19,,Ownership,HRB
+2023-12-31,United States,Hilton Worldwide Holdings Inc,Consumer Discretionary,4710246767,463803260,0.99%,0.99,,Market Value,HLT
+2023-12-31,United States,Home Depot Inc/The,Consumer Discretionary,42913474390,4225555539,1.23%,1.23,,Both,HD
+2023-12-31,United States,HUUUGE Inc,Consumer Discretionary,108551959,10688772,2.34%,2.34,,Ownership,
+2023-12-31,United States,Las Vegas Sands Corp,Consumer Discretionary,2662626470,262180497,0.7%,0.7,,Market Value,LVS
+2023-12-31,United States,Lennar Corp,Consumer Discretionary,4424539060,435670516,0.82%,1.03,,Market Value,LEN
+2023-12-31,United States,Light & Wonder Inc,Consumer Discretionary,1377873606,135674902,1.83%,1.83,,Ownership,LNWO
+2023-12-31,United States,Lithia Motors Inc,Consumer Discretionary,1259062004,123975896,1.37%,1.37,,Ownership,LAD
+2023-12-31,United States,Live Nation Entertainment Inc,Consumer Discretionary,2483889482,244580825,1.13%,1.13,,Market Value,LYV
+2023-12-31,United States,LKQ Corp,Consumer Discretionary,1586589119,156226466,1.22%,1.22,,Ownership,LKQ
+2023-12-31,United States,Lowe's Cos Inc,Consumer Discretionary,16319990106,1606978358,1.26%,1.26,,Both,LOW
+2023-12-31,United States,Lululemon Athletica Inc,Consumer Discretionary,2538861137,249993712,0.39%,0.39,,Market Value,LULU
+2023-12-31,United States,Lyft Inc,Consumer Discretionary,960617645,94589014,1.13%,1.61,,Ownership,LYFT
+2023-12-31,United States,Marriott International Inc/MD,Consumer Discretionary,4550355622,448059279,0.68%,0.68,,Market Value,MAR
+2023-12-31,United States,Mattel Inc,Consumer Discretionary,1373120251,135206854,2.03%,2.03,,Ownership,MAT
+2023-12-31,United States,McDonald's Corp,Consumer Discretionary,26726849089,2631709197,1.22%,1.22,,Both,MCD
+2023-12-31,United States,MercadoLibre Inc,Consumer Discretionary,7165909860,705604721,0.89%,0.89,,Market Value,MELI
+2023-12-31,United States,Meritage Homes Corp,Consumer Discretionary,774852849,76297335,1.2%,1.2,,Ownership,MTH
+2023-12-31,United States,Netflix Inc,Consumer Discretionary,25499121850,2510818737,1.18%,1.18,,Both,NFLX
+2023-12-31,United States,NIKE Inc,Consumer Discretionary,13033147265,1283333228,0.78%,0.78,,Market Value,NKE
+2023-12-31,United States,NVR Inc,Consumer Discretionary,2447498226,240997492,1.08%,1.08,,Market Value,NVR
+2023-12-31,United States,O'Reilly Automotive Inc,Consumer Discretionary,6676022068,657367003,1.17%,1.17,,Both,ORLY
+2023-12-31,United States,Ollie's Bargain Outlet Holdings Inc,Consumer Discretionary,601365089,59214539,1.27%,1.27,,Ownership,OLLI
+2023-12-31,United States,Papa John's International Inc,Consumer Discretionary,296582600,29203561,1.17%,1.17,,Ownership,PZZA
+2023-12-31,United States,Phinia Inc,Consumer Discretionary,168056241,16547972,1.17%,1.17,,Ownership,PHIN
+2023-12-31,United States,PulteGroup Inc,Consumer Discretionary,3823702894,376508059,1.69%,1.69,,Both,PHM
+2023-12-31,United States,ROBLOX Corp,Consumer Discretionary,2235023602,220075780,0.31%,0.77,,Market Value,RBLX
+2023-12-31,United States,Rollins Inc,Consumer Discretionary,2581029134,254145862,1.2%,1.2,,Both,ROL
+2023-12-31,United States,Ross Stores Inc,Consumer Discretionary,5197476313,511779229,1.1%,1.1,,Market Value,ROST
+2023-12-31,United States,Royal Caribbean Cruises Ltd,Consumer Discretionary,3206016274,315686390,0.95%,0.95,,Market Value,RCL
+2023-12-31,United States,Starbucks Corp,Consumer Discretionary,12329676792,1214064692,1.11%,1.11,,Market Value,SBUX
+2023-12-31,United States,Take-Two Interactive Software Inc,Consumer Discretionary,3497299490,344368137,1.26%,1.26,,Both,TTWO
+2023-12-31,United States,Target Corp,Consumer Discretionary,7553365481,743756263,1.13%,1.13,,Market Value,TGT
+2023-12-31,United States,TEGNA Inc,Consumer Discretionary,386006080,38008811,1.26%,1.26,,Ownership,TGNA
+2023-12-31,United States,Tempur Sealy International Inc,Consumer Discretionary,1232181321,121329039,1.38%,1.38,,Ownership,
+2023-12-31,United States,Tesla Inc,Consumer Discretionary,78435498500,7723298099,0.98%,0.98,,Market Value,TSLA
+2023-12-31,United States,Thor Industries Inc,Consumer Discretionary,730647782,71944601,1.14%,1.14,,Ownership,THO
+2023-12-31,United States,TJX Cos Inc/The,Consumer Discretionary,11920027727,1173727830,1.1%,1.1,,Market Value,TJX
+2023-12-31,United States,Toll Brothers Inc,Consumer Discretionary,1309897508,128981509,1.21%,1.21,,Ownership,TOL
+2023-12-31,United States,Tractor Supply Co,Consumer Discretionary,2586788066,254712926,1.1%,1.1,,Market Value,TSCO
+2023-12-31,United States,Trade Desk Inc/The,Consumer Discretionary,2554536214,251537187,0.39%,0.71,,Market Value,
+2023-12-31,United States,Travel + Leisure Co,Consumer Discretionary,355111800,34966748,1.24%,1.24,,Ownership,TNL
+2023-12-31,United States,Uber Technologies Inc,Consumer Discretionary,14399924852,1417915540,1.12%,1.12,,Market Value,UBER
+2023-12-31,United States,Ulta Beauty Inc,Consumer Discretionary,2612032746,257198691,1.08%,1.08,,Market Value,ULTA
+2023-12-31,United States,Vesync Co Ltd,Consumer Discretionary,141790431,13961660,1.74%,1.74,,Ownership,
+2023-12-31,United States,Visteon Corp,Consumer Discretionary,407162585,40092026,1.15%,1.15,,Ownership,VC
+2023-12-31,United States,Walmart Inc,Consumer Discretionary,36757149496,3619361491,0.85%,0.85,,Market Value,WMT
+2023-12-31,United States,Walt Disney Co/The,Consumer Discretionary,19275742284,1898022025,1.15%,1.15,,Both,DIS
+2023-12-31,United States,Williams-Sonoma Inc,Consumer Discretionary,1552226659,152842902,1.18%,1.18,,Ownership,WSM
+2023-12-31,United States,Wynn Resorts Ltd,Consumer Discretionary,1573534600,154941028,1.51%,1.51,,Ownership,WYNN
+2023-12-31,United States,YETI Holdings Inc,Consumer Discretionary,530963009,52282266,1.16%,1.16,,Ownership,YETI
+2023-12-31,United States,Yum! Brands Inc,Consumer Discretionary,3278438818,322817612,0.88%,0.88,,Market Value,YUM
+2023-12-31,United States,Albertsons Cos Inc,Consumer Staples,3139552120,309141873,2.33%,2.33,,Both,ACI
+2023-12-31,United States,Archer-Daniels-Midland Co,Consumer Staples,4173351422,410936855,1.07%,1.07,,Both,ADM
+2023-12-31,United States,BellRing Brands Inc,Consumer Staples,933673068,91935865,1.26%,1.26,,Ownership,BRBR
+2023-12-31,United States,Bunge Global SA,Consumer Staples,1263705132,124433090,0.76%,0.76,,Market Value,BG
+2023-12-31,United States,Campbell Soup Co,Consumer Staples,1256191682,123693264,0.96%,0.96,,Both,CPB
+2023-12-31,United States,Casey's General Stores Inc,Consumer Staples,1176023341,115799338,1.14%,1.14,,Ownership,CASY
+2023-12-31,United States,Cencora Inc,Consumer Staples,3785238022,372720543,0.91%,0.91,,Both,COR
+2023-12-31,United States,Church & Dwight Co Inc,Consumer Staples,2582589900,254299546,1.09%,1.09,,Both,CHD
+2023-12-31,United States,Clorox Co/The,Consumer Staples,1259006752,123970455,0.7%,0.7,,Market Value,
+2023-12-31,United States,Coca-Cola Co/The,Consumer Staples,27943484371,2751507466,1.08%,1.08,,Both,KO
+2023-12-31,United States,Coca-Cola Consolidated Inc,Consumer Staples,1910677181,188138403,0.71%,2.16,,Both,COKE
+2023-12-31,United States,Colgate-Palmolive Co,Consumer Staples,7268860986,715741996,1.09%,1.09,,Both,CL
+2023-12-31,United States,Conagra Brands Inc,Consumer Staples,1392993903,137163751,1%,1.0,,Both,CAG
+2023-12-31,United States,Constellation Brands Inc,Consumer Staples,4405594909,433805145,0.98%,0.98,,Both,STZ
+2023-12-31,United States,Corteva Inc,Consumer Staples,2608657030,256866295,0.76%,0.76,,Market Value,CTVA
+2023-12-31,United States,CVS Health Corp,Consumer Staples,10836941632,1067079732,1.05%,1.05,,Both,CVS
+2023-12-31,United States,Darling Ingredients Inc,Consumer Staples,961241031,94650396,1.19%,1.19,,Ownership,DAR
+2023-12-31,United States,Freshpet Inc,Consumer Staples,409553343,40327436,0.96%,0.96,,Ownership,FRPT
+2023-12-31,United States,General Mills Inc,Consumer Staples,3734970568,367770864,0.99%,0.99,,Both,GIS
+2023-12-31,United States,Grocery Outlet Holding Corp,Consumer Staples,249711691,24588329,0.92%,0.92,,Ownership,GO
+2023-12-31,United States,Hershey Co/The,Consumer Staples,3479881500,342653042,0.26%,0.9,,Market Value,HSY
+2023-12-31,United States,Ingredion Inc,Consumer Staples,835530103,82272035,1.16%,1.16,,Ownership,INGR
+2023-12-31,United States,J M Smucker Co/The,Consumer Staples,1562154956,153820510,1.15%,1.15,,Both,
+2023-12-31,United States,Kellanova,Consumer Staples,1488278150,146546092,0.77%,0.77,,Market Value,
+2023-12-31,United States,Kenvue Inc,Consumer Staples,2864926585,282100356,0.68%,0.68,,Market Value,KVUE
+2023-12-31,United States,Keurig Dr Pepper Inc,Consumer Staples,3149373363,310108940,0.67%,0.67,,Market Value,KDP
+2023-12-31,United States,Kimberly-Clark Corp,Consumer Staples,4340395661,427385179,1.04%,1.04,,Both,KMB
+2023-12-31,United States,Kroger Co/The,Consumer Staples,2260145142,222549420,0.68%,0.68,,Market Value,KR
+2023-12-31,United States,McCormick & Co Inc/MD,Consumer Staples,1592352220,156793940,0%,0.85,,Market Value,
+2023-12-31,United States,McKesson Corp,Consumer Staples,10244422167,1008736194,1.64%,1.64,,Both,MCK
+2023-12-31,United States,Molson Coors Beverage Co,Consumer Staples,1266824937,124740287,0.94%,0.94,,Both,TAP
+2023-12-31,United States,Mondelez International Inc,Consumer Staples,12259032093,1207108530,1.22%,1.22,,Both,MDLZ
+2023-12-31,United States,Monster Beverage Corp,Consumer Staples,5144141473,506527514,0.85%,0.85,,Market Value,MNST
+2023-12-31,United States,Nu Skin Enterprises Inc,Consumer Staples,90691343,8930093,0.93%,0.93,,Ownership,NUS
+2023-12-31,United States,PepsiCo Inc,Consumer Staples,26693845792,2628459465,1.13%,1.13,,Both,PEP
+2023-12-31,United States,Performance Food Group Co,Consumer Staples,1215900273,119725895,1.11%,1.11,,Ownership,PFGC
+2023-12-31,United States,Procter & Gamble Co/The,Consumer Staples,39313399826,3871067462,1.12%,1.12,,Both,PG
+2023-12-31,United States,Simply Good Foods Co/The,Consumer Staples,406132683,39990614,1.01%,1.01,,Ownership,
+2023-12-31,United States,Sysco Corp,Consumer Staples,4485913879,441713902,1.2%,1.2,,Both,SYY
+2023-12-31,United States,US Foods Holding Corp,Consumer Staples,1100024071,108315928,0.97%,0.97,,Ownership,USFD
+2023-12-31,United States,Antero Midstream Corp,Energy,555561360,54704389,0.91%,0.91,,Both,AM
+2023-12-31,United States,Arcosa Inc,Energy,461757176,45467784,1.13%,1.13,,Both,ACA
+2023-12-31,United States,Array Technologies Inc,Energy,1064501243,104818106,4.13%,4.13,,Both,ARRY
+2023-12-31,United States,Baker Hughes Co,Energy,5515138219,543058403,1.58%,1.58,,Both,BKR
+2023-12-31,United States,ChargePoint Holdings Inc,Energy,98848263,9733279,1%,1.0,,Ownership,CHPT
+2023-12-31,United States,Cheniere Energy Inc,Energy,3033507521,298699993,0.73%,0.73,,Both,LNG
+2023-12-31,United States,Chevron Corp,Energy,28829816290,2838781796,1.01%,1.01,,Both,CVX
+2023-12-31,United States,Delek US Holdings Inc,Energy,667409331,65717708,3.98%,3.98,,Both,DKL
+2023-12-31,United States,DT Midstream Inc,Energy,625975911,61637889,1.16%,1.16,,Both,DTM
+2023-12-31,United States,Enphase Energy Inc,Energy,1504141044,148108062,0.82%,0.82,,Both,ENPH
+2023-12-31,United States,Equitrans Midstream Corp,Energy,508731660,50093215,1.14%,1.14,,Both,
+2023-12-31,United States,Exxon Mobil Corp,Energy,55046591659,5420265630,1.35%,1.35,,Both,XOM
+2023-12-31,United States,First Solar Inc,Energy,2981180828,293547547,1.59%,1.59,,Both,FSLR
+2023-12-31,United States,Golar LNG Ltd,Energy,241429054,23772764,0.98%,0.98,,Ownership,GLNG
+2023-12-31,United States,Halliburton Co,Energy,3982223978,392117134,1.21%,1.21,,Both,HAL
+2023-12-31,United States,HF Sinclair Corp,Energy,667985946,65774486,0.59%,0.59,,Market Value,DINO
+2023-12-31,United States,Kinder Morgan Inc,Energy,4067980271,400561288,1.02%,1.02,,Both,KMI
+2023-12-31,United States,Kodiak Gas Services Inc,Energy,314659337,30983520,1.99%,1.99,,Ownership,KGS
+2023-12-31,United States,Marathon Petroleum Corp,Energy,4944061638,486826279,0.86%,0.86,,Both,MPC
+2023-12-31,United States,NEXTracker Inc,Energy,1227432881,120861475,1.78%,1.78,,Both,
+2023-12-31,United States,ONEOK Inc,Energy,2923859178,287903264,0.7%,0.7,,Market Value,OKE
+2023-12-31,United States,Patterson-UTI Energy Inc,Energy,456099031,44910644,1%,1.0,,Both,PTEN
+2023-12-31,United States,PBF Energy Inc,Energy,556860583,54832319,1.02%,1.02,,Both,PBF
+2023-12-31,United States,Phillips 66,Energy,5529309412,544453796,0.93%,0.93,,Both,PSX
+2023-12-31,United States,Plug Power Inc,Energy,993223652,97799625,3.59%,3.59,,Both,PLUG
+2023-12-31,United States,Schlumberger NV,Energy,9972947120,982004896,1.33%,1.33,,Both,
+2023-12-31,United States,Shoals Technologies Group Inc,Energy,319051057,31415959,1.19%,1.19,,Ownership,SHLS
+2023-12-31,United States,SolarEdge Technologies Inc,Energy,405162001,39895034,0.75%,0.75,,Both,SEDG
+2023-12-31,United States,Targa Resources Corp,Energy,1852486852,182408584,0.94%,0.94,,Both,TRGP
+2023-12-31,United States,TechnipFMC PLC,Energy,625291297,61570477,0.7%,0.7,,Market Value,FTI
+2023-12-31,United States,Valaris Ltd,Energy,439556233,43281727,0.87%,0.87,,Both,VAL
+2023-12-31,United States,Valero Energy Corp,Energy,5682453249,559533390,1.26%,1.26,,Both,VLO
+2023-12-31,United States,Weatherford International PLC,Energy,911595536,89761960,1.27%,1.27,,Both,WFRD
+2023-12-31,United States,Williams Cos Inc/The,Energy,3006668402,296057229,0.7%,0.7,,Market Value,WMB
+2023-12-31,United States,Affiliated Managers Group Inc,Financials,672541761,66223083,1.29%,1.29,,Ownership,AMG
+2023-12-31,United States,American Equity Investment Life Holding Co,Financials,513468684,50559655,1.15%,1.15,,Ownership,
+2023-12-31,United States,American International Group Inc,Financials,7456043595,734173282,1.54%,1.54,,Both,AIG
+2023-12-31,United States,Ameriprise Financial Inc,Financials,5126861162,504825976,1.31%,1.31,,Both,AMP
+2023-12-31,United States,Aon PLC,Financials,4151495136,408784735,0.7%,0.7,,Market Value,AON
+2023-12-31,United States,Apollo Global Management Inc,Financials,6515328822,641544042,1.3%,1.3,,Both,APO
+2023-12-31,United States,Arch Capital Group Ltd,Financials,3187161463,313829816,1.13%,1.13,,Both,ACGL
+2023-12-31,United States,Ares Management Corp,Financials,2086981287,205498517,0.93%,0.56,,Market Value,ARES
+2023-12-31,United States,Arthur J Gallagher & Co,Financials,13167374232,1296550138,2.67%,2.67,,Both,AJG
+2023-12-31,United States,Associated Banc-Corp,Financials,372934022,36721646,1.14%,1.14,,Ownership,ASB
+2023-12-31,United States,Assurant Inc,Financials,1097418611,108059377,1.22%,1.22,,Ownership,AIZ
+2023-12-31,United States,Bank of America Corp,Financials,37344907213,3677236154,1.38%,1.38,,Both,BAC
+2023-12-31,United States,Bank of New York Mellon Corp/The,Financials,8164135699,803896895,2.01%,2.01,,Both,BK
+2023-12-31,United States,Berkshire Hathaway Inc,Financials,69108876794,6804934844,0.9%,0.85,,Market Value,BRK-B
+2023-12-31,United States,BlackRock Inc,Financials,18109997530,1783234787,1.48%,1.47,,Both,
+2023-12-31,United States,Blackstone Inc,Financials,6967966773,686113884,0.7%,0.43,,Market Value,BX
+2023-12-31,United States,Brown & Brown Inc,Financials,2168505787,213525979,1.06%,1.06,,Market Value,BRO
+2023-12-31,United States,Cboe Global Markets Inc,Financials,2254551673,221998648,1.18%,1.18,,Both,CBOE
+2023-12-31,United States,Charles Schwab Corp/The,Financials,9394550418,925051982,0.76%,0.74,,Market Value,SCHW
+2023-12-31,United States,Chubb Ltd,Financials,9497284500,935167886,1.01%,1.01,,Market Value,CB
+2023-12-31,United States,Citigroup Inc,Financials,8565009716,843369705,0.86%,0.86,,Market Value,C
+2023-12-31,United States,CME Group Inc,Financials,9553412165,940694602,1.24%,1.24,,Both,CME
+2023-12-31,United States,Columbia Banking System Inc,Financials,641351820,63151907,1.13%,1.13,,Ownership,COLB
+2023-12-31,United States,Corebridge Financial Inc,Financials,2290733827,225561392,1.65%,1.65,,Both,CRBG
+2023-12-31,United States,Discover Financial Services,Financials,3204397879,315527032,1.12%,1.12,,Market Value,
+2023-12-31,United States,East West Bancorp Inc,Financials,1171657530,115369451,1.14%,1.14,,Ownership,EWBC
+2023-12-31,United States,Equitable Holdings Inc,Financials,6133885159,603984478,5.36%,5.36,,Both,EQH
+2023-12-31,United States,Everest Group Ltd,Financials,2016593984,198567699,1.29%,1.29,,Ownership,EG
+2023-12-31,United States,Fifth Third Bancorp,Financials,2554221358,251506185,1.07%,1.07,,Market Value,FITB
+2023-12-31,United States,First American Financial Corp,Financials,773968824,76210288,1.15%,1.15,,Ownership,FAF
+2023-12-31,United States,First BanCorp/Puerto Rico,Financials,330970418,32589621,1.15%,1.15,,Ownership,
+2023-12-31,United States,Goldman Sachs Group Inc/The,Financials,11068131024,1089844228,0.87%,0.84,,Market Value,GS
+2023-12-31,United States,Hanover Insurance Group Inc/The,Financials,496610881,48899719,1.13%,1.13,,Ownership,
+2023-12-31,United States,Hartford Financial Services Group Inc/The,Financials,2771252031,272876516,1.13%,1.13,,Both,
+2023-12-31,United States,Independent Bank Corp,Financials,332944219,32783975,1.14%,1.14,,Ownership,IBCP
+2023-12-31,United States,Intercontinental Exchange Inc,Financials,8341782499,821389220,1.12%,1.12,,Market Value,ICE
+2023-12-31,United States,Jackson Financial Inc,Financials,519859526,51188941,1.26%,1.26,,Ownership,JXN
+2023-12-31,United States,JPMorgan Chase & Co,Financials,59876774552,5895878625,1.2%,1.2,,Both,JPM
+2023-12-31,United States,KKR & Co Inc,Financials,6459870943,636083278,0.87%,0.87,,Market Value,KKR
+2023-12-31,United States,Lazard Ltd,Financials,477953448,47062580,1.2%,1.2,,Ownership,
+2023-12-31,United States,Lincoln National Corp,Financials,546584537,53820469,1.18%,1.18,,Ownership,LNC
+2023-12-31,United States,Loews Corp,Financials,5160025373,508091552,3.27%,3.27,,Both,L
+2023-12-31,United States,LPL Financial Holdings Inc,Financials,1991901264,196136284,1.14%,1.14,,Ownership,LPLA
+2023-12-31,United States,M&T Bank Corp,Financials,2301825511,226653555,1%,1.0,,Market Value,MTB
+2023-12-31,United States,Markel Group Inc,Financials,2131402953,209872579,1.12%,1.12,,Market Value,MKL
+2023-12-31,United States,MarketAxess Holdings Inc,Financials,1280866142,126122881,1.14%,1.14,,Ownership,MKTX
+2023-12-31,United States,Marsh & McLennan Cos Inc,Financials,10410068906,1025046910,1.1%,1.1,,Market Value,MMC
+2023-12-31,United States,MetLife Inc,Financials,5565425683,548010052,1.12%,1.12,,Market Value,MET
+2023-12-31,United States,MGIC Investment Corp,Financials,630131293,62047057,1.16%,1.16,,Ownership,MTG
+2023-12-31,United States,Moody's Corp,Financials,7281821412,717018168,1%,1.0,,Market Value,MCO
+2023-12-31,United States,Morgan Stanley,Financials,9451918465,930700835,0.61%,0.61,,Market Value,MS
+2023-12-31,United States,MSCI Inc,Financials,5015826828,493892772,1.1%,1.1,,Market Value,MSCI
+2023-12-31,United States,Nasdaq Inc,Financials,2379591066,234310886,0.7%,0.7,,Market Value,NDAQ
+2023-12-31,United States,NU Holdings Ltd/Cayman Islands,Financials,2350106905,231407673,0.11%,0.58,,Market Value,NU
+2023-12-31,United States,Pacific Premier Bancorp Inc,Financials,353294941,34787847,1.25%,1.25,,Ownership,
+2023-12-31,United States,Pinnacle Financial Partners Inc,Financials,847603029,83460818,1.25%,1.25,,Ownership,PNFP
+2023-12-31,United States,PNC Financial Services Group Inc/The,Financials,10404052181,1024454462,1.66%,1.66,,Both,PNC
+2023-12-31,United States,Principal Financial Group Inc,Financials,2532558617,249373122,1.33%,1.33,,Both,PFG
+2023-12-31,United States,Progressive Corp/The,Financials,11083186270,1091326671,1.17%,1.17,,Both,PGR
+2023-12-31,United States,Radian Group Inc,Financials,546299445,53792397,1.23%,1.23,,Ownership,RDN
+2023-12-31,United States,Raymond James Financial Inc,Financials,2370188029,233384998,1%,1.0,,Market Value,RJF
+2023-12-31,United States,Regions Financial Corp,Financials,2095021549,206290216,1.14%,1.14,,Both,RF
+2023-12-31,United States,Reinsurance Group of America Inc,Financials,1242047219,122300503,1.15%,1.15,,Ownership,RGA
+2023-12-31,United States,RenaissanceRe Holdings Ltd,Financials,1329776959,130938976,1.27%,1.27,,Ownership,RNR-PF
+2023-12-31,United States,Rithm Capital Corp,Financials,648912779,63896411,1.24%,1.24,,Ownership,RITM
+2023-12-31,United States,S&P Global Inc,Financials,16430124184,1617822916,1.16%,1.16,,Both,SPGI
+2023-12-31,United States,SouthState Corp,Financials,766606007,75485295,1.18%,1.18,,Ownership,
+2023-12-31,United States,Stifel Financial Corp,Financials,856821500,84368532,1.2%,1.2,,Ownership,SF
+2023-12-31,United States,Travelers Cos Inc/The,Financials,2760687690,271836278,0.62%,0.62,,Market Value,TRV
+2023-12-31,United States,Truist Financial Corp,Financials,3003185932,295714321,0.6%,0.6,,Market Value,TFC
+2023-12-31,United States,Unum Group,Financials,5996828222,590488910,6.69%,6.69,,Both,UNM
+2023-12-31,United States,US Bancorp,Financials,8233619504,810738748,1.2%,1.2,,Both,USB
+2023-12-31,United States,W R Berkley Corp,Financials,2132538984,209984441,1.15%,1.15,,Both,WRB
+2023-12-31,United States,Wells Fargo & Co,Financials,26187474697,2578598688,1.44%,1.44,,Both,WFC
+2023-12-31,United States,Willis Towers Watson PLC,Financials,2990367558,294452136,1.18%,1.18,,Both,WTW
+2023-12-31,United States,Abbott Laboratories,Health Care,21007634948,2068556077,1.08%,1.08,,Market Value,ABT
+2023-12-31,United States,AbbVie Inc,Health Care,32116501677,3162411422,1.16%,1.16,,Both,ABBV
+2023-12-31,United States,Agilent Technologies Inc,Health Care,5075962068,499814101,1.23%,1.23,,Both,A
+2023-12-31,United States,Align Technology Inc,Health Care,2221092822,218704060,1.04%,1.04,,Market Value,ALGN
+2023-12-31,United States,Alkermes PLC,Health Care,564129293,55548046,1.2%,1.2,,Ownership,ALKS
+2023-12-31,United States,Alnylam Pharmaceuticals Inc,Health Care,3906379063,384648923,1.6%,1.6,,Both,ALNY
+2023-12-31,United States,Amgen Inc,Health Care,15426963701,1519044842,0.99%,0.99,,Market Value,AMGN
+2023-12-31,United States,Arrowhead Pharmaceuticals Inc,Health Care,410807877,40450966,1.23%,1.23,,Ownership,ARWR
+2023-12-31,United States,Arvinas Inc,Health Care,366889503,36126461,1.29%,1.29,,Ownership,ARVN
+2023-12-31,United States,Axonics Inc,Health Care,382309865,37644856,1.19%,1.19,,Ownership,
+2023-12-31,United States,Azenta Inc,Health Care,1430489957,140855870,3.88%,3.88,,Ownership,AZTA
+2023-12-31,United States,Baxter International Inc,Health Care,2351506507,231545487,1.18%,1.18,,Both,BAX
+2023-12-31,United States,Becton Dickinson & Co,Health Care,7559960715,744405675,1.05%,1.05,,Market Value,BDX
+2023-12-31,United States,Biogen Inc,Health Care,3754108065,369655274,0.99%,0.99,,Market Value,BIIB
+2023-12-31,United States,BioMarin Pharmaceutical Inc,Health Care,3247933606,319813859,1.76%,1.76,,Both,BMRN
+2023-12-31,United States,Bluebird Bio Inc,Health Care,55997799,5513928,2.1%,2.1,,Ownership,
+2023-12-31,United States,Boston Scientific Corp,Health Care,9239761167,909810369,1.07%,1.07,,Market Value,BSX
+2023-12-31,United States,Bristol-Myers Squibb Co,Health Care,15587111765,1534814121,1.47%,1.47,,Both,BMY
+2023-12-31,United States,Cardinal Health Inc,Health Care,2559904873,252065822,1.01%,1.01,,Market Value,CAH
+2023-12-31,United States,Catalent Inc,Health Care,1158362964,114060376,1.41%,1.41,,Ownership,
+2023-12-31,United States,Centene Corp,Health Care,13423293519,1321749709,3.33%,3.33,,Both,CNC
+2023-12-31,United States,Cigna Group/The,Health Care,10001634606,984829663,1.12%,1.12,,Both,CI
+2023-12-31,United States,Cooper Cos Inc/The,Health Care,1945970573,191613633,1.02%,1.02,,Market Value,
+2023-12-31,United States,Cymabay Therapeutics Inc,Health Care,312192345,30740603,1.15%,1.15,,Ownership,
+2023-12-31,United States,Cytokinetics Inc,Health Care,1227848198,120902370,1.48%,1.48,,Ownership,CYTK
+2023-12-31,United States,Danaher Corp,Health Care,17951149543,1767593523,1.03%,1.03,,Market Value,DHR
+2023-12-31,United States,Day One Biopharmaceuticals Inc,Health Care,244926156,24117112,1.9%,1.9,,Ownership,
+2023-12-31,United States,DENTSPLY SIRONA Inc,Health Care,1143379993,112585050,1.49%,1.49,,Ownership,XRAY
+2023-12-31,United States,Dexcom Inc,Health Care,5681269499,559416830,1.17%,1.17,,Both,DXCM
+2023-12-31,United States,Edwards Lifesciences Corp,Health Care,6473320414,637407605,1.38%,1.38,,Both,EW
+2023-12-31,United States,Elevance Health Inc,Health Care,13600683292,1339216725,1.21%,1.21,,Both,ELV
+2023-12-31,United States,Eli Lilly & Co,Health Care,59627536715,5871336955,1.06%,1.06,,Market Value,LLY
+2023-12-31,United States,Evolent Health Inc,Health Care,444401627,43758838,1.15%,1.15,,Ownership,EVH
+2023-12-31,United States,GE HealthCare Technologies Inc,Health Care,2251909183,221738451,0.63%,0.63,,Market Value,GEHC
+2023-12-31,United States,Gilead Sciences Inc,Health Care,12965594000,1276681470,1.26%,1.26,,Both,GILD
+2023-12-31,United States,Globus Medical Inc,Health Care,969614410,95474897,0.52%,1.27,,Ownership,GMED
+2023-12-31,United States,HCA Healthcare Inc,Health Care,6924757079,681859161,0.94%,0.94,,Market Value,HCA
+2023-12-31,United States,Henry Schein Inc,Health Care,1109509296,109249909,1.11%,1.11,,Ownership,HSIC
+2023-12-31,United States,Hologic Inc,Health Care,2166365072,213315190,1.24%,1.24,,Both,HOLX
+2023-12-31,United States,Humana Inc,Health Care,7171242476,706129806,1.25%,1.25,,Both,HUM
+2023-12-31,United States,IDEXX Laboratories Inc,Health Care,5087090346,500909868,1.09%,1.09,,Market Value,IDXX
+2023-12-31,United States,Illumina Inc,Health Care,2632149511,259179526,1.17%,1.17,,Both,ILMN
+2023-12-31,United States,ImmunoGen Inc,Health Care,1666479312,164093003,1.98%,1.98,,Ownership,
+2023-12-31,United States,Insulet Corp,Health Care,2491382846,245318673,1.62%,1.62,,Both,PODD
+2023-12-31,United States,Intra-Cellular Therapies Inc,Health Care,1006671564,99123799,1.44%,1.44,,Ownership,
+2023-12-31,United States,Intuitive Surgical Inc,Health Care,13185456427,1298330635,1.09%,1.09,,Market Value,ISRG
+2023-12-31,United States,IQVIA Holdings Inc,Health Care,3803719525,374540359,0.89%,0.89,,Market Value,IQV
+2023-12-31,United States,Johnson & Johnson,Health Care,40404147555,3978469978,1.05%,1.05,,Market Value,JNJ
+2023-12-31,United States,Laboratory Corp of America Holdings,Health Care,2872467214,282842858,1.47%,1.47,,Both,
+2023-12-31,United States,Ligand Pharmaceuticals Inc,Health Care,77746590,7655463,0.61%,1.17,,Ownership,LGND
+2023-12-31,United States,Medtronic PLC,Health Care,12214472613,1202720897,1.1%,1.1,,Market Value,MDT
+2023-12-31,United States,Merck & Co Inc,Health Care,30873983689,3040064564,1.1%,1.1,,Market Value,MRK
+2023-12-31,United States,Mirum Pharmaceuticals Inc,Health Care,217826569,21448701,1.56%,1.56,,Ownership,MIRM
+2023-12-31,United States,Moderna Inc,Health Care,3536922827,348269723,0.92%,0.92,,Market Value,MRNA
+2023-12-31,United States,Molina Healthcare Inc,Health Care,2742832577,270078141,1.28%,1.28,,Both,MOH
+2023-12-31,United States,Natera Inc,Health Care,852772067,83969797,1.12%,1.12,,Ownership,NTRA
+2023-12-31,United States,Neogen Corp,Health Care,3714897621,365794344,8.4%,8.4,,Both,NEOG
+2023-12-31,United States,Pfizer Inc,Health Care,21224382375,2089898518,1.29%,1.29,,Both,PFE
+2023-12-31,United States,Premier Inc,Health Care,520697769,51271480,1.92%,1.92,,Ownership,
+2023-12-31,United States,Recursion Pharmaceuticals Inc,Health Care,353673929,34825165,1.24%,1.64,,Ownership,RXRX
+2023-12-31,United States,Regeneron Pharmaceuticals Inc,Health Care,9244708549,910297522,0.83%,0.95,,Market Value,REGN
+2023-12-31,United States,Relay Therapeutics Inc,Health Care,343154936,33789393,2.49%,2.49,,Ownership,RLAY
+2023-12-31,United States,ResMed Inc,Health Care,3219932897,317056717,1.25%,1.25,,Both,RMD
+2023-12-31,United States,Select Medical Holdings Corp,Health Care,348545168,34320152,1.14%,1.14,,Ownership,
+2023-12-31,United States,Shockwave Medical Inc,Health Care,846949712,83396488,1.19%,1.19,,Ownership,
+2023-12-31,United States,STERIS PLC,Health Care,2190192661,215661418,0.99%,0.99,,Market Value,STE
+2023-12-31,United States,Stryker Corp,Health Care,12536249538,1234405264,1.09%,1.09,,Market Value,SYK
+2023-12-31,United States,Thermo Fisher Scientific Inc,Health Care,29142962730,2869616346,1.4%,1.4,,Both,TMO
+2023-12-31,United States,UnitedHealth Group Inc,Health Care,58050302883,5716031675,1.17%,1.17,,Both,UNH
+2023-12-31,United States,Vaxcyte Inc,Health Care,783373102,77136298,1.29%,1.29,,Ownership,PCVX
+2023-12-31,United States,Veeva Systems Inc,Health Care,3033296208,298679186,0.51%,0.88,,Market Value,VEEV
+2023-12-31,United States,Vertex Pharmaceuticals Inc,Health Care,12595333726,1240223099,1.18%,1.18,,Both,VRTX
+2023-12-31,United States,West Pharmaceutical Services Inc,Health Care,2985301500,293953297,1.13%,1.13,,Both,WST
+2023-12-31,United States,Zimmer Biomet Holdings Inc,Health Care,2647486138,260689676,1.03%,1.03,,Market Value,ZBH
+2023-12-31,United States,Zoetis Inc,Health Care,9731027053,958183784,1.06%,1.06,,Market Value,ZTS
+2023-12-31,United States,3M Co,Industrials,4954415056,487845747,0.81%,0.81,,Market Value,MMM
+2023-12-31,United States,Accenture PLC,Industrials,20382025778,2006954299,0.86%,0.86,,Market Value,ACN
+2023-12-31,United States,AECOM,Industrials,1615365785,159060014,1.27%,1.27,,Ownership,ACM
+2023-12-31,United States,AerCap Holdings NV,Industrials,1972836411,194259028,1.23%,1.23,,Ownership,AER
+2023-12-31,United States,American Express Co,Industrials,11027140585,1085808027,0.8%,0.8,,Market Value,AXP
+2023-12-31,United States,AMETEK Inc,Industrials,5888555212,579827605,1.52%,1.52,,Both,AME
+2023-12-31,United States,Automatic Data Processing Inc,Industrials,2891070474,284674663,0.3%,0.3,,Market Value,ADP
+2023-12-31,United States,Block Inc,Industrials,5281727848,520075214,0.58%,1.09,,Market Value,SQ
+2023-12-31,United States,Bloom Energy Corp,Industrials,839649004,82677610,2.49%,2.49,,Ownership,BE
+2023-12-31,United States,Capital One Financial Corp,Industrials,4035937140,397406101,0.8%,0.8,,Market Value,COF
+2023-12-31,United States,Carrier Global Corp,Industrials,4394343528,432697257,0.9%,0.9,,Market Value,CARR
+2023-12-31,United States,Caterpillar Inc,Industrials,16488989263,1623619176,1.08%,1.08,,Market Value,CAT
+2023-12-31,United States,Cintas Corp,Industrials,8734128848,860022337,1.41%,1.41,,Both,CTAS
+2023-12-31,United States,CS Disco Inc,Industrials,136762781,13466603,2.93%,2.93,,Ownership,LAW
+2023-12-31,United States,CSX Corp,Industrials,7519292997,740401252,1.08%,1.08,,Market Value,CSX
+2023-12-31,United States,Cummins Inc,Industrials,2950772868,290553371,0.86%,0.86,,Market Value,CMI
+2023-12-31,United States,Curtiss-Wright Corp,Industrials,1156578627,113884678,1.34%,1.34,,Ownership,CW
+2023-12-31,United States,Deere & Co,Industrials,12408477774,1221823978,1.09%,1.09,,Market Value,DE
+2023-12-31,United States,Eagle Materials Inc,Industrials,903096191,88925056,1.26%,1.26,,Ownership,EXP
+2023-12-31,United States,Eaton Corp PLC,Industrials,10809698515,1064397187,1.11%,1.11,,Market Value,ETN
+2023-12-31,United States,EMCOR Group Inc,Industrials,1561327511,153739034,1.52%,1.52,,Ownership,EME
+2023-12-31,United States,Emerson Electric Co,Industrials,7626046358,750912922,1.35%,1.35,,Both,EMR
+2023-12-31,United States,EnerSys,Industrials,474744447,46746600,1.15%,1.15,,Ownership,ENS
+2023-12-31,United States,Euronet Worldwide Inc,Industrials,558022059,54946686,1.17%,1.17,,Ownership,EEFT
+2023-12-31,United States,ExlService Holdings Inc,Industrials,811745469,79930036,1.57%,1.57,,Ownership,EXLS
+2023-12-31,United States,FedEx Corp,Industrials,6965571884,685878067,1.08%,1.08,,Market Value,FDX
+2023-12-31,United States,Fidelity National Information Services Inc,Industrials,4772018012,469885681,1.32%,1.32,,Both,FIS
+2023-12-31,United States,Fiserv Inc,Industrials,9044309005,890564806,1.12%,1.12,,Market Value,FI
+2023-12-31,United States,Forward Air Corp,Industrials,439551693,43281280,2.68%,2.68,,Ownership,FWRD
+2023-12-31,United States,FTAI Aviation Ltd,Industrials,558956111,55038659,1.19%,1.19,,Ownership,FTAI
+2023-12-31,United States,General Dynamics Corp,Industrials,7235587579,712465667,1.01%,1.01,,Market Value,GD
+2023-12-31,United States,General Electric Co,Industrials,11787074413,1160636334,0.84%,0.84,,Market Value,GE
+2023-12-31,United States,Global Payments Inc,Industrials,3632716547,357702231,1.08%,1.08,,Market Value,GPN
+2023-12-31,United States,Graphic Packaging Holding Co,Industrials,1019505030,100387470,1.33%,1.33,,Ownership,GPK
+2023-12-31,United States,Hillenbrand Inc,Industrials,407550434,40130216,1.2%,1.2,,Ownership,
+2023-12-31,United States,Howmet Aerospace Inc,Industrials,5106767085,502847375,2.26%,2.26,,Both,HWM
+2023-12-31,United States,Hyzon Motors Inc,Industrials,59080785,5817500,2.65%,2.65,,Ownership,
+2023-12-31,United States,IDEX Corp,Industrials,2370761318,233441448,1.42%,1.42,,Ownership,IEX
+2023-12-31,United States,Illinois Tool Works Inc,Industrials,8112617012,798824011,1.01%,1.01,,Market Value,ITW
+2023-12-31,United States,Ingersoll Rand Inc,Industrials,2987274870,294147609,0.94%,0.94,,Market Value,IR
+2023-12-31,United States,Johnson Controls International plc,Industrials,3114953582,306719732,0.78%,0.78,,Market Value,JCI
+2023-12-31,United States,Keysight Technologies Inc,Industrials,3011203930,296503828,1.06%,1.06,,Market Value,KEYS
+2023-12-31,United States,Knight-Swift Transportation Holdings Inc,Industrials,2043651183,201231937,2.16%,2.16,,Ownership,KNX
+2023-12-31,United States,Korn Ferry,Industrials,369126901,36346771,1.17%,1.17,,Ownership,KFY
+2023-12-31,United States,L3Harris Technologies Inc,Industrials,3202851914,315374806,0.79%,0.79,,Market Value,LHX
+2023-12-31,United States,Lennox International Inc,Industrials,3337845390,328667191,2.07%,2.07,,Both,LII
+2023-12-31,United States,Lincoln Electric Holdings Inc,Industrials,3418678333,336626558,2.71%,2.71,,Both,LECO
+2023-12-31,United States,Littelfuse Inc,Industrials,1523393268,150003768,2.25%,2.25,,Ownership,LFUS
+2023-12-31,United States,Martin Marietta Materials Inc,Industrials,3057806970,301092684,0.98%,0.98,,Market Value,MLM
+2023-12-31,United States,Mastercard Inc,Industrials,45948182218,4524373723,1.14%,1.13,,Market Value,MA
+2023-12-31,United States,Mettler-Toledo International Inc,Industrials,3192981236,314402871,1.2%,1.2,,Both,MTD
+2023-12-31,United States,MKS Instruments Inc,Industrials,1195041168,117671964,1.71%,1.71,,Ownership,
+2023-12-31,United States,NCR Atleos Corp,Industrials,240777374,23708595,1.38%,1.38,,Ownership,NATL
+2023-12-31,United States,Nikola Corp,Industrials,950910473,93633179,9.25%,9.25,,Ownership,
+2023-12-31,United States,Norfolk Southern Corp,Industrials,5520965135,543632161,1.02%,1.02,,Market Value,NSC
+2023-12-31,United States,Old Dominion Freight Line Inc,Industrials,4931372593,485576828,1.1%,1.1,,Market Value,ODFL
+2023-12-31,United States,Oshkosh Corp,Industrials,848249607,83524485,1.18%,1.18,,Ownership,OSK
+2023-12-31,United States,Otis Worldwide Corp,Industrials,6293519977,619703219,1.69%,1.69,,Both,OTIS
+2023-12-31,United States,PACCAR Inc,Industrials,4427516529,435963698,0.85%,0.85,,Market Value,PCAR
+2023-12-31,United States,Pagseguro Digital Ltd,Industrials,553713203,54522406,0.31%,1.33,,Ownership,PAGS
+2023-12-31,United States,Parker-Hannifin Corp,Industrials,6606742456,650545256,1.1%,1.1,,Market Value,PH
+2023-12-31,United States,PayPal Holdings Inc,Industrials,7468139850,735364362,1.11%,1.11,,Market Value,PYPL
+2023-12-31,United States,PPG Industries Inc,Industrials,5546672447,546163479,1.55%,1.55,,Both,PPG
+2023-12-31,United States,Quanta Services Inc,Industrials,3331284690,328021179,1.05%,1.05,,Market Value,PWR
+2023-12-31,United States,Regal Rexnord Corp,Industrials,1837353819,180918481,1.84%,1.84,,Ownership,RRX
+2023-12-31,United States,RTX Corp,Industrials,6703990423,660120959,0.55%,0.55,,Market Value,RTX
+2023-12-31,United States,Ryder System Inc,Industrials,879955944,86646508,1.7%,1.7,,Ownership,R
+2023-12-31,United States,Saia Inc,Industrials,2042480736,201116687,1.73%,1.73,,Ownership,SAIA
+2023-12-31,United States,Sherwin-Williams Co/The,Industrials,11761230474,1158091562,1.45%,1.45,,Both,SHW
+2023-12-31,United States,Spirit AeroSystems Holdings Inc,Industrials,634042283,62432160,1.69%,1.69,,Ownership,
+2023-12-31,United States,Star Bulk Carriers Corp,Industrials,442429759,43564674,2.44%,2.44,,Ownership,SBLK
+2023-12-31,United States,StoneCo Ltd,Industrials,727100684,71595329,0.82%,1.26,,Ownership,STNE
+2023-12-31,United States,TopBuild Corp,Industrials,1573960216,154982937,1.3%,1.3,,Ownership,
+2023-12-31,United States,Trane Technologies PLC,Industrials,6821550152,671696698,1.21%,1.21,,Both,TT
+2023-12-31,United States,TransDigm Group Inc,Industrials,7896545556,777548131,1.39%,1.39,,Both,TDG
+2023-12-31,United States,Trex Co Inc,Industrials,1153818352,113612883,1.26%,1.26,,Ownership,TREX
+2023-12-31,United States,Union Pacific Corp,Industrials,18233096435,1795355951,1.2%,1.2,,Both,UNP
+2023-12-31,United States,United Parcel Service Inc,Industrials,11174151657,1100283748,0.35%,0.82,,Market Value,UPS
+2023-12-31,United States,United Rentals Inc,Industrials,10101038297,994617633,2.56%,2.56,,Both,URI
+2023-12-31,United States,Veralto Corp,Industrials,2658090774,261733881,1.29%,1.29,,Ownership,VLTO
+2023-12-31,United States,Verisk Analytics Inc,Industrials,3718249256,366124369,1.06%,1.06,,Market Value,VRSK
+2023-12-31,United States,Visa Inc,Industrials,38846752652,3825118175,0.93%,0.8,,Market Value,V
+2023-12-31,United States,Westrock Co,Industrials,1958292503,192826935,1.81%,1.81,,Ownership,
+2023-12-31,United States,WillScot Mobile Mini Holdings Corp,Industrials,1033937279,101808569,1.19%,1.19,,Ownership,
+2023-12-31,United States,WW Grainger Inc,Industrials,3893805376,383410831,0.93%,0.93,,Market Value,GWW
+2023-12-31,United States,Alexandria Real Estate Equities Inc,Real Estate,21132252119,2080826740,9.45%,9.45,,Both,ARE
+2023-12-31,United States,American Homes 4 Rent,Real Estate,8022463133,789946841,5.59%,6.07,,Both,AMH
+2023-12-31,United States,American Tower Corp,Real Estate,10430821296,1027090333,1.02%,1.02,,Market Value,AMT
+2023-12-31,United States,Americold Realty Trust Inc,Real Estate,6876193030,677077211,7.89%,7.89,,Both,COLD
+2023-12-31,United States,AvalonBay Communities Inc,Real Estate,12849714118,1265271140,4.76%,4.76,,Both,AVB
+2023-12-31,United States,Boston Properties Inc,Real Estate,9020428152,888213334,8.07%,8.07,,Both,
+2023-12-31,United States,Camden Property Trust,Real Estate,3828018858,376933038,3.56%,3.56,,Ownership,CPT
+2023-12-31,United States,Crown Castle Inc,Real Estate,5780899160,569227051,1.14%,1.14,,Market Value,CCI
+2023-12-31,United States,CubeSmart,Real Estate,4517442233,444818401,4.27%,4.27,,Both,CUBE
+2023-12-31,United States,Digital Realty Trust Inc,Real Estate,21650150421,2131822565,5.23%,5.12,,Both,DLR
+2023-12-31,United States,Equinix Inc,Real Estate,15798095608,1555589039,2.06%,2.06,,Both,EQIX
+2023-12-31,United States,Equity LifeStyle Properties Inc,Real Estate,4595232090,452478125,3.44%,3.44,,Both,ELS
+2023-12-31,United States,Equity Residential,Real Estate,21710981272,2137812388,9.21%,9.21,,Both,EQR
+2023-12-31,United States,Essex Property Trust Inc,Real Estate,6818314880,671378130,4.22%,4.22,,Both,ESS
+2023-12-31,United States,Extra Space Storage Inc,Real Estate,10303186620,1014522546,2.99%,2.99,,Both,EXR
+2023-12-31,United States,Federal Realty Investment Trust,Real Estate,7529693697,741425377,8.82%,8.82,,Both,FRT
+2023-12-31,United States,Host Hotels & Resorts Inc,Real Estate,6217889201,612256093,4.46%,4.46,,Both,HST
+2023-12-31,United States,Independence Realty Trust Inc,Real Estate,528579047,52047525,1.51%,1.51,,Ownership,IRT
+2023-12-31,United States,Invitation Homes Inc,Real Estate,13627499641,1341857247,6.43%,6.43,,Both,INVH
+2023-12-31,United States,JBG SMITH Properties,Real Estate,1041315606,102535089,6.3%,6.3,,Ownership,JBGS
+2023-12-31,United States,Kilroy Realty Corp,Real Estate,3664493809,360831239,7.73%,7.73,,Ownership,KRC
+2023-12-31,United States,Mid-America Apartment Communities Inc,Real Estate,7207752046,709724790,4.52%,4.52,,Both,MAA
+2023-12-31,United States,Paramount Group Inc,Real Estate,553555950,54506922,4.85%,4.85,,Ownership,
+2023-12-31,United States,PotlatchDeltic Corp,Real Estate,1529012217,150557048,3.86%,3.86,,Ownership,PCH
+2023-12-31,United States,Prologis Inc,Real Estate,10608133699,1044549731,0.85%,0.85,,Market Value,PLD
+2023-12-31,United States,Public Storage,Real Estate,8220406145,809437670,1.51%,1.51,,Market Value,PSA
+2023-12-31,United States,Rayonier Inc,Real Estate,4459119289,439075523,8.86%,8.86,,Both,RYN
+2023-12-31,United States,Realty Income Corp,Real Estate,5039663449,496239890,1.19%,1.19,,Market Value,O
+2023-12-31,United States,Regency Centers Corp,Real Estate,11549921202,1137284599,8.92%,8.92,,Both,REG
+2023-12-31,United States,Simon Property Group Inc,Real Estate,25894808048,2549780719,5.48%,5.48,,Both,SPG
+2023-12-31,United States,Sun Communities Inc,Real Estate,6059046383,596615337,3.59%,3.59,,Both,SUI
+2023-12-31,United States,UDR Inc,Real Estate,10789937603,1062451392,8.44%,8.44,,Both,UDR
+2023-12-31,United States,VICI Properties Inc,Real Estate,4589836320,451946820,1.37%,1.37,,Market Value,VICI
+2023-12-31,United States,Vornado Realty Trust,Real Estate,4975501234,489922037,9.1%,9.1,,Both,VNO
+2023-12-31,United States,Welltower Inc,Real Estate,24792799980,2441269433,4.87%,4.87,,Both,WELL
+2023-12-31,United States,Weyerhaeuser Co,Real Estate,7588008155,747167419,2.94%,2.94,,Both,WY
+2023-12-31,United States,Adobe Inc,Technology,32604671740,3210480000,1.18%,1.18,,Both,ADBE
+2023-12-31,United States,Advanced Micro Devices Inc,Technology,34605952746,3407539879,1.43%,1.43,,Both,AMD
+2023-12-31,United States,Akamai Technologies Inc,Technology,3258177959,320822588,1.8%,1.8,,Both,AKAM
+2023-12-31,United States,Alphabet Inc,Technology,195492601623,19249544751,0.74%,1.1,,Market Value,GOOGL
+2023-12-31,United States,Amphenol Corp,Technology,11079119664,1090926245,1.84%,1.84,,Both,APH
+2023-12-31,United States,Analog Devices Inc,Technology,12194619122,1200765986,1.22%,1.22,,Both,ADI
+2023-12-31,United States,ANSYS Inc,Technology,2969570852,292404349,0.93%,0.93,,Market Value,
+2023-12-31,United States,Apple Inc,Technology,337297344663,33212614065,1.11%,1.11,,Market Value,AAPL
+2023-12-31,United States,Applied Materials Inc,Technology,15045319188,1481465501,1.1%,1.1,,Market Value,AMAT
+2023-12-31,United States,Autodesk Inc,Technology,6160126015,606568333,1.16%,1.16,,Market Value,ADSK
+2023-12-31,United States,Axcelis Technologies Inc,Technology,579939638,57104841,1.34%,1.34,,Ownership,ACLS
+2023-12-31,United States,BigCommerce Holdings Inc,Technology,103953833,10236009,1.38%,1.38,,Ownership,
+2023-12-31,United States,Broadcom Inc,Technology,62023902103,6107299556,1.17%,1.17,,Market Value,AVGO
+2023-12-31,United States,CACI International Inc,Technology,957504248,94282447,1.31%,1.31,,Ownership,CACI
+2023-12-31,United States,Cadence Design Systems Inc,Technology,11945448501,1176230934,1.59%,1.59,,Both,CDNS
+2023-12-31,United States,Cognizant Technology Solutions Corp,Technology,4866461192,479185206,1.27%,1.27,,Both,CTSH
+2023-12-31,United States,Crowdstrike Holdings Inc,Technology,6881044698,677554939,0.75%,1.11,,Market Value,CRWD
+2023-12-31,United States,CyberArk Software Ltd,Technology,1230198267,121133774,1.32%,1.32,,Ownership,
+2023-12-31,United States,Datadog Inc,Technology,3930460334,387020130,0.56%,0.97,,Market Value,DDOG
+2023-12-31,United States,DoorDash Inc,Technology,3041402511,299477388,0.33%,0.76,,Market Value,DASH
+2023-12-31,United States,Entegris Inc,Technology,2830664969,278726722,1.55%,1.55,,Both,ENTG
+2023-12-31,United States,Five9 Inc,Technology,814644394,80215484,1.4%,1.4,,Ownership,FIVN
+2023-12-31,United States,Flex Ltd,Technology,1640481664,161533096,1.22%,1.22,,Ownership,FLEX
+2023-12-31,United States,Gartner Inc,Technology,3859905397,380072806,1.08%,1.08,,Market Value,IT
+2023-12-31,United States,Gitlab Inc,Technology,2289447842,225434765,0.61%,2.3,,Ownership,GTLB
+2023-12-31,United States,GoDaddy Inc,Technology,1803734801,177608122,1.19%,1.19,,Ownership,GDDY
+2023-12-31,United States,Guidewire Software Inc,Technology,1236042616,121709249,1.36%,1.36,,Ownership,GWRE
+2023-12-31,United States,HubSpot Inc,Technology,3095466665,304800916,1.04%,1.04,,Market Value,HUBS
+2023-12-31,United States,Innovid Corp,Technology,30957864,3048324,1.45%,1.45,,Ownership,
+2023-12-31,United States,Intel Corp,Technology,24086489072,2371721208,1.12%,1.12,,Market Value,INTC
+2023-12-31,United States,International Business Machines Corp,Technology,9974716095,982179081,0.66%,0.66,,Market Value,IBM
+2023-12-31,United States,Intuit Inc,Technology,21094756849,2077134698,1.19%,1.19,,Both,INTU
+2023-12-31,United States,Jabil Inc,Technology,1959689562,192964499,1.18%,1.18,,Ownership,JBL
+2023-12-31,United States,KLA Corp,Technology,10864846395,1069827427,1.35%,1.35,,Both,KLAC
+2023-12-31,United States,Lam Research Corp,Technology,14413945409,1419296101,1.37%,1.37,,Both,LRCX
+2023-12-31,United States,Leidos Holdings Inc,Technology,2015315429,198441804,1.33%,1.33,,Ownership,LDOS
+2023-12-31,United States,Maplebear Inc,Technology,794554466,78237292,1.19%,1.19,,Ownership,CART
+2023-12-31,United States,Marvell Technology Inc,Technology,5088234719,501022551,0.96%,0.96,,Market Value,MRVL
+2023-12-31,United States,Meta Platforms Inc,Technology,113119746143,11138547431,0.55%,1.22,,Both,META
+2023-12-31,United States,Microchip Technology Inc,Technology,6973154958,686624748,1.41%,1.41,,Both,MCHP
+2023-12-31,United States,Micron Technology Inc,Technology,7655738747,753836638,0.8%,0.8,,Market Value,MU
+2023-12-31,United States,Microsoft Corp,Technology,358388453626,35289389567,1.26%,1.26,,Both,MSFT
+2023-12-31,United States,Mobileye Global Inc,Technology,4446588899,437841695,0.14%,1.25,,Both,MBLY
+2023-12-31,United States,MongoDB Inc,Technology,3278705848,322843905,1.09%,1.09,,Market Value,MDB
+2023-12-31,United States,Monolithic Power Systems Inc,Technology,3607923864,355260973,1.18%,1.18,,Market Value,MPWR
+2023-12-31,United States,NetApp Inc,Technology,2314782536,227929393,1.25%,1.25,,Ownership,NTAP
+2023-12-31,United States,Nutanix Inc,Technology,1396052758,137464947,1.19%,1.19,,Ownership,NTNX
+2023-12-31,United States,NVIDIA Corp,Technology,145854986699,14361884134,1.17%,1.17,,Market Value,NVDA
+2023-12-31,United States,NXP Semiconductors NV,Technology,7590319679,747395027,1.26%,1.26,,Both,NXPI
+2023-12-31,United States,ON Semiconductor Corp,Technology,4260530999,419521156,1.17%,1.17,,Market Value,ON
+2023-12-31,United States,Onto Innovation Inc,Technology,911834392,89785479,1.2%,1.2,,Ownership,ONTO
+2023-12-31,United States,Oracle Corp,Technology,11904442447,1172193197,0.4%,0.4,,Market Value,ORCL
+2023-12-31,United States,Palo Alto Networks Inc,Technology,15748910202,1550745906,1.67%,1.67,,Both,PANW
+2023-12-31,United States,QUALCOMM Inc,Technology,25067585853,2468326738,1.53%,1.53,,Both,QCOM
+2023-12-31,United States,Rogers Corp,Technology,2002291503,197159379,8.02%,8.02,,Ownership,ROG
+2023-12-31,United States,Roper Technologies Inc,Technology,7535073494,741955108,1.27%,1.27,,Both,ROP
+2023-12-31,United States,Salesforce Inc,Technology,27494353938,2707282997,1.06%,1.06,,Market Value,CRM
+2023-12-31,United States,SentinelOne Inc,Technology,2349436353,231341646,0.68%,2.82,,Ownership,S
+2023-12-31,United States,ServiceNow Inc,Technology,16658863337,1640346144,1.13%,1.13,,Market Value,NOW
+2023-12-31,United States,Silvair Inc,Technology,3494351,344078,1.24%,1.58,,Ownership,
+2023-12-31,United States,Skyworks Solutions Inc,Technology,2253198106,221865367,1.23%,1.23,,Ownership,SWKS
+2023-12-31,United States,Snowflake Inc,Technology,8574896937,844343269,1.29%,1.29,,Both,SNOW
+2023-12-31,United States,Splunk Inc,Technology,3787672565,372960265,1.45%,1.45,,Both,
+2023-12-31,United States,Synopsys Inc,Technology,12724307870,1252922779,1.6%,1.6,,Both,SNPS
+2023-12-31,United States,TE Connectivity Ltd,Technology,6936194756,682985393,1.56%,1.56,,Both,
+2023-12-31,United States,Teradata Corp,Technology,551777093,54331764,1.28%,1.28,,Ownership,TDC
+2023-12-31,United States,Texas Instruments Inc,Technology,16641198590,1638606752,1.06%,1.06,,Market Value,TXN
+2023-12-31,United States,Twilio Inc,Technology,1793283385,176579003,1.29%,1.29,,Ownership,TWLO
+2023-12-31,United States,Tyler Technologies Inc,Technology,4624939723,455403342,2.59%,2.59,,Both,TYL
+2023-12-31,United States,Unity Software Inc,Technology,4224820373,416004842,2.68%,2.68,,Both,U
+2023-12-31,United States,Vishay Intertechnology Inc,Technology,2663666002,262282856,4.43%,7.91,,Ownership,VSH
+2023-12-31,United States,Wolfspeed Inc,Technology,3135073115,308700839,5.66%,5.66,,Both,WOLF
+2023-12-31,United States,Workday Inc,Technology,15496482892,1525890179,0.74%,2.1,,Both,WDAY
+2023-12-31,United States,Altice USA Inc,Telecommunications,39728560,3911947,0.62%,0.26,,Both,
+2023-12-31,United States,Arista Networks Inc,Telecommunications,5803220652,571424978,0.78%,0.78,,Both,ANET
+2023-12-31,United States,AT&T Inc,Telecommunications,11057130127,1088761004,0.91%,0.91,,Both,T
+2023-12-31,United States,Cable One Inc,Telecommunications,357428394,35194855,1.13%,1.13,,Both,CABO
+2023-12-31,United States,Calix Inc,Telecommunications,268951178,26482781,0.92%,0.92,,Both,CALX
+2023-12-31,United States,Charter Communications Inc,Telecommunications,3058421054,301153151,0.4%,0.45,,Both,CHTR
+2023-12-31,United States,Ciena Corp,Telecommunications,1399672184,137821340,2.11%,2.11,,Both,CIEN
+2023-12-31,United States,Cisco Systems Inc,Telecommunications,25209286297,2482279537,1.21%,1.21,,Both,CSCO
+2023-12-31,United States,Cogent Communications Holdings Inc,Telecommunications,512154896,50430290,1.36%,1.36,,Both,CCOI
+2023-12-31,United States,Comcast Corp,Telecommunications,25386389769,2499718362,0.91%,1.42,,Both,CMCSA
+2023-12-31,United States,CommScope Holding Co Inc,Telecommunications,34291024,3376530,0.56%,0.56,,Both,
+2023-12-31,United States,Extreme Networks Inc,Telecommunications,337853012,33267329,1.46%,1.46,,Both,EXTR
+2023-12-31,United States,Frontier Communications Parent Inc,Telecommunications,510513387,50268656,0.81%,0.81,,Both,FYBR
+2023-12-31,United States,InterDigital Inc,Telecommunications,192827487,18987119,0.68%,0.68,,Both,IDCC
+2023-12-31,United States,Iridium Communications Inc,Telecommunications,559367838,55079201,1.08%,1.08,,Both,IRDM
+2023-12-31,United States,Juniper Networks Inc,Telecommunications,1364652118,134373024,1.43%,1.43,,Both,
+2023-12-31,United States,Liberty Broadband Corp,Telecommunications,1363540546,134263571,1.05%,1.14,,Both,LBRDA
+2023-12-31,United States,Liberty Global Ltd,Telecommunications,738007950,72669333,1.35%,1.05,,Both,LBTYA
+2023-12-31,United States,Liberty Latin America Ltd,Telecommunications,88605802,8724736,0%,0.58,,Both,LILA
+2023-12-31,United States,Lumentum Holdings Inc,Telecommunications,546221833,53784755,1.53%,1.53,,Both,LITE
+2023-12-31,United States,Motorola Solutions Inc,Telecommunications,6433506033,633487208,1.22%,1.22,,Both,MSI
+2023-12-31,United States,Ooma Inc,Telecommunications,8270873,814407,0.29%,0.29,,Ownership,OOMA
+2023-12-31,United States,Roku Inc,Telecommunications,917937003,90386384,0.33%,0.69,,Both,ROKU
+2023-12-31,United States,Shenandoah Telecommunications Co,Telecommunications,69032283,6797393,0.63%,0.63,,Both,SHEN
+2023-12-31,United States,T-Mobile US Inc,Telecommunications,33817646399,3329917819,1.8%,1.8,,Both,TMUS
+2023-12-31,United States,Telephone and Data Systems Inc,Telecommunications,83323053,8204560,0.25%,0.4,,Both,TDS
+2023-12-31,United States,Ubiquiti Inc,Telecommunications,58374132,5747918,0.07%,0.07,,Market Value,UI
+2023-12-31,United States,Verizon Communications Inc,Telecommunications,18718221387,1843124687,1.16%,1.16,,Both,VZ
+2023-12-31,United States,Viasat Inc,Telecommunications,177836852,17511038,0.5%,0.5,,Both,VSAT
+2023-12-31,United States,Viavi Solutions Inc,Telecommunications,249912576,24608109,1.1%,1.1,,Both,VIAV
+2023-12-31,United States,Xperi Inc,Telecommunications,16406858,1615532,0.34%,0.34,,Both,XPER
+2023-12-31,United States,American States Water Co,Utilities,304505588,29983712,1.01%,1.01,,Ownership,AWR
+2023-12-31,United States,American Water Works Co Inc,Utilities,2732856220,269095800,1.05%,1.05,,Both,AWK
+2023-12-31,United States,Atmos Energy Corp,Utilities,1354305171,133354192,0.76%,0.76,,Both,ATO
+2023-12-31,United States,Avista Corp,Utilities,192837347,18988090,0.69%,0.69,,Ownership,AVA
+2023-12-31,United States,California Water Service Group,Utilities,290596068,28614086,0.96%,0.96,,Ownership,CWT
+2023-12-31,United States,CenterPoint Energy Inc,Utilities,916731253,90267658,0.5%,0.5,,Market Value,CNP
+2023-12-31,United States,Clean Harbors Inc,Utilities,884294214,87073684,0.92%,0.92,,Both,CLH
+2023-12-31,United States,CMS Energy Corp,Utilities,1084510437,106788349,0.63%,0.63,,Market Value,CMS
+2023-12-31,United States,Consolidated Edison Inc,Utilities,2395205262,235848367,0.75%,0.75,,Both,ED
+2023-12-31,United States,Constellation Energy Corp,Utilities,3026057399,297966403,0.8%,0.8,,Both,CEG
+2023-12-31,United States,Dominion Energy Inc,Utilities,3251136797,320129267,0.81%,0.81,,Both,D
+2023-12-31,United States,Edison International,Utilities,2067792172,203609025,0.74%,0.74,,Both,EIX
+2023-12-31,United States,Entergy Corp,Utilities,1243656092,122458924,0.57%,0.57,,Market Value,ETR
+2023-12-31,United States,Essential Utilities Inc,Utilities,988025568,97287786,0.95%,0.95,,Both,WTRG
+2023-12-31,United States,Eversource Energy,Utilities,1468444879,144593172,0.67%,0.67,,Both,ES
+2023-12-31,United States,Exelon Corp,Utilities,3790678488,373256249,1.05%,1.05,,Both,EXC
+2023-12-31,United States,National Fuel Gas Co,Utilities,505791016,49803659,1.08%,1.08,,Both,NFG
+2023-12-31,United States,New Jersey Resources Corp,Utilities,339233478,33403259,0.77%,0.77,,Ownership,NJR
+2023-12-31,United States,NextEra Energy Inc,Utilities,25701392999,2530735744,2.06%,2.06,,Both,NEE
+2023-12-31,United States,NiSource Inc,Utilities,684847292,67434770,0.61%,0.61,,Market Value,NI
+2023-12-31,United States,Northwestern Energy Group Inc,Utilities,347905990,34257214,1.1%,1.1,,Both,NWE
+2023-12-31,United States,OGE Energy Corp,Utilities,500415910,49274389,0.7%,0.7,,Both,OGE
+2023-12-31,United States,ONE Gas Inc,Utilities,308684580,30395205,0.86%,0.86,,Ownership,OGS
+2023-12-31,United States,PG&E Corp,Utilities,3908797689,384887077,1%,1.0,,Both,PCG
+2023-12-31,United States,Pinnacle West Capital Corp,Utilities,1126673334,110939998,1.36%,1.36,,Both,PNW
+2023-12-31,United States,Portland General Electric Co,Utilities,397204995,39111533,0.89%,0.89,,Both,POR
+2023-12-31,United States,PPL Corp,Utilities,1124855826,110761033,0.55%,0.55,,Market Value,PPL
+2023-12-31,United States,Public Service Enterprise Group Inc,Utilities,2108073360,207575387,0.68%,0.68,,Both,PEG
+2023-12-31,United States,Republic Services Inc,Utilities,3558781126,350422041,0.68%,0.68,,Both,RSG
+2023-12-31,United States,Sempra,Utilities,9614148125,946675081,2.01%,2.01,,Both,SRE
+2023-12-31,United States,Southern Co/The,Utilities,6217401227,612208043,0.8%,0.8,,Both,SO
+2023-12-31,United States,Southwest Gas Holdings Inc,Utilities,366151089,36053752,0.8%,0.8,,Both,SWX
+2023-12-31,United States,Spire Inc,Utilities,249235605,24541450,0.74%,0.74,,Ownership,SR
+2023-12-31,United States,UGI Corp,Utilities,467505042,46033759,0.89%,0.89,,Both,UGI
+2023-12-31,United States,Vistra Corp,Utilities,751632525,74010903,0.54%,0.54,,Market Value,VST
+2023-12-31,United States,Waste Management Inc,Utilities,7784593250,766524538,1.06%,1.06,,Both,WM

@@ -96,6 +96,149 @@ When presenting options, always give all three:
 2. **Downsides** — the real cost, including what it forecloses later.
 3. **Recommendation** — pick one and say why. Don't lay out a menu and abstain.
 
+## 7. Clear Communication & Task Status
+
+Never leave the current state ambiguous. Every response should make it obvious what happens next.
+Always end with a status
+
+Use one of these whenever appropriate.
+✅ Task Complete
+
+The requested work is finished.
+
+Example:
+
+ ✅ Task Complete
+
+Implemented:
+- Added API endpoint
+- Updated tests
+- Verified all tests pass
+
+No further action required.
+
+⏳ Waiting For You
+
+The next step requires user input.
+
+Example:
+
+ ⏳ Waiting For You
+
+I cannot continue until you choose one of these:
+
+1. SQLite
+2. PostgreSQL
+
+👉 Please reply with one option.
+
+🔍 Please Verify
+
+When something must be tested manually.
+
+Example:
+
+🔍 Please Verify
+
+Please test:
+
+1. Open Settings
+2. Click Save
+3. Confirm the toast appears
+4. Tell me whether it worked.
+
+I will continue based on your result.
+
+Never say only "please test."
+
+Always explain:
+
+    exactly what to do
+    what should happen
+    what information to report back
+ Cannot Complete
+
+When blocked.
+
+Example:
+
+ ❌ Cannot Complete
+
+Reason:
+The required API does not expose this information.
+
+Possible solutions:
+- Use API X
+- Change the requirements
+
+I cannot complete this until that decision is made.
+
+Do not pretend a workaround is a complete solution.
+Separate Your Work From Mine
+
+Always distinguish:
+🤖 What I Did
+
+...
+👤 What You Need To Do
+
+...
+
+If the user has nothing to do, explicitly say:
+
+👤 You don't need to do anything.
+
+Report Verification
+
+Never claim something "works" unless verified.
+
+Instead report exactly what was verified.
+
+Good:
+
+✅ Verified
+
+- Project builds successfully
+- Unit tests pass
+- Linter passes
+
+If verification wasn't possible:
+
+⚠️ Not Verified
+
+Reason:
+I cannot run the project here.
+
+You can verify by running:
+
+npm test
+
+Never imply verification happened when it did not.
+Use Visual Structure
+
+Long responses should be easy to scan.
+
+Prefer:
+
+    ✅ Completed
+    ⚠️ Warning
+    ❌ Blocked
+    ⏳ Waiting
+    🔍 Verify
+    💡 Recommendation
+    📌 Notes
+
+Avoid large walls of text whenever possible.
+Be Explicit
+
+Avoid endings like:
+
+    "Done."
+    "Should work."
+    "I think that's it."
+    "Let me know."
+
+Instead, always end with a clear status indicating whether the task is complete, blocked, waiting for input, or awaiting verification.
 ---
 
 **These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, root causes get fixed instead of papered over, and clarifying questions come before implementation rather than after mistakes.

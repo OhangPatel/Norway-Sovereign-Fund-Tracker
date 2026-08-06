@@ -11,13 +11,39 @@ BACKEND_DIR = SCRIPT_DIR.parent
 DATA_DIR = BACKEND_DIR.parent / "data"
 
 INPUT_CSV = DATA_DIR / "holdings_with_tickers.csv"
+PERIODS_DIR = DATA_DIR / "periods"
 DB_PATH = BACKEND_DIR / "nbim.db"
 BATCH_SIZE = 20
 MAX_RETRIES = 3
+NOT_A_TICKER = {"", "nan", "UNKNOWN", "ERROR", "ERROR_TIMEOUT", "N/A", "NA", "NONE", "NULL",
+                "N/A-PRIVATE"}
+
+
+def collect_tickers():
+    """Every ticker across every period, deduplicated.
+
+    Historical periods show CURRENT market data — that is the agreed design — so a
+    company held in 2022 and sold since still needs a live price today. Fetching only
+    the newest period's holdings would leave every older period without metrics.
+
+    Falls back to the single top-level file when no per-period directories exist, so
+    the script still works on its own.
+    """
+    files = sorted(PERIODS_DIR.glob("*/holdings_with_tickers.csv"))
+    if not files:
+        files = [INPUT_CSV]
+    tickers = set()
+    for f in files:
+        df = pd.read_csv(f)
+        if "Yahoo_Ticker" in df.columns:
+            tickers |= {str(t).strip() for t in df["Yahoo_Ticker"].dropna()}
+    valid = sorted(t for t in tickers if t.upper() not in NOT_A_TICKER)
+    print(f"{len(valid)} distinct ticker(s) across {len(files)} period file(s).", flush=True)
+    return valid
+
 
 def fetch_financial_metrics():
-    df = pd.read_csv(INPUT_CSV)
-    valid_tickers = [t for t in df['Yahoo_Ticker'].dropna().unique() if t not in ["UNKNOWN", "ERROR", "ERROR_TIMEOUT"]]
+    valid_tickers = collect_tickers()
 
     total_batches = (len(valid_tickers) + BATCH_SIZE - 1) // BATCH_SIZE
     print(f"Starting yfinance batch fetcher for {len(valid_tickers)} companies ({total_batches} batches)...", flush=True)

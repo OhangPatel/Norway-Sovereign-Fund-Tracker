@@ -16,15 +16,25 @@ reused. The map only ever grows: a company that leaves the portfolio keeps its e
 so re-processing an older period costs no lookups at all.
 
 This script never guesses. It matches names EXACTLY and leaves everything else blank
-for resolve_tickers.py, which searches Yahoo and verifies each hit against the
-exchange and the listed name before accepting it. A blank ticker is handled fine
-downstream; a wrong one silently corrupts a row and collides with another holding.
+and recorded in data/unresolved_names.csv, for resolve_tickers.py to look up: it
+searches Yahoo and verifies each hit against the exchange and the listed name before
+accepting it. A blank ticker is handled fine downstream; a wrong one silently corrupts
+a row and collides with another holding.
+
+WHERE THE OUTPUT GOES
+    data/periods/{period}/holdings_with_tickers.csv   one directory per period
+    data/holdings_with_tickers.csv                    a copy of the LATEST period only
+
+The period is read from the As_Of column rather than passed as an argument, so the
+file cannot be filed under a period it does not contain. The top-level copy exists so
+the layout stays parallel with frontend/public/data.json, which is likewise the latest
+period; anything that wants "the current holdings" can keep reading the same path.
 
 TYPICAL USE
     python backend/pipeline/fetch_and_clean_holding.py --period 2024-12-31
-    python backend/pipeline/build_holdings.py          # reports any unresolved names
-    python backend/pipeline/resolve_tickers.py         # only if it reported some
-    python backend/pipeline/build_holdings.py          # re-run to bank the new tickers
+    python backend/pipeline/build_holdings.py            # reports any unresolved names
+    python backend/pipeline/resolve_tickers.py --names   # only if it reported some
+    python backend/pipeline/build_holdings.py            # re-run to bank the new tickers
 """
 import argparse
 import sys
@@ -38,6 +48,8 @@ CLEANED_CSV = DATA_DIR / "fully_cleaned_dataset_with_reasons.csv"
 HOLDINGS_CSV = DATA_DIR / "holdings_with_tickers.csv"
 OVERRIDES_CSV = DATA_DIR / "ticker_overrides.csv"
 TICKER_MAP_CSV = DATA_DIR / "ticker_map.csv"
+PERIODS_DIR = DATA_DIR / "periods"
+UNRESOLVED_CSV = DATA_DIR / "unresolved_names.csv"
 
 # Same list resolve_tickers.py uses: strings that were written where a ticker belongs
 # but name no company. They must never enter the map.
@@ -102,13 +114,62 @@ def save_map(mapping):
     print(f"Ticker map now holds {len(df)} name(s) → {TICKER_MAP_CSV.name}", flush=True)
 
 
+def update_unresolved(period, missing, mapping, overrides):
+    """Merge this period's unmatched names into one shared ledger.
+
+    Shared rather than per-period because resolving is the slow, rate-limited step:
+    a company held in four periods must only ever cost one Yahoo lookup. Names that
+    have since entered the map drop out on their own, so the file shrinks as work is
+    done and is empty when there is nothing left to resolve.
+
+    First_Seen keeps the earliest period a name appeared in, purely so the list can be
+    read oldest-first — the further back a name goes, the more likely it is delisted
+    and will never resolve.
+    """
+    known = set(mapping) | set(overrides)
+    ledger = {}
+    if UNRESOLVED_CSV.exists():
+        prev = pd.read_csv(UNRESOLVED_CSV, dtype=str).fillna("")
+        for _, r in prev.iterrows():
+            name = r["Name"].strip()
+            if name and name not in known:
+                ledger[name] = (r.get("Country", "").strip(), r.get("First_Seen", "").strip())
+
+    for name, country in missing:
+        prior = ledger.get(name)
+        first_seen = min(prior[1], period) if prior and prior[1] else period
+        ledger[name] = (country, first_seen)
+
+    if not ledger:
+        UNRESOLVED_CSV.unlink(missing_ok=True)
+        print(f"Nothing unresolved — removed {UNRESOLVED_CSV.name}.", flush=True)
+        return
+
+    df = pd.DataFrame(
+        [(n, c, f) for n, (c, f) in sorted(ledger.items(), key=lambda kv: (kv[1][1], kv[0]))],
+        columns=["Name", "Country", "First_Seen"],
+    )
+    df.to_csv(UNRESOLVED_CSV, index=False)
+    print(f"{len(df)} name(s) awaiting resolution → {UNRESOLVED_CSV.name}", flush=True)
+
+
+def latest_period():
+    """Newest period present under data/periods/, or None. Periods sort as ISO dates."""
+    if not PERIODS_DIR.exists():
+        return None
+    found = [d.name for d in PERIODS_DIR.iterdir()
+             if d.is_dir() and (d / "holdings_with_tickers.csv").exists()]
+    return max(found) if found else None
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--cleaned", type=Path, default=CLEANED_CSV,
                     help=f"filtered output from step #1 (default: {CLEANED_CSV.name})")
-    ap.add_argument("--out", type=Path, default=HOLDINGS_CSV,
-                    help=f"where to write (default: {HOLDINGS_CSV.name})")
+    ap.add_argument("--out", type=Path, default=None,
+                    help="where to write (default: data/periods/{period}/holdings_with_tickers.csv, "
+                         "with the period taken from the data's As_Of column)")
     ap.add_argument("--dry-run", action="store_true", help="report only, write nothing")
     args = ap.parse_args()
 
@@ -169,9 +230,21 @@ def main():
         print("\n--dry-run: nothing written.", flush=True)
         return 0
 
-    out.to_csv(args.out, index=False)
-    print(f"\nWrote {len(out)} row(s) for {period} → {args.out.name}", flush=True)
+    dest = args.out or (PERIODS_DIR / period / "holdings_with_tickers.csv")
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    out.to_csv(dest, index=False)
+    print(f"\nWrote {len(out)} row(s) for {period} → {dest.relative_to(DATA_DIR.parent)}", flush=True)
+
     save_map(mapping)
+    missing = list(zip(unresolved, df.loc[df["Yahoo_Ticker"] == "", "Country"].tolist()))
+    update_unresolved(period, missing, mapping, overrides)
+
+    # Mirror the newest period to the top level, matching frontend/public/data.json.
+    # Backfilling an OLD period must never overwrite the current holdings, so this is
+    # keyed on which period is actually newest, not on which one just ran.
+    if args.out is None and period == latest_period():
+        out.to_csv(HOLDINGS_CSV, index=False)
+        print(f"{period} is the latest period → also wrote {HOLDINGS_CSV.name}", flush=True)
     return 0
 
 

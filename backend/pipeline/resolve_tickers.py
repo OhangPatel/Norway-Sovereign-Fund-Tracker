@@ -43,6 +43,8 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 DATA_DIR = SCRIPT_DIR.parent.parent / "data"
 HOLDINGS_CSV = DATA_DIR / "holdings_with_tickers.csv"
 OVERRIDES_CSV = DATA_DIR / "ticker_overrides.csv"
+TICKER_MAP_CSV = DATA_DIR / "ticker_map.csv"
+UNRESOLVED_CSV = DATA_DIR / "unresolved_names.csv"
 
 # Values that mean "no ticker" but were written as if they were one. The bare
 # string is the bug: 12 unlisted companies all shared "N/A-PRIVATE", so the app
@@ -171,11 +173,91 @@ def load_overrides() -> dict:
         }
 
 
+def resolve_name_list(dry_run: bool) -> int:
+    """Work through data/unresolved_names.csv and append hits to data/ticker_map.csv.
+
+    Exists because holdings are now kept per period. A company held in four periods
+    appears in four files, but resolving is the slow, rate-limited step, so it must
+    cost exactly one lookup. The ledger is the union of every period's unmatched
+    names, and the map it feeds is shared by all of them.
+
+    Same bar as the repair path above: a candidate must clear MATCH_THRESHOLD against
+    the exchange's own name, and a ticker already spoken for is never handed to a
+    second company. Anything that does not clear the bar is left for the next run —
+    many of the oldest names are delisted or acquired and never will.
+    """
+    if not UNRESOLVED_CSV.exists():
+        print(f"{UNRESOLVED_CSV.name} does not exist — nothing to resolve.", flush=True)
+        return 0
+
+    pending = pd.read_csv(UNRESOLVED_CSV, dtype=str).fillna("")
+    mapping = {}
+    if TICKER_MAP_CSV.exists():
+        tm = pd.read_csv(TICKER_MAP_CSV, dtype=str).fillna("")
+        mapping = {r["Name"].strip(): r["Yahoo_Ticker"].strip() for _, r in tm.iterrows()
+                   if r["Name"].strip() and r["Yahoo_Ticker"].strip()}
+    overrides = load_overrides()
+    mapping.update({k: v for k, v in overrides.items() if v})
+    claimed = set(mapping.values())
+
+    todo = [(r["Name"].strip(), r["Country"].strip(), r.get("First_Seen", "").strip())
+            for _, r in pending.iterrows()
+            if r["Name"].strip() and r["Name"].strip() not in mapping]
+    print(f"{len(mapping)} name(s) already mapped. Resolving {len(todo)}.", flush=True)
+    print(f"About {len(todo) * SEARCH_PAUSE / 60:.0f} minutes at the current pace.\n", flush=True)
+
+    found = 0
+    for n, (name, country, first_seen) in enumerate(todo, 1):
+        time.sleep(SEARCH_PAUSE)
+        chosen, why = "", "unresolved"
+        for score, sym, listed in search_candidates(name, country):
+            if score < MATCH_THRESHOLD or sym in claimed:
+                continue
+            chosen, why = sym, f"matched {listed!r} ({score:.2f})"
+            break
+        if chosen:
+            mapping[name] = chosen
+            claimed.add(chosen)
+            found += 1
+        print(f"  [{n}/{len(todo)}] {first_seen} {name[:40]:40} -> {chosen or '(blank)':<14} {why}",
+              flush=True)
+        # Written every 25 so a long run that is interrupted keeps what it has earned.
+        if found and n % 25 == 0 and not dry_run:
+            _write_map(mapping)
+
+    print(f"\nResolved {found} of {len(todo)}. {len(todo) - found} still have no ticker.", flush=True)
+    if dry_run:
+        print("--dry-run: nothing written.", flush=True)
+        return 0
+    _write_map(mapping)
+    print("Re-run build_holdings.py for each period to attach the new tickers.", flush=True)
+    return 0
+
+
+def _write_map(mapping: dict) -> None:
+    """Persist the map.
+
+    Writes every known name, including ones that also have a manual override. Dropping
+    those would fight build_holdings.py's save_map(), which keeps them: the two writers
+    would then add and remove the same six rows on alternate runs. Redundancy is
+    harmless here because every reader consults ticker_overrides.csv first.
+    """
+    rows = sorted((n, t) for n, t in mapping.items() if t)
+    pd.DataFrame(rows, columns=["Name", "Yahoo_Ticker"]).to_csv(TICKER_MAP_CSV, index=False)
+    print(f"    ...saved {len(rows)} mapping(s) to {TICKER_MAP_CSV.name}", flush=True)
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--all", action="store_true", help="re-resolve every row, not just broken ones")
+    ap.add_argument("--names", action="store_true",
+                    help=f"resolve {UNRESOLVED_CSV.name} into {TICKER_MAP_CSV.name} "
+                         f"instead of repairing {HOLDINGS_CSV.name}")
     ap.add_argument("--dry-run", action="store_true", help="report only, write nothing")
     args = ap.parse_args()
+
+    if args.names:
+        return resolve_name_list(args.dry_run)
 
     df = pd.read_csv(HOLDINGS_CSV, dtype=str).fillna("")
     if "Yahoo_Ticker" not in df.columns:

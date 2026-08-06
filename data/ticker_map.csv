@@ -1,11 +1,21 @@
 Name,Yahoo_Ticker
 1&1 AG,1U1.DE
+2G Energy AG,2GB.DE
 360 ONE WAM Ltd,360ONE.NS
 3M Co,MMM
+3M India Ltd,3MINDIA.BO
 3i Group PLC,III.L
+4imprint Group PLC,FOUR.L
+7C Solarparken AG,HRPK.F
+8x8 Inc,EGHT
 ABB India Ltd,ABB.NS
+ABM Industries Inc,ABM
+ACADIA Pharmaceuticals Inc,ACAD
+ACCO Brands Corp,ACCO
+ACI Worldwide Inc,ACIW
 ACM Research Inc,ACMR
 ADT Inc,ADT
+ADTRAN Holdings Inc,ADTN
 AECOM,ACM
 AEM Holdings Ltd,AWX.SI
 AIA Engineering Ltd,AIAENG.NS
@@ -15,8 +25,10 @@ AMETEK Inc,AME
 APL Apollo Tubes Ltd,APLAPOLLO.NS
 AST SpaceMobile Inc,ASTS
 AT&T Inc,T
+ATI Inc,ATI
 ATS Corp,ATS.TO
 AU Small Finance Bank Ltd,AUBANK.NS
+AZZ Inc,AZZ
 Aarti Industries Ltd,AARTIIND.NS
 Aavas Financiers Ltd,AAVAS.NS
 AbCellera Biologics Inc,ABCL.TO
@@ -26,50 +38,66 @@ Abercrombie & Fitch Co,ANF
 Academy Sports & Outdoors Inc,ASO
 Accenture PLC,ACN
 Acutaas Chemicals Ltd,ACUTAS.NS
+Adani Green Energy Ltd,ADANIGREEN.NS
 Adani Total Gas Ltd,ATGL.NS
 Aditya Birla Capital Ltd,ABCAPITAL.NS
 Aditya Birla Real Estate Ltd,ABREL.NS
 Aditya Birla Sun Life Asset Management Co Ltd,ABSLAMC.NS
 Admiral Group PLC,ADM.L
 Adobe Inc,ADBE
+Advance Auto Parts Inc,AAP
 Advanced Drainage Systems Inc,WMS
+Advanced Energy Industries Inc,AEIS
 Advanced Micro Devices Inc,AMD
 Aegis Logistics Ltd,AEGISLOG.NS
 Aegis Vopak Terminals Ltd,AEGISVOPAK.NS
 AerCap Holdings NV,AER
+Affiliated Managers Group Inc,AMG
 Affle 3i Ltd,AFFLE.NS
+Aflac Inc,AFL
 Agilent Technologies Inc,A
 Agnico Eagle Mines Ltd,AEM.TO
 Ahluwalia Contracts India Ltd,AHLUCONT.NS
+Air Canada,AC.TO
 Air Products and Chemicals Inc,APD
 Airbnb Inc,ABNB
 Airtel Africa PLC,AAF.L
 Ajanta Pharma Ltd,AJANTPHARM.NS
 Akamai Technologies Inc,AKAM
 Alamos Gold Inc,AGI.TO
+Albany International Corp,AIN
 Albemarle Corp,ALB
 Albertsons Cos Inc,ACI
 Alcoa Corp,AA
+Alembic Pharmaceuticals Ltd,APLLTD.BO
 Alexandria Real Estate Equities Inc,ARE
 Algonquin Power & Utilities Corp,AQN.TO
 Align Technology Inc,ALGN
 Alimentation Couche-Tard Inc,ATD.TO
 Alivus Life Sciences Ltd,ALIVUS.NS
 Alkem Laboratories Ltd,ALKEM.NS
+Alkermes PLC,ALKS
+Alkyl Amines Chemicals,ALKYLAMINE.BO
 Alliance Laundry Holdings Inc,ALH
 Allianz SE,ALV.DE
+Allied Properties Real Estate Investment Trust,AP-UN.TO
+Allison Transmission Holdings Inc,ALSN
 Allstate Corp/The,ALL
 Alnylam Pharmaceuticals Inc,ALNY
+Alpha Metallurgical Resources Inc,AMR
 Alphabet Inc,GOOGL
 AltaGas Ltd,ALA.TO
+AlzChem Group AG,ACT.F
 Amara Raja Energy & Mobility Ltd,AMARAJABAT.NS
 Amazon.com Inc,AMZN
 Amber Enterprises India Ltd,AMBER.NS
 Ambuja Cements Ltd,AMBUJACEM.NS
 Amcor PLC,AMCR
+Amer Sports Inc,AS
 American Express Co,AXP
 American Homes 4 Rent,AMH
 American International Group Inc,AIG
+American States Water Co,AWR
 American Tower Corp,AMT
 American Water Works Co Inc,AWK
 Americold Realty Trust Inc,COLD
@@ -79,16 +107,21 @@ Amphenol Corp,APH
 Analog Devices Inc,ADI
 Anant Raj Ltd,ANANTRAJ.NS
 Anglo American PLC,AAL.L
+Annaly Capital Management Inc,NLY
 Antero Midstream Corp,AM
 Anthem Biosciences Ltd,ANTHEM.NS
+Antofagasta PLC,ANTO.L
 Aon PLC,AON
 Apar Industries Ltd,APARINDS.NS
+Apogee Enterprises Inc,APOG
 Apollo Global Management Inc,APO
 Apollo Hospitals Enterprise Ltd,APOLLOHOSP.NS
 Apollo Tyres Ltd,APOLLOTYRE.NS
 AppLovin Corp,APP
 Apple Inc,AAPL
+Applied Industrial Technologies Inc,AIT
 Applied Materials Inc,AMAT
+Applied Optoelectronics Inc,AAOI
 Aptitude Software Group PLC,APTD.L
 Aptiv PLC,APTV
 Aptus Value Housing Finance India Ltd,APTUS.NS
@@ -96,18 +129,29 @@ Aramark,ARMK
 Arch Capital Group Ltd,ACGL
 Archean Chemical Industries Ltd,ACI.NS
 Archer-Daniels-Midland Co,ADM
+Archrock Inc,AROC
+Arcosa Inc,ACA
 Ares Management Corp,ARES
 Argo Properties NV,ARND.DE
 Arista Networks Inc,ANET
 Aritzia Inc,ATZ.TO
 Aroundtown SA,AT1.DE
+Array Technologies Inc,ARRY
+Arrow Electronics Inc,ARW
+Arrowhead Pharmaceuticals Inc,ARWR
 Arthur J Gallagher & Co,AJG
+Arvinas Inc,ARVN
 Arvind Ltd,ARVIND.NS
+Asahi India Glass Ltd,ASAHIINDIA.BO
 Asbury Automotive Group Inc,ABG
 Ashok Leyland Ltd,ASHOKLEY.NS
 Ashtead Group PLC,AHT.L
 Asian Paints Ltd,ASIANPAINT.NS
+Asian Pay Television Trust,S7OU.SI
+Associated Banc-Corp,ASB
+Associated British Foods PLC,ABF.L
 Assurant Inc,AIZ
+Astec Lifesciences Ltd,ASTEC.NS
 Aster DM Healthcare Ltd,ASTERDM.NS
 Astra Microwave Products Ltd,ASTRAMICRO.NS
 AstraZeneca PLC,AZN.L
@@ -115,12 +159,16 @@ AstraZeneca Pharma India Ltd,ASTRAZEN.NS
 Astral Ltd,ASTRAL.NS
 Atco Ltd/Canada,ACO-X.TO
 AtkinsRealis Group Inc,ATRL.TO
+Atkore Inc,ATKR
 Atmos Energy Corp,ATO
 Atoss Software SE,AOF.DE
 Atul Ltd,ATUL.NS
+Auction Technology Group PLC,ATG.L
 AurionPro Solutions Ltd,AURIONPRO.NS
 Aurobindo Pharma Ltd,AUROPHARMA.NS
+Aurubis AG,NDA1.F
 Auto Trader Group PLC,AUTO.L
+Auto1 Group SE,AG1.F
 AutoZone Inc,AZO
 Autodesk Inc,ADSK
 Autoliv Inc,ALV
@@ -133,22 +181,31 @@ Avenue Supermarts Ltd,DMART.NS
 Avery Dennison Corp,AVY
 Avidity Biosciences Inc,RNA
 Avient Corp,AVNT
+Avista Corp,AVA
 Aviva PLC,AV.L
+Avon Technologies PLC,AVON.L
+Axcelis Technologies Inc,ACLS
 Axis Bank Ltd,AXISBANK.NS
 Axon Enterprise Inc,AXON
 Axsome Therapeutics Inc,AXSM
 Azad Engineering Ltd,AZAD.NS
+Azenta Inc,AZTA
 B&M European Value Retail SA,BME.L
+B2Gold Corp,BTO.TO
 BASF India Ltd,BASF.NS
 BASF SE,BAS.DE
 BCE Inc,BCE.TO
 BOYD GROUP INC,BYD.TO
 BP PLC,BP.L
+BRANICKS Group AG,BRNK.F
+BRP Inc,DOO.TO
 BSE Ltd,BSE.NS
 BT Group PLC,BT-A.L
 BXP Inc,BXP
 Babcock International Group PLC,BAB.L
+Badger Meter Inc,BMI
 Bajaj Auto Ltd,BAJAJ-AUTO.NS
+Bajaj Consumer Care Ltd,BAJAJCON.NS
 Bajaj Electricals Ltd,BAJAJELEC.NS
 Bajaj Finance Ltd,BAJFINANCE.NS
 Bajaj Finserv Ltd,BAJAJFINSV.NS
@@ -158,40 +215,53 @@ Balaji Amines Ltd,BALAMINES.NS
 Balchem Corp,BCPC
 Balfour Beatty PLC,BBY.L
 Balkrishna Industries Ltd,BALKRISIND.NS
+Ballard Power Systems Inc,BLDP.TO
 Balrampur Chini Mills Ltd,BALRAMCHIN.NS
 Baltic Classifieds Group PLC,BCG.L
 Bandhan Bank Ltd,BANDHANBNK.NS
 Bandwidth Inc,BAND
+Bank OZK,OZK
 Bank of America Corp,BAC
 Bank of Baroda,BANKBARODA.NS
 Bank of Montreal,BMO.TO
 Bank of New York Mellon Corp/The,BK
 Bank of Nova Scotia/The,BNS.TO
+BankUnited Inc,BKU
 Barclays PLC,BARC.L
 Barratt Redrow PLC,BTRW.L
 Basler AG,BSL.DE
+Bata India Ltd,BATAINDIA.NS
+Bausch + Lomb Corp,BLCO.TO
 Bausch Health Cos Inc,BHC.TO
+Baxter International Inc,BAX
 Bayer AG,BAYN.DE
 Bayerische Motoren Werke AG,BMW.DE
 Beazley PLC,BEZ.L
 Bechtle AG,BC8.DE
 Becton Dickinson & Co,BDX
 Beiersdorf AG,BEI.DE
+BellRing Brands Inc,BRBR
 Bellway PLC,BWY.L
+Berger Paints India Ltd,BERGEPAINT.BO
 Berkeley Group Holdings PLC,BKG.L
 Berkshire Hathaway Inc,BRK-B
 Bertrandt AG,BDT.DE
+Best Buy Co Inc,BBY
+Beyond Meat Inc,BYND
 Bharat Dynamics Ltd,BDL.NS
 Bharat Forge Ltd,BHARATFORG.NS
 Bharat Petroleum Corp Ltd,BPCL.NS
 Bharti Airtel Ltd,BHARTIARTL.NS
 Bharti Hexacom Ltd,BHARTIHEXA.NS
+Big Technologies plc,BIG.L
 Bikaji Foods International Ltd,BIKAJI.NS
 Bilfinger SE,GBF.DE
 BioMarin Pharmaceutical Inc,BMRN
 BioNTech SE,22UA.DE
 Biocon Ltd,BIOCON.NS
 Biogen Inc,BIIB
+Biohaven Ltd,BHVN
+Birkenstock Holding Plc,BIRK
 Birlasoft Ltd,BSOFT.NS
 BlackBerry Ltd,BB.TO
 BlackLine Inc,BL
@@ -200,41 +270,65 @@ Blackstone Inc,BX
 Blend Labs Inc,BLND
 Block Inc,SQ
 Bloom Energy Corp,BE
+Blue Dart Express Ltd,BLUEDART.NS
+Blue Jet Healthcare Ltd,BLUEJET.NS
 Blue Star Ltd,BLUESTARCO.NS
 Boardwalk Real Estate Investment Trust,BEI-UN.TO
 Bodycote PLC,BOY.L
+Boise Cascade Co,BCC
 Bombardier Inc,BBD-B.TO
+Bombay Burmah Trading Co,BBTC.NS
 Booking Holdings Inc,BKNG
+Booz Allen Hamilton Holding Corp,BAH
+Boralex Inc,BLX.TO
 BorgWarner Inc,BWA
+Borosil Renewables Ltd,BORORENEW.NS
 Bosch Ltd,BOSCHLTD.NS
 Boston Scientific Corp,BSX
+Braze Inc,BRZE
+Bread Financial Holdings Inc,BFH
 Brenntag SE,BNR.DE
+Bridgebio Pharma Inc,BBIO
 Brigade Enterprises Ltd,BRIGADE.NS
+BrightSpring Health Services Inc,BTSG
+Brighthouse Financial Inc,BHF
 Brinker International Inc,EAT
 Bristol-Myers Squibb Co,BMY
 Britannia Industries Ltd,BRITANNIA.NS
 British Land Co PLC/The,BLND.L
 Broadcom Inc,AVGO
 Broadridge Financial Solutions Inc,BR
+Brookdale Senior Living Inc,BKD
+Brookfield Asset Management Ltd,BAM.TO
 Brookfield Corp,BN.TO
 Brookfield India Real Estate Trust,BIRET.NS
 Brookfield Infrastructure Corp,BIPC.TO
 Brookfield Renewable Corp,BEPC.TO
 Brown & Brown Inc,BRO
+Brown-Forman Corp,BF-B
 Bunge Global SA,BG
 Bunzl PLC,BNZL.L
 Burberry Group PLC,BRBY.L
+Burlington Stores Inc,BURL
 Bytes Technology Group PLC,BYIT.L
+CACI International Inc,CACI
 CAE Inc,CAE.TO
+CANCOM SE,COK.DE
 CBRE Group Inc,CBRE
+CCL Industries Inc,CCL-B.TO
 CCL Products India Ltd,CCLPROD.NS
 CF Industries Holdings Inc,CF
 CG Power & Industrial Solutions Ltd,CGPOWER.NS
 CGI Inc,GIB-A.TO
+CIE Automotive India Ltd,CIEINDIA.NS
+CMC Markets PLC,CMCX.L
 CME Group Inc,CME
 CMS Energy Corp,CMS
 CMS Info Systems Ltd,CMSINFO.NS
+CNO Financial Group Inc,CNO
 CRH PLC,CRH
+CRISIL Ltd,CRISIL.NS
+CS Disco Inc,LAW
 CSE Global Ltd,544.SI
 CSW Industrials Inc,CSWI
 CSX Corp,CSX
@@ -243,7 +337,12 @@ Cabaletta Bio Inc,CABA
 Cable One Inc,CABO
 Cabot Corp,CBT
 Cadence Design Systems Inc,CDNS
+Caesars Entertainment Inc,CZR
+California Water Service Group,CWT
+Calix Inc,CALX
+Camden Property Trust,CPT
 Cameco Corp,CCO.TO
+Campbell Soup Co,CPB
 Can Fin Homes Ltd,CANFINHOME.NS
 Canada Packers Inc,CPKR.TO
 Canadian Apartment Properties REIT,CAR-UN.TO
@@ -252,6 +351,7 @@ Canadian National Railway Co,CNR.TO
 Canadian Pacific Kansas City Ltd,CP.TO
 Canadian Tire Corp Ltd,CTC-A.TO
 Canara Bank,CANBK.NS
+Cannae Holdings Inc,CNNE
 Capita PLC,CPI.L
 CapitaLand Ascendas REIT,A17U.SI
 CapitaLand Integrated Commercial Trust,C38U.SI
@@ -259,34 +359,47 @@ CapitaLand Investment Ltd/Singapore,9CI.SI
 Capital One Financial Corp,COF
 Capital Power Corp,CPX.TO
 Capitaland India Trust,CY6U.SI
+Caplin Point Laboratories Ltd,CAPLIPOINT.BO
 Capri Holdings Ltd,CPRI
 Capstone Copper Corp,CS.TO
 CarMax Inc,KMX
 Carborundum Universal Ltd,CARBORUNIV.NS
 Card Factory PLC,CARD.L
 Cardinal Health Inc,CAH
+Cardlytics Inc,CDLX
 Carl Zeiss Meditec AG,AFX.DE
+Carlisle Cos Inc,CSL
 Carnival PLC,CCL.L
 Carpenter Technology Corp,CRS
+Carrier Global Corp,CARR
 Cartrade Tech Ltd,CARTRADE.NS
 Carvana Co,CVNA
 Casella Waste Systems Inc,CWST
 Casey's General Stores Inc,CASY
 Castrol India Ltd,CASTROLIND.NS
+Caterpillar Inc,CAT
 Cboe Global Markets Inc,CBOE
 Ceat Ltd,CEATLTD.NS
+Celanese Corp,CE
 Celestica Inc,CLS.TO
 Cencora Inc,COR
 Centene Corp,CNC
 CenterPoint Energy Inc,CNP
 Centrica PLC,CNA.L
 Century Plyboards India Ltd,CENTURYPLY.NS
+Cerence Inc,CRNC
+Cewe Stiftung & Co KGAA,CWC.DE
 Chambal Fertilisers and Chemicals Ltd,CHAMBLFERT.NS
+Champion Homes Inc,SKY
+ChargePoint Holdings Inc,CHPT
 Charles Schwab Corp/The,SCHW
 Charter Communications Inc,CHTR
 Chartwell Retirement Residences,CSH-UN.TO
 Check Point Software Technologies Ltd,CHKP
+Chegg Inc,CHGG
+Chemed Corp,CHE
 Chemplast Sanmar Ltd,CHEMPLASTS.NS
+Chemring Group PLC,CHG.L
 Cheniere Energy Inc,LNG
 Chennai Super Kings Cricket Ltd,CHENNAISUPR.NS
 Chevron Corp,CVX
@@ -303,6 +416,8 @@ Cipla Ltd/India,CIPLA.NS
 Cisco Systems Inc,CSCO
 Citigroup Inc,C
 Citizens Financial Group Inc,CFG
+City Union Bank Ltd,CUB.NS
+Clarivate PLC,CLVT
 Clean Harbors Inc,CLH
 Clean Science & Technology Ltd,CLEAN.NS
 Clearwater Analytics Holdings Inc,CWAN
@@ -313,8 +428,11 @@ Coats Group PLC,COA.L
 Coca-Cola Co/The,KO
 Coca-Cola Consolidated Inc,COKE
 Coca-Cola Europacific Partners PLC,CCEP.L
+Coca-Cola HBC AG,CCH.L
 Coeur Mining Inc,CDE
 Coforge Ltd,COFORGE.NS
+Cogeco Communications Inc,CCA.TO
+Cogent Communications Holdings Inc,CCOI
 Cognex Corp,CGNX
 Cognizant Technology Solutions Corp,CTSH
 Cohance Lifesciences Ltd,COHANCE.NS
@@ -323,8 +441,11 @@ Coinbase Global Inc,COIN
 Colgate-Palmolive Co,CL
 Colgate-Palmolive India Ltd,COLPAL.NS
 Colliers International Group Inc,CIGI.TO
+Columbia Banking System Inc,COLB
 Comcast Corp,CMCSA
+Comfort Systems USA Inc,FIX
 ComfortDelGro Corp Ltd,C52.SI
+CommVault Systems Inc,CVLT
 Commercial Metals Co,CMC
 Commerzbank AG,CBK.DE
 Compass Group PLC,CPG.L
@@ -338,10 +459,14 @@ Consolidated Edison Inc,ED
 Constellation Brands Inc,STZ
 Constellation Energy Corp,CEG
 Constellation Software Inc/Canada,CSU.TO
+Constellium SE,CSTM
 Container Corp Of India Ltd,CONCOR.NS
 Continental AG,CON.DE
 Convatec Group PLC,CTEC.L
 Copart Inc,CPRT
+CorMedix Inc,CRMD
+Core & Main Inc,CNM
+Core Laboratories NV,CLB
 Corebridge Financial Inc,CRBG
 Corning Inc,GLW
 Coromandel International Ltd,COROMANDEL.NS
@@ -349,30 +474,43 @@ Corteva Inc,CTVA
 Costco Wholesale Corp,COST
 Coty Inc,COTY
 Coupang Inc,CPNG
+Coursera Inc,COUR
 Covestro AG,1COV.DE
 Craftsman Automation Ltd,CRAFTSMAN.NS
 Crane Co,CR
 Cranswick PLC,CWK.L
+CreditAccess Grameen Ltd,CREDITACC.NS
+Crest Nicholson Holdings plc,CRST.L
 Crocs Inc,CROX
 Croda International PLC,CRDA.L
 Crompton Greaves Consumer Electricals Ltd,CROMPTON.NS
 Crowdstrike Holdings Inc,CRWD
 Crown Castle Inc,CCI
+Crown Holdings Inc,CCK
 CubeSmart,CUBE
 Cummins Inc,CMI
 Cummins India Ltd,CUMMINSIND.NS
 Curtiss-Wright Corp,CW
 Cyient Ltd,CYIENT.NS
 Cytokinetics Inc,CYTK
+D2L Inc,DTOL.TO
 DBS Group Holdings Ltd,D05.SI
 DCC PLC,DCC.L
+DEN Networks Ltd,DEN.BO
+DENTSPLY SIRONA Inc,XRAY
 DR Horton Inc,DHI
 DT Midstream Inc,DTM
 DWS Group GmbH & Co KGaA,DWS.DE
+DXC Technology Co,DXC
+DaVita Inc,DVA
 Dabur India Ltd,DABUR.NS
 Daimler Truck Holding AG,DTG.DE
 Dalmia Bharat Ltd,DALBHARAT.NS
+Dana Inc,DAN
 Danaher Corp,DHR
+Darling Ingredients Inc,DAR
+Data Patterns India Ltd,DATAPATTNS.NS
+Datadog Inc,DDOG
 Dayforce Inc,DAY
 Deckers Outdoor Corp,DECK
 Deepak Fertilisers & Petrochemicals Corp Ltd,DEEPAKFERT.NS
@@ -383,11 +521,15 @@ Delhivery Ltd,DELHIVERY.NS
 Delivery Hero SE,DHER.DE
 Dell Technologies Inc,DELL
 Denali Therapeutics Inc,DNLI
+Dermapharm Holding SE,DMP.F
 Derwent London PLC,DLN.L
 Descartes Systems Group Inc/The,DSG.TO
 Deutsche Bank AG,DBK.DE
+Deutsche Beteiligungs AG,DBAN.F
 Deutsche Boerse AG,DB1.DE
 Deutsche EuroShop AG,DEQ.DE
+Deutsche Lufthansa AG,LHA.DE
+Deutsche Pfandbriefbank AG,PBB.F
 Deutsche Post AG,DHL.DE
 Deutsche Telekom AG,DTE.DE
 Deutsche Wohnen SE,DWNI.DE
@@ -399,13 +541,17 @@ Digital Realty Trust Inc,DLR
 Diploma PLC,DPLM.L
 Divi's Laboratories Ltd,DIVISLAB.NS
 Dixon Technologies India Ltd,DIXON.NS
+Docebo Inc,DCBO.TO
 Docusign Inc,DOCU
+Dollar General Corp,DG
+Dollar Tree Inc,DLTR
 Dollarama Inc,DOL.TO
 Dominion Energy Inc,D
 Domino's Pizza Inc,DPZ
 Doms Industries Ltd,DOMS.NS
 DoorDash Inc,DASH
 Douglas AG,DOU.DE
+Douglas Emmett Inc,DEI
 Dow Inc,DOW
 Dr Ing hc F Porsche AG,P911.DE
 Dr Lal PathLabs Ltd,LALPATHLAB.NS
@@ -414,18 +560,22 @@ Draegerwerk AG & Co KGaA,DRW3.DE
 DraftKings Inc,DKNG
 Drax Group PLC,DRX.L
 Dream Industrial Real Estate Investment Trust,DIR-UN.TO
+Duolingo Inc,DUOL
+Dynatrace Inc,DT
 E.ON SE,EOAN.DE
 EID Parry India Ltd,EIDPARRY.NS
 EIH Ltd,EIHOTEL.NS
 EMCOR Group Inc,EME
 EPAM Systems Inc,EPAM
 EPL Ltd,EPL.NS
+ESR-REIT,9A4U.SI
 Eagle Materials Inc,EXP
 East West Bancorp Inc,EWBC
 EastGroup Properties Inc,EGP
 Eastman Chemical Co,EMN
 Eaton Corp PLC,ETN
 EchoStar Corp,SATS
+Eckert & Ziegler SE,EUZ.DE
 Ecolab Inc,ECL
 Edelweiss Financial Services Ltd,EDELWEISS.NS
 Edgewell Personal Care Co,EPC
@@ -433,10 +583,13 @@ Edison International,EIX
 Edwards Lifesciences Corp,EW
 Eicher Motors Ltd,EICHERMOT.NS
 Einhell Germany AG,EIN3.DE
+Elanco Animal Health Inc,ELAN
 Elecon Engineering Co Ltd,ELECON.NS
+Electronic Arts Inc,EA
 Electronics Mart India Ltd,EMIL.NS
 Electrosteel Castings Ltd,ELECTCAST.NS
 Element Fleet Management Corp,EFN.TO
+Elementis PLC,ELM.L
 Elevance Health Inc,ELV
 Elgi Equipments Ltd,ELGIEQUIP.NS
 Eli Lilly & Co,LLY
@@ -444,29 +597,49 @@ Emami Ltd,EMAMILTD.NS
 Embassy Developments Ltd,EMBDL.NS
 Embassy Office Parks REIT,EMBASSY.NS
 Emerson Electric Co,EMR
+Enanta Pharmaceuticals Inc,ENTA
 Enbridge Inc,ENB.TO
 Endeavour Mining PLC,EDV.L
 Endurance Technologies Ltd,ENDURANCE.NS
 EnerSys,ENS
+Enerflex Ltd,EFX.TO
+Energiekontor AG,EKT.F
+Enerpac Tool Group Corp,EPAC
 Engineers India Ltd,ENGINERSIN.NS
 Enphase Energy Inc,ENPH
+Ensign Energy Services Inc,ESI.TO
 Entain PLC,ENT.L
+Entegris Inc,ENTG
 Entergy Corp,ETR
+Equifax Inc,EFX
 Equinix Inc,EQIX
 Equitable Holdings Inc,EQH
+Equity LifeStyle Properties Inc,ELS
 Equity Residential,EQR
 Eris Lifesciences Ltd,ERIS.NS
 Escorts Kubota Ltd,ESCORTS.NS
 Essent Group Ltd,ESNT
+Essential Properties Realty Trust Inc,EPRT
 Essential Utilities Inc,WTRG
+Essentra PLC,ESNT.L
+Essex Property Trust Inc,ESS
+Establishment Labs Holdings Inc,ESTA
 Estee Lauder Cos Inc/The,EL
 Eternal Ltd,ETERNAL.NS
+Etsy Inc,ETSY
+Euronet Worldwide Inc,EEFT
+Evercore Inc,EVR
 Everest Group Ltd,EG
 Eversource Energy,ES
+Evolent Health Inc,EVH
 Evonik Industries AG,EVK.DE
+Evotec SE,EVT.F
+Exasol AG,EXL.F
+Excelerate Energy Inc,EE
 Exchange Income Corp,EIF.TO
 Exelon Corp,EXC
 Exide Industries Ltd,EXIDEIND.NS
+ExlService Holdings Inc,EXLS
 Expedia Group Inc,EXPE
 Experian PLC,EXPN.L
 Extra Space Storage Inc,EXR
@@ -475,6 +648,8 @@ Exxon Mobil Corp,XOM
 FDM Group Holdings PLC,FDM.L
 FMC Corp,FMC
 FSN E-Commerce Ventures Ltd,NYKAA.NS
+FTAI Aviation Ltd,FTAI
+FUCHS PETROLUB SE,FPE4.F
 FUCHS SE,FPE3.DE
 FactSet Research Systems Inc,FDS
 Fair Isaac Corp,FICO
@@ -483,60 +658,84 @@ Fastenal Co,FAST
 FedEx Corp,FDX
 Federal Bank Ltd,FEDERALBNK.NS
 Federal Realty Investment Trust,FRT
+Federal Signal Corp,FSS
 Ferguson Enterprises Inc,FERG
+Fidelity National Financial Inc,FNF
 Fidelity National Information Services Inc,FIS
 Fifth Third Bancorp,FITB
 Filtronic PLC,FTC.L
 Finning International Inc,FTT.TO
+Fino Payments Bank Ltd,FINOPB.NS
 Finolex Cables Ltd,FINCABLES.NS
+Finolex Industries Ltd,FINPIPE.NS
+First American Financial Corp,FAF
 First Capital Real Estate Investment Trust,FCR-UN.TO
+First Hawaiian Inc,FHB
 First Horizon Corp,FHN
 First Industrial Realty Trust Inc,FR
 First Quantum Minerals Ltd,FM.TO
 First Solar Inc,FSLR
 FirstService Corp,FSV.TO
+Firstsource Solutions Ltd,FSL.BO
 Fiserv Inc,FI
+Five Below Inc,FIVE
 Five-Star Business Finance Ltd,FIVESTAR.NS
+Five9 Inc,FIVN
 Flex Ltd,FLEX
 Flowers Foods Inc,FLO
 Flutter Entertainment PLC,FLUT
 Ford Motor Co,F
+Formycon AG,FYB.DE
 Fortinet Inc,FTNT
 Fortis Healthcare Ltd,FORTIS.NS
 Fortis Inc/Canada,FTS.TO
 Fortive Corp,FTV
 Fortune Brands Innovations Inc,FBIN
+Forward Air Corp,FWRD
 Fox Corp,FOX
 Franco-Nevada Corp,FNV.TO
+Frasers Logistics & Commercial Trust,BUOU.SI
 Freenet AG,FNTN.DE
 Fresenius Medical Care AG,FME.DE
 Fresenius SE & Co KGaA,FRE.DE
+Freshpet Inc,FRPT
 Freshworks Inc,FRSH
 Fresnillo PLC,FRES.L
 Frontier Communications Parent Inc,FYBR
+FuelCell Energy Inc,FCEL
 Fulcrum Therapeutics Inc,FULC
+Fulton Financial Corp,FULT
 Funding Circle Holdings PLC,FCH.L
+Future PLC,FUTR.L
 G-III Apparel Group Ltd,GIII
+GAIL India Ltd,GAIL.BO
 GE HealthCare Technologies Inc,GEHC
 GE Vernova Inc,GEV
 GE Vernova T&D India Ltd,GEVERNOVA.NS
 GEA Group AG,G1A.DE
 GFL Environmental Inc,GFL.TO
+GFT Technologies SE,GFT.DE
 GHCL Ltd,GHCL.NS
 GMM Pfaudler Ltd,GMMPFAUDLR.NS
 GMR Airports Ltd,GMRAIRPORT.NS
 GSK PLC,GSK.L
 GTPL Hathway Ltd,GTPL.NS
 Gabriel India Ltd,GABRIEL.NS
+Galaxy Surfactants Ltd,GALAXYSURF.NS
+Gallant Venture Ltd,5IG.SI
+Galliford Try Holdings PLC,GFRD.L
 Games Workshop Group PLC,GAW.L
 Garmin Ltd,GRMN
 Gartner Inc,IT
 Garware Hi-Tech Films Ltd,GARFIBRES.NS
 Gates Industrial Corp PLC,GTES
+Gateway Distriparks Ltd,GATEWAY.NS
 Generac Holdings Inc,GNRC
+General Dynamics Corp,GD
 General Electric Co,GE
 General Mills Inc,GIS
 General Motors Co,GM
+Gentex Corp,GNTX
 Genting Singapore Ltd,G13.SI
 Genuine Parts Co,GPC
 Genus PLC,GNS.L
@@ -547,65 +746,99 @@ Gibson Energy Inc,GEI.TO
 Gildan Activewear Inc,GIL.TO
 Gilead Sciences Inc,GILD
 Gillette India Ltd,GILLETTE.NS
+Gitlab Inc,GTLB
 Gland Pharma Ltd,GLAND.NS
+Glaukos Corp,GKOS
 GlaxoSmithKline Pharmaceuticals Ltd,GLAXO.NS
 Glenmark Pharmaceuticals Ltd,GLENMARK.NS
 Global Health Ltd/India,MEDANTA.NS
 Global Payments Inc,GPN
 Globe Life Inc,GL
+Globus Medical Inc,GMED
 Go Digit General Insurance Ltd,GODIGIT.NS
+GoDaddy Inc,GDDY
 Godawari Power and Ispat Ltd,GPIL.NS
 Godrej Agrovet Ltd,GODREJAGRO.NS
 Godrej Consumer Products Ltd,GODREJCP.NS
+Godrej Industries Ltd,GODREJIND.NS
 Godrej Properties Ltd,GODREJPROP.NS
 Golar LNG Ltd,GLNG
 Goldman Sachs Group Inc/The,GS
+GrafTech International Ltd,EAF
+Grafton Group PLC,GFTU.L
 Grainger PLC,GRI.L
 Grand Canyon Education Inc,LOPE
 Grand City Properties SA,GYC.DE
+Granite Construction Inc,GVA
 Granite Real Estate Investment Trust,GRT-UN.TO
+Granules India Ltd,GRANULES.BO
+Graphic Packaging Holding Co,GPK
+Graphite India Ltd,GRAPHITE.NS
 Grasim Industries Ltd,GRASIM.NS
 Gravita India Ltd,GRAVITA.NS
 Great Eastern Shipping Co Ltd/The,GESHIP.NS
 Great Portland Estates PLC,GPE.L
+Greencore Group PLC,GNC.L
 Greggs PLC,GRG.L
 Grindwell Norton Ltd,GRINDWELL.NS
+Grocery Outlet Holding Corp,GO
 Group 1 Automotive Inc,GPI
 Guardant Health Inc,GH
+Guidewire Software Inc,GWRE
 Gujarat Gas Ltd,GUJGASLTD.NS
 Gujarat Narmada Valley Fertilizers & Chemicals Ltd,GNFC.NS
 Gujarat Pipavav Port Ltd,GPPL.NS
 Gujarat State Fertilizers & Chemicals Ltd,GSFC.NS
 Gujarat State Petronet Ltd,GSPL.NS
+H&R Block Inc,HRB
+H&R Real Estate Investment Trust,HR-UN.TO
 HCA Healthcare Inc,HCA
 HCL Technologies Ltd,HCLTECH.NS
 HDFC Asset Management Co Ltd,HDFCAMC.NS
 HDFC Bank Ltd,HDFCBANK.NS
 HDFC Life Insurance Co Ltd,HDFCLIFE.NS
+HEG Ltd,HEG.NS
+HEICO Corp,HEI
 HF Sinclair Corp,DINO
 HFCL Ltd,HFCL.NS
 HOCHTIEF AG,HOT.DE
 HSBC Holdings PLC,HSBA.L
 HUGO BOSS AG,BOSS.DE
 Haleon PLC,HLN.L
+Halfords Group PLC,HFD.L
 Halliburton Co,HAL
 Halma PLC,HLMA.L
+Hancock Whitney Corp,HWC
 Hannover Rueck SE,HNR1.DE
 Happiest Minds Technologies Ltd,HAPPSTMNDS.NS
+Harmonic Inc,HLIT
 Hartford Insurance Group Inc/The,HIG
+Hasbro Inc,HAS
+Hathway Cable & Datacom Ltd,HATHWAY.BO
+Hatsun Agro Product Ltd,HATSUN.NS
 Havells India Ltd,HAVELLS.NS
+Hawaiian Electric Industries Inc,HE
 Hays PLC,HAS.L
+Healthpeak Properties Inc,DOC
 Heidelberg Materials AG,HEIG.DE
+Helen of Troy Ltd,HELE
+Helical PLC,HLCL.L
+Helios Towers PLC,HTWS.L
 HelloFresh SE,HFG.DE
 Helmerich & Payne Inc,HP
 Henkel AG & Co KGaA,HEN3.DE
+Henry Schein Inc,HSIC
+Hensoldt AG,HAG.DE
+Heranba Industries Ltd,HERANBA.NS
 Herc Holdings Inc,HRI
 Hero MotoCorp Ltd,HEROMOTOCO.NS
 Hershey Co/The,HSY
 Hexaware Technologies Ltd,HEXAWARE.NS
 Hexcel Corp,HXL
+Hikal Ltd,HIKAL.BO
 Hikma Pharmaceuticals PLC,HIK.L
 Hill & Smith PLC,HILS.L
+Hilton Food Group PLC,HFG.L
 Hilton Worldwide Holdings Inc,HLT
 Himadri Speciality Chemical Ltd,HSCL.NS
 Hindustan Aeronautics Ltd,HAL.NS
@@ -618,30 +851,46 @@ Hitachi Energy India Ltd,POWERINDIA.NS
 Hologic Inc,HOLX
 Home Depot Inc/The,HD
 Home First Finance Co India Ltd,HOMEFIRST.NS
+Honeywell Automation India Ltd,HONAUT.BO
 Host Hotels & Resorts Inc,HST
 Howden Joinery Group PLC,HWDN.L
 Howmet Aerospace Inc,HWM
+Hub Group Inc,HUBG
+HubSpot Inc,HUBS
+Hudbay Minerals Inc,HBM.TO
+Hudson Pacific Properties Inc,HPP-PC
 Humana Inc,HUM
 Hunting PLC,HTG.L
 Huntington Bancshares Inc/OH,HBAN
+Huntsman Corp,HUN
 Hutchison Port Holdings Trust,NS8U.SI
 Hydro One Ltd,H.TO
+Hypoport SE,HYQ.DE
 Hyundai Motor India Ltd,HYUNDAI.NS
 ICICI Bank Ltd,ICICIBANK.NS
 ICICI Lombard General Insurance Co Ltd,ICICIGI.NS
 ICICI Prudential Life Insurance Co Ltd,ICICIPRULI.NS
 ICON PLC,ICLR
+IDEX Corp,IEX
+IDEXX Laboratories Inc,IDXX
 IDFC First Bank Ltd,IDFCFIRSTB.NS
+IDT Corp,IDT
 IG Group Holdings PLC,IGG.L
 IMI PLC,IMI.L
 ION Exchange India Ltd,IONEXCHANG.NS
 IONOS Group SE,IOS.DE
 IQVIA Holdings Inc,IQV
 ITC Hotels Ltd,ITCHOTELS.NS
+ITM Power PLC,ITM.L
 Illinois Tool Works Inc,ITW
+Illumina Inc,ILMN
 Inchcape PLC,INCH.L
 Indegene Ltd,INDEGENE.NS
+Independence Realty Trust Inc,IRT
+Independent Bank Corp,IBCP
 IndiaMart InterMesh Ltd,INDIAMART.NS
+Indian Bank,INDIANB.BO
+Indian Hotels Co Ltd,INDHOTEL.BO
 Indian Hotels Co Ltd/The,INDHOTEL.NS
 Indian Oil Corp Ltd,IOC.NS
 Indian Railway Catering & Tourism Corp Ltd,IRCTC.NS
@@ -654,7 +903,10 @@ Info Edge India Ltd,NAUKRI.NS
 Informa PLC,INF.L
 Infosys Ltd,INFY.NS
 Ingersoll Rand Inc,IR
+Ingevity Corp,NGVT
 Ingredion Inc,INGR
+Innospec Inc,IOSP
+Inogen Inc,INGN
 Inox Wind Ltd,INOXWIND.NS
 Insmed Inc,INSM
 Instone Real Estate Group SE,INS.DE
@@ -666,23 +918,40 @@ InterContinental Hotels Group PLC,IHG.L
 InterDigital Inc,IDCC
 InterGlobe Aviation Ltd,INDIGO.NS
 Intercontinental Exchange Inc,ICE
+Interfor Corp,IFP.TO
 International Business Machines Corp,IBM
 International Consolidated Airlines Group SA,IAG.L
 International Flavors & Fragrances Inc,IFF
 International Gemmological Institute India Ltd,IGIL.NS
 International Paper Co,IP
+International Personal Finance PLC,IPF.L
+International Workplace Group PLC,IWG.L
 Intertek Group PLC,ITRK.L
 Intuit Inc,INTU
 Intuitive Surgical Inc,ISRG
 Inventurus Knowledge Solutions Ltd,IKS.NS
+Investec PLC,INVR.L
+Invinity Energy Systems PLC,IES.L
 Invitation Homes Inc,INVH
+Iovance Biotherapeutics Inc,IOVA
 Ipca Laboratories Ltd,IPCALAB.NS
+Iridium Communications Inc,IRDM
+Iron Mountain Inc,IRM
+Ivanhoe Mines Ltd,IVN.TO
+J Sainsbury PLC,SBRY.L
 JB Chemicals & Pharmaceuticals Ltd,JBCHEPHARM.NS
 JB Hunt Transport Services Inc,JBHT
+JBG SMITH Properties,JBGS
+JBM Auto Ltd,JBMA.BO
 JD Sports Fashion PLC,JD.L
+JDC Group AG,JDC.F
 JFrog Ltd,FROG
 JK Cement Ltd,JKCEMENT.NS
+JK Lakshmi Cement Ltd,JKLAKSHMI.BO
 JK Paper Ltd,JKPAPER.NS
+JK Tyre & Industries Ltd,JKTYRE.NS
+JM Financial Ltd,JMFINANCIL.BO
+JOST Werke SE,JST.F
 JPMorgan Chase & Co,JPM
 JSW Steel Ltd,JSWSTEEL.NS
 JTC PLC,JTC.L
@@ -692,6 +961,7 @@ Jai Balaji Industries Ltd,JAIBALAJI.NS
 James Fisher & Sons PLC,FSJ.L
 Janus Henderson Group PLC,JHG
 Jenoptik AG,JEN.DE
+Jindal Saw Ltd,JINDALSAW.BO
 Jio Financial Services Ltd,JIOFIN.NS
 Johnson & Johnson,JNJ
 Johnson Controls International plc,JCI
@@ -704,6 +974,7 @@ Just Dial Ltd,JUSTDIAL.NS
 Jyothy Labs Ltd,JYOTHYLAB.NS
 Jyoti CNC Automation Ltd,JYOTICNC.NS
 K+S AG,SDF.DE
+KB Home,KBH
 KBR Inc,KBR
 KEC International Ltd,KEC.NS
 KEI Industries Ltd,KEI.NS
@@ -714,10 +985,14 @@ KPIT Technologies Ltd,KPITTECH.NS
 KPR Mill Ltd,KPRMILL.NS
 KRBL Ltd,KRBL.NS
 KWS Saat SE & Co KGaA,KWS.DE
+Kainos Group PLC,KNOS.L
+Kajaria Ceramics Ltd,KAJARIACER.BO
 Kalyan Jewellers India Ltd,KALYANKJIL.NS
 Kaveri Seed Co Ltd,KSCL.NS
 Kaynes Technology India Ltd,KAYNES.NS
+Keller Group PLC,KLR.L
 Kenvue Inc,KVUE
+Keppel DC REIT,AJBU.SI
 Keppel Infrastructure Trust,A7RU.SI
 Keppel Ltd,BN4.SI
 Keurig Dr Pepper Inc,KDP
@@ -725,14 +1000,21 @@ Keyera Corp,KEY.TO
 Keysight Technologies Inc,KEYS
 Kilroy Realty Corp,KRC
 Kimberly-Clark Corp,KMB
+Kimco Realty Corp,KIM
 Kinaxis Inc,KXS.TO
 Kinder Morgan Inc,KMI
 Kingfisher PLC,KGF.L
 Kinross Gold Corp,K.TO
 Kirloskar Oil Engines Ltd,KIRLOSENG.NS
 Kirloskar Pneumatic Co Ltd,KIRLPNU.NS
+Kite Realty Group Trust,KRG
 Klarna Group PLC,KLAR
+Knight-Swift Transportation Holdings Inc,KNX
+Knights Group Holdings PLC,KGH.L
 Knorr-Bremse AG,KBX.DE
+Kodiak Gas Services Inc,KGS
+Kohl's Corp,KSS
+Korn Ferry,KFY
 Kotak Mahindra Bank Ltd,KOTAKBANK.NS
 Kraft Heinz Co/The,KHC
 Krishna Institute of Medical Sciences Ltd,KIMS.NS
@@ -740,6 +1022,7 @@ Kroger Co/The,KR
 Kwality Wall's India Ltd,KWIL.NS
 L&T Finance Ltd,LTF.NS
 L&T Technology Services Ltd,LTTS.NS
+L3Harris Technologies Inc,LHX
 LANXESS AG,LXS.DE
 LEG Immobilien SE,LEG.DE
 LG Electronics India Ltd,LGEINDIA.NS
@@ -754,7 +1037,12 @@ Labcorp Holdings Inc,LH
 Lam Research Corp,LRCX
 Lamb Weston Holdings Inc,LW
 Land Securities Group PLC,LAND.L
+Lantheus Holdings Inc,LNTH
+Larsen & Toubro Ltd,LT.NS
+Las Vegas Sands Corp,LVS
 Lattice Semiconductor Corp,LSCC
+Laureate Education Inc,LAUR
+Laurentian Bank of Canada,LB-PH.TO
 Laurus Labs Ltd,LAURUSLABS.NS
 Lazard Inc,LAZ
 Lear Corp,LEA
@@ -763,20 +1051,31 @@ Leidos Holdings Inc,LDOS
 Lemon Tree Hotels Ltd,LEMONTREE.NS
 LendInvest PLC,LINV.L
 Lennar Corp,LEN
+Lennox International Inc,LII
 Lenskart Solutions Ltd,LENSKART.NS
 Liberty Broadband Corp,LBRDA
 Liberty Global Ltd,LBTYA
 Liberty Latin America Ltd,LILA
 Liberty Media Corp-Liberty Formula One,FWONA
+Life Insurance Corp of India,LICI.NS
 Life360 Inc,360
+Ligand Pharmaceuticals Inc,LGND
+Light & Wonder Inc,LNWO
 Lightspeed Commerce Inc,LSPD.TO
 Linamar Corp,LNR.TO
 Lincoln Electric Holdings Inc,LECO
+Lincoln National Corp,LNC
 Linde India Ltd,LINDEINDIA.NS
 Linde PLC,LIN
+Lindsay Corp,LNN
 Lineage Inc,LINE
 Lion Finance Group PLC,LIOF.L
+Liontrust Asset Management PLC,LIO.L
 Lithia Motors Inc,LAD
+Littelfuse Inc,LFUS
+LivaNova PLC,LIVN
+Live Nation Entertainment Inc,LYV
+LiveRamp Holdings Inc,RAMP
 Lloyds Banking Group PLC,LLOY.L
 Lloyds Metals & Energy Ltd,LLOYDSMETAL.NS
 Loblaw Cos Ltd,L.TO
@@ -785,14 +1084,19 @@ Loews Corp,L
 London Stock Exchange Group PLC,LSEG.L
 LondonMetric Property PLC,LMP.L
 Lowe's Cos Inc,LOW
+Lululemon Athletica Inc,LULU
 Lumen Technologies Inc,LUMN
 Lumentum Holdings Inc,LITE
 Lupin Ltd,LUPIN.NS
+Lyft Inc,LYFT
+LyondellBasell Industries NV,LYB
 M&G PLC,MNG.L
 M&T Bank Corp,MTB
+MDU Resources Group Inc,MDU
 ME GROUP INTERNATIONAL PLC,MEGP.L
 METRO AG,B4B.DE
 MGIC Investment Corp,MTG
+MGM Resorts International,MGM
 MONY Group PLC,MONY.L
 MP Evans Group PLC,MPE.L
 MP Materials Corp,MP
@@ -801,8 +1105,10 @@ MSCI Inc,MSCI
 MTAR Technologies Ltd,MTAR.NS
 MTU Aero Engines AG,MTX.DE
 Macy's Inc,M
+Madison Square Garden Sports Corp,MSGS
 Magna International Inc,MG.TO
 Mahanagar Gas Ltd,MGL.NS
+Maharashtra Seamless Ltd,MAHSEAMLES.BO
 Mahindra & Mahindra Financial Services Ltd,M&MFIN.NS
 Mahindra & Mahindra Ltd,M&M.NS
 Mahindra Holidays & Resorts India Ltd,MHRIL.NS
@@ -812,29 +1118,41 @@ MakeMyTrip Ltd,MMYT
 Man Group PLC/Jersey,EMG.L
 Manappuram Finance Ltd,MANAPPURAM.NS
 Mangalore Refinery & Petrochemicals Ltd,MRPL.NS
+Manhattan Associates Inc,MANH
 Mankind Pharma Ltd,MANKIND.NS
 Manulife Financial Corp,MFC.TO
 Maple Leaf Foods Inc,MFI.TO
+Maplebear Inc,CART
 Mapletree Industrial Trust,ME8U.SI
 Mapletree Logistics Trust,M44U.SI
 Marathon Petroleum Corp,MPC
 Marico Ltd,MARICO.NS
+Markel Group Inc,MKL
 MarketAxess Holdings Inc,MKTX
 Marks & Spencer Group PLC,MKS.L
 Marksans Pharma Ltd,MARKSANS.NS
+Marqeta Inc,MQ
 Marriott International Inc/MD,MAR
+Marriott Vacations Worldwide Corp,VAC
 Marsh & McLennan Cos Inc,MMC
+Martin Marietta Materials Inc,MLM
 Maruti Suzuki India Ltd,MARUTI.NS
 Marvell Technology Inc,MRVL
 Mastek Ltd,MASTEK.NS
+Masterbrand Inc,MBC
 Mastercard Inc,MA
 Match Group Inc,MTCH
 Mattel Inc,MAT
 Max Financial Services Ltd,MFSL.NS
 Max Healthcare Institute Ltd,MAXHEALTH.NS
+Maximus Inc,MMS
 Mazagon Dock Shipbuilders Ltd,MAZDOCK.NS
 McDonald's Corp,MCD
 McKesson Corp,MCK
+McLeod Russel India Ltd,MCLEODRUSS.BO
+MediaAlpha Inc,MAX
+Medifast Inc,MED
+Medios AG,ILM1.F
 Medline Inc,MDLN
 Medplus Health Services Ltd,MEDPLUS.NS
 Medtronic PLC,MDT
@@ -843,10 +1161,12 @@ MercadoLibre Inc,MELI
 Mercedes-Benz Group AG,MBG.DE
 Merck & Co Inc,MRK
 Merck KGaA,MRK.DE
+Merit Medical Systems Inc,MMSI
 Meritage Homes Corp,MTH
 MetLife Inc,MET
 Meta Platforms Inc,META
 Metlen Energy & Metals PLC,METLEN.L
+Metro Bank Holdings PLC,MTRO.L
 Metro Inc/CN,MRU.TO
 Metropolis Healthcare Ltd,METROPOLIS.NS
 Mettler-Toledo International Inc,MTD
@@ -856,15 +1176,22 @@ Microsoft Corp,MSFT
 Mid-America Apartment Communities Inc,MAA
 Millrose Properties Inc,MRP
 Mindspace Business Parks REIT,MINDSPACE.NS
+Minerals Technologies Inc,MTX
+Mirum Pharmaceuticals Inc,MIRM
 Mitie Group PLC,MTO.L
 Mobico Group PLC,MCG.L
+Mobileye Global Inc,MBLY
+Moderna Inc,MRNA
+Molina Healthcare Inc,MOH
 Molson Coors Beverage Co,TAP
 Molson Coors Canada Inc,TPX-B.TO
 Mondelez International Inc,MDLZ
 Mondi PLC,MNDI.L
+MongoDB Inc,MDB
 Monolithic Power Systems Inc,MPWR
 Monster Beverage Corp,MNST
 Moody's Corp,MCO
+Moonpig Group PLC,MOON.L
 Morgan Stanley,MS
 Mosaic Co/The,MOS
 Motherson Sumi Wiring India Ltd,MSUMI.NS
@@ -876,16 +1203,26 @@ Muenchener Rueckversicherungs-Gesellschaft AG in Muenchen,MUV2.DE
 Multi Commodity Exchange of India Ltd,MCX.NS
 Muthoot Finance Ltd,MUTHOOTFIN.NS
 NBCC India Ltd,NBCC.NS
+NCC Group PLC,NCC.L
 NCC Ltd/India,NCC.NS
+NCR Atleos Corp,NATL
+NETGEAR Inc,NTGR
 NETLINK NBN TRUST,CJLU.SI
+NIIT Learning Systems Ltd,NIITMTS.NS
+NIIT Ltd,NIITLTD.BO
 NIKE Inc,NKE
+NIOX GROUP PLC,NIOX.L
 NMC Health PLC,NMC.L
+NMI Holdings Inc,NMIH
+NOCIL Ltd,NOCIL.BO
 NOV Inc,NOV
 NTPC Green Energy Ltd,NTPCGREEN.NS
 NTT DC REIT,NTTU.SI
 NU Holdings Ltd/Cayman Islands,NU
 NVIDIA Corp,NVDA
+NVR Inc,NVR
 NXP Semiconductors NV,NXPI
+Nagarro SE,NA9.F
 Narayana Hrudayalaya Ltd,NH.NS
 Nasdaq Inc,NDAQ
 NatWest Group PLC,NWG.L
@@ -896,14 +1233,22 @@ National Bank of Canada,NA.TO
 National Fuel Gas Co,NFG
 National Grid PLC,NG.L
 Navin Fluorine International Ltd,NAVINFLUOR.NS
+Navitas Semiconductor Corp,NVTS
+Nazara Technologies Ltd,NAZARA.NS
 Nemetschek SE,NEM.DE
+NeoGenomics Inc,NEO
+Neogen Corp,NEOG
+Nera Telecommunications Ltd,N01.SI
 Nestle India Ltd,NESTLEIND.NS
+NetApp Inc,NTAP
 Netflix Inc,NFLX
 Netweb Technologies India Ltd,NETWEB.NS
 Network18 Media & Investments Ltd,NETWORK18.NS
 Neuland Laboratories Ltd,NEULANDLAB.NS
 Neurogene Inc,NGNE
+New Fortress Energy Inc,NFE
 New Jersey Resources Corp,NJR
+NewMarket Corp,NEU
 Newgen Software Technologies Ltd,NEWGEN.NS
 Newmont Corp,NEM
 News Corp,NWSA
@@ -914,15 +1259,21 @@ Nexus Select Trust,NEXUSSELECT.NS
 NiSource Inc,NI
 Nippon Life India Asset Management Ltd,NAM-INDIA.NS
 Nordex SE,NDX1.DE
+Nordson Corp,NDSN
 Norfolk Southern Corp,NSC
+Norma Group SE,NOEJ.F
 Northland Power Inc,NPI.TO
+Northwest Natural Holding Co,NWN
 Northwestern Energy Group Inc,NWE
 Noventiq Holdings plc,NVTQ.L
+Nu Skin Enterprises Inc,NUS
 Nucor Corp,NUE
+Nutanix Inc,NTNX
 Nutrien Ltd,NTR.TO
 Nuvama Wealth Management Ltd,NUVAMA.NS
 O'Reilly Automotive Inc,ORLY
 OGE Energy Corp,OGE
+ON Semiconductor Corp,ON
 ONE Gas Inc,OGS
 ONEOK Inc,OKE
 ORIC Pharmaceuticals Inc,ORIC
@@ -930,21 +1281,39 @@ OSB Group PLC,OSB.L
 OSRAM Licht AG,OSR.DE
 Oberoi Realty Ltd,OBEROIRLTY.NS
 Ocado Group PLC,OCDO.L
+Oceaneering International Inc,OII
 Oklo Inc,OKLO
+Okta Inc,OKTA
+Ola Electric Mobility Ltd,OLAELEC.NS
+Old Dominion Freight Line Inc,ODFL
+Old Republic International Corp,ORI
+Olin Corp,OLN
+Ollie's Bargain Outlet Holdings Inc,OLLI
+On the Beach Group PLC,OTB.L
 One 97 Communications Ltd,PAYTM.NS
 One Mobikwik Systems Ltd,MOBIKWIK.NS
 Onesource Specialty Pharma Ltd,ONESOURCE.NS
 Onestream Inc,OS
+Onex Corp,ONEX.TO
+Onto Innovation Inc,ONTO
+Ooma Inc,OOMA
 Open Text Corp,OTEX.TO
 Optimum Communications Inc,OPTU
+Option Care Health Inc,OPCH
 Oracle Corp,ORCL
 Oracle Financial Services Software Ltd,OFSS.NS
 Orkla India Ltd,ORKLAINDIA.NS
 Ormat Technologies Inc,ORA
+Oshkosh Corp,OSK
 Otis Worldwide Corp,OTIS
+Outfront Media Inc,OUT
 Oversea-Chinese Banking Corp Ltd,O39.SI
+Owens Corning,OC
+Oxford Biomedica PLC,OXB.L
+Oxford Instruments PLC,OXIG.L
 Oxford Nanopore Technologies PLC,ONT.L
 PACCAR Inc,PCAR
+PATRIZIA SE,PAT.DE
 PB Fintech Ltd,POLICYBZR.NS
 PBF Energy Inc,PBF
 PCBL CHEMICAL Ltd,PCBL.NS
@@ -953,20 +1322,35 @@ PG&E Corp,PCG
 PI Industries Ltd,PIIND.NS
 PNB Housing Finance Ltd,PNBHOUSING.NS
 PNC Financial Services Group Inc/The,PNC
+PNC Infratech Ltd,PNCINFRA.NS
+PNE AG,PNE3.DE
+PPG Industries Inc,PPG
 PPL Corp,PPL
+PROG Holdings Inc,PRG
+PTC India Ltd,PTC.BO
 PTC Industries Ltd,PTCIL.NS
+PVA TePla AG,TPE.F
 PVR Inox Ltd,PVRINOX.NS
+Packaging Corp of America,PKG
+Pagseguro Digital Ltd,PAGS
 Palantir Technologies Inc,PLTR
 Palo Alto Networks Inc,PANW
 Pan African Resources PLC,PAF.L
 Pan American Silver Corp,PAAS.TO
+Papa John's International Inc,PZZA
 Paradeep Phosphates Ltd,PARADEEP.NS
+Paragon Banking Group PLC,PAG.L
 Parker-Hannifin Corp,PH
 Patanjali Foods Ltd,PATANJALI.NS
+Patterson-UTI Energy Inc,PTEN
 PayPal Holdings Inc,PYPL
+PayPoint PLC,PAY.L
 Pembina Pipeline Corp,PPL.TO
+Penn Entertainment Inc,PENN
 Pennon Group PLC,PNN.L
 Pensionbee Group PLC,PBEE.L
+Pentixapharm Holding AG,PTP.F
+Penumbra Inc,PEN
 PepsiCo Inc,PEP
 Performance Food Group Co,PFGC
 Perrigo Co PLC,PRGO
@@ -976,7 +1360,9 @@ Petrofac Ltd,PFC.L
 Petronet LNG Ltd,PETRONET.NS
 Pets at Home Group Plc,PETS.L
 Pfizer Inc,PFE
+Pfizer Ltd,PFIZER.BO
 Phillips 66,PSX
+Phinia Inc,PHIN
 Phoenix Group Holdings PLC,PHNX.L
 Phoenix Mills Ltd/The,PHOENIXLTD.NS
 Pidilite Industries Ltd,PIDILITIND.NS
@@ -985,11 +1371,17 @@ Pinnacle West Capital Corp,PNW
 Pinterest Inc,PINS
 Piramal Finance Ltd,PIRAMALFINL.NS
 Piramal Pharma Ltd,PPLPHARMA.NS
+Planet Fitness Inc,PLNT
 Playtech Plc,PTEC.L
+Plexus Corp,PLXS
 Plug Power Inc,PLUG
 Poly Medicure Ltd,POLYMED.NS
 Polycab India Ltd,POLYCAB.NS
+Polyplex Corp Ltd,POLYPLEX.NS
+Popular Inc,BPOP
 Porsche Automobil Holding SE,PAH3.DE
+Portillo's Inc,PTLO
+Portland General Electric Co,POR
 Post Holdings Inc,POST
 PotlatchDeltic Corp,PCH
 Power Corp of Canada,POW.TO
@@ -998,7 +1390,12 @@ Power Grid Corp of India Ltd,POWERGRID.NS
 Praj Industries Ltd,PRAJIND.NS
 Premier Energies Ltd,PREMIERENE.NS
 Premium Brands Holdings Corp,PBH.TO
+Prestige Consumer Healthcare Inc,PBH
 Prestige Estates Projects Ltd,PRESTIGE.NS
+Primaris Real Estate Investment Trust,PMZ-UN.TO
+Prince Pipes & Fittings Ltd,PRINCEPIPE.NS
+Principal Financial Group Inc,PFG
+ProSiebenSat.1 Media SE,PSM.DE
 Procore Technologies Inc,PCOR
 Procter & Gamble Co/The,PG
 Procter & Gamble Health Ltd,PGHL.NS
@@ -1014,19 +1411,25 @@ PureTech Health PLC,PRTC.L
 Q2 Holdings Inc,QTWO
 QIAGEN NV,QIA.DE
 QUALCOMM Inc,QCOM
+QinetiQ Group PLC,QQ.L
+Qorvo Inc,QRVO
 Quanta Services Inc,PWR
 Quebecor Inc,QBR-B.TO
+Quest Diagnostics Inc,DGX
 Quilter PLC,QLT.L
 RB Global Inc,RBA.TO
 RBC Bearings Inc,RBC
 RBL Bank Ltd,RBLBANK.NS
 REC Ltd,RECLTD.NS
 RELX PLC,REL.L
+RENK Group AG,R3NK.F
 REV Group Inc,REVG
+REVOLUTION Medicines Inc,RVMDW
 RHT Health Trust,RHT.SI
 RM PLC,RM.L
 ROBLOX Corp,RBLX
 RR Kabel Ltd,RRKABEL.NS
+RS GROUP PLC,RS1.L
 RTX Corp,RTX
 RWE AG,RWE.DE
 Radian Group Inc,RDN
@@ -1035,40 +1438,58 @@ Raffles Medical Group Ltd,BSL.SI
 Railtel Corp of India Ltd,RAILTEL.NS
 Rain Industries Ltd,RAIN.NS
 Rainbow Children's Medicare Ltd,RAINBOW.NS
+Rajesh Exports Ltd,RAJESHEXPO.BO
 Ralliant Corp,RALY
+Rallis India Ltd,RALLIS.BO
 Rambus Inc,RMBS
 Ramco Cements Ltd/The,RAMCOCEM.NS
 Ramkrishna Forgings Ltd,RKFORGE.NS
+Rapid7 Inc,RPD
 Rategain Travel Technologies Ltd,RATEGAIN.NS
 Ratnamani Metals & Tubes Ltd,RATNAMANI.NS
+Raymond James Financial Inc,RJF
+Raymond Ltd,RAYMOND.NS
 Raymond Realty Ltd,RAYMONDLSL.NS
 Rayonier Inc,RYN
+Raytheon Technologies Corp,^RTX
 ReNew Energy Global PLC,RNW
 Realty Income Corp,O
 Reckitt Benckiser Group PLC,RKT.L
+Recursion Pharmaceuticals Inc,RXRX
 Redcare Pharmacy NV,RDC.DE
 Redington Ltd,REDINGTON.NS
 Regal Rexnord Corp,RRX
 Regency Centers Corp,REG
 Regeneron Pharmaceuticals Inc,REGN
+Regions Financial Corp,RF
+Reinsurance Group of America Inc,RGA
+Relaxo Footwears Ltd,RELAXO.BO
+Relay Therapeutics Inc,RLAY
+Reliance Home Finance Ltd,RHFL.NS
 Reliance Inc,RS
 Reliance Industries Ltd,RELIANCE.NS
+Remitly Global Inc,RELY
+RenaissanceRe Holdings Ltd,RNR-PF
 Rentokil Initial PLC,RTO.L
 Republic Services Inc,RSG
 ResMed Inc,RMD
 Restaurant Brands International Inc,QSR.TO
 Revolution Medicines Inc,RVMD
+Rexford Industrial Realty Inc,REXR
 Rheinmetall AG,RHM.DE
 Rightmove PLC,RMV.L
 Rio Tinto PLC,RIO.L
 RioCan Real Estate Investment Trust,REI-UN.TO
+Rithm Capital Corp,RITM
 Riverstone Holdings Ltd,AP4.SI
 Robinhood Markets Inc,HOOD
 Rocket Internet SE,RKET.DE
 Rockpoint Gas Storage Inc,RPT.TO
 Rockwell Automation Inc,ROK
+Rogers Communications Inc,RCI-B.TO
 Rogers Corp,ROG
 Roku Inc,ROKU
+Rollins Inc,ROL
 Rolls-Royce Holdings PLC,RR.L
 Roper Technologies Inc,ROP
 Rosebank Industries PLC,ROSE.L
@@ -1080,18 +1501,27 @@ Royal Caribbean Cruises Ltd,RCL
 Royal Gold Inc,RGLD
 Royalty Pharma PLC,RPRX
 Rubrik Inc,RBRK
+Russel Metals Inc,RUS.TO
+Ryder System Inc,R
 S&P Global Inc,SPGI
+SAF-Holland SE,SFQ.F
 SAI Life Sciences Ltd,SAILIFE.NS
 SAP SE,SAP.DE
 SATS Ltd,S58.SI
 SBFC Finance Ltd,SBFC.NS
 SBI Cards & Payment Services Ltd,SBICARD.NS
 SBI Life Insurance Co Ltd,SBILIFE.NS
+SFC Energy AG,F3C.DE
+SGL Carbon SE,SGL.DE
 SIA Engineering Co Ltd,S59.SI
+SITE Centers Corp,SITC
 SJVN Ltd,SJVN.NS
 SKF India Ltd,SKFINDIA.NS
 SLB Ltd,SLB
+SLM Corp,SLM
+SMA Solar Technology AG,S92.DE
 SOUTHSTATE BANK CORP,SSB
+SPX Technologies Inc,SPXC
 SRF Ltd,SRF.NS
 SSE PLC,SSE.L
 SSP Group Plc,SSPG.L
@@ -1099,17 +1529,21 @@ SSR Mining Inc,SSRM.TO
 STAG Industrial Inc,STAG
 STERIS PLC,STE
 STRATEC SE,SBS.DE
+SUSS MicroTec SE,SMHN.DE
 Safari Industries India Ltd,SAFARI.NS
+Saga PLC,SAGA.L
 Sage Group PLC/The,SGE.L
 Sagility Ltd,SAGILITY.NS
 Saia Inc,SAIA
 SailPoint Inc,SAIL
 Salesforce Inc,CRM
+Salzgitter AG,SZG.DE
 Samvardhana Motherson International Ltd,MOTHERSON.NS
 Sandisk Corp/DE,SNDK
 Sanofi Consumer Healthcare India Ltd,SANOFICONR.BO
 Sanofi India Ltd,SANOFI.NS
 Sansera Engineering Ltd,SANSERA.NS
+Sapphire Foods India Ltd,SAPPHIRE.NS
 Saputo Inc,SAP.TO
 Sarda Energy & Minerals Ltd,SARDAEN.NS
 Saregama India Ltd,SAREGAMA.NS
@@ -1117,6 +1551,7 @@ Sartorius AG,SRT3.DE
 Schaeffler AG,SHA.DE
 Schaeffler India Ltd,SCHAEFFLER.NS
 Scholar Rock Holding Corp,SRRK
+Schott Pharma AG & Co KGaA,1SXP.DE
 Science Applications International Corp,SAIC
 Scotts Miracle-Gro Co/The,SMG
 Scout24 SE,G24.DE
@@ -1127,15 +1562,20 @@ Seatrium Ltd,S51.SI
 Secure Trust Bank PLC,STB.L
 Secure Waste Infrastructure Corp,SES.TO
 Segro PLC,SGRO.L
+Selective Insurance Group Inc,SIGI
 Sembcorp Industries Ltd,U96.SI
 Semler Scientific Inc,SMLR
 Sempra,SRE
 Senco Gold Ltd,SENCO.NS
+Senior PLC,SNR.L
 Sensient Technologies Corp,SXT
+SentinelOne Inc,S
 ServiceNow Inc,NOW
 Severn Trent PLC,SVT.L
 Shaftesbury Capital PLC,SHC.L
+Shakti Pumps India Ltd,SHAKTIPUMP.BO
 Shell PLC,SHEL.L
+Shenandoah Telecommunications Co,SHEN
 Sheng Siong Group Ltd,OV8.SI
 Sherwin-Williams Co/The,SHW
 Shoals Technologies Group Inc,SHLS
@@ -1144,20 +1584,25 @@ Shopify Inc,SHOP.TO
 Shree Cement Ltd,SHREECEM.NS
 Shree Renuka Sugars Ltd,RENUKA.NS
 Shriram Finance Ltd,SHRIRAMFIN.NS
+Shutterstock Inc,SSTK
 Shyam Metalics & Energy Ltd,SHYAMMETL.NS
 Siemens AG,SIE.DE
 Siemens Energy AG,ENR.DE
 Siemens Energy India Ltd,ENRIN.NS
 Siemens Healthineers AG,SHL.DE
 Siemens Ltd,SIEMENS.NS
+Sigma Lithium Corp,SGML
 SignatureGlobal India Ltd,SIGNATURE.NS
 Silicon Laboratories Inc,SLAB
+Siltronic AG,WAF.DE
 Simon Property Group Inc,SPG
 Singapore Airlines Ltd,C6L.SI
 Singapore Exchange Ltd,S68.SI
 Singapore Post Ltd,S08.SI
 Singapore Technologies Engineering Ltd,S63.SI
 Singapore Telecommunications Ltd,Z74.SI
+Sixt SE,SIX2.DE
+Skyworks Solutions Inc,SWKS
 SmartCentres Real Estate Investment Trust,SRU-UN.TO
 Smith & Nephew PLC,SN.L
 Smiths Group PLC,SMIN.L
@@ -1165,35 +1610,49 @@ Smurfit WestRock PLC,SW
 Snowflake Inc,SNOW
 SoFi Technologies Inc,SOFI
 Sobha Ltd,SOBHA.NS
+Softcat PLC,SCT.L
 SolGold PLC,SOLG.L
 Solar Industries India Ltd,SOLARINDS.NS
+SolarEdge Technologies Inc,SEDG
 Solstice Advanced Materials Inc,SLST
+Solventum Corp,SOLV
 Somnigroup International Inc,SGI
 Sona Blw Precision Forgings Ltd,SONACOMS.NS
 Sonata Software Ltd,SONATSOFTW.NS
+Sonoco Products Co,SON
 South Bow Corp,SOBO.TO
 Southern Co/The,SO
 Southern Copper Corp,SCCO
+Southwest Gas Holdings Inc,SWX
+Spectrum Brands Holdings Inc,SPB
 Speedy Hire PLC,SDY.L
 Spirax Group PLC,SPX.L
 Spire Inc,SR
 Spotify Technology SA,SPOT
+Sprott Inc,SII.TO
 Sprouts Farmers Market Inc,SFM
 St James's Place PLC,STJ.L
+Stabilus SE,STM.F
 Standard Chartered PLC,STAN.L
 StandardAero Inc,SARO
 Stantec Inc,STN.TO
+Star Bulk Carriers Corp,SBLK
 Star Health & Allied Insurance Co Ltd,STARHEALTH.NS
 StarHub Ltd,CC3.SI
 Starbucks Corp,SBUX
 State Bank of India,SBIN.NS
 Steel Dynamics Inc,STLD
+Stella-Jones Inc,SJ.TO
+Stepan Co,SCL
 Sterling and Wilson Renewable,SWSOLAR.NS
 Sterlite Technologies Ltd,STLTECH.NS
 Stifel Financial Corp,SF
 StoneCo Ltd,STNE
+Stratasys Ltd,SSYS
 Strategy Inc,MSTR
+Stride Inc,LRN
 Strides Pharma Science Ltd,STAR.NS
+Stroeer SE & Co KGaA,SAX.DE
 Stryker Corp,SYK
 Sudarshan Chemical Industries Ltd,SUDARSCHEM.NS
 Suedzucker AG,SZU.DE
@@ -1202,20 +1661,28 @@ Sun Communities Inc,SUI
 Sun Life Financial Inc,SLF.TO
 Sun Pharma Advanced Research Co Ltd,SPARC.NS
 Sun Pharmaceutical Industries Ltd,SUNPHARMA.NS
+Sun TV Network Ltd,SUNTV.BO
+SunCoke Energy Inc,SXC
 Sundaram Finance Ltd,SUNDARMFIN.NS
 Sundram Fasteners Ltd,SUNDRMFAST.NS
 Sunococorp LLC,SUN
+Sunrun Inc,RUN
+Suntec Real Estate Investment Trust,T82U.SI
+Superior Plus Corp,SPB.TO
 Supreme Industries Ltd,SUPREMEIND.NS
 Supreme Petrochem Ltd,SUPPETRO.NS
 Suzlon Energy Ltd,SUZLON.NS
 Swiggy Ltd,SWIGGY.NS
 Symrise AG,SY1.DE
+Synaptics Inc,SYNA
 Synchrony Financial,SYF
 Syngene International Ltd,SYNGENE.NS
 Synopsys Inc,SNPS
 Synovus Financial Corp,SNV
+Synthomer PLC,SYNT.L
 Syrma SGS Technology Ltd,SYRMA.NS
 Sysco Corp,SYY
+T Rowe Price Group Inc,TROW
 T-Mobile US Inc,TMUS
 TAG Immobilien AG,TEG.DE
 TBC Bank Group PLC,TBCG.L
@@ -1226,6 +1693,8 @@ TELUS Corp,T.TO
 TFI International Inc,TFII.TO
 TJX Cos Inc/The,TJX
 TLG Immobilien AG,TLG.DE
+TP ICAP Group PLC,TCAP.L
+TTK Prestige Ltd,TTKPRESTIG.NS
 TUI AG,TUI1.DE
 TVS Motor Co Ltd,TVSMOTOR.NS
 TXNM Energy Inc,TXNM
@@ -1251,6 +1720,7 @@ Tata Teleservices Maharashtra Ltd,TTML.NS
 Tate & Lyle PLC,TATE.L
 Taylor Wimpey PLC,TW.L
 Tbo Tek Ltd,TBO.NS
+TeamLease Services Ltd,TEAMLEASE.NS
 TeamViewer SE,TMV.DE
 Tech Mahindra Ltd,TECHM.NS
 TechnipFMC PLC,FTI
@@ -1259,26 +1729,39 @@ Tejas Networks Ltd,TEJASNET.NS
 Telecom Plus PLC,TEP.L
 Teledyne Technologies Inc,TDY
 Teleflex Inc,TFX
+Telephone and Data Systems Inc,TDS
+Tenable Holdings Inc,TENB
 Tenet Healthcare Corp,THC
+Tennant Co,TNC
 Tenneco Clean Air India Ltd,TENNIND.NS
+Teradata Corp,TDC
 Terex Corp,TEX
 Terreno Realty Corp,TRNO
 Tesco PLC,TSCO.L
 Tesla Inc,TSLA
+Tetra Tech Inc,TTEK
 Texas Instruments Inc,TXN
+Texas Roadhouse Inc,TXRH
+Texmaco Rail & Engineering Ltd,TEXRAIL.BO
 Thai Beverage PCL,Y92.SI
 Thermax Ltd,THERMAX.NS
 Thermo Fisher Scientific Inc,TMO
 Thomas Cook India Ltd,THOMASCOOK.NS
 Thomson Reuters Corp,TRI.TO
+Thor Industries Inc,THO
+Thyssenkrupp Nucera AG & Co KGaa,NCH2.F
+Tidewater Inc,TDW
 Timken Co/The,TKR
 Timken India Ltd,TIMKEN.NS
 Titagarh Rail System Ltd,TITAGARH.NS
 Titan Co Ltd,TITAN.NS
+Toll Brothers Inc,TOL
+Tonies SE,TNIE.DE
 Toromont Industries Ltd,TIH.TO
 Toronto-Dominion Bank/The,TD.TO
 Torrent Pharmaceuticals Ltd,TORNTPHARM.NS
 Torrent Power Ltd,TORNTPOWER.NS
+Tracsis PLC,TRCS.L
 Tractor Supply Co,TSCO
 Trainline PLC,TRN.L
 Trane Technologies PLC,TT
@@ -1288,15 +1771,19 @@ Transformers & Rectifiers India Ltd,TARIL.NS
 Travel + Leisure Co,TNL
 Travelers Cos Inc/The,TRV
 Trent Ltd,TRENT.NS
+Trex Co Inc,TREX
 Tribal Group PLC,TRB.L
+Trimble Inc,TRMB
 Triveni Engineering & Industries Ltd,TRIVENI.NS
 Truist Financial Corp,TFC
 Tube Investments of India Ltd,TIINDIA.NS
+Twilio Inc,TWLO
 Tyler Technologies Inc,TYL
 Tyson Foods Inc,TSN
 UDR Inc,UDR
 UFP Industries Inc,UFPI
 UGI Corp,UGI
+UL Solutions Inc,ULS
 UMS Integration Ltd,558.SI
 UNITE Group PLC/The,UTG.L
 UNO Minda Ltd,UNOMINDA.NS
@@ -1313,6 +1800,7 @@ UltraTech Cement Ltd,ULTRACEMCO.NS
 Unilever PLC,ULVR.L
 Union Bank of India Ltd,UNIONBANK.NS
 Union Pacific Corp,UNP
+Uniper SE,UN0.F
 United Breweries Ltd,UBL.NS
 United Internet AG,UTDI.DE
 United Overseas Bank Ltd,U11.SI
@@ -1322,8 +1810,10 @@ United Spirits Ltd,UNITDSPR.NS
 United Therapeutics Corp,UTHR
 United Utilities Group PLC,UU.L
 UnitedHealth Group Inc,UNH
+Unity Software Inc,U
 Universal Display Corp,OLED
 Unum Group,UNM
+Upstart Holdings Inc,UPST
 Upstream Bio Inc,UPB
 Uranium Energy Corp,UEC
 Usha Martin Ltd,USHAMART.NS
@@ -1331,31 +1821,45 @@ V-Mart Retail Ltd,VMART.NS
 VA Tech Wabag Ltd,WABAG.NS
 VF Corp,VFC
 VICI Properties Inc,VICI
+VIP Industries Ltd,VIPIND.NS
+Vaibhav Global Ltd,VAIBHAVGBL.BO
 Valaris Ltd,VAL
 Valero Energy Corp,VLO
+Valmont Industries Inc,VMI
 Valor Estate Ltd,VALORESTATE.NS
+Valvoline Inc,VVV
 Vanquis Banking Group PLC,VANQ.L
 Vantage Towers AG,VTWR.DE
 Vardhman Textiles Ltd,VTL.NS
 Varroc Engineering Ltd,VARROC.NS
 Varun Beverages Ltd,VBL.NS
+Vaxcyte Inc,PCVX
 Vedant Fashions Ltd,MANYAVAR.NS
 Veeva Systems Inc,VEEV
 Ventas Inc,VTR
 Venture Corp Ltd,V03.SI
 Vera Therapeutics Inc,VERA
+Veralto Corp,VLTO
+Verbio SE,VBK.DE
+VeriSign Inc,VRSN
+Verisk Analytics Inc,VRSK
 Verizon Communications Inc,VZ
 Vertex Pharmaceuticals Inc,VRTX
 Vertiv Holdings Co,VRT
 Vertu Motors PLC,VTU.L
 Viasat Inc,VSAT
+Viavi Solutions Inc,VIAV
 Victrex PLC,VCT.L
 Vijaya Diagnostic Centre Ltd,VIJAYA.NS
 Viking Holdings Ltd,VIK
+Viking Therapeutics Inc,VKTX
 Vinati Organics Ltd,VINATIORGA.NS
 Visa Inc,V
 Vishal Mega Mart Ltd,VISHAL.NS
+Vishay Intertechnology Inc,VSH
+Visteon Corp,VC
 Vistra Corp,VST
+Vistry Group PLC,VTY.L
 Vodafone Group PLC,VOD.L
 Vodafone Idea Ltd,IDEA.NS
 Volkswagen AG,VOW3.DE
@@ -1364,20 +1868,29 @@ Voltas Ltd,VOLTAS.NS
 Volution Group PLC,FAN.L
 Vonovia SE,VNA.DE
 Vornado Realty Trust,VNO
+Voya Financial Inc,VOYA
 Vulcan Materials Co,VMC
+W R Berkley Corp,WRB
 WAAREE Energies Ltd,WAAREEENER.NS
+WD-40 Co,WDFC
+WESCO International Inc,WCC
 WH Smith PLC,SMWH.L
+WSFS Financial Corp,WSFS
 WSP Global Inc,WSP.TO
 WW Grainger Inc,GWW
 Wacker Chemie AG,WCH.DE
+Walker & Dunlop Inc,WD
 Walmart Inc,WMT
 Walt Disney Co/The,DIS
 Warner Bros Discovery Inc,WBD
+Warrior Met Coal Inc,HCC
+Washtec AG,WSU.F
 Waste Connections Inc,WCN.TO
 Waste Management Inc,WM
 Watches of Switzerland Group PLC,WOSG.L
 WaterBridge Infrastructure LLC,WBI
 Waters Corp,WAT
+Waystar Holding Corp,WAY
 Weatherford International PLC,WFRD
 Webster Financial Corp,WBS
 Weir Group PLC/The,WEIR.L
@@ -1385,30 +1898,51 @@ Wells Fargo & Co,WFC
 Welltower Inc,WELL
 Welspun Corp Ltd,WELCORP.NS
 Welspun Living Ltd,WELSPUNLIV.NS
+West Fraser Timber Co Ltd,WFG.TO
 West Pharmaceutical Services Inc,WST
 Western Alliance Bancorp,WAL
 Western Digital Corp,WDC
 Westinghouse Air Brake Technologies Corp,WAB
+Westlake Corp,WLK
+Westlife Foodworld Ltd,WESTLIFE.NS
 Weyerhaeuser Co,WY
 Wheaton Precious Metals Corp,WPM.TO
+Whirlpool Corp,WHR
 Whirlpool of India Ltd,WHIRLPOOL.NS
 Whitbread PLC,WTB.L
+White Mountains Insurance Group Ltd,WTM
+WillScot Holdings Corp,WSC
 Williams Cos Inc/The,WMB
+Williams-Sonoma Inc,WSM
 Willis Towers Watson PLC,WTW
+Wingstop Inc,WING
+Wintrust Financial Corp,WTFC
 Wipro Ltd,WIPRO.NS
 Wise PLC,WISE.L
 Wockhardt Ltd,WOCKPHARMA.NS
+Wolfspeed Inc,WOLF
+Woodward Inc,WWD
+Workday Inc,WDAY
+Workspace Group PLC,WKP.L
+World Kinect Corp,WKC
 Wyndham Hotels & Resorts Inc,WH
+Wynn Resorts Ltd,WYNN
 XP Inc,XP
 XPO Inc,XPO
+Xaar PLC,XAR.L
 Xenon Pharmaceuticals Inc,XENE
+Xperi Inc,XPER
+YETI Holdings Inc,YETI
+Yellow Cake PLC,YCA.L
 Yes Bank Ltd,YESBANK.NS
+Yext Inc,YEXT
 Yu Group plc,YU.L
 Yum! Brands Inc,YUM
 ZF Commercial Vehicle Control Systems India Ltd,ZFCVINDIA.NS
 Zalando SE,ZAL.DE
 Zee Entertainment Enterprises Ltd,ZEEL.NS
 Zegona Communications plc,ZEG.L
+Zen Technologies Ltd,ZENTEC.BO
 Zensar Technologies Ltd,ZENSARTECH.NS
 Zimmer Biomet Holdings Inc,ZBH
 Zoetis Inc,ZTS
@@ -1416,12 +1950,15 @@ Zoom Communications Inc,ZM
 ZoomInfo Technologies Inc,ZI
 Zotefoams PLC,ZTF.L
 Zydus Lifesciences Ltd,ZYDUSLIFE.NS
+Zydus Wellnes Ltd,ZYDUSWELL.BO
 Zydus Wellness Ltd,ZYDUSWELL.NS
 adidas AG,ADS.DE
+boohoo Group PLC,DEBS.L
 eClerx Services Ltd,ECLERX.NS
 flatexDEGIRO AG,FTK.DE
 iA Financial Corp Inc,IAG.TO
 iFAST Corp Ltd,AIY.SI
 iomart Group PLC,IOM.L
 nVent Electric PLC,NVT
+thyssenkrupp AG,TKA.DE
 uniQure NV,QURE
