@@ -1,11 +1,17 @@
 import React from 'react';
 import { fmt, Icon, BrandMark } from './format.jsx';
+import { PeriodPicker } from './period.jsx';
+import { periodLabel } from './snapshot.js';
 
-// Top navigation bar with brand, search, theme toggle, compare toggle.
+// Top navigation bar with brand, search, theme toggle, and the menu holding the
+// controls that scope the whole page — reporting period and what changed in it.
 // UI 2.0: the bar floats inset from the page edges and the ticker band below it
 // carries the bottom corners, so nav + band read as one card.
 
-export function TopBar({ data, query, setQuery, theme, setTheme, onPick, compareOn, setCompareOn, compareCount, onOpenColumns, lastFetched }) {
+export function TopBar({
+  data, query, setQuery, theme, setTheme, onPick, lastFetched,
+  manifest, period, onChangePeriod, changesOpen, onToggleChanges, hasChanges,
+}) {
   const [focused, setFocused] = React.useState(false);
   const [active, setActive] = React.useState(0);
   const [condensed, setCondensed] = React.useState(false);
@@ -14,6 +20,10 @@ export function TopBar({ data, query, setQuery, theme, setTheme, onPick, compare
   // inert on wider screens, where CSS hides the buttons that set them.
   const [menuOpen, setMenuOpen] = React.useState(false);
   const [searchOpen, setSearchOpen] = React.useState(false);
+  // The period picker is a second level of the menu rather than a popover of its own:
+  // anchoring one panel to another that can close under it is how menus lose their
+  // alignment. Reset whenever the menu closes, so it always reopens on the root list.
+  const [periodOpen, setPeriodOpen] = React.useState(false);
   const wrapRef = React.useRef(null);
   const navRef = React.useRef(null);
 
@@ -61,6 +71,10 @@ export function TopBar({ data, query, setQuery, theme, setTheme, onPick, compare
       window.removeEventListener('keydown', onKey);
       window.removeEventListener('pointerdown', onDown);
     };
+  }, [menuOpen]);
+
+  React.useEffect(() => {
+    if (!menuOpen) setPeriodOpen(false);
   }, [menuOpen]);
 
   // Opening search from the icon should put the caret in the field — otherwise it
@@ -218,37 +232,15 @@ export function TopBar({ data, query, setQuery, theme, setTheme, onPick, compare
               )}
             </div>
 
-            {/* Right actions — labels collapse to icons on the smallest screens. */}
-            <div className="r-actions" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <TopBtn onClick={onOpenColumns} title="Columns">
-                <Icon name="columns" size={14}/> <span className="r-hide-sm">Columns</span>
-              </TopBtn>
-              <TopBtn
-                fill
-                active={compareOn}
-                onClick={() => setCompareOn(!compareOn)}
-                title="Compare mode (multi-select rows to compare)"
-              >
-                <Icon name="compare" size={14}/>
-                <span className="r-hide-sm">Compare</span>
-                {compareCount > 0 && (
-                  <span className="mono" style={{
-                    padding: '1px 6px', borderRadius: 999,
-                    background: 'var(--accent)', color: 'var(--nav-ink)',
-                    fontSize: 10, fontWeight: 600
-                  }}>{compareCount}</span>
-                )}
-              </TopBtn>
-              <TopBtn onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} title="Toggle theme">
-                <Icon name={theme === 'dark' ? 'sun' : 'moon'} size={14}/>
-              </TopBtn>
-            </div>
-
-            {/* Phone cluster — replaces the three action buttons and the search row
-                below 640px, so the whole bar fits on one line. CSS owns the
-                breakpoint (see index.html); this is always rendered. */}
-            <div className="r-nav-mobile">
+            {/* Right actions. The menu holds what scopes the whole page — Period,
+                What changed, Theme — at every width, so the bar reads the same on a
+                phone and on a desktop. Only the search TOGGLE is width-dependent —
+                above 640px the field itself is in the bar, so the icon would be a
+                second way to reach what is already there. CSS owns that breakpoint
+                (see index.html). */}
+            <div className="r-nav-actions">
               <NavIconBtn
+                className="r-nav-search-toggle"
                 onClick={() => { setSearchOpen(o => !o); setMenuOpen(false); }}
                 label={searchOpen ? 'Close search' : 'Search companies'}
                 expanded={searchOpen}
@@ -259,7 +251,6 @@ export function TopBar({ data, query, setQuery, theme, setTheme, onPick, compare
                 onClick={() => { setMenuOpen(o => !o); setSearchOpen(false); }}
                 label={menuOpen ? 'Close menu' : 'Open menu'}
                 expanded={menuOpen}
-                badge={!menuOpen && compareCount > 0 ? compareCount : 0}
               >
                 <Icon name={menuOpen ? 'x' : 'menu'} size={17}/>
               </NavIconBtn>
@@ -267,27 +258,53 @@ export function TopBar({ data, query, setQuery, theme, setTheme, onPick, compare
           </div>
         </div>
 
-        {/* Phone menu — everything the one-line bar cannot hold. Absolute so opening
-            it never reflows the page behind the sticky header. */}
+        {/* Nav menu — Period, What changed and Theme, at every width. Absolute so
+            opening it never reflows the page behind the sticky header. Width and
+            horizontal anchoring live in CSS (index.html) so the panel can hug the
+            button on wide screens and go full-bleed on a phone. */}
         {menuOpen && (
           <div className="r-nav-menu" role="menu" style={{
-            position: 'absolute', top: '100%', left: 0, right: 0, marginTop: 8,
+            position: 'absolute', top: '100%', marginTop: 8,
             zIndex: 60,
             background: 'var(--surface)', border: '1px solid var(--line)',
-            borderRadius: 16, overflow: 'hidden',
+            borderRadius: 16, overflow: 'hidden auto',
+            // A menu taller than the viewport cannot be scrolled to; the picker's
+            // year pills are what can push it there on a short screen.
+            maxHeight: 'min(70vh, 560px)',
             boxShadow: '0 24px 48px -24px rgba(0,0,0,.45)',
             animation: 'rise .12s ease-out',
           }}>
-            <MenuRow
-              icon="columns"
-              onClick={() => { setMenuOpen(false); onOpenColumns(); }}
-            >Columns</MenuRow>
-            <MenuRow
-              icon="compare"
-              active={compareOn}
-              hint={compareCount > 0 ? `${compareCount} selected` : (compareOn ? 'On' : null)}
-              onClick={() => { setMenuOpen(false); setCompareOn(!compareOn); }}
-            >Compare</MenuRow>
+            {manifest && (
+              <>
+                <MenuRow
+                  icon="clock"
+                  active={periodOpen}
+                  hint={period ? periodLabel(period) : null}
+                  expanded={periodOpen}
+                  onClick={() => setPeriodOpen(o => !o)}
+                >Period</MenuRow>
+                {periodOpen && (
+                  <div style={{
+                    padding: '14px 16px',
+                    borderBottom: '1px solid var(--line)',
+                    background: 'var(--row-hover)',
+                  }}>
+                    <PeriodPicker
+                      manifest={manifest}
+                      period={period}
+                      onChange={(p) => { onChangePeriod(p); setMenuOpen(false); }}
+                    />
+                  </div>
+                )}
+              </>
+            )}
+            {hasChanges && (
+              <MenuRow
+                icon="compare"
+                active={changesOpen}
+                onClick={() => { setMenuOpen(false); onToggleChanges(); }}
+              >What changed in {periodLabel(period)}</MenuRow>
+            )}
             <MenuRow
               icon={theme === 'dark' ? 'sun' : 'moon'}
               hint={theme === 'dark' ? 'Dark' : 'Light'}
@@ -338,9 +355,10 @@ function Tick({ row }) {
 
 // Square icon button for the phone bar. Same outline treatment as TopBtn, sized as a
 // touch target rather than a pill, and with a real aria-label since it has no text.
-function NavIconBtn({ children, onClick, label, expanded, badge = 0 }) {
+function NavIconBtn({ children, onClick, label, expanded, className }) {
   return (
     <button
+      className={className}
       onClick={onClick}
       aria-label={label}
       aria-expanded={expanded}
@@ -357,25 +375,18 @@ function NavIconBtn({ children, onClick, label, expanded, badge = 0 }) {
       }}
     >
       {children}
-      {badge > 0 && (
-        <span className="mono" aria-hidden="true" style={{
-          position: 'absolute', top: -5, right: -5,
-          minWidth: 16, height: 16, padding: '0 4px',
-          display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-          borderRadius: 999, background: 'var(--accent)', color: 'var(--nav-ink)',
-          fontSize: 9.5, fontWeight: 600, lineHeight: 1,
-        }}>{badge}</span>
-      )}
     </button>
   );
 }
 
-// One row of the phone menu: icon, label, and an optional state hint on the right.
-function MenuRow({ children, icon, onClick, active, hint, last }) {
+// One row of the menu: icon, label, an optional state hint on the right, and — for
+// rows that open a second level in place — a chevron saying so.
+function MenuRow({ children, icon, onClick, active, hint, last, expanded }) {
   return (
     <button
       onClick={onClick}
       role="menuitem"
+      aria-expanded={expanded}
       style={{
         width: '100%', display: 'flex', alignItems: 'center', gap: 12,
         padding: '14px 16px',
@@ -394,38 +405,13 @@ function MenuRow({ children, icon, onClick, active, hint, last }) {
           letterSpacing: '0.06em', textTransform: 'uppercase',
         }}>{hint}</span>
       )}
+      {expanded !== undefined && (
+        <Icon name={expanded ? 'chev-up' : 'chev-down'} size={14} color="var(--soft)"/>
+      )}
     </button>
   );
 }
 
-// Nav pill button (STYLE_GUIDE §5): mono/uppercase. `fill` is the ink-filled
-// primary (lime text); the rest are outlines. Both lift 1px on hover.
-export function TopBtn({ children, onClick, active, title, fill }) {
-  const solid = fill || active;
-  return (
-    <button onClick={onClick} title={title}
-      style={{
-        display:'inline-flex', alignItems:'center', gap: 6,
-        padding: '7px 13px',
-        background: solid ? 'var(--nav-ink)' : 'transparent',
-        color: solid ? 'var(--accent)' : 'var(--nav-ink)',
-        border: `1px solid ${solid ? 'var(--nav-ink)' : 'var(--nav-line)'}`,
-        borderRadius: 10,
-        cursor: 'pointer',
-        fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 500,
-        letterSpacing: '0.06em', textTransform: 'uppercase',
-        transition: 'transform .25s cubic-bezier(.2,.7,.3,1), background .14s ease, color .14s ease, border-color .14s ease',
-      }}
-      onMouseEnter={e => {
-        e.currentTarget.style.transform = 'translateY(-1px)';
-        if (!solid) { e.currentTarget.style.background = 'var(--nav-ink)'; e.currentTarget.style.color = 'var(--accent)'; }
-      }}
-      onMouseLeave={e => {
-        e.currentTarget.style.transform = 'none';
-        if (!solid) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--nav-ink)'; }
-      }}
-    >
-      {children}
-    </button>
-  );
-}
+// TopBtn (the mono/uppercase nav pill) lived here and rendered Columns, Compare and
+// Theme. Those three moved into the menu at every width, and nothing else imported
+// it, so it went with them rather than sitting unused.

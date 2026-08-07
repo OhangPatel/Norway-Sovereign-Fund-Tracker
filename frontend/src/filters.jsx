@@ -31,7 +31,10 @@ const popoverStyle = {
   animation: 'rise .12s ease-out',
 };
 
-export function Filters({ data, filters, setFilters, columns, setColumns, showColumns, setShowColumns, count }) {
+export function Filters({
+  data, filters, setFilters, columns, setColumns, showColumns, setShowColumns, count,
+  compareOn, setCompareOn, compareCount,
+}) {
   const allCountries = React.useMemo(() => [...new Set(data.map(d => d.country))].filter(Boolean).sort(), [data]);
   const allSectors = React.useMemo(() => [...new Set(data.map(d => d.sector || d.industry))].filter(Boolean).sort(), [data]);
   const allRecs = React.useMemo(() => [...new Set(data.map(d => d.rec))].filter(Boolean).sort(), [data]);
@@ -127,6 +130,27 @@ export function Filters({ data, filters, setFilters, columns, setColumns, showCo
             Reset
           </button>
         )}
+
+        {/* Columns and Compare act on the table right below, not on the fund, so they
+            belong beside the filters rather than behind the nav menu. The hairline is
+            what keeps them from reading as two more filters. */}
+        <span aria-hidden="true" style={{
+          width: 1, height: 22, margin: '0 4px',
+          background: 'var(--line)', flexShrink: 0,
+        }}/>
+
+        <ColumnsMenu
+          columns={columns}
+          setColumns={setColumns}
+          open={showColumns}
+          setOpen={setShowColumns}
+        />
+
+        <button onClick={() => setCompareOn(!compareOn)} style={pillStyle(compareOn)}>
+          <Icon name="compare" size={13}/>
+          Compare
+          {compareCount > 0 && <span className="mono" style={countBadge}>{compareCount}</span>}
+        </button>
       </div>
 
       <div style={{ display:'flex', alignItems:'center', gap: 12 }}>
@@ -134,10 +158,29 @@ export function Filters({ data, filters, setFilters, columns, setColumns, showCo
           <span style={{ color: 'var(--ink)', fontWeight: 600 }}>{count.toLocaleString()}</span> / {data.length.toLocaleString()} companies
         </div>
       </div>
+    </div>
+  );
+}
 
-      {showColumns && (
-        <ColumnsPopover columns={columns} setColumns={setColumns} onClose={() => setShowColumns(false)}/>
-      )}
+// Trigger + popover. The outside-click check has to cover BOTH, or clicking the
+// trigger to close closes and immediately reopens.
+function ColumnsMenu({ columns, setColumns, open, setOpen }) {
+  const ref = React.useRef(null);
+
+  React.useEffect(() => {
+    const close = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    if (open) document.addEventListener('mousedown', close);
+    return () => document.removeEventListener('mousedown', close);
+  }, [open, setOpen]);
+
+  return (
+    <div ref={ref} style={{ position:'relative' }}>
+      <button onClick={() => setOpen(o => !o)} style={pillStyle(open)}>
+        <Icon name="columns" size={13}/>
+        <span>Columns</span>
+        <Icon name="chev-down" size={12} color="var(--soft)"/>
+      </button>
+      {open && <ColumnsPopover columns={columns} setColumns={setColumns}/>}
     </div>
   );
 }
@@ -283,17 +326,11 @@ export function RangeFilter({ label, min, max, step, valueMin, valueMax, onChang
   );
 }
 
-export function ColumnsPopover({ columns, setColumns, onClose }) {
-  const ref = React.useRef(null);
-  React.useEffect(() => {
-    const close = (e) => { if (ref.current && !ref.current.contains(e.target)) onClose(); };
-    document.addEventListener('mousedown', close);
-    return () => document.removeEventListener('mousedown', close);
-  }, [onClose]);
+export function ColumnsPopover({ columns, setColumns }) {
   return (
-    <div ref={ref} style={{
+    <div style={{
       ...popoverStyle,
-      position:'absolute', top: 'calc(100% + 8px)', right: 18,
+      position:'absolute', top: 'calc(100% + 8px)', left: 0,
       width: 240, padding: 8, zIndex: 40,
     }}>
       <div className="eyebrow" style={{ padding: '6px 10px', fontSize: 9.5 }}>Visible columns</div>

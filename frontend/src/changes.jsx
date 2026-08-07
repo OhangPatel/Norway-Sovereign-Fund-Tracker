@@ -73,15 +73,24 @@ function Level({ eyebrow, headline, note, data, shown }) {
   );
 }
 
-export function ChangesPanel({ period, manifest }) {
-  const [open, setOpen] = React.useState(false);
+/**
+ * The oldest period has nothing before it to compare against, so there is no file.
+ * The nav menu asks this before offering the row, rather than offering one that
+ * opens an empty panel.
+ */
+export function hasPreviousPeriod(manifest, period) {
+  return !!(manifest && period &&
+    manifest.periods[manifest.periods.length - 1].period !== period);
+}
+
+// Open/closed is owned by the app now: the control that toggles this panel lives in
+// the nav menu, and the panel itself stays here where two columns of company names
+// have room to breathe.
+export function ChangesPanel({ period, manifest, open, onClose }) {
   const [state, setState] = React.useState({ key: null, data: null, error: null });
   const cache = React.useRef(new Map());
 
-  // The oldest period has nothing before it to compare against, so there is no file
-  // and no button — rather than a button that opens an empty panel.
-  const hasPrevious = manifest && period &&
-    manifest.periods[manifest.periods.length - 1].period !== period;
+  const hasPrevious = hasPreviousPeriod(manifest, period);
 
   React.useEffect(() => {
     if (!open || !hasPrevious || state.key === period) return;
@@ -99,86 +108,85 @@ export function ChangesPanel({ period, manifest }) {
     return () => { cancelled = true; };
   }, [open, period, hasPrevious, state.key]);
 
-  if (!hasPrevious) return null;
+  if (!hasPrevious || !open) return null;
 
   const d = state.key === period ? state.data : null;
 
   return (
-    <section style={{ display: 'grid', gap: 12 }}>
-      <button
-        onClick={() => setOpen(o => !o)}
-        aria-expanded={open}
-        style={{
-          display: 'flex', alignItems: 'center', gap: 9, justifySelf: 'start',
-          padding: '9px 14px',
-          background: 'var(--surface)',
-          border: `1px solid ${open ? 'var(--ink)' : 'var(--line)'}`,
-          borderRadius: 10, cursor: 'pointer',
-          color: 'var(--ink)', fontFamily: 'var(--font-display)', fontSize: 13,
-        }}
-      >
+    <section style={{
+      padding: 18, background: 'var(--surface)',
+      border: '1px solid var(--line)', borderRadius: 12,
+      display: 'grid', gap: 24,
+    }}>
+      {/* The panel is opened from a menu that is closed by the time it appears, so
+          it has to say what it is and offer its own way out. */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
         <Icon name="compare" size={14} color="var(--soft)" />
-        What changed in {periodLabel(period)}
-        <Icon name={open ? 'chev-up' : 'chev-down'} size={14} color="var(--soft)" />
-      </button>
+        <span className="display" style={{ flex: 1, fontSize: 15, fontWeight: 600 }}>
+          What changed in {periodLabel(period)}
+        </span>
+        <button
+          onClick={onClose}
+          aria-label="Close what changed"
+          style={{
+            display: 'inline-flex', padding: 6, background: 'transparent',
+            border: '1px solid var(--line)', borderRadius: 8,
+            color: 'var(--soft)', cursor: 'pointer',
+          }}
+        >
+          <Icon name="x" size={14} />
+        </button>
+      </div>
 
-      {open && (
-        <div style={{
-          padding: 18, background: 'var(--surface)',
-          border: '1px solid var(--line)', borderRadius: 12,
-          display: 'grid', gap: 24,
-        }}>
-          {state.error && (
-            <div style={{ fontSize: 12, color: 'var(--bear)' }}>
-              Could not load the changes for this period. {state.error}
-            </div>
-          )}
-          {!d && !state.error && (
-            <div className="mono" style={{ fontSize: 11, color: 'var(--soft)' }}>Loading…</div>
-          )}
-          {d && (
-            <>
-              <Level
-                eyebrow="All NBIM equity holdings"
-                headline={
-                  <>
-                    <strong>{d.raw.heldBefore.toLocaleString()} → {d.raw.heldNow.toLocaleString()} companies</strong>
-                    {' '}between {formatPeriod(d.previous)} and {formatPeriod(d.period)}
-                  </>
-                }
-                note="Entering or leaving this list means NBIM opened or closed a position. Companies are matched by name — NBIM publishes no ISIN or ticker — so a company that renamed itself appears once as removed and once as added."
-                data={d.raw}
-                shown={d.topN}
-              />
-
-              <div style={{ borderTop: '1px solid var(--line)' }} />
-
-              <Level
-                eyebrow="This site's tracked set"
-                headline={
-                  <>
-                    <strong>{d.filtered.trackedBefore.toLocaleString()} → {d.filtered.trackedNow.toLocaleString()} tracked</strong>
-                    {' '}of those
-                  </>
-                }
-                note={
-                  <>
-                    <strong>Not trades.</strong> This site tracks the largest holdings per
-                    country and industry, so a company crossing that boundary enters or
-                    leaves this list without NBIM buying or selling a single share. The
-                    figures above are the ones that describe what the fund actually did.
-                    {d.filtered.renamesSuppressed > 0 && (
-                      <> {d.filtered.renamesSuppressed} rename
-                        {d.filtered.renamesSuppressed === 1 ? '' : 's'} collapsed.</>
-                    )}
-                  </>
-                }
-                data={d.filtered}
-                shown={d.topN}
-              />
-            </>
-          )}
+      {state.error && (
+        <div style={{ fontSize: 12, color: 'var(--bear)' }}>
+          Could not load the changes for this period. {state.error}
         </div>
+      )}
+      {!d && !state.error && (
+        <div className="mono" style={{ fontSize: 11, color: 'var(--soft)' }}>Loading…</div>
+      )}
+      {d && (
+        <>
+          <Level
+            eyebrow="All NBIM equity holdings"
+            headline={
+              <>
+                <strong>{d.raw.heldBefore.toLocaleString()} → {d.raw.heldNow.toLocaleString()} companies</strong>
+                {' '}between {formatPeriod(d.previous)} and {formatPeriod(d.period)}
+              </>
+            }
+            note="Entering or leaving this list means NBIM opened or closed a position. Companies are matched by name — NBIM publishes no ISIN or ticker — so a company that renamed itself appears once as removed and once as added."
+            data={d.raw}
+            shown={d.topN}
+          />
+
+          <div style={{ borderTop: '1px solid var(--line)' }} />
+
+          <Level
+            eyebrow="This site's tracked set"
+            headline={
+              <>
+                <strong>{d.filtered.trackedBefore.toLocaleString()} → {d.filtered.trackedNow.toLocaleString()} tracked</strong>
+                {' '}of those
+              </>
+            }
+            note={
+              <>
+                <strong>Not trades.</strong> This site tracks the largest holdings per
+                country and industry, so a company crossing that boundary enters or
+                leaves this list without NBIM buying or selling a single share. The
+                figures above are the ones that describe what the fund actually did.
+                {d.filtered.renamesSuppressed > 0 && (
+                  <> {d.filtered.renamesSuppressed} rename
+                    {d.filtered.renamesSuppressed === 1 ? '' : 's'} collapsed.</>
+                )}
+              </>
+            }
+            data={d.filtered}
+            shown={d.topN}
+          />
+        </>
       )}
     </section>
   );

@@ -9,7 +9,7 @@ import { CompareDock, CompareModal } from './compare.jsx';
 import { ChatWidget } from './chat.jsx';
 import { AdminLogin, useSession } from './auth.jsx';
 import { PeriodBar } from './period.jsx';
-import { ChangesPanel } from './changes.jsx';
+import { ChangesPanel, hasPreviousPeriod } from './changes.jsx';
 import { MARKET_FIELDS, assertSplit } from './origin.js';
 import { snapshotDate, formatSnapshot, periodLabel } from './snapshot.js';
 
@@ -445,6 +445,8 @@ export function App() {
   const [manifest, setManifest] = React.useState(null);
   const [period, setPeriod] = React.useState(null);
   const [switching, setSwitching] = React.useState(false);
+  // Opened from the nav menu; the panel itself renders in main.
+  const [changesOpen, setChangesOpen] = React.useState(false);
 
   React.useEffect(() => {
     fetch('periods.json?v=' + LOAD_ID)
@@ -632,10 +634,13 @@ export function App() {
         query={query} setQuery={setQuery}
         theme={theme} setTheme={setTheme}
         onPick={(c) => setSelected(c)}
-        compareOn={compareOn} setCompareOn={(v) => { setCompareOn(v); if (!v) setCompared(new Set()); }}
-        compareCount={compared.size}
-        onOpenColumns={() => setShowColumns(o => !o)}
         lastFetched={headerDate}
+        manifest={manifest}
+        period={period}
+        onChangePeriod={setPeriod}
+        changesOpen={changesOpen}
+        onToggleChanges={() => setChangesOpen(o => !o)}
+        hasChanges={hasPreviousPeriod(manifest, period)}
       />
 
       {(PIPELINE_ENABLED || isAdmin) && (
@@ -650,12 +655,16 @@ export function App() {
         <PeriodBar
           manifest={manifest}
           period={period}
-          onChange={setPeriod}
           loading={switching}
           marketAsOf={marketAsOf}
         />
 
-        <ChangesPanel period={period} manifest={manifest} />
+        <ChangesPanel
+          period={period}
+          manifest={manifest}
+          open={changesOpen}
+          onClose={() => setChangesOpen(false)}
+        />
 
         <Summary
           data={data}
@@ -677,6 +686,9 @@ export function App() {
             showColumns={showColumns}
             setShowColumns={setShowColumns}
             count={filtered.length}
+            compareOn={compareOn}
+            setCompareOn={(v) => { setCompareOn(v); if (!v) setCompared(new Set()); }}
+            compareCount={compared.size}
           />
           <DataTable
             data={filtered}

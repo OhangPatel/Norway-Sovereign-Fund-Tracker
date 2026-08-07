@@ -500,9 +500,15 @@
       /* Filter strip, top bar, detail price block, loading skeleton */
       .r-filterbar { display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: center; }
       .r-topbar { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 16px; }
-      /* Phone-only nav pieces. Rendered at every width so the breakpoint stays here
-         rather than in a JS media listener, and hidden until the phone rules below. */
-      .r-nav-mobile, .r-nav-menu { display: none; }
+      /* Nav actions cluster — the menu button at every width, and on phones a search
+         toggle beside it. The toggle is hidden here because the search field itself
+         is in the bar until the phone layout; !important because NavIconBtn sets
+         display inline (same debt as the table cells below). */
+      .r-nav-actions { display: flex; align-items: center; gap: 8px; }
+      .r-nav-search-toggle { display: none !important; }
+      /* Menu panel hugs the button it opened from. Left-anchored full-bleed only on
+         phones, where the bar is narrow enough that a fixed 260px would look arbitrary. */
+      .r-nav-menu { right: 0; width: 260px; }
       .r-priceblock { display: grid; grid-template-columns: auto 1fr; gap: 28px; align-items: flex-end; }
       .r-skel4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
 
@@ -531,7 +537,7 @@
         .r-brand { grid-area: brand; min-width: 0; }
         .r-brand > div { min-width: 0; overflow: hidden; }
         .r-search { grid-area: search; min-width: 0; }
-        .r-actions { grid-area: actions; }
+        .r-nav-actions { grid-area: actions; }
         /* Two rows will not fit the condensed height, so the shell sizes to
            its content and supplies the vertical padding itself. */
         .nav-shell { height: auto !important; padding: 12px 0; }
@@ -570,19 +576,19 @@
 
         .r-cmp-row { grid-template-columns: 108px repeat(var(--cmp-n), minmax(136px, 1fr)); }
 
-        /* Nav collapses to ONE line: brand, then a search toggle and a menu button.
+        /* Nav collapses to ONE line: brand, then a search toggle and the menu button.
            Two rows plus the ticker band was costing 161px — a fifth of a phone
            screen — and scrolling barely helped, because the two-row grid forces
            .nav-shell to height:auto and the condensed 56px height never applied.
-           Columns / Compare / Theme move into the menu; search moves behind its
-           icon and takes a second row only while it is open. */
+           The menu already holds Period / What changed / Theme at every width; what
+           is phone-specific is that the search FIELD gives up its place in the bar
+           and reappears as a second row only while its toggle is on. */
         .r-topbar { grid-template-areas: "brand actions"; gap: 10px; }
-        .r-actions { display: none !important; }
-        .r-nav-mobile { display: flex; grid-area: actions; align-items: center; gap: 8px; }
+        .r-nav-search-toggle { display: inline-flex !important; }
         .r-search { display: none; }
         .r-topbar.search-open { grid-template-areas: "brand actions" "search search"; }
         .r-topbar.search-open .r-search { display: block; }
-        .r-nav-menu { display: block; }
+        .r-nav-menu { left: 0; width: auto; }
         /* The eyebrow is the brand block's second line — dropping it is what makes
            the bar single-line. Its only content here is "Norway GPFG"; the date and
            "Equity Holdings" are already hidden at this width by .r-hide-sm. */
