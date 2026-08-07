@@ -6,9 +6,10 @@ import { DataTable } from './table.jsx';
 import { Detail } from './detail.jsx';
 import { CompareDock, CompareModal } from './compare.jsx';
 import { ChatWidget } from './chat.jsx';
-import { AdminLogin, useSession } from './auth.jsx';
+import { useSession } from './auth.jsx';
 import { PeriodBar } from './period.jsx';
 import { ChangesPanel, hasPreviousPeriod } from './changes.jsx';
+import { Footer } from './footer.jsx';
 import { MARKET_FIELDS, assertSplit } from './origin.js';
 import { snapshotDate, formatSnapshot, periodLabel } from './snapshot.js';
 
@@ -659,7 +660,10 @@ export function App() {
 
       <main style={{
         maxWidth: 1680, margin: '0 auto',
-        padding: '22px clamp(14px, 2vw, 22px) 120px',
+        // The bottom pad used to be 120px, holding the page clear of the chat
+        // launcher. The footer band sits under here now and carries that job;
+        // what is left is the gap before the ink edge.
+        padding: '22px clamp(14px, 2vw, 22px) 32px',
         display: 'grid', gap: 16,
       }}>
         <PeriodBar
@@ -722,27 +726,14 @@ export function App() {
             enlarged so they stay clickable. Hover any tile for its true share;
             click one to filter.
           </div>
-          <div className="mono" style={{
-            display:'flex', justifyContent:'space-between',
-            fontSize: 10.5, color: 'var(--soft)',
-            padding: '4px 6px'
-          }}>
-            <span>
-              Press <kbd style={kbd}>/</kbd> to search · <kbd style={kbd}>Esc</kbd> to close
-              {' · '}<AdminLogin />
-            </span>
-            <span>Norway GPFG · {data.length.toLocaleString()} positions · USD values estimated at acquisition FX · <a
-              href="/holdings/"
-              style={{ color: 'var(--accent-text)', textDecoration: 'underline' }}
-            >Browse by sector</a> · <a
-              href="https://learnbasecase.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ color: 'var(--accent-text)', textDecoration: 'underline' }}
-            >Basecase</a></span>
-          </div>
         </section>
       </main>
+
+      <Footer
+        positions={data.length}
+        period={period}
+        pricesAsOf={lastFetched}
+      />
 
       {selected && (
         <Detail
@@ -779,16 +770,6 @@ export function App() {
     </>
   );
 }
-
-export var kbd = {
-  fontFamily: 'var(--font-mono)',
-  padding: '1px 5px',
-  border: '1px solid var(--line)',
-  borderRadius: 3,
-  fontSize: 10,
-  background: 'var(--surface)',
-  color: 'var(--sub)',
-};
 
 export function LoadingState() {
   return (

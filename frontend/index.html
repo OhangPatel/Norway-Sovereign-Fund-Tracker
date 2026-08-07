@@ -220,6 +220,16 @@
         --tick-up: #9BE04A;
         --tick-down: #FF7A6B;
 
+        /* Footer band. Ink in BOTH themes, so like the nav band it carries its
+           own colours instead of the page tokens — on the olive field it is the
+           third ink surface, after the ticker band and the holdings card. */
+        --foot-surface: #14150F;
+        --foot-ink: #F4F2EC;
+        --foot-sub: #A9AB9C;
+        --foot-soft: #8A8C7D;
+        --foot-line: rgba(244, 242, 236, .11);
+        --foot-accent: #D8F34A;
+
         /* Shimmer across the total-holdings figure: lime → white → lime. */
         --shimmer: linear-gradient(100deg, #D8F34A 30%, #FFFFFF 50%, #D8F34A 70%);
         --page-glow: none;
@@ -292,6 +302,15 @@
         --nav-band-ink: #2C3505;
         --tick-up: #15490A;
         --tick-down: #8E1104;
+
+        /* Footer band — a shade under the page (#14150F) so it still reads as a
+           band of its own rather than dissolving into the field. */
+        --foot-surface: #0E0F09;
+        --foot-ink: #F4F2EC;
+        --foot-sub: #A9AB9C;
+        --foot-soft: #8A8C7D;
+        --foot-line: rgba(244, 242, 236, .11);
+        --foot-accent: #D8F34A;
 
         /* Shimmer across the total-holdings figure: ink → white → ink. */
         --shimmer: linear-gradient(100deg, #14150F 30%, #FFFFFF 50%, #14150F 70%);
@@ -581,6 +600,34 @@
       .r-cmp-row { display: grid; grid-template-columns: 180px repeat(var(--cmp-n), minmax(180px, 1fr)); }
       .r-cmp-label { position: sticky; left: 0; z-index: 2; background: var(--bg); }
 
+      /* Footer — statement, then three link columns, on even quarters so the
+         rules behind them have something to trace. */
+      .r-foot-cols {
+        display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 40px clamp(24px, 3vw, 48px);
+        padding: clamp(56px, 7vw, 104px) 0 clamp(48px, 6vw, 88px);
+      }
+      /* Hairlines on the quarters. One element with a repeating gradient rather
+         than four divs — they are decoration, not structure. */
+      .r-foot-rules {
+        position: absolute; inset: 0; pointer-events: none;
+        background-image: repeating-linear-gradient(to right, var(--foot-line) 0 1px, transparent 1px 25%);
+      }
+      .r-foot-bar {
+        display: flex; justify-content: space-between; align-items: flex-end; gap: 28px;
+        border-top: 1px solid var(--foot-line);
+        /* The bottom pad is the chat launcher's parking space (54px + a 24px
+           inset): without it the launcher covers the sign-in link. */
+        padding: clamp(30px, 3.5vw, 46px) 0 clamp(76px, 7vw, 96px);
+      }
+      .r-foot-lockup { display: flex; align-items: center; gap: clamp(12px, 1.4vw, 20px); min-width: 0; }
+      /* BrandMark takes a px size prop; scaling it with the wordmark has to
+         happen here, where the viewport is legible. */
+      .r-foot-lockup svg { width: clamp(34px, 4.4vw, 56px); height: auto; }
+      .r-foot-meta { font-size: 10.5px; line-height: 1.7; text-align: right; flex-shrink: 0; color: var(--foot-sub); }
+      .r-flink { transition: color .15s ease; }
+      .r-flink:hover { color: var(--foot-ink); }
+
       @media (max-width: 900px) {
         .r-bento { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         .r-bento-lead { grid-column: span 2; }
@@ -598,6 +645,12 @@
         /* Two rows will not fit the condensed height, so the shell sizes to
            its content and supplies the vertical padding itself. */
         .nav-shell { height: auto !important; padding: 12px 0; }
+        /* Three link columns still fit; the statement takes its own row rather
+           than being squeezed into a quarter. The rules go with the quarters
+           they were tracing. */
+        .r-foot-cols { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        .r-foot-cols > *:first-child { grid-column: 1 / -1; }
+        .r-foot-rules { display: none; }
       }
 
       @media (max-width: 640px) {
@@ -683,6 +736,14 @@
            "Equity Holdings" are already hidden at this width by .r-hide-sm. */
         .r-brand .eyebrow { display: none !important; }
         .nav-shell { padding: 10px 0 !important; }
+
+        /* Three link columns in 340px leaves "Browse by sector" wrapping to
+           three lines; two columns keep every label on one. */
+        .r-foot-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 34px 24px; }
+        /* The lockup owns the width at this size, so the meta stacks under it
+           and reads from the same left edge as everything else. */
+        .r-foot-bar { flex-direction: column; align-items: flex-start; gap: 24px; }
+        .r-foot-meta { text-align: left; }
 
         /* Utility: drop non-essential chrome on the smallest screens. */
         .r-hide-sm { display: none !important; }
