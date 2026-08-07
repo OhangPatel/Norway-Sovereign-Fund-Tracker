@@ -538,8 +538,20 @@
       }
 
       @media (max-width: 640px) {
-        .r-bento { grid-template-columns: minmax(0, 1fr); }
-        .r-bento-lead, .r-bento-feature { grid-column: span 1; }
+        /* The four stat cards pair off instead of taking a row each. One per row
+           cost ~560px of scrolling to read four short numbers; two-up halves that.
+           Only the hero headline keeps the full width — it is a paragraph, not a
+           figure. grid-auto-rows drops from 118px because the cards no longer need
+           to hold a 38px numeral. */
+        .r-bento { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; grid-auto-rows: minmax(86px, auto); }
+        .r-bento-lead { grid-column: span 2; }
+        .r-bento-feature { grid-column: span 1; padding: 16px !important; }
+        /* Type scaled to a ~165px-wide card. These are inline styles, so overriding
+           needs !important — same debt as the table cells below. Values wrap rather
+           than ellipsise: "NVIDIA Corp" truncated to "NVIDIA C…" reads as broken. */
+        .r-bento-feature .display { font-size: 26px !important; }
+        .r-bento > .card { padding: 16px 14px !important; }
+        .r-bento > .card .display { font-size: 22px !important; white-space: normal !important; }
         .r-metrics3 { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
         .r-kv2 { grid-template-columns: minmax(0, 1fr); }
         .r-changes2 { grid-template-columns: minmax(0, 1fr); gap: 22px; }
