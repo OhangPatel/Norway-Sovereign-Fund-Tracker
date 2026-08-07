@@ -561,6 +561,15 @@
         .r-metrics3 { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
         .r-kv2 { grid-template-columns: minmax(0, 1fr); }
         .r-changes2 { grid-template-columns: minmax(0, 1fr); gap: 22px; }
+
+        /* Ownership distribution — 370px of phone for one histogram. The header was
+           91px of it: "Ownership distribution" and "1,422 cos" each wrapped to two
+           lines fighting over 343px. Dropping the eyebrow and the count leaves the
+           title alone on one line at full size, and the count is already on the
+           hero card. The only svg in here is the histogram. */
+        .r-owncard { padding: 16px !important; }
+        .r-owncard > div:first-child .eyebrow { display: none; }
+        .r-owncard svg { height: 92px !important; }
         .r-filterbar { grid-template-columns: minmax(0, 1fr); gap: 10px; }
         .r-priceblock { grid-template-columns: minmax(0, 1fr); gap: 18px; }
         .r-skel4 { grid-template-columns: minmax(0, 1fr); }

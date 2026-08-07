@@ -183,6 +183,7 @@ export function Summary({ data, filtered, onPickCompany, onSetFilter, activeSect
 
         {/* Ownership distribution — full-width histogram panel */}
         <Card i={7} title="Ownership distribution" eyebrow="% per holding"
+          className="r-owncard"
           rightSlot={<span className="eyebrow">{owns.length.toLocaleString()} cos</span>}
         >
           <div style={{ paddingTop: 6 }}>
@@ -247,9 +248,9 @@ export function StatMini({ label, value }) {
   );
 }
 
-export function Card({ title, eyebrow, rightSlot, children, padding = 24, i = 0 }) {
+export function Card({ title, eyebrow, rightSlot, children, padding = 24, i = 0, className = '' }) {
   return (
-    <div className="enter lift" style={{
+    <div className={`enter lift ${className}`} style={{
       '--i': i,
       background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: 18, padding,
     }}>
