@@ -241,4 +241,5 @@ Avoid endings like:
 Instead, always end with a clear status indicating whether the task is complete, blocked, waiting for input, or awaiting verification.
 ---
 
+
 **These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, root causes get fixed instead of papered over, and clarifying questions come before implementation rather than after mistakes.
