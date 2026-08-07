@@ -1,6 +1,7 @@
 import React from 'react';
 import { fmt, Chip, Delta, RangeBar, MicroBar, Icon } from './format.jsx';
 import { SECTOR_COLORS } from './summary.jsx';
+import { ColumnsMenu, CompareButton, FilterPanel } from './filters.jsx';
 
 // Core data table — sortable, virtualized scroll, sticky header, compare/pin support
 
@@ -46,10 +47,11 @@ export const REC_TONE = {
 };
 
 export function DataTable({
-  data, columns, setColumns,
+  data, columns, setColumns, showColumns, setShowColumns,
+  allData, filters, setFilters, filtersOpen, setFiltersOpen, activeFilterCount, totalRows,
   sort, setSort,
   pinned, togglePin,
-  compareOn, compared, toggleCompare,
+  compareOn, setCompareOn, compared, toggleCompare,
   onOpen,
   maxOwnership
 }) {
@@ -121,20 +123,42 @@ export function DataTable({
 
   return (
     <div className="enter" style={{ '--i': 9, background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: 18, padding: 0, overflow: 'hidden' }}>
-      <div style={{
-        display:'flex', alignItems:'baseline', justifyContent:'space-between',
-        padding: '16px 20px', borderBottom: '1px solid var(--line)',
-        gap: 16, flexWrap: 'wrap',
-      }}>
+      {/* Three compact triggers, so they sit beside the title rather than costing a
+          row of their own. Filters open as a panel at every width — a large screen
+          gets a centred dialog, a phone the bottom sheet. */}
+      <div className="r-ledger-head" style={{ padding: '16px 20px', borderBottom: '1px solid var(--line)' }}>
         <div style={{ minWidth: 0 }}>
-          <div className="eyebrow">Holdings ledger</div>
+          <div className="eyebrow r-ledger-eyebrow">Holdings ledger</div>
           <div className="display" style={{ fontSize: 22, marginTop: 2, letterSpacing:'-0.01em', whiteSpace: 'nowrap' }}>
-            All positions <span className="display-italic" style={{ color:'var(--soft)' }}>· {data.length.toLocaleString()} rows</span>
+            All positions <span className="display-italic" style={{ color:'var(--soft)' }}>
+              · {data.length.toLocaleString()}{totalRows > data.length && ` of ${totalRows.toLocaleString()}`} rows
+            </span>
+          </div>
+          <div className="mono" style={{ fontSize: 10.5, color: 'var(--soft)', marginTop: 6 }}>
+            Sorted by <span style={{ color:'var(--sub)' }}>{sort.key}</span> {sort.dir === 'desc' ? '↓' : '↑'}
           </div>
         </div>
-        <div className="mono" style={{ fontSize: 10.5, color: 'var(--soft)' }}>
-          Sorted by <span style={{ color:'var(--sub)' }}>{sort.key}</span> {sort.dir === 'desc' ? '↓' : '↑'}
-          {compareOn && <span style={{ marginLeft: 14, color: 'var(--accent-text)' }}>· Compare mode</span>}
+        <div className="r-ledger-tools">
+          <FilterPanel
+            data={allData}
+            filters={filters}
+            setFilters={setFilters}
+            count={data.length}
+            open={filtersOpen}
+            setOpen={setFiltersOpen}
+            activeCount={activeFilterCount}
+          />
+          <ColumnsMenu
+            columns={columns}
+            setColumns={setColumns}
+            open={showColumns}
+            setOpen={setShowColumns}
+          />
+          <CompareButton
+            compareOn={compareOn}
+            setCompareOn={setCompareOn}
+            compareCount={compared.size}
+          />
         </div>
       </div>
 

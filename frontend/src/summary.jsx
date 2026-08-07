@@ -93,10 +93,6 @@ export function Summary({ data, filtered, onPickCompany, onSetFilter, activeSect
           padding: 'clamp(28px, 3vw, 40px)',
           display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
         }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <div className="eyebrow" style={{ color: 'var(--nav-accent-text)' }}>Portfolio · Quarterly cut</div>
-            <div className="mono" style={{ fontSize: 11, color: 'var(--hero-sub)' }}>[ 01 / 04 ]</div>
-          </div>
           <h1 className="display" style={{
             fontSize: 'clamp(32px, 4.2vw, 54px)', fontWeight: 600,
             lineHeight: 0.99, letterSpacing: '-0.03em', margin: '20px 0', maxWidth: 760, textWrap: 'balance',

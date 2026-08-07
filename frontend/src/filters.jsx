@@ -1,4 +1,5 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
 import { fmt, Icon } from './format.jsx';
 
 // Filters strip — country/sector multi-select chips + ownership range slider + reset
@@ -31,13 +32,29 @@ const popoverStyle = {
   animation: 'rise .12s ease-out',
 };
 
-export function Filters({
-  data, filters, setFilters, columns, setColumns, showColumns, setShowColumns, count,
-  compareOn, setCompareOn, compareCount,
-}) {
+// Which presentation the filter panel takes. A media query in JS rather than CSS
+// because the two mount at different points in the tree, not just different boxes.
+function useIsPhone() {
+  const [isPhone, setIsPhone] = React.useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(max-width: 640px)').matches
+  );
+  React.useEffect(() => {
+    const mq = window.matchMedia('(max-width: 640px)');
+    const onChange = (e) => setIsPhone(e.matches);
+    mq.addEventListener('change', onChange);
+    setIsPhone(mq.matches);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
+  return isPhone;
+}
+
+// Option lists, the ownership ceiling, and the shared mutators. Derived once for
+// whichever presentation is on screen — the desktop pill row or the phone sheet.
+function useFilters(data, filters, setFilters) {
   const allCountries = React.useMemo(() => [...new Set(data.map(d => d.country))].filter(Boolean).sort(), [data]);
   const allSectors = React.useMemo(() => [...new Set(data.map(d => d.sector || d.industry))].filter(Boolean).sort(), [data]);
   const allRecs = React.useMemo(() => [...new Set(data.map(d => d.rec))].filter(Boolean).sort(), [data]);
+  const maxOwn = React.useMemo(() => Math.max(...data.map(d => d.ownership || 0)), [data]);
 
   const toggleSet = (key, value) => {
     setFilters(f => {
@@ -47,9 +64,6 @@ export function Filters({
     });
   };
 
-  const ownerships = data.map(d => d.ownership || 0);
-  const maxOwn = Math.max(...ownerships);
-
   const reset = () => setFilters({
     countries: [], sectors: [], recs: [],
     ownMin: 0, ownMax: maxOwn,
@@ -58,113 +72,118 @@ export function Filters({
 
   const dirty = filters.countries.length || filters.sectors.length || filters.recs.length || filters.ownMin > 0 || filters.ownMax < maxOwn || filters.pinned;
 
+  return { allCountries, allSectors, allRecs, maxOwn, toggleSet, reset, dirty };
+}
+
+// Trigger plus its panel, anchored together the way the nav menu is: the panel
+// hangs off the button on a large screen, and re-seats as a bottom sheet on a
+// phone. Sections expand inline rather than into popovers — on the sheet a popover
+// would open downward, off the screen.
+//
+// The dropdown is absolute inside the ledger card, which clips to overflow:hidden.
+// That is safe because .r-tscroll fixes the table viewport at 640px, so the card is
+// always taller than the panel's max-height however few rows are showing.
+//
+// The sheet cannot live there. The card is .enter, whose cardIn keyframes hold a
+// transform, and a transformed ancestor becomes the containing block for
+// position:fixed — the sheet would anchor to the card instead of the viewport. So
+// the phone branch portals to document.body, clear of the transform.
+export function FilterPanel({ data, filters, setFilters, count, open, setOpen, activeCount }) {
+  const { allCountries, allSectors, allRecs, maxOwn, toggleSet, reset, dirty } = useFilters(data, filters, setFilters);
+  const isPhone = useIsPhone();
+
+  // Escape closes it — the backdrop must not be the only exit.
+  React.useEffect(() => {
+    if (!open) return;
+    const onKey = (e) => { if (e.key === 'Escape') setOpen(false); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [open, setOpen]);
+
+  const panel = (
+    <>
+      {/* Full-screen catcher for outside clicks. Transparent on a large screen —
+          a dropdown should not dim the page — and the dimming scrim on a phone. */}
+      <div className="r-sheet-back" onClick={() => setOpen(false)}/>
+      <div className="r-sheet" role="dialog" aria-label="Filters">
+            <div className="r-sheet-grip" aria-hidden="true"/>
+            <div className="r-sheet-body">
+              <SheetSection label="Country" icon="globe" count={filters.countries.length}>
+                <OptionList
+                  options={allCountries} selected={filters.countries}
+                  onToggle={(v) => toggleSet('countries', v)}
+                  onClear={() => setFilters(f => ({ ...f, countries: [] }))}
+                  counter={(opt) => data.filter(d => d.country === opt).length}
+                />
+              </SheetSection>
+              <SheetSection label="Sector" icon="wave" count={filters.sectors.length}>
+                <OptionList
+                  options={allSectors} selected={filters.sectors}
+                  onToggle={(v) => toggleSet('sectors', v)}
+                  onClear={() => setFilters(f => ({ ...f, sectors: [] }))}
+                  counter={(opt) => data.filter(d => (d.sector || d.industry) === opt).length}
+                />
+              </SheetSection>
+              <SheetSection label="Analyst rec" icon="sparkle" count={filters.recs.length}>
+                <OptionList
+                  options={allRecs} selected={filters.recs}
+                  onToggle={(v) => toggleSet('recs', v)}
+                  onClear={() => setFilters(f => ({ ...f, recs: [] }))}
+                  format={v => fmt.rec(v)}
+                  counter={(opt) => data.filter(d => d.rec === opt).length}
+                />
+              </SheetSection>
+              <SheetSection label="Ownership %" icon="filter"
+                count={(filters.ownMin > 0 || filters.ownMax < maxOwn) ? 1 : 0}>
+                <RangeBody
+                  min={0} max={maxOwn} step={0.1}
+                  valueMin={filters.ownMin} valueMax={filters.ownMax}
+                  onChange={(lo, hi) => setFilters(f => ({ ...f, ownMin: lo, ownMax: hi }))}
+                  formatValue={v => v.toFixed(1) + '%'}
+                />
+              </SheetSection>
+
+              <div className="r-sheet-sec">
+                <button className="r-sheet-sec-head"
+                  onClick={() => setFilters(f => ({ ...f, pinned: !f.pinned }))}>
+                  <Icon name={filters.pinned ? 'pinned' : 'pin'} size={14}/>
+                  <span style={{ flex: 1, textAlign: 'left' }}>Pinned only</span>
+                  <Check on={filters.pinned}/>
+                </button>
+              </div>
+
+              {dirty && (
+                <button className="r-sheet-reset" onClick={reset}>Reset all filters</button>
+              )}
+            </div>
+            <button className="r-sheet-done" onClick={() => setOpen(false)}>
+              Done · {count.toLocaleString()} companies
+            </button>
+      </div>
+    </>
+  );
+
   return (
-    <div className="r-filterbar enter" style={{
-      '--i': 8,
-      padding: '14px 18px',
-      background: 'var(--surface)',
-      border: '1px solid var(--line)',
-      borderRadius: 16,
-      // The entry animation leaves every .enter card a permanent stacking
-      // context, so the table below would otherwise paint over these popovers
-      // no matter how high their own z-index is. Stays under the sticky
-      // header (50) so it still slides beneath the nav on scroll.
-      position: 'relative', zIndex: 20,
-    }}>
-      <div style={{ display:'flex', flexWrap:'wrap', alignItems:'center', gap: 8 }}>
-        <FilterMenu
-          label="Country"
-          icon="globe"
-          options={allCountries}
-          selected={filters.countries}
-          onToggle={(v) => toggleSet('countries', v)}
-          onClear={() => setFilters(f => ({ ...f, countries: [] }))}
-          counter={(opt) => data.filter(d => d.country === opt).length}
-        />
-        <FilterMenu
-          label="Sector"
-          icon="wave"
-          options={allSectors}
-          selected={filters.sectors}
-          onToggle={(v) => toggleSet('sectors', v)}
-          onClear={() => setFilters(f => ({ ...f, sectors: [] }))}
-          counter={(opt) => data.filter(d => (d.sector || d.industry) === opt).length}
-        />
-        <FilterMenu
-          label="Analyst rec"
-          icon="sparkle"
-          options={allRecs}
-          selected={filters.recs}
-          onToggle={(v) => toggleSet('recs', v)}
-          onClear={() => setFilters(f => ({ ...f, recs: [] }))}
-          format={v => fmt.rec(v)}
-          counter={(opt) => data.filter(d => d.rec === opt).length}
-        />
-
-        {/* Ownership range */}
-        <RangeFilter
-          label="Ownership %"
-          min={0}
-          max={maxOwn}
-          step={0.1}
-          valueMin={filters.ownMin}
-          valueMax={filters.ownMax}
-          onChange={(lo, hi) => setFilters(f => ({ ...f, ownMin: lo, ownMax: hi }))}
-          formatValue={v => v.toFixed(1) + '%'}
-        />
-
-        <button onClick={() => setFilters(f => ({ ...f, pinned: !f.pinned }))}
-          style={pillStyle(filters.pinned)}>
-          <Icon name={filters.pinned ? 'pinned' : 'pin'} size={13}/>
-          Pinned only
-        </button>
-
-        {dirty && (
-          <button onClick={reset}
-            style={{
-              padding: '7px 12px', background: 'transparent',
-              color: 'var(--soft)', border: '1px dashed var(--line)',
-              borderRadius: 999, cursor: 'pointer',
-              fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.04em', textTransform: 'uppercase',
-            }}>
-            Reset
-          </button>
-        )}
-
-        {/* Columns and Compare act on the table right below, not on the fund, so they
-            belong beside the filters rather than behind the nav menu. The hairline is
-            what keeps them from reading as two more filters. */}
-        <span aria-hidden="true" style={{
-          width: 1, height: 22, margin: '0 4px',
-          background: 'var(--line)', flexShrink: 0,
-        }}/>
-
-        <ColumnsMenu
-          columns={columns}
-          setColumns={setColumns}
-          open={showColumns}
-          setOpen={setShowColumns}
-        />
-
-        <button onClick={() => setCompareOn(!compareOn)} style={pillStyle(compareOn)}>
-          <Icon name="compare" size={13}/>
-          Compare
-          {compareCount > 0 && <span className="mono" style={countBadge}>{compareCount}</span>}
-        </button>
-      </div>
-
-      <div style={{ display:'flex', alignItems:'center', gap: 12 }}>
-        <div className="mono" style={{ fontSize: 11.5, color: 'var(--soft)' }}>
-          <span style={{ color: 'var(--ink)', fontWeight: 600 }}>{count.toLocaleString()}</span> / {data.length.toLocaleString()} companies
-        </div>
-      </div>
+    <div style={{ position: 'relative' }}>
+      <button className="r-filter-trigger" onClick={() => setOpen(!open)} aria-expanded={open}
+        style={pillStyle(open || activeCount > 0)}>
+        <Icon name="filter" size={13}/>
+        Filters
+        {activeCount > 0 && <span className="mono" style={countBadge}>{activeCount}</span>}
+        <Icon name={open ? 'chev-up' : 'chev-down'} size={12} color="var(--soft)"/>
+      </button>
+      {open && (isPhone ? createPortal(panel, document.body) : panel)}
     </div>
   );
 }
 
+// Filters, Columns and Compare all act on the table, so table.jsx renders the three
+// of them together in the ledger header. They live in this file because they share
+// the pill styling and popover chrome — exporting components beats exporting styles.
+
 // Trigger + popover. The outside-click check has to cover BOTH, or clicking the
 // trigger to close closes and immediately reopens.
-function ColumnsMenu({ columns, setColumns, open, setOpen }) {
+export function ColumnsMenu({ columns, setColumns, open, setOpen }) {
   const ref = React.useRef(null);
 
   React.useEffect(() => {
@@ -185,129 +204,79 @@ function ColumnsMenu({ columns, setColumns, open, setOpen }) {
   );
 }
 
-export function FilterMenu({ label, icon, options, selected, onToggle, onClear, format = (v) => v, counter }) {
-  const [open, setOpen] = React.useState(false);
-  const ref = React.useRef(null);
-
-  React.useEffect(() => {
-    const close = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
-    if (open) document.addEventListener('mousedown', close);
-    return () => document.removeEventListener('mousedown', close);
-  }, [open]);
-
-  const active = selected.length > 0;
+// The checkbox rows themselves, with no chrome of their own — the sheet's sections
+// render them inline.
+function OptionList({ options, selected, onToggle, onClear, format = (v) => v, counter }) {
   return (
-    <div ref={ref} style={{ position:'relative' }}>
-      <button onClick={() => setOpen(o => !o)} style={pillStyle(active)}>
-        <Icon name={icon} size={13}/>
-        <span>{label}</span>
-        {active && <span className="mono" style={countBadge}>{selected.length}</span>}
-        <Icon name="chev-down" size={12} color="var(--soft)"/>
-      </button>
-      {open && (
-        <div style={{
-          ...popoverStyle,
-          position:'absolute', top: 'calc(100% + 8px)', left: 0,
-          minWidth: 240, maxHeight: 360, overflowY: 'auto', padding: 6,
-        }}>
-          {options.map(opt => {
-            const sel = selected.includes(opt);
-            return (
-              <button key={opt} onClick={() => onToggle(opt)}
-                style={{
-                  display:'grid', gridTemplateColumns:'16px 1fr auto', alignItems:'center', gap: 10,
-                  width:'100%', padding:'8px 10px',
-                  background: sel ? 'var(--row-hover)' : 'transparent',
-                  border:'none', borderRadius: 8,
-                  textAlign:'left', cursor:'pointer',
-                  color:'var(--ink)', fontFamily:'var(--font-display)', fontSize: 13,
-                }}
-                onMouseEnter={e => { if (!sel) e.currentTarget.style.background = 'var(--row-hover)'; }}
-                onMouseLeave={e => { if (!sel) e.currentTarget.style.background = 'transparent'; }}
-              >
-                <Check on={sel}/>
-                <span>{format(opt)}</span>
-                {counter && <span className="mono" style={{ fontSize: 10.5, color:'var(--soft)' }}>{counter(opt)}</span>}
-              </button>
-            );
-          })}
-          {selected.length > 0 && (
-            <button onClick={onClear}
-              style={{
-                width:'100%', padding:'8px 10px', marginTop: 4,
-                background:'transparent', border:'none',
-                borderTop: '1px solid var(--line)',
-                color:'var(--soft)', fontFamily:'var(--font-mono)', fontSize: 10.5,
-                cursor:'pointer', textAlign:'left',
-                letterSpacing:'0.08em', textTransform: 'uppercase',
-              }}>
-              Clear selection
-            </button>
-          )}
-        </div>
+    <>
+      {options.map(opt => {
+        const sel = selected.includes(opt);
+        return (
+          <button key={opt} onClick={() => onToggle(opt)}
+            style={{
+              display:'grid', gridTemplateColumns:'16px 1fr auto', alignItems:'center', gap: 10,
+              width:'100%', padding:'8px 10px',
+              background: sel ? 'var(--row-hover)' : 'transparent',
+              border:'none', borderRadius: 8,
+              textAlign:'left', cursor:'pointer',
+              color:'var(--ink)', fontFamily:'var(--font-display)', fontSize: 13,
+            }}
+            onMouseEnter={e => { if (!sel) e.currentTarget.style.background = 'var(--row-hover)'; }}
+            onMouseLeave={e => { if (!sel) e.currentTarget.style.background = 'transparent'; }}
+          >
+            <Check on={sel}/>
+            <span>{format(opt)}</span>
+            {counter && <span className="mono" style={{ fontSize: 10.5, color:'var(--soft)' }}>{counter(opt)}</span>}
+          </button>
+        );
+      })}
+      {selected.length > 0 && (
+        <button onClick={onClear}
+          style={{
+            width:'100%', padding:'8px 10px', marginTop: 4,
+            background:'transparent', border:'none',
+            borderTop: '1px solid var(--line)',
+            color:'var(--soft)', fontFamily:'var(--font-mono)', fontSize: 10.5,
+            cursor:'pointer', textAlign:'left',
+            letterSpacing:'0.08em', textTransform: 'uppercase',
+          }}>
+          Clear selection
+        </button>
       )}
-    </div>
+    </>
   );
 }
 
-export function RangeFilter({ label, min, max, step, valueMin, valueMax, onChange, formatValue }) {
-  const [open, setOpen] = React.useState(false);
-  const ref = React.useRef(null);
-  React.useEffect(() => {
-    const close = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
-    if (open) document.addEventListener('mousedown', close);
-    return () => document.removeEventListener('mousedown', close);
-  }, [open]);
-
-  const active = valueMin > min || valueMax < max;
-
+// The dual slider, carrying its own thumb CSS so it works wherever it is mounted.
+function RangeBody({ min, max, step, valueMin, valueMax, onChange, formatValue }) {
   return (
-    <div ref={ref} style={{ position:'relative' }}>
-      <button onClick={() => setOpen(o => !o)} style={pillStyle(active)}>
-        <Icon name="filter" size={13}/>
-        <span>{label}</span>
-        {active && (
-          <span className="mono" style={{ fontSize: 11, color: 'var(--sub)', textTransform: 'none', letterSpacing: 0 }}>
-            {formatValue(valueMin)}–{formatValue(valueMax)}
-          </span>
-        )}
-        <Icon name="chev-down" size={12} color="var(--soft)"/>
-      </button>
-      {open && (
+    <>
+      <div style={{ position: 'relative', height: 32 }}>
+        <div style={{ position:'absolute', left: 0, right: 0, top: 14, height: 4, background:'var(--track)', borderRadius:999 }}/>
         <div style={{
-          ...popoverStyle,
-          position:'absolute', top: 'calc(100% + 8px)', left: 0,
-          width: 320, padding: 18,
-        }}>
-          <div className="eyebrow" style={{ fontSize: 9.5, marginBottom: 14 }}>{label}</div>
-          <div style={{ position: 'relative', height: 32 }}>
-            <div style={{ position:'absolute', left: 0, right: 0, top: 14, height: 4, background:'var(--track)', borderRadius:999 }}/>
-            <div style={{
-              position:'absolute',
-              left:  ((valueMin - min) / (max - min) * 100) + '%',
-              right: (100 - ((valueMax - min) / (max - min) * 100)) + '%',
-              top: 14, height: 4, background:'var(--accent)', borderRadius:999
-            }}/>
-            <input type="range" min={min} max={max} step={step} value={valueMin}
-              onChange={e => onChange(Math.min(+e.target.value, valueMax), valueMax)}
-              style={{ position:'absolute', inset:0, width:'100%', appearance:'none', background:'transparent', pointerEvents:'auto' }}
-              className="range-input"
-            />
-            <input type="range" min={min} max={max} step={step} value={valueMax}
-              onChange={e => onChange(valueMin, Math.max(+e.target.value, valueMin))}
-              style={{ position:'absolute', inset:0, width:'100%', appearance:'none', background:'transparent', pointerEvents:'auto' }}
-              className="range-input"
-            />
-          </div>
-          <div className="mono" style={{
-            display:'flex', justifyContent:'space-between',
-            fontSize: 11, color:'var(--sub)', marginTop: 8
-          }}>
-            <span>{formatValue(valueMin)}</span>
-            <span>{formatValue(valueMax)}</span>
-          </div>
-        </div>
-      )}
+          position:'absolute',
+          left:  ((valueMin - min) / (max - min) * 100) + '%',
+          right: (100 - ((valueMax - min) / (max - min) * 100)) + '%',
+          top: 14, height: 4, background:'var(--accent)', borderRadius:999
+        }}/>
+        <input type="range" min={min} max={max} step={step} value={valueMin}
+          onChange={e => onChange(Math.min(+e.target.value, valueMax), valueMax)}
+          style={{ position:'absolute', inset:0, width:'100%', appearance:'none', background:'transparent', pointerEvents:'auto' }}
+          className="range-input"
+        />
+        <input type="range" min={min} max={max} step={step} value={valueMax}
+          onChange={e => onChange(valueMin, Math.max(+e.target.value, valueMin))}
+          style={{ position:'absolute', inset:0, width:'100%', appearance:'none', background:'transparent', pointerEvents:'auto' }}
+          className="range-input"
+        />
+      </div>
+      <div className="mono" style={{
+        display:'flex', justifyContent:'space-between',
+        fontSize: 11, color:'var(--sub)', marginTop: 8
+      }}>
+        <span>{formatValue(valueMin)}</span>
+        <span>{formatValue(valueMax)}</span>
+      </div>
       <style>{`
         .range-input::-webkit-slider-thumb {
           appearance: none; width: 16px; height: 16px; border-radius: 50%;
@@ -322,15 +291,46 @@ export function RangeFilter({ label, min, max, step, valueMin, valueMax, onChang
         .range-input::-webkit-slider-runnable-track,
         .range-input::-moz-range-track { background: transparent; }
       `}</style>
+    </>
+  );
+}
+
+// One collapsible row of the phone sheet.
+function SheetSection({ label, icon, count, children }) {
+  const [open, setOpen] = React.useState(false);
+  return (
+    <div className="r-sheet-sec">
+      <button className="r-sheet-sec-head" onClick={() => setOpen(o => !o)} aria-expanded={open}>
+        <Icon name={icon} size={14}/>
+        <span style={{ flex: 1, textAlign: 'left' }}>{label}</span>
+        {count > 0 && <span className="mono" style={countBadge}>{count}</span>}
+        <Icon name={open ? 'chev-up' : 'chev-down'} size={12} color="var(--soft)"/>
+      </button>
+      {open && <div className="r-sheet-sec-body">{children}</div>}
     </div>
   );
 }
 
+export function CompareButton({ compareOn, setCompareOn, compareCount }) {
+  return (
+    <button onClick={() => setCompareOn(!compareOn)} style={pillStyle(compareOn)}>
+      <Icon name="compare" size={13}/>
+      Compare
+      {compareCount > 0 && <span className="mono" style={countBadge}>{compareCount}</span>}
+    </button>
+  );
+}
+
+// The ledger card clips to its rounded corners with overflow:hidden, so this panel
+// has to open on whichever side keeps it inside the card: the trigger sits at the
+// card's right edge on desktop and near its left edge once the header wraps on a
+// phone. index.html owns that flip (.r-colpop) — hence no left/right here.
+// Opening downward is always safe: the table below is 640px of the same card.
 export function ColumnsPopover({ columns, setColumns }) {
   return (
-    <div style={{
+    <div className="r-colpop" style={{
       ...popoverStyle,
-      position:'absolute', top: 'calc(100% + 8px)', left: 0,
+      position:'absolute', top: 'calc(100% + 8px)',
       width: 240, padding: 8, zIndex: 40,
     }}>
       <div className="eyebrow" style={{ padding: '6px 10px', fontSize: 9.5 }}>Visible columns</div>

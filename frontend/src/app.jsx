@@ -1,7 +1,6 @@
 import React from 'react';
 import { Icon } from './format.jsx';
 import { TopBar } from './topbar.jsx';
-import { Filters } from './filters.jsx';
 import { Summary } from './summary.jsx';
 import { DataTable } from './table.jsx';
 import { Detail } from './detail.jsx';
@@ -405,6 +404,10 @@ export function App() {
   const [compared, setCompared] = React.useState(new Set());
   const [compareModal, setCompareModal] = React.useState(false);
   const [showColumns, setShowColumns] = React.useState(false);
+  // Phone filter sheet. Lives here because the trigger is in the ledger header
+  // (table.jsx) while the sheet renders at app level, clear of the ledger card's
+  // overflow:hidden.
+  const [filtersOpen, setFiltersOpen] = React.useState(false);
   // On a phone there is no width for 13 columns, so start with the four that
   // answer "what does the fund own and how much of it" — the rest stay one tap
   // away in the Columns menu or in the detail drawer. Evaluated once at mount:
@@ -584,6 +587,13 @@ export function App() {
   // Stable max ownership for bars
   const maxOwn = React.useMemo(() => (data && data.length) ? Math.max(...data.map(d => d.ownership || 0)) : 1, [data]);
 
+  // Badge on the phone's Filters trigger. Counted the same way the pills count
+  // theirs, so the collapsed badge and the open sheet never disagree.
+  const activeFilterCount =
+    filters.countries.length + filters.sectors.length + filters.recs.length +
+    (filters.ownMin > 0 || filters.ownMax < maxOwn ? 1 : 0) +
+    (filters.pinned ? 1 : 0);
+
   const togglePin = (ticker) => {
     setPinned(prev => {
       const s = new Set(prev);
@@ -677,26 +687,23 @@ export function App() {
         />
 
         <section style={{ display:'grid', gap: 16, position: 'relative' }}>
-          <Filters
-            data={data}
+          <DataTable
+            data={filtered}
+            allData={data}
             filters={filters}
             setFilters={setFilters}
+            filtersOpen={filtersOpen}
+            setFiltersOpen={setFiltersOpen}
+            totalRows={data.length}
             columns={columns}
             setColumns={setColumns}
             showColumns={showColumns}
             setShowColumns={setShowColumns}
-            count={filtered.length}
-            compareOn={compareOn}
-            setCompareOn={(v) => { setCompareOn(v); if (!v) setCompared(new Set()); }}
-            compareCount={compared.size}
-          />
-          <DataTable
-            data={filtered}
-            columns={columns}
-            setColumns={setColumns}
+            activeFilterCount={activeFilterCount}
             sort={sort} setSort={setSort}
             pinned={pinned} togglePin={togglePin}
             compareOn={compareOn}
+            setCompareOn={(v) => { setCompareOn(v); if (!v) setCompared(new Set()); }}
             compared={compared} toggleCompare={toggleCompare}
             onOpen={setSelected}
             maxOwnership={maxOwn}
