@@ -172,12 +172,12 @@ export function Summary({ data, filtered, onPickCompany, onSetFilter, activeSect
               <span className="eyebrow">{sectors.length} sectors</span>
             )}
           >
+            {/* The asterisk in the title above points at the page footnote in
+                app.jsx, not at anything here. Three lines of caveat sat directly
+                under the treemap and read as part of the chart. */}
             <Treemap items={sectors} height={300}
               onClick={(it) => onSetFilter && it.label !== '—' && onSetFilter({ sector: it.label })}
             />
-            <div className="mono" style={{ fontSize: 10, color: 'var(--soft)', marginTop: 12, lineHeight: 1.4 }}>
-              * Tile areas are approximate — the smallest sectors are enlarged so they stay clickable. Hover any tile for its true share; click to filter.
-            </div>
           </Card>
         </div>
 

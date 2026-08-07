@@ -690,7 +690,19 @@ export function App() {
             maxOwnership={maxOwn}
           />
 
-          {/* Footnote */}
+          {/* Footnote.
+              Caveats live down here rather than beside the chart they describe.
+              Inline, they read as part of the reading — three lines of hedging
+              under the treemap looked like a result. The marker in the panel
+              title ("Sector weight*") is what carries the reference. */}
+          <div className="mono" style={{
+            fontSize: 10, color: 'var(--soft)', lineHeight: 1.5,
+            padding: '4px 6px', marginBottom: 2,
+          }}>
+            * Sector weight tile areas are approximate — the smallest sectors are
+            enlarged so they stay clickable. Hover any tile for its true share;
+            click one to filter.
+          </div>
           <div className="mono" style={{
             display:'flex', justifyContent:'space-between',
             fontSize: 10.5, color: 'var(--soft)',
