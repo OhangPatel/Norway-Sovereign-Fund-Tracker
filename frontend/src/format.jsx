@@ -170,6 +170,7 @@ export function Icon({ name, size = 16, color = 'currentColor', strokeWidth = 1.
     case 'pin':     return <svg {...props}><path d="M12 2v6M12 8l4 4v3H8v-3l4-4zM12 15v7"/></svg>;
     case 'pinned':  return <svg {...props} fill="currentColor"><path d="M12 2v6M12 8l4 4v3H8v-3l4-4zM12 15v7"/></svg>;
     case 'x':       return <svg {...props}><path d="M5 5l14 14M19 5 5 19"/></svg>;
+    case 'menu':    return <svg {...props}><path d="M4 7h16M4 12h16M4 17h16"/></svg>;
     case 'arrow-up': return <svg {...props}><path d="M12 19V5M5 12l7-7 7 7"/></svg>;
     case 'arrow-down': return <svg {...props}><path d="M12 5v14M19 12l-7 7-7-7"/></svg>;
     case 'arrow-right': return <svg {...props}><path d="M5 12h14M12 5l7 7-7 7"/></svg>;

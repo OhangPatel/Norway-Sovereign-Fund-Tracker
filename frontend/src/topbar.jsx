@@ -9,7 +9,13 @@ export function TopBar({ data, query, setQuery, theme, setTheme, onPick, compare
   const [focused, setFocused] = React.useState(false);
   const [active, setActive] = React.useState(0);
   const [condensed, setCondensed] = React.useState(false);
+  // Phone only (<=640px). The bar there is one row — brand, then a search toggle and
+  // a menu button — and these two hold what that row no longer has space for. Both are
+  // inert on wider screens, where CSS hides the buttons that set them.
+  const [menuOpen, setMenuOpen] = React.useState(false);
+  const [searchOpen, setSearchOpen] = React.useState(false);
   const wrapRef = React.useRef(null);
+  const navRef = React.useRef(null);
 
   const matches = React.useMemo(() => {
     if (!query) return [];
@@ -42,6 +48,26 @@ export function TopBar({ data, query, setQuery, theme, setTheme, onPick, compare
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, []);
+
+  // Dismiss the phone menu the two ways a menu is always expected to close:
+  // Escape, and a tap anywhere outside it.
+  React.useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (e) => { if (e.key === 'Escape') setMenuOpen(false); };
+    const onDown = (e) => { if (!navRef.current?.contains(e.target)) setMenuOpen(false); };
+    window.addEventListener('keydown', onKey);
+    window.addEventListener('pointerdown', onDown);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      window.removeEventListener('pointerdown', onDown);
+    };
+  }, [menuOpen]);
+
+  // Opening search from the icon should put the caret in the field — otherwise it
+  // costs two taps to do one thing.
+  React.useEffect(() => {
+    if (searchOpen) wrapRef.current?.querySelector('input')?.focus();
+  }, [searchOpen]);
 
   // Animation 4 — past ~64px the bar condenses and the band collapses to 0.
   //
@@ -84,7 +110,7 @@ export function TopBar({ data, query, setQuery, theme, setTheme, onPick, compare
       position: 'sticky', top: 0, zIndex: 50,
       padding: '16px clamp(14px, 2vw, 22px) 0',
     }}>
-      <div style={{ maxWidth: 1680, margin: '0 auto' }}>
+      <div ref={navRef} style={{ maxWidth: 1680, margin: '0 auto', position: 'relative' }}>
         {/* Nav shell — top corners only; the band below carries the bottom. */}
         <div className="nav-shell" style={{
           '--nav-h': condensed ? '56px' : '68px',
@@ -93,7 +119,7 @@ export function TopBar({ data, query, setQuery, theme, setTheme, onPick, compare
           borderBottom: condensed ? '1px solid var(--nav-line)' : 'none',
           borderRadius: condensed ? 16 : '16px 16px 0 0',
         }}>
-          <div className="r-topbar" style={{
+          <div className={`r-topbar${searchOpen ? ' search-open' : ''}`} style={{
             height: '100%',
             padding: '0 18px',
             gap: 18,
@@ -217,8 +243,59 @@ export function TopBar({ data, query, setQuery, theme, setTheme, onPick, compare
                 <Icon name={theme === 'dark' ? 'sun' : 'moon'} size={14}/>
               </TopBtn>
             </div>
+
+            {/* Phone cluster — replaces the three action buttons and the search row
+                below 640px, so the whole bar fits on one line. CSS owns the
+                breakpoint (see index.html); this is always rendered. */}
+            <div className="r-nav-mobile">
+              <NavIconBtn
+                onClick={() => { setSearchOpen(o => !o); setMenuOpen(false); }}
+                label={searchOpen ? 'Close search' : 'Search companies'}
+                expanded={searchOpen}
+              >
+                <Icon name={searchOpen ? 'x' : 'search'} size={17}/>
+              </NavIconBtn>
+              <NavIconBtn
+                onClick={() => { setMenuOpen(o => !o); setSearchOpen(false); }}
+                label={menuOpen ? 'Close menu' : 'Open menu'}
+                expanded={menuOpen}
+                badge={!menuOpen && compareCount > 0 ? compareCount : 0}
+              >
+                <Icon name={menuOpen ? 'x' : 'menu'} size={17}/>
+              </NavIconBtn>
+            </div>
           </div>
         </div>
+
+        {/* Phone menu — everything the one-line bar cannot hold. Absolute so opening
+            it never reflows the page behind the sticky header. */}
+        {menuOpen && (
+          <div className="r-nav-menu" role="menu" style={{
+            position: 'absolute', top: '100%', left: 0, right: 0, marginTop: 8,
+            zIndex: 60,
+            background: 'var(--surface)', border: '1px solid var(--line)',
+            borderRadius: 16, overflow: 'hidden',
+            boxShadow: '0 24px 48px -24px rgba(0,0,0,.45)',
+            animation: 'rise .12s ease-out',
+          }}>
+            <MenuRow
+              icon="columns"
+              onClick={() => { setMenuOpen(false); onOpenColumns(); }}
+            >Columns</MenuRow>
+            <MenuRow
+              icon="compare"
+              active={compareOn}
+              hint={compareCount > 0 ? `${compareCount} selected` : (compareOn ? 'On' : null)}
+              onClick={() => { setMenuOpen(false); setCompareOn(!compareOn); }}
+            >Compare</MenuRow>
+            <MenuRow
+              icon={theme === 'dark' ? 'sun' : 'moon'}
+              hint={theme === 'dark' ? 'Dark' : 'Light'}
+              last
+              onClick={() => { setMenuOpen(false); setTheme(theme === 'dark' ? 'light' : 'dark'); }}
+            >Theme</MenuRow>
+          </div>
+        )}
 
         {/* Ticker band — one continuous marquee line; carries the bottom corners. */}
         <div className="tick-band" style={{
@@ -256,6 +333,68 @@ function Tick({ row }) {
         {up ? '▲' : '▼'} {fmt.signedPct(row.change)}
       </span>
     </span>
+  );
+}
+
+// Square icon button for the phone bar. Same outline treatment as TopBtn, sized as a
+// touch target rather than a pill, and with a real aria-label since it has no text.
+function NavIconBtn({ children, onClick, label, expanded, badge = 0 }) {
+  return (
+    <button
+      onClick={onClick}
+      aria-label={label}
+      aria-expanded={expanded}
+      title={label}
+      style={{
+        position: 'relative',
+        display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+        width: 40, height: 40, flexShrink: 0,
+        background: expanded ? 'var(--nav-ink)' : 'transparent',
+        color: expanded ? 'var(--accent)' : 'var(--nav-ink)',
+        border: `1px solid ${expanded ? 'var(--nav-ink)' : 'var(--nav-line)'}`,
+        borderRadius: 10, cursor: 'pointer',
+        transition: 'background .14s ease, color .14s ease, border-color .14s ease',
+      }}
+    >
+      {children}
+      {badge > 0 && (
+        <span className="mono" aria-hidden="true" style={{
+          position: 'absolute', top: -5, right: -5,
+          minWidth: 16, height: 16, padding: '0 4px',
+          display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+          borderRadius: 999, background: 'var(--accent)', color: 'var(--nav-ink)',
+          fontSize: 9.5, fontWeight: 600, lineHeight: 1,
+        }}>{badge}</span>
+      )}
+    </button>
+  );
+}
+
+// One row of the phone menu: icon, label, and an optional state hint on the right.
+function MenuRow({ children, icon, onClick, active, hint, last }) {
+  return (
+    <button
+      onClick={onClick}
+      role="menuitem"
+      style={{
+        width: '100%', display: 'flex', alignItems: 'center', gap: 12,
+        padding: '14px 16px',
+        background: active ? 'var(--row-hover)' : 'transparent',
+        border: 'none',
+        borderBottom: last ? 'none' : '1px solid var(--line)',
+        color: 'var(--ink)', cursor: 'pointer', textAlign: 'left',
+        fontFamily: 'var(--font-display)', fontSize: 14, fontWeight: 500,
+      }}
+    >
+      <Icon name={icon} size={16} color="var(--sub)"/>
+      <span style={{ flex: 1 }}>{children}</span>
+      {hint && (
+        <span className="mono" style={{
+          fontSize: 10.5, color: 'var(--soft)',
+          letterSpacing: '0.06em', textTransform: 'uppercase',
+        }}>{hint}</span>
+      )}
+    </button>
   );
 }
 
