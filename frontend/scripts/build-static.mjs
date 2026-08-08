@@ -98,7 +98,11 @@ const TOTAL_USD = sectors.reduce((s, x) => s + x.usd, 0);
 const CSS = `
 :root{--bg:#F4F3EE;--surface:#fff;--line:#E4E2DA;--ink:#1B1A17;--sub:#5F5B52;--soft:#6B685F;--accent:#D6E134;--accent-ink:#6F7610;--zebra:#FAF9F5;
   --logo-tile:#16181B;--logo-stroke:transparent;--logo-crown:#F7F6F2;--logo-gold:#C9A227}
-@media(prefers-color-scheme:dark){:root{--bg:#08080A;--surface:#131316;--line:#26262B;--ink:#F6F6F2;--sub:#A8A49A;--soft:#8B8780;--accent:#D6E134;--accent-ink:#D6E134;--zebra:#0E0E11;
+/* Onyx field — neutral greys, mirroring the app's dark tokens in index.html.
+   Not the same names (these pages predate the token set and have no theme
+   toggle, only the OS preference), but the same values, so a reader arriving
+   from the dashboard lands on the same ground. */
+@media(prefers-color-scheme:dark){:root{--bg:#000000;--surface:#1C1C1E;--line:#2C2C2E;--ink:#FFFFFF;--sub:#98989D;--soft:#8E8E93;--accent:#D6E134;--accent-ink:#D6E134;--zebra:#161618;
   --logo-tile:#0F1113;--logo-stroke:#2B2F33}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);line-height:1.6;

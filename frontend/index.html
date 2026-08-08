@@ -21,7 +21,7 @@
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
     <meta name="author" content="Basecase" />
     <meta name="theme-color" content="#E3E8CE" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#14150F" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
@@ -164,7 +164,8 @@
       /* ============================================================
          "LIME" DESIGN SYSTEM — see STYLE_GUIDE.md (single source of truth)
          Light is default; [data-theme="dark"] inverts.
-         UI 2.0: light = "Olive wash", dark = "Ink field".
+         UI 2.0: light = "Olive wash", dark = "Onyx field" (neutral greys —
+         only --accent and the sector hues carry colour on the dark theme).
          ============================================================ */
       /* The nav card keeps the same look in both themes — only its surface and
          the ticker band flip — so its text colours are theme-independent and
@@ -232,7 +233,6 @@
 
         /* Shimmer across the total-holdings figure: lime → white → lime. */
         --shimmer: linear-gradient(100deg, #D8F34A 30%, #FFFFFF 50%, #D8F34A 70%);
-        --page-glow: none;
 
         /* Hero card carries its own surface so it can stay cream on the ink
            field (spec 02B) without dragging the other cards with it. */
@@ -268,29 +268,37 @@
       }
 
       :root[data-theme="dark"] {
-        /* — canonical Lime tokens — INK FIELD */
-        --bg: #14150F;
-        --surface: #1D1F14;
-        --line: #2C2E20;
-        --track: #2C2E20;
+        /* — canonical Lime tokens — ONYX FIELD
+           Neutral by construction: every surface and text token below is a pure
+           or near-pure grey, so nothing in the dark UI carries hue except
+           --accent and the --sector-* chart colours. The previous "Ink field"
+           derived these from the lime's own hue (~67deg), which tinted every
+           surface olive and kept --ink from ever reading as white. The greys are
+           Apple's system scale — the same ground the Stocks app puts under this
+           kind of dense numeric page. */
+        --bg: #000000;
+        --surface: #1C1C1E;
+        --line: #2C2C2E;
+        --track: #2C2C2E;
 
-        --ink: #F4F2EC;
-        --sub: #95978A;
-        /* Same fix as the light theme, lightened instead of darkened. #6E7060 scored
-           3.04:1 on --row-hover. Hue (67deg) and saturation (8%) unchanged.
-           Now 5.02:1 on --row-hover, 5.44 on --surface, 5.99 on --bg. */
-        --soft: #929583;
+        --ink: #FFFFFF;
+        --sub: #98989D;
+        /* Tertiary text: eyebrows, captions, table meta — mostly 9-11px, so WCAG's
+           4.5:1 "normal text" bar applies, not the 3:1 large-text one. Worst case
+           is --row-hover at 4.75:1; 5.22 on --surface, 6.44 on --bg. Re-check all
+           three if any of those backgrounds change. */
+        --soft: #8E8E93;
 
         --accent: #D8F34A;
         --accent-text: #D8F34A;
 
         /* Total-holdings card flips to a solid lime fill with ink numerals. */
         --feature: #D8F34A;
-        --feature-ink: #14150F;
+        --feature-ink: #000000;
         --feature-sub: #5A6B12;
-        --feature-num: #14150F;
+        --feature-num: #000000;
 
-        --row-hover: #23261A;
+        --row-hover: #242426;
         --card-hover-border: #D8F34A;
 
         /* Nav shell — the floating card stays cream so nav + band read as one
@@ -303,18 +311,19 @@
         --tick-up: #15490A;
         --tick-down: #8E1104;
 
-        /* Footer band — a shade under the page (#14150F) so it still reads as a
-           band of its own rather than dissolving into the field. */
-        --foot-surface: #0E0F09;
-        --foot-ink: #F4F2EC;
-        --foot-sub: #A9AB9C;
-        --foot-soft: #8A8C7D;
-        --foot-line: rgba(244, 242, 236, .11);
+        /* Footer band. On the ink field this sat a shade UNDER the page; nothing
+           sits under #000, so it now sits a shade above and reads as a band the
+           same way. It shares --surface's value on purpose: the footer is the
+           page's last card, not a fourth elevation. */
+        --foot-surface: #1C1C1E;
+        --foot-ink: #FFFFFF;
+        --foot-sub: #98989D;
+        --foot-soft: #8E8E93;
+        --foot-line: rgba(255, 255, 255, .11);
         --foot-accent: #D8F34A;
 
         /* Shimmer across the total-holdings figure: ink → white → ink. */
-        --shimmer: linear-gradient(100deg, #14150F 30%, #FFFFFF 50%, #14150F 70%);
-        --page-glow: radial-gradient(90% 60% at 85% -10%, rgba(216,243,74,.13), transparent 60%);
+        --shimmer: linear-gradient(100deg, #000000 30%, #FFFFFF 50%, #000000 70%);
 
         --hero-surface: #FFFDF7;
         --hero-line: #FFFDF7;
@@ -333,13 +342,15 @@
         --bull: #4ADE80;
         --bear: #F87171;
 
-        --treemap-cell-fg: #14150F;
+        --treemap-cell-fg: #000000;
 
         --font-display: 'Space Grotesk', sans-serif;
         --font-mono: 'JetBrains Mono', monospace;
 
-        /* On the onyx ground the tile would disappear, so it darkens slightly
-           and takes a hairline edge — this is logo/crown-ridge-dark.svg. */
+        /* The tile is a shade off the onyx ground rather than flush with it, and
+           takes a hairline edge so it still reads as a tile — this is
+           logo/crown-ridge-dark.svg. Kept cool-neutral on purpose: the mark has
+           its own palette and does not follow --accent. */
         --logo-tile: #0F1113;
         --logo-stroke: #2B2F33;
         --logo-crown: #F7F6F2;
@@ -354,13 +365,6 @@
         font-family: var(--font-display);
         line-height: 1.5;
         transition: background .25s, color .25s;
-      }
-      /* One soft lime glow over the ink field; `none` on the olive wash. */
-      body::before {
-        content: '';
-        position: fixed; inset: 0; z-index: 0;
-        background: var(--page-glow);
-        pointer-events: none;
       }
       #app { position: relative; z-index: 1; }
 

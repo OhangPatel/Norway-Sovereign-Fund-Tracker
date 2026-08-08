@@ -24,12 +24,14 @@ LOGO_STROKE    = "#2B2F33"
 LOGO_CROWN     = "#F7F6F2"
 LOGO_GOLD      = "#C9A227"
 
-# Lime tokens (site UI accent — unchanged by the logo)
-BG     = "#08080A"
-INK    = "#F6F6F2"
-SUB    = "#A0A0A4"
-SOFT   = "#74747A"
-LINE   = "#24242A"
+# Lime tokens (site UI accent — unchanged by the logo). Neutrals are the dark
+# theme's "Onyx field" greys, so the social card sits on the same ground as the
+# page it links to.
+BG     = "#000000"
+INK    = "#FFFFFF"
+SUB    = "#98989D"
+SOFT   = "#8E8E93"
+LINE   = "#2C2C2E"
 ACCENT = "#D6E134"
 
 DISPLAY = "/System/Library/Fonts/SFNS.ttf"
