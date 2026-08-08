@@ -151,11 +151,14 @@ def _record_metrics_run():
 MIN_YF_INTERVAL = 1.5          # seconds enforced between any two yfinance calls
 IP_WINDOW = 60.0              # sliding window length, seconds
 IP_MAX_CALLS = 30            # max live requests per IP per window
+QUOTE_TTL = 60.0             # seconds a quote is reused before refetching
 
 _yf_lock = threading.Lock()
 _yf_last_call = 0.0
 _ip_calls: dict = {}
 _ip_lock = threading.Lock()
+_quotes: dict = {}
+_quote_lock = threading.Lock()
 
 
 def _check_ip_rate(ip: str) -> bool:
@@ -175,6 +178,27 @@ def _check_ip_rate(ip: str) -> bool:
         recent.append(now)
         _ip_calls[ip] = recent
         return True
+
+
+def _quote_cached(ticker: str):
+    """Cached quote payload for `ticker`, or None when absent or past QUOTE_TTL."""
+    now = time.time()
+    with _quote_lock:
+        entry = _quotes.get(ticker)
+        if entry is None or now - entry[0] >= QUOTE_TTL:
+            return None
+        return entry[1]
+
+
+def _quote_store(ticker: str, payload: dict) -> None:
+    now = time.time()
+    with _quote_lock:
+        # Drop expired entries on write. One holding per key is small, but the fund
+        # holds 1400+ and nothing else would ever evict them (same reason _ip_calls
+        # prunes rather than growing one entry per visitor forever).
+        for stale in [k for k, v in _quotes.items() if now - v[0] >= QUOTE_TTL]:
+            del _quotes[stale]
+        _quotes[ticker] = (now, payload)
 
 
 @contextmanager
@@ -458,18 +482,29 @@ def get_price_history(ticker: str, request: Request, range: str = Query("1y")):
 
 @app.get("/api/quote/{ticker}")
 def get_quote(ticker: str, request: Request):
-    """Live current price for one ticker. On-demand and throttled; the result is
-    transient (the frontend shows it inline and never stores it)."""
+    """Live current price and previous close for one ticker. The result is transient
+    (the frontend shows it inline and never stores it) but IS cached here for
+    QUOTE_TTL: the drawer now fetches on open rather than on a button press, so
+    without this every reopen would be another yfinance call."""
     if not _check_ip_rate(_client_ip(request)):
         return JSONResponse(status_code=429, content={"error": "Too many requests — slow down"})
+
+    cached = _quote_cached(ticker)
+    if cached is not None:
+        return cached
 
     try:
         with _yf_slot():
             t = yf.Ticker(ticker)
+            fast = t.fast_info
             try:
-                price = float(t.fast_info["last_price"])
+                price = float(fast["last_price"])
             except Exception:
                 price = None
+            try:
+                prev_close = float(fast["previous_close"])
+            except Exception:
+                prev_close = None
             if price is None:
                 h = t.history(period="1d")
                 if h is not None and not h.empty and "Close" in h:
@@ -483,11 +518,16 @@ def get_quote(ticker: str, request: Request):
     if price is None:
         return JSONResponse(status_code=404, content={"error": "No live price available (invalid ticker or rate limited)"})
 
-    return {
+    # fetched_at records the yfinance call, not this request — a cached reply must not
+    # claim to be newer than the price it is carrying.
+    payload = {
         "ticker": ticker,
         "price": round(price, 2),
+        "previous_close": round(prev_close, 2) if prev_close is not None else None,
         "fetched_at": datetime.now(timezone.utc).isoformat(),
     }
+    _quote_store(ticker, payload)
+    return payload
 
 
 @app.get("/api/report/{ticker}")
