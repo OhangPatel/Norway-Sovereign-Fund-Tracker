@@ -18,7 +18,9 @@ export var ALL_COLUMNS = {
   price:   { label: 'Price',     width: 100, min: 62,  fr: 0.8, align: 'right', sortable: true,  sortKey: 'price' },
   change:  { label: '24h',       width: 78,  min: 52,  fr: 0.7, align: 'right', sortable: true,  sortKey: 'change' },
   range:   { label: '52-week range',  width: 200, min: 108, fr: 1.4, align: 'left',  sortable: false },
-  mvUsd:   { label: 'Fund value',    width: 132, min: 72,  fr: 1,   align: 'right', sortable: true,  sortKey: 'mvUsd' },
+  // The header carries the currency because the cell is USD-only — 80px is what
+  // "$ 56.9B" needs at 13px mono once the 9px phone padding is taken off.
+  mvUsd:   { label: 'USD value',     width: 132, min: 80,  fr: 1,   align: 'right', sortable: true,  sortKey: 'mvUsd' },
   ownership: { label: 'Ownership %', width: 154, min: 68,  fr: 1,   align: 'left',  sortable: true,  sortKey: 'ownership' },
   rec:     { label: 'Rec',       width: 110, min: 72,  fr: 0.9, align: 'left',  sortable: true,  sortKey: 'rec' },
   pe:      { label: 'P/E',       width: 70,  min: 46,  fr: 0.6, align: 'right', sortable: true,  sortKey: 'pe' },
@@ -130,7 +132,7 @@ export function DataTable({
         <div style={{ minWidth: 0 }}>
           <div className="eyebrow r-ledger-eyebrow">Holdings ledger</div>
           <div className="display" style={{ fontSize: 22, marginTop: 2, letterSpacing:'-0.01em', whiteSpace: 'nowrap' }}>
-            All positions <span className="display-italic" style={{ color:'var(--soft)' }}>
+            All positions <span className="display-italic r-ledger-count" style={{ color:'var(--soft)' }}>
               · {data.length.toLocaleString()}{totalRows > data.length && ` of ${totalRows.toLocaleString()}`} rows
             </span>
           </div>
@@ -379,10 +381,9 @@ export function Cell({ colKey, row, rank, cellBase, pinned, togglePin, hover, ma
 
     case 'mvUsd':
       return <div style={style}>
-        <div style={{ textAlign:'right' }}>
-          <div className="mono" style={{ fontSize: 13, color: 'var(--ink)' }}>{fmt.money(row.mvUsd, 'USD', 1)}</div>
-          <div className="mono" style={{ fontSize: 10, color:'var(--soft)' }}>{fmt.money(row.mvNok, 'NOK', 1)}</div>
-        </div>
+        <span className="mono" style={{ fontSize: 13, color: 'var(--ink)' }}>
+          {fmt.money(row.mvUsd, 'USD', 1)}
+        </span>
       </div>;
 
     case 'ownership': {

@@ -410,7 +410,11 @@ def get_holdings(
 
 
 # Map each chart range to an interval that keeps the payload reasonable.
-_HISTORY_RANGES = {"1y": "1d", "5y": "1wk", "max": "1mo"}
+_HISTORY_RANGES = {"1d": "5m", "1y": "1d", "5y": "1wk", "max": "1mo"}
+
+# Intraday points all fall on one date, so the date alone cannot tell them apart —
+# they carry a time. Anything coarser stays a plain date.
+_INTRADAY_INTERVALS = {"5m"}
 
 
 @app.get("/api/history/{ticker}")
@@ -442,12 +446,13 @@ def get_price_history(ticker: str, request: Request, range: str = Query("1y")):
         )
 
     closes = hist["Close"].dropna()
+    stamp = "%Y-%m-%d %H:%M" if interval in _INTRADAY_INTERVALS else "%Y-%m-%d"
     return {
         "ticker": ticker,
         "range": range,
         "interval": interval,
         "points": [round(float(v), 2) for v in closes.tolist()],
-        "dates": [d.strftime("%Y-%m-%d") for d in closes.index],
+        "dates": [d.strftime(stamp) for d in closes.index],
     }
 
 

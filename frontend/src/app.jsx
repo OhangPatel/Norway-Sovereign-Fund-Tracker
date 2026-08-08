@@ -424,7 +424,7 @@ export function App() {
       price:     { label: 'Price',          visible: wide },
       change:    { label: '24h change',     visible: true },
       range:     { label: '52-week range',  visible: wide },
-      mvUsd:     { label: 'Fund value',     visible: true },
+      mvUsd:     { label: 'USD value',      visible: true },
       ownership: { label: 'Ownership %',    visible: true },
       rec:       { label: 'Analyst rec',    visible: wide },
       pe:        { label: 'P/E ratio',      visible: false },

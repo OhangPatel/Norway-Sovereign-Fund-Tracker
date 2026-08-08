@@ -684,9 +684,12 @@
            a second row. !important because pillStyle() sets padding inline. */
         .r-ledger-tools { gap: 6px; }
         .r-ledger-tools button { padding: 7px 9px !important; }
-        /* "HOLDINGS LEDGER" over a title that already reads "All positions · N rows"
+        /* "HOLDINGS LEDGER" over a title that already reads "All positions"
            is a label for something the next line names. Desktop keeps it. */
         .r-ledger-eyebrow { display: none; }
+        /* "· 1,430 of 1,430 rows" wraps the title onto two lines to repeat what
+           the Filters sheet already reports on its Done button. Desktop keeps it. */
+        .r-ledger-count { display: none; }
 
         /* The header wraps here, putting the trigger near the card's LEFT edge —
            right-anchoring would hang 105px of the panel off the clipped side. */

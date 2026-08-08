@@ -256,10 +256,13 @@ export function Treemap({ items, height = 300, gap = 5, radius = 4, minShare = 0
 
 // Interactive price chart: line + fill + hover crosshair with a date/price tooltip
 const _MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+// Intraday points arrive as "2026-08-07 15:55" — the time is what separates them,
+// so it replaces the year. Daily and coarser stay "Aug 7, 2026".
 function fmtDay(s) {
   if (!s) return '';
-  const [y, m, d] = s.split('-');
-  return `${_MONTHS[+m - 1]} ${+d}, ${y}`;
+  const [date, time] = s.split(' ');
+  const [y, m, d] = date.split('-');
+  return `${_MONTHS[+m - 1]} ${+d}, ${time || y}`;
 }
 
 export function PriceChart({ points, dates, height = 84, color = 'auto', valueFmt = (v) => v }) {
