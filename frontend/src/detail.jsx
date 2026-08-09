@@ -49,6 +49,20 @@ function fmtStamp(s) {
   return (typeof s === 'string' && /^\d{4}-\d{2}-\d{2} /.test(s)) ? s.slice(0, 16) : (s || '—');
 }
 
+const MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+// "2026-08-06 13:35:28" -> "Aug 6, 2026 · 1:35 PM". Built by hand rather than with
+// Date — same reason as snapshot.js: the stamp carries no timezone, and a Date would
+// silently apply the reader's local one. Falls back to fmtStamp's raw slice for
+// anything (e.g. a pre-formatted lastFetched string) that doesn't match the pattern.
+function fmtSnapshotStamp(s) {
+  const m = typeof s === 'string' && s.match(/^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2})/);
+  if (!m) return fmtStamp(s);
+  const [, y, mo, d, h, mi] = m;
+  const hour = +h % 12 || 12;
+  return `${MONTHS_SHORT[+mo - 1]} ${+d}, ${y} · ${hour}:${mi} ${+h < 12 ? 'AM' : 'PM'}`;
+}
+
 // Grouped, signed percent. fmt.signedPct is toFixed only, which is fine for a 24h
 // move but unreadable on an all-time one — AAPL's max return prints as 312180.10.
 const groupedPct = (n) =>
@@ -113,7 +127,13 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
   // data.json — that file is a single cross-sectional moment and per-company live
   // writes would leave its totals summing prices from different days. Keyed by
   // ticker like `history` above, so `loading` is derived rather than set in an effect.
-  const [quote, setQuote] = React.useState({ key: null, price: null, prevClose: null, at: null, error: null });
+  //
+  // `refreshTick` exists only so the refresh button can re-run this same effect for
+  // the same ticker. `tick` travels inside `quote` (same trick as `history.key` above)
+  // so "busy" can be derived by comparing against `refreshTick` below, rather than
+  // set synchronously inside the effect.
+  const [quote, setQuote] = React.useState({ key: null, tick: -1, price: null, prevClose: null, at: null, error: null });
+  const [refreshTick, setRefreshTick] = React.useState(0);
 
   React.useEffect(() => {
     const ticker = company?.ticker;
@@ -121,14 +141,25 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
     const ctrl = new AbortController();
     fetch(`${PIPELINE_API}/api/quote/${encodeURIComponent(ticker)}`, { signal: ctrl.signal })
       .then(r => r.json().then(j => ({ ok: r.ok, j })))
-      .then(({ ok, j }) => setQuote(ok
-        ? { key: ticker, price: j.price, prevClose: j.previous_close, at: j.fetched_at, error: null }
-        : { key: ticker, price: null, prevClose: null, at: null, error: j.error || 'Unavailable' }))
+      .then(({ ok, j }) => setQuote(prev => ok
+        ? { key: ticker, tick: refreshTick, price: j.price, prevClose: j.previous_close, at: j.fetched_at, error: null }
+        // A failed *refresh* (as opposed to the first load) must not throw away a
+        // still-good live price the user is already looking at — only the initial
+        // fetch for this ticker has nothing to fall back to.
+        : { key: ticker, tick: refreshTick, error: j.error || 'Unavailable',
+            price: prev.key === ticker ? prev.price : null,
+            prevClose: prev.key === ticker ? prev.prevClose : null,
+            at: prev.key === ticker ? prev.at : null }))
       .catch(e => {
-        if (e.name !== 'AbortError') setQuote({ key: ticker, price: null, prevClose: null, at: null, error: 'Cannot reach backend' });
+        if (e.name !== 'AbortError') {
+          setQuote(prev => ({ key: ticker, tick: refreshTick, error: 'Cannot reach backend',
+            price: prev.key === ticker ? prev.price : null,
+            prevClose: prev.key === ticker ? prev.prevClose : null,
+            at: prev.key === ticker ? prev.at : null }));
+        }
       });
     return () => ctrl.abort();
-  }, [company?.ticker]);
+  }, [company?.ticker, refreshTick]);
 
   // Null until a quote for THIS company has actually landed, so a stale one from the
   // previously opened company can never reach the headline.
@@ -156,8 +187,10 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
   if (!company) return null;
 
   const loading = history.key !== `${company.ticker}|${range}`;
-  const quoteLoading = quote.key !== company.ticker;
-  const quoteError = quoteLoading ? null : quote.error;
+  const quoteBusy = quote.key !== company.ticker || quote.tick !== refreshTick;
+  // Guarded by key too, not just quoteBusy: while a new ticker's request is in
+  // flight this would otherwise show the previous ticker's error underneath it.
+  const quoteError = (quote.key === company.ticker && !quoteBusy) ? quote.error : null;
 
   // The headline and its 24h baseline travel together, so the delta can never be
   // measured against a price other than the one printed above it. Live when we have
@@ -249,8 +282,6 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
             </div>
           </div>
 
-          <ResearchLinks ticker={company.ticker} name={company.name}/>
-
           {/* Price block */}
           <div className="r-priceblock" style={{ marginTop: 22 }}>
             <div>
@@ -262,15 +293,15 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
                 <RangeDelta delta={delta} label={DELTA_LABEL[range]}/>
               </div>
               {/* Which clock the number above is on. Never omitted: an unlabelled price
-                  that is sometimes live and sometimes days old is the whole problem. */}
-              <div className="mono" style={{ marginTop: 6, fontSize: 10, color: 'var(--soft)' }}>
-                {headline.live ? (
-                  <>
-                    <span style={{ color:'var(--bull)' }}>●</span> Live · {fmtClock(headline.at)} · not saved
-                  </>
-                ) : (
-                  <>Snapshot · {fmtStamp(headline.at)} · {quoteLoading ? 'fetching live price…' : (quoteError || 'live price unavailable')}</>
-                )}
+                  that is sometimes live and sometimes days old is the whole problem —
+                  so even without the old "Live"/"Snapshot" labels, "Today" vs. a real
+                  date still says which one this is. */}
+              <div className="mono" style={{ marginTop: 6, fontSize: 10, color: 'var(--soft)', display: 'flex', alignItems: 'center', gap: 5 }}>
+                <span>
+                  {headline.live ? `Today · ${fmtClock(headline.at)}` : fmtSnapshotStamp(headline.at)}
+                  {!headline.live && quoteError && ` · ${quoteError}`}
+                </span>
+                <RefreshQuoteBtn onClick={() => setRefreshTick(t => t + 1)} busy={quoteBusy}/>
               </div>
               {company.targetPrice && (
                 <div className="mono" style={{ marginTop: 6, fontSize: 10.5, color: 'var(--soft)' }}>
@@ -318,6 +349,8 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
             <div className="eyebrow" style={{ fontSize: 9, marginBottom: 9 }}>52-week range</div>
             <RangeBar low={company.low52} high={company.high52} value={headline.price} height={10} showLabels={true}/>
           </div>
+
+          <ResearchLinks ticker={company.ticker} name={company.name}/>
 
           {/* Fund holding card */}
           <div style={{
@@ -538,6 +571,48 @@ export function KvCell({ label, value }) {
       <div className="eyebrow" style={{ fontSize: 8.5 }}>{label}</div>
       <div className="mono" style={{ fontSize: 13, color: 'var(--ink)', marginTop: 3 }}>{value}</div>
     </div>
+  );
+}
+
+// Refetches the live quote in place — the replacement for closing and reopening the
+// drawer to get a newer price. Small and borderless: it sits inline in the provenance
+// line, not styled as a peer of the header's pin/close buttons.
+//
+// The quote cache (backend, 60s TTL) usually answers in single-digit milliseconds, so
+// `busy` alone would flip on and off too fast to read as a spin. `minSpin` holds the
+// icon spinning for a floor of 500ms after a click regardless of how fast the request
+// actually returns; `busy` still keeps it spinning for however much longer a real
+// (uncached) fetch takes.
+const REFRESH_MIN_SPIN_MS = 500;
+
+function RefreshQuoteBtn({ onClick, busy }) {
+  const [minSpin, setMinSpin] = React.useState(false);
+  const timerRef = React.useRef(null);
+  React.useEffect(() => () => clearTimeout(timerRef.current), []);
+
+  const handleClick = () => {
+    onClick();
+    setMinSpin(true);
+    clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => setMinSpin(false), REFRESH_MIN_SPIN_MS);
+  };
+
+  const spinning = busy || minSpin;
+  return (
+    <button onClick={handleClick} disabled={spinning} title={spinning ? 'Refreshing…' : 'Refresh price'}
+      style={{
+        display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+        width: 16, height: 16, padding: 0,
+        background: 'transparent', border: 'none', color: 'var(--soft)',
+        cursor: spinning ? 'default' : 'pointer',
+      }}
+      onMouseEnter={e => { if (!spinning) e.currentTarget.style.color = 'var(--ink)'; }}
+      onMouseLeave={e => { e.currentTarget.style.color = 'var(--soft)'; }}
+    >
+      {spinning
+        ? <span style={{ display: 'inline-flex', animation: 'spin 1s linear infinite' }}><Icon name="refresh" size={11}/></span>
+        : <Icon name="refresh" size={11}/>}
+    </button>
   );
 }
 
