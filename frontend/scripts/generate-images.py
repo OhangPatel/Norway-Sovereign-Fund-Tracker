@@ -32,7 +32,7 @@ INK    = "#FFFFFF"
 SUB    = "#98989D"
 SOFT   = "#8E8E93"
 LINE   = "#2C2C2E"
-ACCENT = "#D6E134"
+ACCENT = "#D8F34A"
 
 DISPLAY = "/System/Library/Fonts/SFNS.ttf"
 MONO    = "/System/Library/Fonts/SFNSMono.ttf"

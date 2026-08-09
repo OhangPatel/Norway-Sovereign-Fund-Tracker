@@ -168,20 +168,6 @@
          dark = "Onyx field" (neutral greys — only --accent and the sector hues
          carry colour on the dark theme).
          ============================================================ */
-      /* The nav card keeps the same look in both themes — only its surface and
-         the ticker band flip — so its text colours are theme-independent and
-         cannot inherit --ink, which is cream on the ink field. */
-      :root {
-        --nav-ink: #16170F;
-        --nav-sub: #6F6D5F;
-        /* Was #A3A88F — 2.25:1 light, 2.13:1 dark: the worst contrast in the app, and
-           on the masthead ("Norway GPFG · Equity Holdings · <date>"). Because this token
-           is shared by both themes, one value has to clear all four nav backgrounds;
-           this does, at 5.01-5.77:1. Hue and saturation unchanged. */
-        --nav-soft: #646851;
-        --nav-accent-text: #6C8118;
-      }
-
       :root[data-theme="light"] {
         /* — canonical Lime tokens — WHISPER OLIVE
            The field keeps the lime's hue (72deg) but at a fraction of its former
@@ -229,10 +215,24 @@
         --row-hover: #F2F3ED;
         --card-hover-border: #16170F;
 
-        /* Nav shell — the floating card sits above the olive field. */
+        /* Nav shell — the floating card sits above the whisper-olive field.
+           These used to live on bare :root, because the card was cream in BOTH
+           themes and so could not inherit --ink. The dark theme's nav now follows
+           its own surface like every other card, so they are per-theme again. */
         --nav-surface: #FFFFFF;
         --nav-line: #E2E4D7;
         --nav-field: #F2F3ED;
+        --nav-ink: #16170F;
+        /* Was #A3A88F — 2.25:1, the worst contrast in the app, and on the masthead
+           ("Norway GPFG · Equity Holdings · <date>"). Hue and saturation unchanged;
+           now 5.77:1 on --nav-surface and 5.50 on --nav-field. */
+        --nav-soft: #646851;
+        --nav-accent-text: #6C8118;
+        /* Nav buttons invert when expanded: --nav-invert is the fill, and
+           --nav-invert-ink is the only thing legible on top of it. They are a
+           pair — changing one without the other is what breaks the button. */
+        --nav-invert: #16170F;
+        --nav-invert-ink: #D8F34A;
         --nav-band: #16170F;
         --nav-band-ink: #8F9180;
         --tick-up: #9BE04A;
@@ -318,11 +318,21 @@
         --row-hover: #242426;
         --card-hover-border: #D8F34A;
 
-        /* Nav shell — the floating card stays cream so nav + band read as one
-           card in both themes; only the surfaces flip. */
-        --nav-surface: #FFFDF7;
-        --nav-line: #E3E8D3;
-        --nav-field: #F2EFE4;
+        /* Nav shell — follows the theme. It used to stay cream on the dark side so
+           nav + ticker band read as one object, but on the onyx field that made it
+           the only warm surface left in the UI. It is now an ordinary card:
+           --surface fill, --line border, --row-hover for the search field. */
+        --nav-surface: #1C1C1E;
+        --nav-line: #2C2C2E;
+        --nav-field: #242426;
+        --nav-ink: #FFFFFF;
+        --nav-soft: #8E8E93;
+        --nav-accent-text: #D8F34A;
+        /* The inversion flips with the card: on a dark nav the active button fills
+           with lime and takes near-black text, rather than the light theme's
+           near-black fill with lime text. */
+        --nav-invert: #D8F34A;
+        --nav-invert-ink: #000000;
         --nav-band: #D8F34A;
         --nav-band-ink: #2C3505;
         --tick-up: #15490A;
@@ -342,10 +352,12 @@
         /* Shimmer across the total-holdings figure: ink → white → ink. */
         --shimmer: linear-gradient(100deg, #000000 30%, #FFFFFF 50%, #000000 70%);
 
-        --hero-surface: #FFFDF7;
-        --hero-line: #FFFDF7;
-        --hero-ink: #16170F;
-        --hero-sub: #6F6D5F;
+        /* Hero card, likewise. It carried its own surface so it could stay cream on
+           the ink field (spec 02B); on the onyx field it is just a card. */
+        --hero-surface: #1C1C1E;
+        --hero-line: #2C2C2E;
+        --hero-ink: #FFFFFF;
+        --hero-sub: #98989D;
 
         --sector-tech: #60A5FA;
         --sector-financials: #D6E134;

@@ -39,15 +39,10 @@ Theme choice persists in `localStorage` under the key `sov-theme` (see `src/app.
 **Always reference colors through the `var(--token)` names below — never hardcode hex
 values in components.** The JSX is already clean on this; keep it that way.
 
-A small group of tokens lives on bare `:root` because it is *theme-independent* — the nav
-card keeps the same cream look in both themes, so its text colors cannot inherit `--ink`:
-
-| Token                | Value     | Use |
-|----------------------|-----------|-----|
-| `--nav-ink`          | `#16170F` | Nav card primary text |
-| `--nav-sub`          | `#6F6D5F` | Nav card secondary text |
-| `--nav-soft`         | `#646851` | Nav card tertiary text (clears all four nav backgrounds at 5.01–5.77:1) |
-| `--nav-accent-text`  | `#6C8118` | Accent text on the nav card |
+**Every palette token is per-theme.** There is no bare-`:root` group any more. The
+`--nav-*` text tokens used to live there because the nav card stayed cream on both themes
+and so could not inherit `--ink`; now that the nav follows the theme, they are ordinary
+theme-scoped tokens like everything else.
 
 ---
 
@@ -130,14 +125,20 @@ from that same color family.
 
 ### Nav shell, footer, hero (self-contained surfaces)
 
-These three carry their own colors instead of the page tokens, because each one keeps a
-look that does not follow the theme.
+These carry their own tokens rather than reading `--surface` / `--ink` directly, because
+the ticker band and the footer keep a look of their own. The nav and hero cards now
+*match* the page tokens — they have their own names, but the same values.
 
 | Token             | Light                     | Dark                      | Use |
 |-------------------|---------------------------|---------------------------|-----|
-| `--nav-surface`   | `#FFFFFF`                 | `#FFFDF7`                 | Floating nav card |
-| `--nav-line`      | `#E2E4D7`                 | `#E3E8D3`                 | Nav card border |
-| `--nav-field`     | `#F2F3ED`                 | `#F2EFE4`                 | Search field inside the nav |
+| `--nav-surface`   | `#FFFFFF`                 | `#1C1C1E`                 | Floating nav card |
+| `--nav-line`      | `#E2E4D7`                 | `#2C2C2E`                 | Nav card border |
+| `--nav-field`     | `#F2F3ED`                 | `#242426`                 | Search field inside the nav |
+| `--nav-ink`       | `#16170F`                 | `#FFFFFF`                 | Nav card primary text |
+| `--nav-soft`      | `#646851`                 | `#8E8E93`                 | Nav card tertiary text |
+| `--nav-accent-text` | `#6C8118`               | `#D8F34A`                 | Accent text on the nav card |
+| `--nav-invert`    | `#16170F`                 | `#D8F34A`                 | Fill of an expanded nav button |
+| `--nav-invert-ink`| `#D8F34A`                 | `#000000`                 | Text on `--nav-invert` |
 | `--nav-band`      | `#16170F`                 | `#D8F34A`                 | Ticker band |
 | `--nav-band-ink`  | `#8F9180`                 | `#2C3505`                 | Ticker band text |
 | `--tick-up`       | `#9BE04A`                 | `#15490A`                 | Ticker gain |
@@ -148,15 +149,18 @@ look that does not follow the theme.
 | `--foot-soft`     | `#8A8C7D`                 | `#8E8E93`                 | Footer tertiary text |
 | `--foot-line`     | `rgba(244,242,236,.11)`   | `rgba(255,255,255,.11)`   | Footer rules |
 | `--foot-accent`   | `#D8F34A`                 | `#D8F34A`                 | Footer accent |
-| `--hero-surface`  | `#FFFFFF`                 | `#FFFDF7`                 | Hero card |
-| `--hero-line`     | `#E2E4D7`                 | `#FFFDF7`                 | Hero card border |
-| `--hero-ink`      | `#16170F`                 | `#16170F`                 | Hero card text |
-| `--hero-sub`      | `#6F6D5F`                 | `#6F6D5F`                 | Hero card secondary text |
+| `--hero-surface`  | `#FFFFFF`                 | `#1C1C1E`                 | Hero card |
+| `--hero-line`     | `#E2E4D7`                 | `#2C2C2E`                 | Hero card border |
+| `--hero-ink`      | `#16170F`                 | `#FFFFFF`                 | Hero card text |
+| `--hero-sub`      | `#6F6D5F`                 | `#98989D`                 | Hero card secondary text |
 
-**The nav card and the hero card stay cream on the onyx field.** That is deliberate — nav
-and ticker band read as one card in both themes — but it is the one place the dark theme
-is not neutral, and it is a much starker contrast against `#000000` than it was against
-the old `#14150F`. Revisit it as a design decision, not as a bug.
+> ⚠️ **`--nav-invert` and `--nav-invert-ink` are a pair — never change one alone.**
+> `NavIconBtn` in `topbar.jsx` inverts when its menu is open: it fills with `--nav-invert`
+> and writes `--nav-invert-ink` on top. It used to fill with `--nav-ink` and write
+> `--accent`, which only worked while `--nav-ink` was guaranteed to be a dark color. The
+> moment the dark theme's nav card went dark and `--nav-ink` became white, that pattern
+> produced lime-on-white at **1.25:1**. Hence the explicit pair: a text token is not a
+> fill token. Verified at 14.47:1 (light) and 16.84:1 (dark).
 
 The footer inverts its old logic: on the ink field it sat a shade *under* the page, and
 nothing sits under `#000`, so on the onyx field it sits a shade *above* and reads as a
@@ -203,6 +207,11 @@ enough to take dark text in both themes.
 
 Sector and signal colors are the **only** hues allowed on the dark theme besides
 `--accent`. They are data, not decoration.
+
+> ⚠️ **`--sector-financials` is `#D6E134`, which is the *retired* accent lime.** That is a
+> coincidence of how the sector palette was picked, not a link. It is the last live use of
+> that hex in the codebase, so **never search-and-replace `#D6E134`** — doing so recolors
+> Financial Services across every chart and treemap. The accent is `#D8F34A`.
 
 ### Logo (its own palette, on purpose)
 
@@ -345,12 +354,19 @@ palette above.
   mode toggle" in §5 describe the pre-redesign build. The toggle now lives in the nav
   menu, not a bottom-center pill. Colors (§1–§2) are current; treat the rest as stale
   until someone does a pass.
-- **Accent drift outside the SPA.** `build-static.mjs` and `generate-images.py` still use
-  the pre-2.0 lime `#D6E134`; the app uses `#D8F34A`. Visible when a reader crosses from
-  the dashboard to a `/holdings/` page.
-- **`site.webmanifest` `theme_color`** is `#16181B` (the logo tile), not either theme's
-  `--bg`. A manifest holds only one value, so this needs a call about which theme the PWA
-  splash should represent. `background_color` now tracks the light `--bg`.
+- **`--accent-ink` on the static pages is `#6F7610`, not the app's `#6C8118`** — and that
+  is the better value, so it was left alone when the accent drift was fixed. It scores
+  4.48:1 on `--bg` / 4.91 on `--surface`, against 4.00 / 4.38 for the app's. "Aligning"
+  the two would make contrast worse. Both should converge on `#617416` when the
+  `--accent-text` AA fix lands; until then the mismatch is deliberate.
+- **`site.webmanifest` is split across themes, deliberately.** `theme_color` is `#000000`
+  (dark `--bg`) so installed-app chrome reads as an extension of the dark theme;
+  `background_color` is `#F4F5F0` (light `--bg`) because the app boots into the light
+  theme, so the splash matches what actually loads. A manifest holds one value per field
+  and cannot follow the theme — unlike `<meta name="theme-color">` in `index.html`, which
+  has proper light/dark variants. **This is only self-consistent while the app defaults to
+  light** (`src/app.jsx`, `localStorage.getItem('sov-theme') || 'light'`). If that default
+  changes, `background_color` has to move with it.
 - **`--accent-text` fails AA on light** — see the callout in §2 for the measurement and
   the one-value fix.
 - **The light theme's ink surfaces stay olive.** `--feature`, `--nav-band`, and
@@ -358,5 +374,10 @@ palette above.
   where that works out to a 6/255 spread across the channels. The tint is not perceivable,
   and neutralizing them to `#000000` would change their *weight* on a light page, not just
   their hue. Left alone deliberately; this is not the dark theme's no-hue rule leaking.
-- **The nav and hero cards stay cream on the dark theme.** Still the open design question
-  from the onyx change — see the note under §2's self-contained surfaces table.
+- **`--nav-accent-text` fails AA on light** for the same reason as `--accent-text`:
+  `#6C8118` is 4.38:1 on `--nav-surface`, 3.93 on `--nav-field`. It renders the "Insights"
+  half of the wordmark at 17px/600 — just under WCAG's 18.66px bold threshold, so the
+  4.5:1 bar applies. Fixing `--accent-text` should fix this one in the same pass.
+- **`--nav-sub` was removed**, not renamed. It had zero consumers — the restructure would
+  have duplicated a dead token into both theme blocks. Nav secondary text uses
+  `--nav-soft`.

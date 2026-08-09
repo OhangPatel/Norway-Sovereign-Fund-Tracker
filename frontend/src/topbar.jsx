@@ -367,9 +367,12 @@ function NavIconBtn({ children, onClick, label, expanded, className }) {
         position: 'relative',
         display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
         width: 40, height: 40, flexShrink: 0,
-        background: expanded ? 'var(--nav-ink)' : 'transparent',
-        color: expanded ? 'var(--accent)' : 'var(--nav-ink)',
-        border: `1px solid ${expanded ? 'var(--nav-ink)' : 'var(--nav-line)'}`,
+        // The expanded fill is --nav-invert, not --nav-ink: --nav-ink is a TEXT
+        // colour and follows the nav card, so on the dark theme it is white —
+        // filling with it would put lime on white at 1.2:1.
+        background: expanded ? 'var(--nav-invert)' : 'transparent',
+        color: expanded ? 'var(--nav-invert-ink)' : 'var(--nav-ink)',
+        border: `1px solid ${expanded ? 'var(--nav-invert)' : 'var(--nav-line)'}`,
         borderRadius: 10, cursor: 'pointer',
         transition: 'background .14s ease, color .14s ease, border-color .14s ease',
       }}
