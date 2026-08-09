@@ -168,7 +168,7 @@ export function TopBar({
                 background: 'var(--nav-field)',
                 border: `1px solid ${focused ? 'var(--nav-ink)' : 'var(--nav-line)'}`,
                 borderRadius: 10,
-                boxShadow: focused ? '0 0 0 4px color-mix(in oklch, var(--accent) 55%, transparent)' : 'none',
+                boxShadow: focused ? '0 0 0 4px color-mix(in srgb, var(--accent) 55%, transparent)' : 'none',
                 transition: 'border-color .15s ease, box-shadow .15s ease',
               }}>
                 <Icon name="search" size={15} color="var(--nav-soft)"/>

@@ -127,7 +127,7 @@ export function OriginTag({ origin, period }) {
     <span className="mono" style={{
       fontSize: 9.5, padding: '2px 6px', borderRadius: 4,
       whiteSpace: 'nowrap',
-      background: nbim ? 'color-mix(in oklch, var(--accent) 30%, transparent)' : 'transparent',
+      background: nbim ? 'color-mix(in srgb, var(--accent) 30%, transparent)' : 'transparent',
       border: `1px solid ${nbim ? 'transparent' : 'var(--line)'}`,
       color: nbim ? 'var(--ink)' : 'var(--soft)',
     }}>

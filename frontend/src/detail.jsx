@@ -7,8 +7,6 @@ import { formatPeriod, periodLabel } from './snapshot.js';
 
 // Slide-over detail drawer for a single company
 
-const RANGE_LABEL = { '1d': 'Market open', '1y': '1 year ago', '5y': '5 years ago', 'max': 'All time' };
-
 // Suffix on the headline delta, naming the window it measures.
 const DELTA_LABEL = { '1d': '24h', '1y': '1Y', '5y': '5Y', 'max': 'all time' };
 
@@ -68,8 +66,9 @@ function fmtSnapshotStamp(s) {
 const groupedPct = (n) =>
   (n >= 0 ? '+' : '-') + Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%';
 
-// Headline delta: "▲ +12.40 (+6.14%) 1Y". Arrow and sign match Delta in format.jsx.
-function RangeDelta({ delta, label }) {
+// Headline delta: "▲ +12.40 (+6.14%)". The window it measures is named in the
+// eyebrow above the price, not repeated here.
+function RangeDelta({ delta }) {
   if (!delta) return <span className="mono" style={{ fontSize: 11, color: 'var(--soft)' }}>—</span>;
   const pos = delta.pct >= 0;
   return (
@@ -80,7 +79,6 @@ function RangeDelta({ delta, label }) {
     }}>
       <span style={{ fontSize: 9 }}>{pos ? '▲' : '▼'}</span>
       <span>{(pos ? '+' : '-') + fmt.price(Math.abs(delta.abs))} ({groupedPct(delta.pct)})</span>
-      <span style={{ color: 'var(--soft)', fontSize: 9.5, fontWeight: 400 }}>{label}</span>
     </span>
   );
 }
@@ -207,6 +205,13 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
     ? null
     : rangeDelta(range, headline.price, headline.prevClose, chart.points);
 
+  // Where the headline price sits between the 52-week low and high, as a percent —
+  // the number the "52w position" tile shows next to the bar itself.
+  const range52 = company.high52 - company.low52;
+  const pos52 = (company.low52 != null && company.high52 != null && headline.price != null && range52 > 0)
+    ? Math.max(0, Math.min(100, (headline.price - company.low52) / range52 * 100))
+    : null;
+
   const peerSet = allData
     .filter(c => (c.sector || c.industry) === (company.sector || company.industry) && c.id !== company.id)
     .sort((a, b) => b.mvUsd - a.mvUsd)
@@ -239,11 +244,19 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
           display:'flex', alignItems:'center', justifyContent:'space-between',
           padding: '12px 20px',
           borderBottom: '1px solid var(--line)',
-          background: 'color-mix(in oklch, var(--bg) 90%, transparent)',
+          // srgb, not oklch — in a polar space this mix loses --bg's olive hue and
+          // paints the strip pink. See the note on Row's `bg` in table.jsx.
+          background: 'color-mix(in srgb, var(--bg) 90%, transparent)',
           backdropFilter: 'blur(10px)',
           position: 'sticky', top: 0, zIndex: 5,
         }}>
-          <div className="eyebrow">Position detail</div>
+          <div className="eyebrow" style={{ display:'flex', alignItems:'center', gap: 7 }}>
+            <span style={{
+              width: 6, height: 6, borderRadius: 99, flexShrink: 0,
+              background: headline.live ? 'var(--bull)' : 'var(--soft)',
+            }}/>
+            Position detail
+          </div>
           <div style={{ display:'flex', gap: 6 }}>
             <IconBtn onClick={() => togglePin(company.id)} active={isPinned} title={isPinned ? 'Unpin' : 'Pin'}>
               <Icon name={isPinned ? 'pinned' : 'pin'} size={14}/>
@@ -257,96 +270,141 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
         {/* Type here runs a step below the dashboard's: the drawer is a dense read,
             and every point of headline size costs a metric off the first screen. */}
         <div style={{ padding: 'clamp(16px, 3.2vw, 22px) clamp(14px, 3.2vw, 26px) 40px' }}>
-          {/* Title block */}
-          <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap: 24 }}>
+          {/* Title block. The ticker repeats — once in the meta line, once as its own
+              chip — because the two do different jobs: the line reads as a sentence,
+              the chip is what a returning eye lands on first. */}
+          <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap: 16 }}>
             <div style={{ minWidth: 0 }}>
-              <div style={{ display:'flex', alignItems:'center', gap: 9, marginBottom: 7 }}>
-                <span className="mono" style={{
-                  fontSize: 11, color:'var(--sub)',
-                  background:'var(--surface)', border:'1px solid var(--line)',
-                  padding: '2px 7px', borderRadius: 4
-                }}>{company.ticker}</span>
-                <span style={{ fontSize: 11.5, color:'var(--soft)' }}>{company.country}</span>
-                <span style={{ width: 3, height: 3, background:'var(--soft)', borderRadius: 99 }}/>
-                <span style={{ fontSize: 11.5, color:'var(--soft)' }}>{company.industry}</span>
+              <div className="eyebrow" style={{ fontSize: 10.5 }}>
+                {company.ticker} · {company.country} · {company.industry}
               </div>
               <h2 className="display" style={{
-                fontSize: 30, lineHeight: 1.06, margin: 0,
+                fontSize: 30, lineHeight: 1.06, margin: '6px 0 0',
                 letterSpacing: '-0.015em',
               }}>{company.name}</h2>
               {company.reason && (
-                <div className="mono" style={{ marginTop: 7, fontSize: 10.5, color: 'var(--soft)', letterSpacing:'0.04em' }}>
+                <div className="eyebrow" style={{ fontSize: 9.5, marginTop: 7 }}>
                   Inclusion basis · <span style={{ color:'var(--sub)' }}>{company.reason}</span>
                 </div>
               )}
             </div>
+            <span className="mono" style={{
+              fontSize: 12, fontWeight: 600, letterSpacing:'0.04em', flexShrink: 0,
+              color: 'var(--accent-text)',
+              // srgb, not oklch — see the note on Row's `bg` in table.jsx.
+              background: 'color-mix(in srgb, var(--accent) 12%, var(--surface))',
+              border: '1px solid color-mix(in srgb, var(--accent) 45%, transparent)',
+              padding: '6px 12px', borderRadius: 8,
+            }}>{company.ticker}</span>
           </div>
 
-          {/* Price block */}
-          <div className="r-priceblock" style={{ marginTop: 22 }}>
-            <div>
-              <div className="eyebrow" style={{ fontSize: 9 }}>Last price</div>
-              <div style={{ display:'flex', alignItems:'baseline', gap: 10, marginTop: 5 }}>
-                <span className="display" style={{ fontSize: 38, lineHeight: 1, letterSpacing:'-0.02em' }}>
+          {/* Price + chart card. Price and its window sit at the top, the chart itself
+              gets a bordered field to read as an instrument rather than bare lines
+              on the page, and the range tabs live at the BOTTOM — under the chart
+              they control, not above it, so the eye reads price → chart → range. */}
+          <div style={{
+            marginTop: 22, border: '1px solid var(--line)', borderRadius: 16,
+            background: 'var(--surface)', overflow: 'hidden',
+          }}>
+            <div style={{ padding: '16px 18px 0', display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap: 12, flexWrap:'wrap' }}>
+              <div style={{ display:'flex', alignItems:'baseline', gap: 10, flexWrap:'wrap' }}>
+                <span className="display" style={{ fontSize: 32, lineHeight: 1, letterSpacing:'-0.02em' }}>
                   {fmt.price(headline.price)}
                 </span>
-                <RangeDelta delta={delta} label={DELTA_LABEL[range]}/>
+                <RangeDelta delta={delta}/>
               </div>
-              {/* Which clock the number above is on. Never omitted: an unlabelled price
-                  that is sometimes live and sometimes days old is the whole problem —
-                  so even without the old "Live"/"Snapshot" labels, "Today" vs. a real
-                  date still says which one this is. */}
-              <div className="mono" style={{ marginTop: 6, fontSize: 10, color: 'var(--soft)', display: 'flex', alignItems: 'center', gap: 5 }}>
+              <div className="eyebrow" style={{ fontSize: 9 }}>Last price · {DELTA_LABEL[range]}</div>
+            </div>
+
+            {/* Faint grid behind the line — a bare chart on a blank field read as
+                unfinished; this reads as an instrument. */}
+            <div style={{
+              margin: '14px 18px 0', height: 130, display:'grid', placeItems:'center',
+              backgroundImage:
+                'repeating-linear-gradient(to bottom, var(--line) 0 1px, transparent 1px 33%),' +
+                'repeating-linear-gradient(to right, var(--line) 0 1px, transparent 1px 20%)',
+              backgroundSize: '100% 100%', opacity: 1,
+            }}>
+              {loading ? (
+                <span className="mono" style={{ fontSize: 11, color:'var(--soft)' }}>Loading price history…</span>
+              ) : (history.error || !chart.points || chart.points.length < 2) ? (
+                <span className="mono" style={{ fontSize: 11, color:'var(--soft)' }}>{history.error || 'No price history'}</span>
+              ) : (
+                <PriceChart points={chart.points} dates={chart.dates} valueFmt={fmt.price} height={130} color="auto"/>
+              )}
+            </div>
+
+            <div style={{
+              marginTop: 14, padding: '0 18px', minHeight: 40, borderTop: '1px solid var(--line)',
+              display:'flex', alignItems:'center', justifyContent:'space-between', gap: 12, flexWrap:'wrap',
+            }}>
+              {/* Tabs rather than pills: the accent bar rides the card's own divider,
+                  so the selected range reads as the tab the chart above hangs from.
+                  The negative margin pulls the first label back to the 18px gutter —
+                  its tint bleeds left of it, which is what keeps the row aligned. */}
+              <div style={{ display:'flex', marginLeft: -12 }}>
+                {['1d', '1y', '5y', 'max'].map(r => {
+                  const on = range === r;
+                  return (
+                    <button key={r} onClick={() => setRange(r)}
+                      className="mono"
+                      style={{
+                        position: 'relative',
+                        fontSize: 10.5, padding: '11px 12px', border: 'none', borderRadius: 0,
+                        cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '0.1em',
+                        fontWeight: on ? 600 : 500,
+                        color: on ? 'var(--accent-text)' : 'var(--soft)',
+                        // srgb, not oklch — see the note on Row's `bg` in table.jsx.
+                        background: on ? 'color-mix(in srgb, var(--accent) 10%, transparent)' : 'transparent',
+                        transition: 'color .12s, background .12s',
+                      }}
+                      onMouseEnter={e => { if (!on) e.currentTarget.style.color = 'var(--ink)'; }}
+                      onMouseLeave={e => { if (!on) e.currentTarget.style.color = 'var(--soft)'; }}
+                    >
+                      {r}
+                      {on && <span style={{
+                        position:'absolute', left: 0, right: 0, top: -1, height: 2,
+                        background: 'var(--accent)',
+                      }}/>}
+                    </button>
+                  );
+                })}
+              </div>
+              {/* Which clock the price above is on, plus a manual refresh. Never
+                  omitted: an unlabelled price that is sometimes live and sometimes
+                  days old is the whole problem. */}
+              <div className="mono" style={{ display:'flex', alignItems:'center', gap: 6, fontSize: 10, color: 'var(--soft)' }}>
+                <span style={{
+                  width: 6, height: 6, borderRadius: 99, flexShrink: 0,
+                  background: headline.live ? 'var(--bull)' : 'var(--soft)',
+                }}/>
                 <span>
-                  {headline.live ? `Today · ${fmtClock(headline.at)}` : fmtSnapshotStamp(headline.at)}
+                  {headline.live ? `Live · ${fmtClock(headline.at)}` : fmtSnapshotStamp(headline.at)}
                   {!headline.live && quoteError && ` · ${quoteError}`}
                 </span>
                 <RefreshQuoteBtn onClick={() => setRefreshTick(t => t + 1)} busy={quoteBusy}/>
               </div>
-              {company.targetPrice && (
-                <div className="mono" style={{ marginTop: 6, fontSize: 10.5, color: 'var(--soft)' }}>
-                  Analyst target · <span style={{ color:'var(--sub)' }}>{fmt.price(company.targetPrice)}</span>
-                  &nbsp;
-                  <span style={{ color: company.targetPrice > headline.price ? 'var(--bull)' : 'var(--bear)' }}>
-                    ({((company.targetPrice / headline.price - 1) * 100).toFixed(1)}%)
-                  </span>
-                </div>
-              )}
-            </div>
-            <div style={{ alignSelf:'stretch', minWidth: 0 }}>
-              <div style={{ display:'flex', gap: 4, justifyContent:'flex-end', marginBottom: 6 }}>
-                {['1d', '1y', '5y', 'max'].map(r => (
-                  <button key={r} onClick={() => setRange(r)}
-                    className="mono"
-                    style={{
-                      fontSize: 10, padding: '2px 8px', borderRadius: 5, cursor: 'pointer',
-                      textTransform: 'uppercase', letterSpacing: '0.04em',
-                      background: range === r ? 'var(--accent)' : 'transparent',
-                      color: range === r ? 'var(--treemap-cell-fg)' : 'var(--soft)',
-                      border: `1px solid ${range === r ? 'var(--accent)' : 'var(--line)'}`,
-                      transition: 'all .12s',
-                    }}>{r}</button>
-                ))}
-              </div>
-              <div style={{ height: 84, display:'grid', placeItems:'center' }}>
-                {loading ? (
-                  <span className="mono" style={{ fontSize: 11, color:'var(--soft)' }}>Loading price history…</span>
-                ) : (history.error || !chart.points || chart.points.length < 2) ? (
-                  <span className="mono" style={{ fontSize: 11, color:'var(--soft)' }}>{history.error || 'No price history'}</span>
-                ) : (
-                  <PriceChart points={chart.points} dates={chart.dates} valueFmt={fmt.price} height={84} color="auto"/>
-                )}
-              </div>
-              <div className="mono" style={{ display:'flex', justifyContent:'space-between', marginTop: 6, fontSize: 10, color:'var(--soft)' }}>
-                <span>{RANGE_LABEL[range]}</span>
-                <span>{(chart.dates && chart.dates.length) ? chart.dates[chart.dates.length - 1] : 'Snapshot'}</span>
-              </div>
             </div>
           </div>
 
+          {/* As of / target / 52-week position — three numbers that used to run down
+              the page as separate caption lines, now scannable in one row. */}
+          <div className="r-metrics3" style={{ marginTop: 18, gap: 10 }}>
+            <MetricBox label="As of" value={headline.live ? fmtClock(headline.at) : fmtSnapshotStamp(headline.at)}/>
+            <MetricBox label="Target" value={company.targetPrice ? (
+              <>
+                {fmt.price(company.targetPrice)}{' '}
+                <span style={{
+                  fontSize: 12,
+                  color: company.targetPrice > headline.price ? 'var(--bull)' : 'var(--bear)',
+                }}>({((company.targetPrice / headline.price - 1) * 100).toFixed(1)}%)</span>
+              </>
+            ) : '—'}/>
+            <MetricBox label="52w position" value={pos52 != null ? `${pos52.toFixed(0)}%` : '—'}/>
+          </div>
+
           {/* 52w range */}
-          <div style={{ marginTop: 22 }}>
-            <div className="eyebrow" style={{ fontSize: 9, marginBottom: 9 }}>52-week range</div>
+          <div style={{ marginTop: 18 }}>
             <RangeBar low={company.low52} high={company.high52} value={headline.price} height={10} showLabels={true}/>
           </div>
 
@@ -360,7 +418,7 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
             background: 'color-mix(in oklch, var(--accent) 7%, var(--surface))',
             borderRadius: 18,
           }}>
-            <SectionLabel text="Norway GPFG holding"
+            <SectionLabel text="Norway GPFG holding" accent divider
               tag={historical ? `disclosed as of ${formatPeriod(period)}` : null}/>
             <div className="r-metrics3">
               <Metric label="USD value" value={fmt.money(company.mvUsd, 'USD', 2)}/>
@@ -456,7 +514,7 @@ function ResearchLinks({ ticker, name }) {
   return (
     <div style={{ marginTop: 18 }}>
       <div className="eyebrow" style={{ fontSize: 9, marginBottom: 8 }}>Research</div>
-      <div style={{ display: 'flex', alignItems: 'stretch', gap: 6, flexWrap: 'wrap' }}>
+      <div className="r-research3">
         <ExtLink href={`https://www.perplexity.ai/finance/${sym}`} brand="perplexity"
           title={`Open ${ticker} on Perplexity Finance`}>Perplexity</ExtLink>
         <ExtLink href={`https://finance.yahoo.com/quote/${sym}`} brand="yahoo"
@@ -500,9 +558,10 @@ function BrandMark({ brand }) {
   );
 }
 
-// One outbound link, framed like the ticker chip in the title block above it. All three
-// carry equal weight now that each is named and marked: the destination is the label,
-// so the row says where it goes rather than making the reader guess from an icon.
+// One outbound link, one cell of the r-research3 grid. All three carry equal weight
+// now that each is named, marked, and given equal width: the destination is the
+// label, so the row says where it goes rather than making the reader guess from an
+// icon or hunt for the shortest button.
 function ExtLink({ href, children, brand, title }) {
   const reset = (el) => {
     el.style.background = 'var(--surface)';
@@ -512,11 +571,11 @@ function ExtLink({ href, children, brand, title }) {
   return (
     <a href={href} target="_blank" rel="noopener noreferrer" className="mono" title={title}
       style={{
-        display: 'inline-flex', alignItems: 'center', gap: 6,
-        fontSize: 11, lineHeight: 1, color: 'var(--sub)', textDecoration: 'none',
+        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7,
+        fontSize: 11.5, lineHeight: 1, color: 'var(--sub)', textDecoration: 'none',
         background: 'var(--surface)',
         border: '1px solid var(--line)',
-        padding: '6px 10px', borderRadius: 6,
+        padding: '10px', borderRadius: 8,
         transition: 'background .12s, color .12s, border-color .12s',
       }}
       onMouseEnter={e => {
@@ -530,6 +589,31 @@ function ExtLink({ href, children, brand, title }) {
       <BrandMark brand={brand}/>
       {children}
     </a>
+  );
+}
+
+/**
+ * Boxed reading, for the three figures that sit in the open page under the chart
+ * card. Metric below is the bare stacked pair, which reads fine inside a card that
+ * already has its own border — out on the page these three floated. Same framing as
+ * the chart above them, so price and its context read as one instrument.
+ *
+ * Mono, not `display`: a clock, a price and a percent are all figures to be compared
+ * across the three cells, and the value wraps rather than truncates because "As of"
+ * on a snapshot is a full date plus a time.
+ */
+function MetricBox({ label, value }) {
+  return (
+    <div style={{
+      border: '1px solid var(--line)', borderRadius: 12,
+      background: 'var(--surface)', padding: '11px 14px',
+    }}>
+      <div className="eyebrow" style={{ fontSize: 9 }}>{label}</div>
+      <div className="mono" style={{
+        fontSize: 15, fontWeight: 600, marginTop: 5, lineHeight: 1.3,
+        color: 'var(--ink)',
+      }}>{value}</div>
+    </div>
   );
 }
 
@@ -551,11 +635,20 @@ export function Metric({ label, value, accent, note }) {
 /**
  * Section heading with an optional provenance tag. The tag is what stops a reader
  * assuming every number under one heading belongs to the same date.
+ *
+ * `accent` + `divider` are for a heading that sits inside its own card (the GPFG
+ * holding block): the accent colour and the rule under it separate the card's title
+ * from its numbers the way a plain heading in the open page doesn't need to.
  */
-export function SectionLabel({ text, tag }) {
+export function SectionLabel({ text, tag, accent, divider }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, flexWrap: 'wrap', marginBottom: 9 }}>
-      <span className="eyebrow" style={{ fontSize: 10 }}>{text}</span>
+    <div style={{
+      display: 'flex', alignItems: 'baseline', gap: 8, flexWrap: 'wrap',
+      marginBottom: divider ? 14 : 9,
+      paddingBottom: divider ? 12 : 0,
+      borderBottom: divider ? '1px solid var(--line)' : 'none',
+    }}>
+      <span className="eyebrow" style={{ fontSize: 10, color: accent ? 'var(--accent-text)' : undefined }}>{text}</span>
       {tag && (
         <span className="mono" style={{ fontSize: 8.5, color: 'var(--sub)', fontWeight: 400 }}>
           · {tag}
@@ -565,11 +658,16 @@ export function SectionLabel({ text, tag }) {
   );
 }
 
+// Label and value share one row instead of stacking — half the height of the old
+// two-line cell, so six figures cost one screenful instead of two.
 export function KvCell({ label, value }) {
   return (
-    <div style={{ background:'var(--surface)', padding: '11px 14px' }}>
-      <div className="eyebrow" style={{ fontSize: 8.5 }}>{label}</div>
-      <div className="mono" style={{ fontSize: 13, color: 'var(--ink)', marginTop: 3 }}>{value}</div>
+    <div style={{
+      background:'var(--surface)', padding: '12px 14px',
+      display:'flex', alignItems:'center', justifyContent:'space-between', gap: 10,
+    }}>
+      <span className="eyebrow" style={{ fontSize: 8.5 }}>{label}</span>
+      <span className="mono" style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink)', textAlign:'right', flexShrink: 0 }}>{value}</span>
     </div>
   );
 }

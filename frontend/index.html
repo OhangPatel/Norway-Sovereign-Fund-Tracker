@@ -546,6 +546,9 @@
       /* Metric groups — summary.jsx + detail.jsx */
       .r-metrics3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
       .r-kv2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; }
+      /* Research links — detail.jsx. Equal-width buttons instead of left-aligned
+         flex-wrap, so three destinations read as one row of equal weight. */
+      .r-research3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
       /* Added / removed columns — changes.jsx */
       .r-changes2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
 
@@ -618,7 +621,6 @@
       /* Menu panel hugs the button it opened from. Left-anchored full-bleed only on
          phones, where the bar is narrow enough that a fixed 260px would look arbitrary. */
       .r-nav-menu { right: 0; width: 260px; }
-      .r-priceblock { display: grid; grid-template-columns: auto 1fr; gap: 28px; align-items: flex-end; }
       .r-skel4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
 
       /* Data table. Column templates are computed in JS because the visible
@@ -702,7 +704,10 @@
         .r-bento > .card { padding: 16px 14px !important; }
         .r-bento > .card .display { font-size: 22px !important; white-space: normal !important; }
         .r-metrics3 { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-        .r-kv2 { grid-template-columns: minmax(0, 1fr); }
+        /* Financials stays two-up rather than collapsing: six one-line figures in a
+           single column was ~350px of scrolling, and the widest label
+           ("P/E RATIO (TRAILING)", ~126px) still clears a half-width cell. */
+        .r-kv2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         .r-changes2 { grid-template-columns: minmax(0, 1fr); gap: 22px; }
 
         /* Ownership distribution — 370px of phone for one histogram. The header was
@@ -740,8 +745,10 @@
           animation: sheet-up .2s cubic-bezier(.2,.8,.2,1);
         }
         .r-sheet-grip { display: block; }
-        .r-priceblock { grid-template-columns: minmax(0, 1fr); gap: 18px; }
         .r-skel4 { grid-template-columns: minmax(0, 1fr); }
+        /* Three research buttons at 190px each read fine; at phone width they'd
+           squeeze "Yahoo Finance" onto two lines, so this stacks them instead. */
+        .r-research3 { grid-template-columns: minmax(0, 1fr); }
 
         /* Table fits the viewport instead of scrolling sideways. */
         .r-trow { grid-template-columns: var(--cols-m, var(--cols)); }

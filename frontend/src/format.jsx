@@ -41,10 +41,10 @@ export const fmt = {
 export function Chip({ children, tone = 'neutral', style = {} }) {
   const tones = {
     neutral: { bg: 'var(--row-hover)', fg: 'var(--sub)', bd: 'var(--line)' },
-    pos:     { bg: 'color-mix(in oklch, var(--bull) 14%, transparent)', fg: 'var(--bull)', bd: 'color-mix(in oklch, var(--bull) 35%, transparent)' },
-    neg:     { bg: 'color-mix(in oklch, var(--bear) 14%, transparent)', fg: 'var(--bear)', bd: 'color-mix(in oklch, var(--bear) 35%, transparent)' },
-    accent:  { bg: 'color-mix(in oklch, var(--accent) 18%, transparent)', fg: 'var(--accent-text)', bd: 'color-mix(in oklch, var(--accent) 35%, transparent)' },
-    info:    { bg: 'color-mix(in oklch, var(--sector-tech) 14%, transparent)', fg: 'var(--sector-tech)', bd: 'color-mix(in oklch, var(--sector-tech) 30%, transparent)' },
+    pos:     { bg: 'color-mix(in srgb, var(--bull) 14%, transparent)', fg: 'var(--bull)', bd: 'color-mix(in srgb, var(--bull) 35%, transparent)' },
+    neg:     { bg: 'color-mix(in srgb, var(--bear) 14%, transparent)', fg: 'var(--bear)', bd: 'color-mix(in srgb, var(--bear) 35%, transparent)' },
+    accent:  { bg: 'color-mix(in srgb, var(--accent) 18%, transparent)', fg: 'var(--accent-text)', bd: 'color-mix(in srgb, var(--accent) 35%, transparent)' },
+    info:    { bg: 'color-mix(in srgb, var(--sector-tech) 14%, transparent)', fg: 'var(--sector-tech)', bd: 'color-mix(in srgb, var(--sector-tech) 30%, transparent)' },
   };
   const t = tones[tone] || tones.neutral;
   return (
@@ -93,7 +93,7 @@ export function RangeBar({ low, high, value, height = 8, showLabels = false }) {
     <div style={{ width: '100%' }}>
       <div style={{
         position: 'relative', height, borderRadius: 99,
-        background: 'linear-gradient(90deg, color-mix(in oklch, var(--bear) 40%, transparent), color-mix(in oklch, var(--soft) 30%, transparent) 50%, color-mix(in oklch, var(--bull) 40%, transparent))',
+        background: 'linear-gradient(90deg, color-mix(in srgb, var(--bear) 40%, transparent), color-mix(in srgb, var(--soft) 30%, transparent) 50%, color-mix(in srgb, var(--bull) 40%, transparent))',
         border: '1px solid var(--line)',
         overflow: 'visible',
       }}>

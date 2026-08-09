@@ -16,7 +16,7 @@ export function CompareDock({ companies, onRemove, onClear, onExpand, onOpenComp
       animation: 'rise .25s cubic-bezier(.22,.61,.36,1)',
     }}>
       <div style={{
-        background: 'color-mix(in oklch, var(--surface) 92%, transparent)',
+        background: 'color-mix(in srgb, var(--surface) 92%, transparent)',
         backdropFilter: 'blur(20px) saturate(140%)',
         border: '1px solid var(--line)',
         borderRadius: 14,

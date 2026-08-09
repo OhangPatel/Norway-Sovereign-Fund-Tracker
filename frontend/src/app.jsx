@@ -248,9 +248,9 @@ export function PipelineControls(props) {
       fontFamily: 'var(--font-mono)', fontSize: 9.5, flexShrink: 0,
       padding: '2px 9px', borderRadius: 999,
       letterSpacing: '0.08em', textTransform: 'uppercase',
-      border: '1px solid ' + (warn ? 'color-mix(in oklch, var(--bear) 45%, transparent)'
+      border: '1px solid ' + (warn ? 'color-mix(in srgb, var(--bear) 45%, transparent)'
         : soon ? 'var(--line)'
-        : 'color-mix(in oklch, var(--accent) 45%, transparent)'),
+        : 'color-mix(in srgb, var(--accent) 45%, transparent)'),
       color: warn ? 'var(--bear)' : soon ? 'var(--soft)' : 'var(--accent-text)',
     };
   }
@@ -271,7 +271,7 @@ export function PipelineControls(props) {
           <div style={{
             border: '1.5px solid ' + stateColor,
             borderRadius: 14, padding: '11px 22px',
-            boxShadow: '0 0 22px -8px color-mix(in oklch, ' + stateColor + ' 55%, transparent)',
+            boxShadow: '0 0 22px -8px color-mix(in srgb, ' + stateColor + ' 55%, transparent)',
             transition: 'border-color .2s ease',
           }}>
             <div className="eyebrow" style={{ fontSize: 10 }}>Live Data</div>

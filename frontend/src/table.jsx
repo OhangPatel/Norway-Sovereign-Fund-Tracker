@@ -265,9 +265,15 @@ export function Row({ row, rank, visibleCols, onOpen, pinned, togglePin, compare
     onOpen(row);
   };
 
-  const bg = compared ? 'color-mix(in oklch, var(--accent) 10%, transparent)'
-    : pinned ? 'color-mix(in oklch, var(--accent) 4%, transparent)'
-    : hover ? 'color-mix(in oklch, var(--row-hover) 50%, transparent)'
+  // srgb, not oklch. Mixing a colour with `transparent` in a polar space leaves the
+  // hue undefined — Chrome resolves it to `none`, which paints as hue 0, i.e. pink.
+  // It only shows on near-neutral tokens (--bg, --surface, --row-hover), whose own
+  // hue is too weak to carry: this hover turned the olive row pink. srgb is
+  // rectangular, so the mix is exactly the base colour at n% alpha. Keep it srgb
+  // anywhere the second colour is `transparent`.
+  const bg = compared ? 'color-mix(in srgb, var(--accent) 10%, transparent)'
+    : pinned ? 'color-mix(in srgb, var(--accent) 4%, transparent)'
+    : hover ? 'color-mix(in srgb, var(--row-hover) 50%, transparent)'
     : 'transparent';
 
   return (
