@@ -96,7 +96,8 @@ const TOTAL_USD = sectors.reduce((s, x) => s + x.usd, 0);
 
 // ── Shared chrome ───────────────────────────────────────────────────────────
 const CSS = `
-:root{--bg:#F4F3EE;--surface:#fff;--line:#E4E2DA;--ink:#1B1A17;--sub:#5F5B52;--soft:#6B685F;--accent:#D6E134;--accent-ink:#6F7610;--zebra:#FAF9F5;
+/* Whisper olive — mirrors the app's light tokens in index.html. */
+:root{--bg:#F4F5F0;--surface:#fff;--line:#E2E4D7;--ink:#16170F;--sub:#626054;--soft:#5E624C;--accent:#D6E134;--accent-ink:#6F7610;--zebra:#F8F9F4;
   --logo-tile:#16181B;--logo-stroke:transparent;--logo-crown:#F7F6F2;--logo-gold:#C9A227}
 /* Onyx field — neutral greys, mirroring the app's dark tokens in index.html.
    Not the same names (these pages predate the token set and have no theme

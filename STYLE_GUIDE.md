@@ -6,8 +6,11 @@ Reference implementation: `frontend/index.html` (the `<style>` block holds every
 
 The two themes have names, and the names are load-bearing:
 
-- **Light = "Olive wash."** The page is a warm olive field; the accent's hue runs through
-  the neutrals on purpose.
+- **Light = "Whisper olive."** The page keeps the lime's hue (72°) but at ~20% saturation
+  and 95% lightness. This replaced the earlier "Olive wash" (`#E3E8CE`, 36% saturation at
+  86% lightness) — more saturated and darker than any comparable finance UI puts behind a
+  page of white cards, so it read as a color rather than as a surface. Hue is unchanged;
+  only the volume came down.
 - **Dark = "Onyx field."** Pure neutral greys on true black. **No hue anywhere except
   `--accent` and the `--sector-*` chart colors.** This replaced the earlier "Ink field,"
   whose neutrals were derived from the lime's own hue (~67°) — that tinted every dark
@@ -54,32 +57,40 @@ card keeps the same cream look in both themes, so its text colors cannot inherit
 
 | Token                  | Light       | Dark        | Use |
 |------------------------|-------------|-------------|-----|
-| `--bg`                 | `#E3E8CE`   | `#000000`   | Page background |
+| `--bg`                 | `#F4F5F0`   | `#000000`   | Page background |
 | `--surface`            | `#FFFFFF`   | `#1C1C1E`   | Cards / panels |
-| `--line`               | `#E3E8D3`   | `#2C2C2E`   | Borders, dividers |
-| `--track`              | `#E3E8D3`   | `#2C2C2E`   | Progress-bar track |
+| `--line`               | `#E2E4D7`   | `#2C2C2E`   | Borders, dividers |
+| `--track`              | `#E2E4D7`   | `#2C2C2E`   | Progress-bar track |
 | `--ink`                | `#16170F`   | `#FFFFFF`   | Primary text |
 | `--sub`                | `#626054`   | `#98989D`   | Secondary text |
 | `--soft`               | `#5E624C`   | `#8E8E93`   | Tertiary / mono labels |
-| `--row-hover`          | `#F4F6EA`   | `#242426`   | List-row hover |
+| `--row-hover`          | `#F2F3ED`   | `#242426`   | List-row hover |
 | `--card-hover-border`  | `#16170F`   | `#D8F34A`   | Card hover border |
 
-Dark-theme elevation runs `--bg` → `--surface` → `--row-hover` → `--line`, darkest to
-lightest. Keep that ordering if you add a surface: a row hover that outruns `--line`
-erases the borders inside the row it is highlighting.
+**Elevation runs opposite ways in the two themes, and that is not a mistake.** Dark goes
+`--bg` → `--surface` → `--row-hover` → `--line`, darkest to lightest: elevated means
+lighter, and a row hover that outruns `--line` would erase the borders inside the row it
+is highlighting. Light has nothing above white, so `--surface` is the ceiling and
+`--row-hover` steps *down* from it.
+
+**Card definition is carried differently in each theme too.** On dark, the `#000` page
+against `#1C1C1E` cards does the work. On light, white cards on a 95%-lightness field is
+only 1.10:1, so `--line` carries it — 1.29:1 against `--surface`, 1.17:1 against `--bg`.
+Under the old olive field `--line` was the same luminance as `--bg` (1.00:1) and
+contributed nothing. **Do not lighten `--line` on the light theme**; it is load-bearing now.
 
 **Contrast.** Every text token clears WCAG AA (4.5:1) against every background it can
 land on. Secondary and tertiary text is mostly 9–11px, so the 4.5:1 *normal-text* bar
-applies, not the 3:1 large-text one. Measured on the dark theme:
+applies, not the 3:1 large-text one.
 
-| Token    | on `--bg` | on `--surface` | on `--row-hover` |
-|----------|-----------|----------------|------------------|
-| `--ink`  | 21.00     | 17.01          | 15.49            |
-| `--sub`  | 7.31      | 5.93           | 5.40             |
-| `--soft` | 6.44      | 5.22           | 4.75             |
+| Token    | Dark: `--bg` / `--surface` / `--row-hover` | Light: `--bg` / `--surface` / `--row-hover` |
+|----------|--------------------------------------------|---------------------------------------------|
+| `--ink`  | 21.00 / 17.01 / 15.49                      | 16.47 / 18.05 / 16.17                       |
+| `--sub`  | 7.31 / 5.93 / 5.40                         | 5.77 / 6.32 / 5.67                          |
+| `--soft` | 6.44 / 5.22 / 4.75                         | 5.76 / 6.31 / 5.66                          |
 
-`--soft` on `--row-hover` is the tightest pair in the theme. Re-check all three columns
-if any of those three backgrounds change.
+`--soft` on dark `--row-hover` (4.75) is the tightest pair in the system. Re-check every
+column if any of those backgrounds change.
 
 ### Accent
 
@@ -92,6 +103,14 @@ if any of those three backgrounds change.
 > `--accent-text` darkens to `#6C8118` in light mode. Use `--accent` for fills/shapes and
 > `--accent-text` for any accent-colored text. On the dark theme the raw lime is fine
 > (16.84:1 on `--bg`), so the two are the same value there.
+
+> ⚠️ **`--accent-text` fails AA on the light theme.** It scores 4.00:1 on `--bg`, 4.38 on
+> `--surface`, 3.93 on `--row-hover` — under the 4.5:1 bar, and it is used on 9–13px text
+> (`table.jsx` "HIGH" labels and sorted column headers, `compare.jsx` ownership figures).
+> This predates the whisper-olive field, which lifted it from 3.49 to 4.00 without fixing
+> it. `#617416` clears all three (4.77 / 5.23 / 4.68) with hue and saturation unchanged —
+> the same lightness-only technique already used on `--sub` and `--soft`. Not applied:
+> it darkens a visible brand color and wants a design call.
 
 ### Feature card (the inverted highlight card)
 
@@ -117,8 +136,8 @@ look that does not follow the theme.
 | Token             | Light                     | Dark                      | Use |
 |-------------------|---------------------------|---------------------------|-----|
 | `--nav-surface`   | `#FFFFFF`                 | `#FFFDF7`                 | Floating nav card |
-| `--nav-line`      | `#E3E8D3`                 | `#E3E8D3`                 | Nav card border |
-| `--nav-field`     | `#F4F6EA`                 | `#F2EFE4`                 | Search field inside the nav |
+| `--nav-line`      | `#E2E4D7`                 | `#E3E8D3`                 | Nav card border |
+| `--nav-field`     | `#F2F3ED`                 | `#F2EFE4`                 | Search field inside the nav |
 | `--nav-band`      | `#16170F`                 | `#D8F34A`                 | Ticker band |
 | `--nav-band-ink`  | `#8F9180`                 | `#2C3505`                 | Ticker band text |
 | `--tick-up`       | `#9BE04A`                 | `#15490A`                 | Ticker gain |
@@ -130,7 +149,7 @@ look that does not follow the theme.
 | `--foot-line`     | `rgba(244,242,236,.11)`   | `rgba(255,255,255,.11)`   | Footer rules |
 | `--foot-accent`   | `#D8F34A`                 | `#D8F34A`                 | Footer accent |
 | `--hero-surface`  | `#FFFFFF`                 | `#FFFDF7`                 | Hero card |
-| `--hero-line`     | `#E3E8D3`                 | `#FFFDF7`                 | Hero card border |
+| `--hero-line`     | `#E2E4D7`                 | `#FFFDF7`                 | Hero card border |
 | `--hero-ink`      | `#16170F`                 | `#16170F`                 | Hero card text |
 | `--hero-sub`      | `#6F6D5F`                 | `#6F6D5F`                 | Hero card secondary text |
 
@@ -329,6 +348,15 @@ palette above.
 - **Accent drift outside the SPA.** `build-static.mjs` and `generate-images.py` still use
   the pre-2.0 lime `#D6E134`; the app uses `#D8F34A`. Visible when a reader crosses from
   the dashboard to a `/holdings/` page.
-- **`site.webmanifest`** carries `background_color: #F4F3EE` (a light `--bg` that no
-  longer exists) and `theme_color: #16181B` (the logo tile). A manifest can hold only one
-  value, so this needs a call about which theme the PWA splash should represent.
+- **`site.webmanifest` `theme_color`** is `#16181B` (the logo tile), not either theme's
+  `--bg`. A manifest holds only one value, so this needs a call about which theme the PWA
+  splash should represent. `background_color` now tracks the light `--bg`.
+- **`--accent-text` fails AA on light** — see the callout in §2 for the measurement and
+  the one-value fix.
+- **The light theme's ink surfaces stay olive.** `--feature`, `--nav-band`, and
+  `--foot-surface` are `#14150F`/`#16170F` — 17–21% saturation, but at **7% lightness**,
+  where that works out to a 6/255 spread across the channels. The tint is not perceivable,
+  and neutralizing them to `#000000` would change their *weight* on a light page, not just
+  their hue. Left alone deliberately; this is not the dark theme's no-hue rule leaking.
+- **The nav and hero cards stay cream on the dark theme.** Still the open design question
+  from the onyx change — see the note under §2's self-contained surfaces table.

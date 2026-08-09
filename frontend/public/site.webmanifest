@@ -6,7 +6,7 @@
   "scope": "/",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#F4F3EE",
+  "background_color": "#F4F5F0",
   "theme_color": "#16181B",
   "lang": "en",
   "categories": ["finance", "business", "education"],

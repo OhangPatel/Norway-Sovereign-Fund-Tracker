@@ -20,7 +20,7 @@
     <link rel="canonical" href="https://invest.learnbasecase.com/" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
     <meta name="author" content="Basecase" />
-    <meta name="theme-color" content="#E3E8CE" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#F4F5F0" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
 
     <!-- Open Graph -->
@@ -164,8 +164,9 @@
       /* ============================================================
          "LIME" DESIGN SYSTEM — see STYLE_GUIDE.md (single source of truth)
          Light is default; [data-theme="dark"] inverts.
-         UI 2.0: light = "Olive wash", dark = "Onyx field" (neutral greys —
-         only --accent and the sector hues carry colour on the dark theme).
+         UI 2.0: light = "Whisper olive" (the lime's hue at ~20% saturation),
+         dark = "Onyx field" (neutral greys — only --accent and the sector hues
+         carry colour on the dark theme).
          ============================================================ */
       /* The nav card keeps the same look in both themes — only its surface and
          the ticker band flip — so its text colours are theme-independent and
@@ -182,23 +183,36 @@
       }
 
       :root[data-theme="light"] {
-        /* — canonical Lime tokens — OLIVE WASH */
-        --bg: #E3E8CE;
+        /* — canonical Lime tokens — WHISPER OLIVE
+           The field keeps the lime's hue (72deg) but at a fraction of its former
+           strength: the old "Olive wash" ran 36% saturation at 86% lightness,
+           which is more saturated and darker than any comparable finance UI puts
+           behind a page of white cards — it read as a colour rather than as a
+           surface. Everything olive-derived below now sits at ~20% saturation,
+           and the field moved to 95% lightness. Hue is unchanged throughout, so
+           the palette keeps its character; only its volume came down. */
+        --bg: #F4F5F0;
         --surface: #FFFFFF;
-        --line: #E3E8D3;
+        /* Card definition changed hands. Against the old field this line was the
+           same luminance as --bg (1.00:1) and did nothing — cards were defined
+           purely by white-on-olive at 1.26:1. On the lighter field that fill
+           contrast drops to 1.10:1, so the border now carries the separation:
+           1.29:1 against --surface, 1.17:1 against --bg. Do not lighten it. */
+        --line: #E2E4D7;
         /* Bar rails read as the card border, not a separate grey. */
-        --track: #E3E8D3;
+        --track: #E2E4D7;
 
         --ink: #16170F;
-        /* Was #6F6D5F — 4.15:1 on --bg, a marginal AA failure alongside --soft below.
-           Hue and saturation unchanged; now 5.03:1 on --bg. */
+        /* Was #6F6D5F — 4.15:1 on the old --bg, a marginal AA failure alongside
+           --soft below. Hue and saturation unchanged; 5.77:1 on --bg. */
         --sub: #626054;
         /* Secondary text: eyebrows, captions, table meta — mostly 9-11px, so WCAG's
            4.5:1 "normal text" bar applies, not the 3:1 large-text one. #A3A88F scored
-           1.95:1 on --bg, which is close to invisible with low vision or in sunlight.
-           Hue (72deg) and saturation (13%) are unchanged — only lightness moved — so
-           the palette keeps its character. Now 5.02:1 on --bg, 5.78 on --row-hover,
-           6.31 on --surface. Re-check all three if any of those backgrounds change. */
+           1.95:1 on the old --bg, which is close to invisible with low vision or in
+           sunlight. Hue (72deg) and saturation (13%) are unchanged — only lightness
+           moved — so the palette keeps its character. Now 5.76:1 on --bg, 5.66 on
+           --row-hover, 6.31 on --surface. The lighter field lifted all three; re-check
+           them if any of those backgrounds change. */
         --soft: #5E624C;
 
         --accent: #D8F34A;
@@ -209,13 +223,16 @@
         --feature-sub: #8F9180;
         --feature-num: #D8F34A;
 
-        --row-hover: #F4F6EA;
+        /* Row hover happens inside a white card, so it steps DOWN from --surface
+           rather than up — light mode has nothing above white. Same 6-point
+           lightness step as before, desaturated to match the field. */
+        --row-hover: #F2F3ED;
         --card-hover-border: #16170F;
 
         /* Nav shell — the floating card sits above the olive field. */
         --nav-surface: #FFFFFF;
-        --nav-line: #E3E8D3;
-        --nav-field: #F4F6EA;
+        --nav-line: #E2E4D7;
+        --nav-field: #F2F3ED;
         --nav-band: #16170F;
         --nav-band-ink: #8F9180;
         --tick-up: #9BE04A;
@@ -237,7 +254,7 @@
         /* Hero card carries its own surface so it can stay cream on the ink
            field (spec 02B) without dragging the other cards with it. */
         --hero-surface: #FFFFFF;
-        --hero-line: #E3E8D3;
+        --hero-line: #E2E4D7;
         --hero-ink: #16170F;
         --hero-sub: #6F6D5F;
 
