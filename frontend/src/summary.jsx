@@ -1,6 +1,7 @@
 import React from 'react';
 import { fmt } from './format.jsx';
 import { TopBarList, Histogram, Treemap } from './charts.jsx';
+import { sectorOf } from './sectors.js';
 
 // Summary section: hero bento + charts (top holdings, sector treemap, ownership histogram)
 
@@ -35,7 +36,7 @@ export function Summary({ data, filtered, onPickCompany, onSetFilter, activeSect
       totalUsd += c.mvUsd || 0;
       ownSum += c.ownership || 0;
       countrySet.add(c.country);
-      const s = c.sector || c.industry;
+      const s = sectorOf(c);
       if (s) sectorSet.add(s);
     }
     return {
@@ -57,7 +58,7 @@ export function Summary({ data, filtered, onPickCompany, onSetFilter, activeSect
     const bySector = new Map();
     let tot = 0;
     for (const c of filtered) {
-      const k = c.sector || c.industry || '—';
+      const k = sectorOf(c, '—');
       bySector.set(k, (bySector.get(k) || 0) + c.mvUsd);
       tot += c.mvUsd || 0;
     }
@@ -100,7 +101,7 @@ export function Summary({ data, filtered, onPickCompany, onSetFilter, activeSect
             The world&apos;s largest sovereign wealth fund, tracked equity by equity.
           </h1>
           <p style={{ fontSize: 15, lineHeight: 1.6, color: 'var(--hero-sub)', maxWidth: 560, margin: 0 }}>
-            Norway&apos;s Government Pension Fund Global holds positions in {fmt.short(data.length, 0)}+ public companies across six markets.
+            Norway&apos;s Government Pension Fund Global holds positions in {data.length.toLocaleString()} public companies across six markets.
             Filter, compare, and click through to see how every krone is allocated.
           </p>
         </div>
@@ -213,16 +214,25 @@ export function percentile(arr, p) {
   return s[Math.min(s.length-1, Math.floor(p * s.length))];
 }
 
+// Hover and focus mean "this responds to you". A clickable stat cell therefore takes
+// the same .lift treatment the chart panels have, and renders as a real <button> so it
+// is reachable by keyboard and announced as a control; a static one stays a plain div,
+// because a card that lifts under the cursor and then does nothing is a lie.
 export function StatCell({ label, value, sub, clickable, onClick, i = 0 }) {
+  const Tag = clickable ? 'button' : 'div';
   return (
-    <div
-      className="card enter"
+    <Tag
+      className={`card enter${clickable ? ' lift' : ''}`}
       onClick={clickable ? onClick : undefined}
+      type={clickable ? 'button' : undefined}
       style={{
         '--i': i,
         padding: '22px 24px',
         display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
         cursor: clickable ? 'pointer' : 'default',
+        // A <button> brings its own font, alignment and colour; the cell has to look
+        // identical to the two plain cells beside it.
+        font: 'inherit', color: 'inherit', textAlign: 'left', width: '100%',
       }}
     >
       <div className="mono" style={{ fontSize: 10, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--soft)' }}>{label}</div>
@@ -231,7 +241,7 @@ export function StatCell({ label, value, sub, clickable, onClick, i = 0 }) {
         overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap'
       }}>{value}</div>
       <div className="mono" style={{ fontSize: 11, color:'var(--soft)', marginTop: 4 }}>{sub}</div>
-    </div>
+    </Tag>
   );
 }
 
@@ -246,10 +256,10 @@ export function StatMini({ label, value }) {
 
 export function Card({ title, eyebrow, rightSlot, children, padding = 24, i = 0, className = '' }) {
   return (
-    <div className={`enter lift ${className}`} style={{
-      '--i': i,
-      background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: 18, padding,
-    }}>
+    // Surface, border and radius come from .card rather than being repeated inline.
+    // .keep-edge holds the border at its resting colour through hover — these panels
+    // lift and shadow, but the edge highlight read as an outline around the whole box.
+    <div className={`card enter lift keep-edge ${className}`} style={{ '--i': i, padding }}>
       <div style={{
         display:'flex', justifyContent:'space-between', alignItems:'baseline',
         marginBottom: 14, gap: 10

@@ -36,10 +36,10 @@ function List({ title, tone, count, rows, shown }) {
   return (
     <div style={{ minWidth: 0 }}>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 6 }}>
-        <span className="display" style={{ fontSize: 20, color: `var(--${tone})` }}>
+        <span className="display" style={{ fontSize: 20, color: `var(--${tone}-text)` }}>
           {tone === 'bull' ? '+' : '−'}{count.toLocaleString()}
         </span>
-        <span className="eyebrow" style={{ fontSize: 9.5 }}>{title}</span>
+        <span className="eyebrow" style={{ fontSize: 10 }}>{title}</span>
       </div>
       <div style={{ maxHeight: 260, overflowY: 'auto', paddingRight: 4 }}>
         {rows.map(c => <Row key={c.name} c={c} />)}
@@ -57,7 +57,7 @@ function Level({ eyebrow, headline, note, data, shown }) {
   return (
     <div style={{ display: 'grid', gap: 10 }}>
       <div>
-        <div className="eyebrow" style={{ fontSize: 9.5 }}>{eyebrow}</div>
+        <div className="eyebrow" style={{ fontSize: 10 }}>{eyebrow}</div>
         <div style={{ fontSize: 12.5, color: 'var(--ink)', marginTop: 3 }}>{headline}</div>
         {note && (
           <div style={{ fontSize: 11, color: 'var(--sub)', marginTop: 5, lineHeight: 1.5 }}>
@@ -113,9 +113,12 @@ export function ChangesPanel({ period, manifest, open, onClose }) {
   const d = state.key === period ? state.data : null;
 
   return (
+    /* 18, like every other card that sits directly in <main>'s grid — the ledger,
+       the bento cells, the chart panels. At 12 this one panel read as a different
+       kind of object from the cards immediately above and below it. */
     <section style={{
-      padding: 18, background: 'var(--surface)',
-      border: '1px solid var(--line)', borderRadius: 12,
+      padding: 20, background: 'var(--surface)',
+      border: '1px solid var(--line)', borderRadius: 18,
       display: 'grid', gap: 24,
     }}>
       {/* The panel is opened from a menu that is closed by the time it appears, so
@@ -139,7 +142,7 @@ export function ChangesPanel({ period, manifest, open, onClose }) {
       </div>
 
       {state.error && (
-        <div style={{ fontSize: 12, color: 'var(--bear)' }}>
+        <div style={{ fontSize: 12, color: 'var(--bear-text)' }}>
           Could not load the changes for this period. {state.error}
         </div>
       )}

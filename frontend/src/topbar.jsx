@@ -2,6 +2,7 @@ import React from 'react';
 import { fmt, Icon, BrandMark } from './format.jsx';
 import { PeriodPicker } from './period.jsx';
 import { periodLabel } from './snapshot.js';
+import { sectorOf } from './sectors.js';
 
 // Top navigation bar with brand, search, theme toggle, and the menu holding the
 // controls that scope the whole page — reporting period and what changed in it.
@@ -196,7 +197,7 @@ export function TopBar({
                   position: 'absolute', top: 'calc(100% + 8px)', left: 0, right: 0,
                   background: 'var(--surface)', border: '1px solid var(--line)',
                   borderRadius: 16, overflow: 'hidden',
-                  boxShadow: '0 24px 48px -24px rgba(0,0,0,.45)',
+                  boxShadow: 'var(--shadow-menu)',
                   animation: 'rise .12s ease-out'
                 }}>
                   {matches.map((m, i) => (
@@ -212,7 +213,7 @@ export function TopBar({
                       }}>
                       <div>
                         <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--ink)' }}>{m.name}</div>
-                        <div className="mono" style={{ fontSize: 10.5, color: 'var(--soft)' }}>{m.country} · {m.sector || m.industry}</div>
+                        <div className="mono" style={{ fontSize: 10.5, color: 'var(--soft)' }}>{m.country} · {sectorOf(m, '—')}</div>
                       </div>
                       <span className="mono" style={{ fontSize: 11, color: 'var(--sub)' }}>{m.ticker}</span>
                       <span className="mono" style={{ fontSize: 11, color: 'var(--soft)' }}>{fmt.money(m.mvUsd, 'USD', 1)}</span>
@@ -271,7 +272,7 @@ export function TopBar({
             // A menu taller than the viewport cannot be scrolled to; the picker's
             // year pills are what can push it there on a short screen.
             maxHeight: 'min(70vh, 560px)',
-            boxShadow: '0 24px 48px -24px rgba(0,0,0,.45)',
+            boxShadow: 'var(--shadow-menu)',
             animation: 'rise .12s ease-out',
           }}>
             {manifest && (

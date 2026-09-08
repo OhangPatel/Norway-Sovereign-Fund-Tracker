@@ -1,6 +1,7 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
 import { fmt, Icon } from './format.jsx';
+import { sectorOf } from './sectors.js';
 
 // Filters strip — country/sector multi-select chips + ownership range slider + reset
 
@@ -28,7 +29,7 @@ const countBadge = {
 const popoverStyle = {
   background: 'var(--surface)', border: '1px solid var(--line)',
   borderRadius: 16, zIndex: 30,
-  boxShadow: '0 24px 48px -20px rgba(0,0,0,.45)',
+  boxShadow: 'var(--shadow-menu)',
   animation: 'rise .12s ease-out',
 };
 
@@ -52,7 +53,7 @@ function useIsPhone() {
 // whichever presentation is on screen — the desktop pill row or the phone sheet.
 function useFilters(data, filters, setFilters) {
   const allCountries = React.useMemo(() => [...new Set(data.map(d => d.country))].filter(Boolean).sort(), [data]);
-  const allSectors = React.useMemo(() => [...new Set(data.map(d => d.sector || d.industry))].filter(Boolean).sort(), [data]);
+  const allSectors = React.useMemo(() => [...new Set(data.map(d => sectorOf(d)))].filter(Boolean).sort(), [data]);
   const allRecs = React.useMemo(() => [...new Set(data.map(d => d.rec))].filter(Boolean).sort(), [data]);
   const maxOwn = React.useMemo(() => Math.max(...data.map(d => d.ownership || 0)), [data]);
 
@@ -121,7 +122,7 @@ export function FilterPanel({ data, filters, setFilters, count, open, setOpen, a
                   options={allSectors} selected={filters.sectors}
                   onToggle={(v) => toggleSet('sectors', v)}
                   onClear={() => setFilters(f => ({ ...f, sectors: [] }))}
-                  counter={(opt) => data.filter(d => (d.sector || d.industry) === opt).length}
+                  counter={(opt) => data.filter(d => sectorOf(d) === opt).length}
                 />
               </SheetSection>
               <SheetSection label="Analyst rec" icon="sparkle" count={filters.recs.length}>
@@ -333,7 +334,7 @@ export function ColumnsPopover({ columns, setColumns }) {
       position:'absolute', top: 'calc(100% + 8px)',
       width: 240, padding: 8, zIndex: 40,
     }}>
-      <div className="eyebrow" style={{ padding: '6px 10px', fontSize: 9.5 }}>Visible columns</div>
+      <div className="eyebrow" style={{ padding: '6px 10px', fontSize: 10 }}>Visible columns</div>
       {Object.entries(columns).map(([key, col]) => (
         <button key={key} onClick={() => setColumns(c => ({ ...c, [key]: { ...c[key], visible: !c[key].visible } }))}
           style={{

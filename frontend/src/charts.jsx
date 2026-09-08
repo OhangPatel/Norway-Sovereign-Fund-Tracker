@@ -10,17 +10,26 @@ export function TopBarList({ items, max, valueFmt, height = 280, onClick, accent
     <div style={{ width: '100%' }}>
       {items.map((it, i) => {
         const pct = max ? (it.value / max) * 100 : 0;
+        // A real <button> when the row does something. As a div with onClick it was
+        // mouse-only — not in the tab order, no focus ring, and announced as nothing —
+        // and this list is one of the two ways into a company from the dashboard.
+        const Tag = onClick ? 'button' : 'div';
         return (
-          <div key={it.key || i}
+          <Tag key={it.key || i}
+            type={onClick ? 'button' : undefined}
             onClick={() => onClick && onClick(it)}
             style={{
               display: 'grid',
               gridTemplateColumns: '20px 1fr auto',
               alignItems: 'center',
               gap: 10,
+              width: '100%',
               padding: '6px 0',
-              cursor: onClick ? 'pointer' : 'default',
+              background: 'transparent',
+              border: 'none',
               borderBottom: i < n - 1 ? '1px solid var(--line)' : 'none',
+              font: 'inherit', color: 'inherit', textAlign: 'left',
+              cursor: onClick ? 'pointer' : 'default',
             }}
             onMouseEnter={e => e.currentTarget.style.background = 'var(--row-hover)'}
             onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
@@ -42,7 +51,7 @@ export function TopBarList({ items, max, valueFmt, height = 280, onClick, accent
               </div>
             </div>
             <span className="mono" style={{ fontSize: 12, color:'var(--ink)', whiteSpace:'nowrap' }}>{valueFmt(it.value)}</span>
-          </div>
+          </Tag>
         );
       })}
     </div>
@@ -201,14 +210,21 @@ export function Treemap({ items, height = 300, gap = 5, radius = 4, minShare = 0
         const cw = r.w - gx, ch = r.h - gy;
         const showName = cw > 44 && ch > 22;
         const showPct = cw > 44 && ch > 40;
+        // Same reason as TopBarList: clicking a tile filters the whole table, so it is a
+        // control and has to be one. aria-label carries the share, which is otherwise
+        // only in the hover tooltip and on the cells too small to print a label.
+        const Tag = onClick ? 'button' : 'div';
         return (
-          <div key={it.label}
+          <Tag key={it.label}
+            type={onClick ? 'button' : undefined}
+            aria-label={onClick ? `${it.label} — ${it.pct.toFixed(1)}% of value. Filter to this sector.` : undefined}
             onClick={() => onClick && onClick(it)}
             onMouseEnter={e => setHover({ i, x: e.clientX, y: e.clientY })}
             onMouseMove={e => setHover({ i, x: e.clientX, y: e.clientY })}
             onMouseLeave={() => setHover(null)}
             style={{
               position: 'absolute',
+              border: 'none', font: 'inherit', textAlign: 'left', display: 'block',
               left: r.x + gx / 2, top: r.y + gy / 2,
               width: cw, height: ch,
               background: it.color, borderRadius: Math.min(radius, cw / 2, ch / 2),
@@ -225,7 +241,7 @@ export function Treemap({ items, height = 300, gap = 5, radius = 4, minShare = 0
             {showPct && (
               <div className="mono" style={{ fontSize: 10.5, opacity: 0.82, marginTop: 1 }}>{it.pct.toFixed(1)}%</div>
             )}
-          </div>
+          </Tag>
         );
       })}
 
@@ -240,7 +256,7 @@ export function Treemap({ items, height = 300, gap = 5, radius = 4, minShare = 0
           transform: flip ? 'translateX(-100%)' : 'none',
           pointerEvents: 'none', whiteSpace: 'nowrap',
           background: 'var(--surface)', border: '1px solid var(--line)',
-          borderRadius: 8, padding: '7px 10px', boxShadow: '0 8px 24px rgba(0,0,0,.18)',
+          borderRadius: 8, padding: '7px 10px', boxShadow: 'var(--shadow-pop)',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
             <span style={{ width: 9, height: 9, borderRadius: 2, background: hovered.color, flexShrink: 0 }}/>
@@ -290,7 +306,10 @@ export function PriceChart({ points, dates, height = 84, color = 'auto', valueFm
     const sx = (i) => (i / (points.length - 1)) * width;
     const sy = (v) => height - ((v - min) / range) * (height - 2) - 1;
     const d = points.map((p, i) => `${i ? 'L' : 'M'} ${sx(i).toFixed(1)} ${sy(p).toFixed(1)}`).join(' ');
-    const stroke = color === 'auto' ? (points[points.length - 1] >= points[0] ? 'var(--bull)' : 'var(--bear)') : color;
+    // -text, not the fill token: this is a 1.25px line, and #4ADE80 on --surface is
+    // 1.74:1 — below the 3:1 WCAG asks of a graphic you have to be able to trace. The
+    // area under it reuses the same colour at 12%, which reads as a tint either way.
+    const stroke = color === 'auto' ? (points[points.length - 1] >= points[0] ? 'var(--bull-text)' : 'var(--bear-text)') : color;
 
     const onMove = (e) => {
       const rect = e.currentTarget.getBoundingClientRect();
@@ -322,7 +341,7 @@ export function PriceChart({ points, dates, height = 84, color = 'auto', valueFm
             pointerEvents: 'none',
             background: 'var(--surface)', border: '1px solid var(--line)',
             borderRadius: 6, padding: '4px 8px', whiteSpace: 'nowrap',
-            boxShadow: '0 6px 16px rgba(0,0,0,.28)',
+            boxShadow: 'var(--shadow-pop)',
           }}>
             <div style={{ fontSize: 10, color: 'var(--soft)' }}>{dates ? fmtDay(dates[hover]) : ''}</div>
             <div style={{ fontSize: 12, color: 'var(--ink)', marginTop: 1 }}>{valueFmt(points[hover])}</div>

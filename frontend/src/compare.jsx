@@ -2,6 +2,7 @@ import React from 'react';
 import { fmt, Chip, Delta, Icon } from './format.jsx';
 import { REC_TONE } from './table.jsx';
 import { IconBtn } from './detail.jsx';
+import { sectorOf } from './sectors.js';
 
 // Compare dock — pinned bottom bar showing selected companies side-by-side
 
@@ -9,8 +10,19 @@ export function CompareDock({ companies, onRemove, onClear, onExpand, onOpenComp
   if (!companies.length) return null;
 
   return (
+    // bottom: 90, not 18. The chat launcher is fixed at right/bottom 24 and is 54px
+    // across, so it occupies the bottom 78px of the viewport at z-index 1000 — above
+    // this dock's 70. At 18 the dock's right end ran under it at every width below
+    // ~1296px (below ~1188px the dock is 96vw, so the two always met), covering the
+    // last comparison card and swallowing clicks on it. 90 parks the dock just above
+    // the launcher's band — the same 78px the footer already reserves for it.
     <div style={{
-      position:'fixed', left: '50%', bottom: 18, transform: 'translateX(-50%)',
+      // Centred with auto margins, not translateX(-50%). The `rise` keyframes end at
+      // `transform: translateY(0)`, which replaces the whole transform for the length
+      // of the animation — so the dock spent its first 250ms displaced half its own
+      // width to the right and then snapped into place. Auto margins centre it in a
+      // way no animation can clobber, and leave `transform` free for the entry.
+      position:'fixed', left: 0, right: 0, bottom: 90, margin: '0 auto',
       zIndex: 70,
       width: 'min(1140px, 96vw)',
       animation: 'rise .25s cubic-bezier(.22,.61,.36,1)',
@@ -20,7 +32,7 @@ export function CompareDock({ companies, onRemove, onClear, onExpand, onOpenComp
         backdropFilter: 'blur(20px) saturate(140%)',
         border: '1px solid var(--line)',
         borderRadius: 14,
-        boxShadow: '0 30px 60px -20px rgba(0,0,0,.6)',
+        boxShadow: 'var(--shadow-overlay)',
         overflow: 'hidden',
       }}>
         <div style={{
@@ -59,6 +71,8 @@ export function CompareDock({ companies, onRemove, onClear, onExpand, onOpenComp
               onMouseLeave={e => e.currentTarget.style.background = 'var(--bg)'}
             >
               <button onClick={(e) => { e.stopPropagation(); onRemove(c.id); }}
+                aria-label={`Remove ${c.name} from comparison`}
+                title={`Remove ${c.name}`}
                 style={{
                   position:'absolute', top: 6, right: 6,
                   width: 20, height: 20, padding:0,
@@ -113,7 +127,7 @@ export function CompareModal({ companies, onClose, allData }) {
 
   const rows = [
     { label: 'Country',         val: c => c.country },
-    { label: 'Industry',        val: c => c.industry || c.sector },
+    { label: 'Sector',          val: c => sectorOf(c, '—') },
     { label: 'Current price',   val: c => fmt.price(c.price), mono: true },
     { label: '24h change',      val: c => <Delta value={c.change} fmt="pct"/>, html: true },
     { label: '52-week low',     val: c => fmt.price(c.low52), mono: true },
@@ -129,7 +143,7 @@ export function CompareModal({ companies, onClose, allData }) {
     { label: 'Dividend yield',  val: c => c.divYield ? c.divYield.toFixed(2) + '%' : '—', mono: true },
     { label: 'Beta (5y)',       val: c => c.beta?.toFixed(2) ?? '—', mono: true },
     { label: 'Market cap',      val: c => fmt.money(c.marketCap, 'USD', 1), mono: true },
-    { label: 'Recommendation',  val: c => <Chip tone={REC_TONE[c.rec] || 'neutral'}>{fmt.rec(c.rec)}</Chip>, html: true },
+    { label: 'Analyst rec',     val: c => <Chip tone={REC_TONE[c.rec] || 'neutral'}>{fmt.rec(c.rec)}</Chip>, html: true },
   ];
 
   return (
@@ -139,7 +153,7 @@ export function CompareModal({ companies, onClose, allData }) {
         background:'rgba(0,0,0,.55)', backdropFilter: 'blur(4px)',
         animation:'fadeIn .15s ease'
       }}/>
-      <div style={{
+      <div role="dialog" aria-modal="true" aria-label="Side-by-side comparison" style={{
         position: 'fixed', inset: 'clamp(8px, 3vw, 32px)',
         zIndex: 91,
         background: 'var(--bg)',

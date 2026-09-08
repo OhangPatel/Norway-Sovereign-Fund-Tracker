@@ -18,26 +18,17 @@ import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { snapshotDate, formatSnapshot } from '../src/snapshot.js';
+import { sectorOf } from '../src/sectors.js';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = resolve(ROOT, 'dist');
 const ORIGIN = 'https://invest.learnbasecase.com';
 const PER_PAGE = 200;
 
-// data.json carries two sector taxonomies: `sector` uses Yahoo's names, while 78
-// rows have no sector and fall back to `industry`, which uses GICS names. The app
-// does the same `sector || industry` fallback, so mirror it here and fold the GICS
-// synonyms onto their Yahoo equivalents — otherwise "Health Care" and "Healthcare"
-// become two pages competing for the same topic.
-// NOTE: the app's own Sector filter shows both spellings for this same reason.
-// The real fix is normalising in the pipeline; see audit.
-const CANON = {
-  'Health Care': 'Healthcare',
-  'Financials': 'Financial Services',
-  'Consumer Discretionary': 'Consumer Cyclical',
-  'Consumer Staples': 'Consumer Defensive',
-  'Telecommunications': 'Communication Services',
-};
+// The `sector || industry` fallback and the GICS→Yahoo synonym fold both live in
+// src/sectors.js now, shared with the app bundle — otherwise "Health Care" and
+// "Healthcare" become two pages competing for the same topic here, while the
+// dashboard's own filter shows them as two sectors. One map, both surfaces.
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) =>
   ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -68,14 +59,9 @@ const AS_OF = snapshotDate(rows);
 if (!AS_OF) throw new Error('No usable fetchedAt in data.json — refusing to guess the snapshot date.');
 const AS_OF_LABEL = formatSnapshot(AS_OF, 'long');
 
-const sectorOf = (r) => {
-  const s = r.sector || r.industry || 'Unclassified';
-  return CANON[s] || s;
-};
-
 const bySector = new Map();
 for (const r of rows) {
-  const s = sectorOf(r);
+  const s = sectorOf(r, 'Unclassified');
   if (!bySector.has(s)) bySector.set(s, []);
   bySector.get(s).push(r);
 }
@@ -97,7 +83,7 @@ const TOTAL_USD = sectors.reduce((s, x) => s + x.usd, 0);
 // ── Shared chrome ───────────────────────────────────────────────────────────
 const CSS = `
 /* Whisper olive — mirrors the app's light tokens in index.html. */
-:root{--bg:#F4F5F0;--surface:#fff;--line:#E2E4D7;--ink:#16170F;--sub:#626054;--soft:#5E624C;--accent:#D8F34A;--accent-ink:#6F7610;--zebra:#F8F9F4;
+:root{--bg:#F4F5F0;--surface:#fff;--line:#E2E4D7;--ink:#16170F;--sub:#626054;--soft:#5E624C;--accent:#D8F34A;--accent-ink:#617416;--zebra:#F8F9F4;
   --logo-tile:#16181B;--logo-stroke:transparent;--logo-crown:#F7F6F2;--logo-gold:#C9A227}
 /* Onyx field — neutral greys, mirroring the app's dark tokens in index.html.
    Not the same names (these pages predate the token set and have no theme

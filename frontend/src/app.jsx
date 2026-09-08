@@ -12,6 +12,7 @@ import { ChangesPanel, hasPreviousPeriod } from './changes.jsx';
 import { Footer } from './footer.jsx';
 import { MARKET_FIELDS, assertSplit } from './origin.js';
 import { snapshotDate, formatSnapshot, periodLabel } from './snapshot.js';
+import { sectorOf } from './sectors.js';
 
 // ── Pipeline Controls ─────────────────────────────────────────────────────────
 
@@ -210,7 +211,7 @@ export function PipelineControls(props) {
   var pct       = status.progress;
   var isError   = !!status.error;
   var showBar   = isRunning || isError;
-  var barColor  = isError ? 'var(--bear)' : 'var(--accent)';
+  var barColor  = isError ? 'var(--bear-text)' : 'var(--accent)';
   var displayElapsed = elapsed;
 
   var estLeft = null;
@@ -224,10 +225,13 @@ export function PipelineControls(props) {
   // wants to know: is this current, is it updating, or is the source down.
   var stateColor, headline;
   if (!online) {
-    stateColor = 'var(--bear)';
+    // -text, not the fill: stateColor draws a 1.5px border and tints the headline
+    // beside it, and #F87171 is 2.52:1 on the light field — under the 3:1 WCAG asks
+    // of a border you are meant to read as a state.
+    stateColor = 'var(--bear-text)';
     headline = 'Source offline';
   } else if (isError) {
-    stateColor = 'var(--bear)';
+    stateColor = 'var(--bear-text)';
     headline = 'Update failed';
   } else if (isRunning) {
     stateColor = 'var(--accent)';
@@ -251,7 +255,7 @@ export function PipelineControls(props) {
       border: '1px solid ' + (warn ? 'color-mix(in srgb, var(--bear) 45%, transparent)'
         : soon ? 'var(--line)'
         : 'color-mix(in srgb, var(--accent) 45%, transparent)'),
-      color: warn ? 'var(--bear)' : soon ? 'var(--soft)' : 'var(--accent-text)',
+      color: warn ? 'var(--bear-text)' : soon ? 'var(--soft)' : 'var(--accent-text)',
     };
   }
   var spinner = <span style={{ display: 'inline-flex', animation: 'spin 1s linear infinite', color: 'var(--accent-text)' }}><Icon name="refresh" size={17}/></span>;
@@ -313,7 +317,7 @@ export function PipelineControls(props) {
                 position: 'absolute', top: 'calc(100% + 10px)', right: 0, width: 344, zIndex: 60,
                 background: 'var(--surface)', border: '1px solid var(--line)',
                 borderRadius: 18, padding: 8,
-                boxShadow: '0 28px 56px -28px rgba(0,0,0,.5)',
+                boxShadow: 'var(--shadow-menu)',
                 animation: 'rise .12s ease-out',
               }}>
                 <ToolRow
@@ -350,7 +354,7 @@ export function PipelineControls(props) {
               display: 'flex', justifyContent: 'space-between', alignItems: 'center',
               marginBottom: 4, fontSize: 11,
             }}>
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7, color: isError ? 'var(--bear)' : 'var(--sub)' }}>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7, color: isError ? 'var(--bear-text)' : 'var(--sub)' }}>
                 {!isError && <span style={{ display: 'inline-flex', animation: 'spin 1s linear infinite', color: 'var(--accent-text)' }}><Icon name="refresh" size={12}/></span>}
                 {isError ? status.error : (status.step || status.message)}
               </span>
@@ -395,7 +399,12 @@ export function App() {
     ownMin: 0, ownMax: 100,
     pinned: false,
   });
-  const [sort, setSort] = React.useState({ key: 'mvNok', dir: 'desc' });
+  // mvUsd, not mvNok. There is no NOK column, so a default of 'mvNok' left every
+  // header showing the neutral ⇅ glyph while the caption under the title read
+  // "Sorted by mvNok ↓" — the table asserted a sort no control could express and no
+  // click could return to. USD value is the column that IS on screen, and it orders
+  // the holdings identically.
+  const [sort, setSort] = React.useState({ key: 'mvUsd', dir: 'desc' });
   const [pinned, setPinned] = React.useState(() => {
     try { return new Set(JSON.parse(localStorage.getItem('sov-pinned-v2') || '[]')); }
     catch { return new Set(); }
@@ -523,9 +532,14 @@ export function App() {
     localStorage.setItem('sov-theme', theme);
   }, [theme]);
 
-  // Persist pinned
+  // Persist pinned to sov-pinned-v2, matching the key this reads from at mount.
+  // Previously it wrote to 'sov-pinned'
+  // and read from 'sov-pinned-v2', so a pin has never survived a reload since the key
+  // was bumped — you pinned a company, refreshed, and it was gone with nothing to say
+  // why. Safe to restore: an id is `${ticker}#${index}`, so a stale entry can only
+  // fail to match a row, never match the wrong one.
   React.useEffect(() => {
-    localStorage.setItem('sov-pinned', JSON.stringify([...pinned]));
+    localStorage.setItem('sov-pinned-v2', JSON.stringify([...pinned]));
   }, [pinned]);
 
   // The ownership slider's ceiling is derived from the loaded data, so it has to be
@@ -555,7 +569,7 @@ export function App() {
     const q = query.toLowerCase();
     let arr = data.filter(c => {
       if (filters.countries.length && !filters.countries.includes(c.country)) return false;
-      if (filters.sectors.length && !filters.sectors.includes(c.sector || c.industry)) return false;
+      if (filters.sectors.length && !filters.sectors.includes(sectorOf(c))) return false;
       if (filters.recs.length && !filters.recs.includes(c.rec)) return false;
       const o = c.ownership || 0;
       if (o < filters.ownMin || o > filters.ownMax) return false;
@@ -628,10 +642,7 @@ export function App() {
   const headerDate = period ? periodLabel(period) : lastFetched;
 
   if (err) {
-    return <div style={{ padding: 60, color: 'var(--bear)' }}>
-      <div className="display" style={{ fontSize: 24 }}>Failed to load data.</div>
-      <pre style={{ marginTop: 8, fontSize: 12 }}>{err}</pre>
-    </div>;
+    return <ErrorState message={err}/>;
   }
 
   if (!data) {
@@ -771,31 +782,98 @@ export function App() {
   );
 }
 
+// One pulsing placeholder. Radius 18 and a --line border, so it is the same object
+// the real card will be — a skeleton block that does not match the card replacing it
+// is just a second layout.
+function Skel({ height, className = '', delay = 0 }) {
+  return (
+    <div className={className} style={{
+      height,
+      background: 'var(--surface)',
+      border: '1px solid var(--line)',
+      borderRadius: 18,
+      animation: 'pulse 1.6s ease-in-out infinite',
+      animationDelay: `${delay}s`,
+    }}/>
+  );
+}
+
+/**
+ * The wait before data.json lands. It mirrors the page it is standing in for rather
+ * than describing it: the old version sat on a 80px/32px gutter under a 48px headline
+ * and laid out four equal cards, none of which is what arrives — so the whole page
+ * jumped sideways and reflowed the moment the fetch resolved.
+ *
+ * Same gutter as <main>, same .r-bento / .r-split grids, so it collapses 3→2→1 with
+ * the viewport exactly as the real thing does and there is one shape on screen from
+ * first paint to last.
+ */
 export function LoadingState() {
   return (
-    <div style={{ padding: '80px 32px', maxWidth: 1680, margin: '0 auto' }}>
-      <div className="eyebrow">Sovereign Insights</div>
-      <div className="display" style={{ fontSize: 48, lineHeight: 1.05, marginTop: 10, letterSpacing:'-0.02em' }}>
-        Loading <span className="display-italic">sovereign holdings</span>…
+    <div
+      role="status" aria-live="polite" aria-busy="true"
+      style={{
+        maxWidth: 1680, margin: '0 auto',
+        padding: '22px clamp(14px, 2vw, 22px) 32px',
+        display: 'grid', gap: 16,
+      }}>
+      <span className="sr-only">Loading holdings…</span>
+      <div className="r-bento" aria-hidden="true">
+        <Skel className="r-bento-lead" height={340} delay={0}/>
+        <Skel className="r-bento-feature" height={340} delay={0.06}/>
+        <Skel height={118} delay={0.12}/>
+        <Skel height={118} delay={0.18}/>
+        <Skel height={118} delay={0.24}/>
       </div>
-      <div className="r-skel4" style={{ marginTop: 32 }}>
-        {[1,2,3,4].map(i => (
-          <div key={i} style={{
-            height: 110,
-            background: 'var(--surface)',
-            border: '1px solid var(--line)',
-            borderRadius: 14,
-            animation: 'pulse 1.6s ease-in-out infinite',
-            animationDelay: `${i * 0.1}s`
-          }}/>
-        ))}
+      <div className="r-split" aria-hidden="true">
+        <Skel height={392} delay={0.3}/>
+        <Skel height={392} delay={0.36}/>
       </div>
-      <div style={{
-        marginTop: 24, height: 420,
-        background: 'var(--surface)', border: '1px solid var(--line)',
-        borderRadius: 14,
-        animation: 'pulse 1.6s ease-in-out infinite'
-      }}/>
+      <Skel height={256} delay={0.42}/>
+    </div>
+  );
+}
+
+/**
+ * data.json did not load. The page has no fallback content — there is nothing to show
+ * but the failure — so this says what broke, what it means, and offers the one action
+ * that can help, instead of dropping a bare stack trace on a red heading at 2.5:1.
+ */
+export function ErrorState({ message }) {
+  return (
+    <div style={{
+      maxWidth: 1680, margin: '0 auto',
+      padding: '22px clamp(14px, 2vw, 22px) 32px',
+    }}>
+      <div className="card" role="alert" style={{ padding: 'clamp(24px, 4vw, 40px)', maxWidth: 640 }}>
+        <div className="eyebrow" style={{ color: 'var(--bear-text)' }}>Could not load</div>
+        <h1 className="display" style={{
+          fontSize: 26, lineHeight: 1.15, letterSpacing: '-0.02em', margin: '8px 0 0',
+        }}>The holdings data did not load.</h1>
+        <p style={{ fontSize: 14, lineHeight: 1.6, color: 'var(--sub)', margin: '10px 0 0' }}>
+          This is usually a dropped connection or a deploy in progress. Reloading is
+          the fastest thing to try; every holding is also readable without JavaScript
+          at <a href="/holdings/" style={{ color: 'var(--accent-text)' }}>/holdings/</a>.
+        </p>
+        {/* overflowWrap, not a <pre>: an unbroken URL in the message used to push the
+            page sideways on a phone. */}
+        <div className="mono" style={{
+          marginTop: 16, padding: '10px 12px',
+          background: 'var(--row-hover)', border: '1px solid var(--line)', borderRadius: 10,
+          fontSize: 11, color: 'var(--soft)', overflowWrap: 'anywhere',
+        }}>{message}</div>
+        <button
+          onClick={() => window.location.reload()}
+          style={{
+            marginTop: 18, padding: '11px 20px',
+            background: 'var(--accent)', color: 'var(--treemap-cell-fg)',
+            border: 'none', borderRadius: 999, cursor: 'pointer',
+            fontFamily: 'var(--font-mono)', fontSize: 12, fontWeight: 600,
+            letterSpacing: '0.06em', textTransform: 'uppercase',
+          }}>
+          Reload the page
+        </button>
+      </div>
     </div>
   );
 }

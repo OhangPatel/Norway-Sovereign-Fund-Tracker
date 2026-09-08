@@ -41,8 +41,10 @@ export const fmt = {
 export function Chip({ children, tone = 'neutral', style = {} }) {
   const tones = {
     neutral: { bg: 'var(--row-hover)', fg: 'var(--sub)', bd: 'var(--line)' },
-    pos:     { bg: 'color-mix(in srgb, var(--bull) 14%, transparent)', fg: 'var(--bull)', bd: 'color-mix(in srgb, var(--bull) 35%, transparent)' },
-    neg:     { bg: 'color-mix(in srgb, var(--bear) 14%, transparent)', fg: 'var(--bear)', bd: 'color-mix(in srgb, var(--bear) 35%, transparent)' },
+    // Ground and border are areas, so they take the fill token; the label is read as
+    // text, so it takes the -text one. On the dark theme the two are the same value.
+    pos:     { bg: 'color-mix(in srgb, var(--bull) 14%, transparent)', fg: 'var(--bull-text)', bd: 'color-mix(in srgb, var(--bull) 35%, transparent)' },
+    neg:     { bg: 'color-mix(in srgb, var(--bear) 14%, transparent)', fg: 'var(--bear-text)', bd: 'color-mix(in srgb, var(--bear) 35%, transparent)' },
     accent:  { bg: 'color-mix(in srgb, var(--accent) 18%, transparent)', fg: 'var(--accent-text)', bd: 'color-mix(in srgb, var(--accent) 35%, transparent)' },
     info:    { bg: 'color-mix(in srgb, var(--sector-tech) 14%, transparent)', fg: 'var(--sector-tech)', bd: 'color-mix(in srgb, var(--sector-tech) 30%, transparent)' },
   };
@@ -73,7 +75,7 @@ export function Delta({ value, fmt: f = 'pct' }) {
   const label = f === 'pct' ? fmt.signedPct(value) : (pos ? '+' : '') + fmt.short(value, 2);
   return (
     <span className="mono" style={{
-      color: pos ? 'var(--bull)' : 'var(--bear)',
+      color: pos ? 'var(--bull-text)' : 'var(--bear-text)',
       fontSize: 12, fontWeight: 500,
       display: 'inline-flex', alignItems:'center', gap: 4,
     }}>

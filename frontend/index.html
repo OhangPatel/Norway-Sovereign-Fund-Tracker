@@ -202,7 +202,13 @@
         --soft: #5E624C;
 
         --accent: #D8F34A;
-        --accent-text: #6C8118;
+        /* Was #6C8118 — 4.00:1 on --bg, 4.38 on --surface, 3.93 on --row-hover, all
+           under AA, and it carries 9-13px text (the table's HIGH labels, sorted column
+           headers, compare.jsx ownership figures). Lightness-only darkening, the same
+           technique already used on --sub and --soft: hue (72deg) and saturation are
+           unchanged, so the brand colour is intact. Now 4.77 / 5.23 / 4.68. The static
+           holdings pages carry their own copy of this value — keep them in step. */
+        --accent-text: #617416;
 
         --feature: #14150F;
         --feature-ink: #F4F2EC;
@@ -227,7 +233,9 @@
            ("Norway GPFG · Equity Holdings · <date>"). Hue and saturation unchanged;
            now 5.77:1 on --nav-surface and 5.50 on --nav-field. */
         --nav-soft: #646851;
-        --nav-accent-text: #6C8118;
+        /* Same fix as --accent-text: this renders the "Insights" half of the wordmark at
+           17px/600, just under WCAG's 18.66px bold threshold, so the 4.5:1 bar applies. */
+        --nav-accent-text: #617416;
         /* Nav buttons invert when expanded: --nav-invert is the fill, and
            --nav-invert-ink is the only thing legible on top of it. They are a
            pair — changing one without the other is what breaks the button. */
@@ -267,10 +275,37 @@
         --sector-utilities: #FBBF24;
         --sector-realestate: #4ADE80;
 
+        /* --bull / --bear are FILLS: chart areas, chip grounds, the 52-week range
+           gradient, micro-bars. They are not legible as text on a light field —
+           #4ADE80 scores 1.59:1 on --bg and #F87171 scores 2.52:1, the two worst
+           contrasts in the app, and they carried the 24h change column, every delta
+           in the drawer, and the added/removed counts.
+           So the pair splits the way --accent / --accent-text already does: same hue
+           and saturation, lightness dropped until it clears AA on all three light
+           grounds (--bg 5.00 / 4.91, --surface 5.48 / 5.62, --row-hover 4.91 / 5.04).
+           Use the -text tokens for anything read as a glyph — text, arrows, status
+           dots, a 1px chart stroke; use the plain tokens for anything with area. */
         --bull: #4ADE80;
         --bear: #F87171;
+        --bull-text: #16793A;
+        --bear-text: #C62828;
 
         --treemap-cell-fg: #16170F;
+
+        /* Elevation. Nine hand-written rgba shadows used to sit inline across the
+           components — 0 24px 48px -24px .45 beside 0 24px 48px -20px .45 beside
+           0 28px 56px -28px .5, differences no eye can see but which meant nothing
+           lined up. Three tiers, by how far the thing floats off the page:
+             pop     — tooltips and the chat launcher, attached to what they explain
+             menu    — dropdowns, popovers, the filter sheet, the chat panel
+             overlay — the detail drawer, the compare dock, the compare modal
+           plus one for the card hover lift. They are per-theme because a shadow tuned
+           for a white page disappears on #000, where the ground is already darker
+           than the shadow. */
+        --shadow-pop: 0 8px 20px -8px rgba(22, 23, 15, .28);
+        --shadow-menu: 0 24px 48px -24px rgba(22, 23, 15, .45);
+        --shadow-overlay: 0 30px 60px -20px rgba(22, 23, 15, .55);
+        --shadow-lift: 0 18px 34px -22px rgba(22, 23, 15, .55);
 
         --font-display: 'Space Grotesk', sans-serif;
         --font-mono: 'JetBrains Mono', monospace;
@@ -368,10 +403,22 @@
         --sector-utilities: #FBBF24;
         --sector-realestate: #4ADE80;
 
+        /* On the onyx field the fills are already legible as text (9.76:1 and 6.15:1 on
+           --surface), so the -text tokens are the same value here — exactly as
+           --accent-text equals --accent on this theme. */
         --bull: #4ADE80;
         --bear: #F87171;
+        --bull-text: #4ADE80;
+        --bear-text: #F87171;
 
         --treemap-cell-fg: #000000;
+
+        /* Same three tiers, opened up: on the onyx field a shadow has to be nearly
+           opaque black to register at all against a #000 page. */
+        --shadow-pop: 0 8px 20px -8px rgba(0, 0, 0, .55);
+        --shadow-menu: 0 24px 48px -24px rgba(0, 0, 0, .75);
+        --shadow-overlay: 0 30px 60px -20px rgba(0, 0, 0, .85);
+        --shadow-lift: 0 18px 34px -22px rgba(0, 0, 0, .8);
 
         --font-display: 'Space Grotesk', sans-serif;
         --font-mono: 'JetBrains Mono', monospace;
@@ -463,9 +510,19 @@
         animation-delay: calc(var(--i, 0) * 60ms);
       }
 
-      /* 6 · Card hover — lift plus a soft shadow; no shadow at rest. */
+      /* 6 · Card hover — lift, a soft shadow, and the border shift the style guide
+         has specified all along. --card-hover-border was defined in both themes and
+         read by nothing, so a card's hover said "something moved" without saying what
+         is now live; the border is what makes it read as one object waking up. The
+         shadow is a token because the old inline rgba(22,23,15,.55) was mixed for a
+         white page and vanished on the onyx field. */
       .lift { transition: transform .25s cubic-bezier(.2,.7,.3,1), box-shadow .25s ease, border-color .25s ease; }
-      .lift:hover { transform: translateY(-4px); box-shadow: 0 18px 34px -22px rgba(22,23,15,.55); }
+      .lift:hover { transform: translateY(-4px); box-shadow: var(--shadow-lift); border-color: var(--card-hover-border); }
+      /* Keyboard parity: a card that reacts to a mouse has to react to focus too. */
+      .lift:focus-visible { transform: translateY(-4px); box-shadow: var(--shadow-lift); }
+      /* The chart panels lift and shadow but keep their resting border: the edge
+         highlight read as a selection outline drawn around the whole box. */
+      .lift.keep-edge:hover, .lift.keep-edge:focus-visible { border-color: var(--line); }
 
       /* 7 · Live dot. */
       @keyframes pulseDot {
@@ -503,6 +560,9 @@
 
       /* Always show a focus ring for keyboard users. */
       :focus-visible { outline: 2px solid var(--accent-text); outline-offset: 2px; }
+      /* Sortable column headers are sticky at the very top of a clipping scroll
+         container, so an outward ring loses its top edge. Draw it inset. */
+      .r-thead [role="columnheader"]:focus-visible { outline-offset: -2px; }
 
       /* WCAG 2.2 — respect the OS "reduce motion" setting.
          Marquee, shimmer and card entry stop outright; hover and the nav
@@ -521,7 +581,7 @@
           -webkit-text-fill-color: currentColor;
           color: var(--feature-num);
         }
-        .lift:hover { transform: none; box-shadow: none; }
+        .lift:hover, .lift:focus-visible { transform: none; box-shadow: none; }
       }
 
       /* ============================================================
@@ -552,7 +612,7 @@
       /* Added / removed columns — changes.jsx */
       .r-changes2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
 
-      /* Filter strip, top bar, detail price block, loading skeleton */
+      /* Filter strip, top bar, detail price block */
       /* Ledger header: title on the left, its three triggers on the right. They are
          compact enough to share the title's row, so they cost no vertical space of
          their own; on a phone they wrap underneath. */
@@ -575,7 +635,7 @@
         display: flex; flex-direction: column;
         background: var(--surface); border: 1px solid var(--line);
         border-radius: 16px; padding: 6px 16px 16px;
-        box-shadow: 0 24px 48px -24px rgba(0,0,0,.45);
+        box-shadow: var(--shadow-menu);
         animation: rise .12s ease-out;
       }
       /* A grab handle means "drag me from the edge" — true of the sheet, not this. */
@@ -621,7 +681,6 @@
       /* Menu panel hugs the button it opened from. Left-anchored full-bleed only on
          phones, where the bar is narrow enough that a fixed 260px would look arbitrary. */
       .r-nav-menu { right: 0; width: 260px; }
-      .r-skel4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
 
       /* Data table. Column templates are computed in JS because the visible
          columns are user-configurable, then handed to CSS as custom properties
@@ -668,7 +727,6 @@
         .r-bento-lead { grid-column: span 2; }
         .r-bento-feature { grid-column: span 2; }
         .r-split { grid-template-columns: minmax(0, 1fr); }
-        .r-skel4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         /* Brand and actions share row 1; search gets its own full-width row.
            The brand column is 1fr rather than auto so it can shrink below its
            content instead of pushing the whole bar past the viewport. */
@@ -745,7 +803,6 @@
           animation: sheet-up .2s cubic-bezier(.2,.8,.2,1);
         }
         .r-sheet-grip { display: block; }
-        .r-skel4 { grid-template-columns: minmax(0, 1fr); }
         /* Three research buttons at 190px each read fine; at phone width they'd
            squeeze "Yahoo Finance" onto two lines, so this stacks them instead. */
         .r-research3 { grid-template-columns: minmax(0, 1fr); }

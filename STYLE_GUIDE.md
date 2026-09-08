@@ -92,20 +92,20 @@ column if any of those backgrounds change.
 | Token            | Light       | Dark        | Use |
 |------------------|-------------|-------------|-----|
 | `--accent`       | `#D8F34A`   | `#D8F34A`   | Lime accent (bars, dots, CTAs) — same in both themes |
-| `--accent-text`  | `#6C8118`   | `#D8F34A`   | Accent used as text (needs to be legible on `--bg`) |
+| `--accent-text`  | `#617416`   | `#D8F34A`   | Accent used as text (needs to be legible on `--bg`) |
 
 > **Note:** raw lime `#D8F34A` is too low-contrast for text on the light background, so
 > `--accent-text` darkens to `#6C8118` in light mode. Use `--accent` for fills/shapes and
 > `--accent-text` for any accent-colored text. On the dark theme the raw lime is fine
 > (16.84:1 on `--bg`), so the two are the same value there.
 
-> ⚠️ **`--accent-text` fails AA on the light theme.** It scores 4.00:1 on `--bg`, 4.38 on
-> `--surface`, 3.93 on `--row-hover` — under the 4.5:1 bar, and it is used on 9–13px text
+> ✅ **`--accent-text` used to fail AA on the light theme** at `#6C8118` — 4.00:1 on
+> `--bg`, 4.38 on `--surface`, 3.93 on `--row-hover`, under the 4.5:1 bar, on 9–13px text
 > (`table.jsx` "HIGH" labels and sorted column headers, `compare.jsx` ownership figures).
-> This predates the whisper-olive field, which lifted it from 3.49 to 4.00 without fixing
-> it. `#617416` clears all three (4.77 / 5.23 / 4.68) with hue and saturation unchanged —
-> the same lightness-only technique already used on `--sub` and `--soft`. Not applied:
-> it darkens a visible brand color and wants a design call.
+> It is now `#617416`: **4.77 / 5.23 / 4.68**, hue (72°) and saturation unchanged — the
+> same lightness-only technique already used on `--sub` and `--soft`. `--nav-accent-text`
+> and the static pages' `--accent-ink` moved with it, so there is one light accent-text
+> value across all three surfaces.
 
 ### Feature card (the inverted highlight card)
 
@@ -136,7 +136,7 @@ the ticker band and the footer keep a look of their own. The nav and hero cards 
 | `--nav-field`     | `#F2F3ED`                 | `#242426`                 | Search field inside the nav |
 | `--nav-ink`       | `#16170F`                 | `#FFFFFF`                 | Nav card primary text |
 | `--nav-soft`      | `#646851`                 | `#8E8E93`                 | Nav card tertiary text |
-| `--nav-accent-text` | `#6C8118`               | `#D8F34A`                 | Accent text on the nav card |
+| `--nav-accent-text` | `#617416`               | `#D8F34A`                 | Accent text on the nav card |
 | `--nav-invert`    | `#16170F`                 | `#D8F34A`                 | Fill of an expanded nav button |
 | `--nav-invert-ink`| `#D8F34A`                 | `#000000`                 | Text on `--nav-invert` |
 | `--nav-band`      | `#16170F`                 | `#D8F34A`                 | Ticker band |
@@ -196,10 +196,25 @@ Categorical colors for charts, treemaps, tags. Pick by sector, not by index.
 
 ### Market signals
 
-| Token      | Hex       | Use |
-|------------|-----------|-----|
-| `--bull`   | `#4ADE80` | Positive / gains |
-| `--bear`   | `#F87171` | Negative / losses |
+| Token         | Light     | Dark      | Use |
+|---------------|-----------|-----------|-----|
+| `--bull`      | `#4ADE80` | `#4ADE80` | Positive — **fills**: chart areas, chip grounds, micro-bars, the 52-week gradient |
+| `--bear`      | `#F87171` | `#F87171` | Negative — fills, same list |
+| `--bull-text` | `#16793A` | `#4ADE80` | Positive — **text and glyphs**: deltas, arrows, status dots, a 1px chart stroke |
+| `--bear-text` | `#C62828` | `#F87171` | Negative — text and glyphs |
+
+> ⚠️ **The pair splits the same way `--accent` / `--accent-text` does, and for the same
+> reason.** The mint and coral are unreadable as text on a light field: `#4ADE80` is
+> **1.59:1** on `--bg` and `#F87171` is **2.52:1** — the two worst contrasts the app has
+> ever shipped, and they carried the 24h change column, every delta in the drawer, the
+> added/removed counts, and the "live price" dot. The `-text` values keep each hue and
+> saturation and drop only lightness until they clear AA on all three light grounds
+> (`--bg` 5.00 / 4.91 · `--surface` 5.48 / 5.62 · `--row-hover` 4.91 / 5.04). On the onyx
+> field the fills are already legible (9.76 and 6.15 on `--surface`), so there the two
+> tokens are the same value — exactly as `--accent-text` equals `--accent` on dark.
+>
+> **The rule: anything with area takes `--bull` / `--bear`; anything read as a shape —
+> text, an arrow, a dot, a hairline — takes `--bull-text` / `--bear-text`.**
 
 When placing sector colors as a treemap/chart fill, text on top uses
 `--treemap-cell-fg` (`#16170F` light, `#000000` dark) — these sector hues are all light
@@ -268,6 +283,13 @@ Two families, loaded from Google Fonts:
 **Rule of thumb:** anything numeric or label-like → `--font-mono`, uppercase, wide tracking.
 Anything sentence-like → `--font-display`, tight negative tracking on large sizes.
 
+**The `.eyebrow` scale is three steps and nothing else: 11px (base) · 10px · 9px.** It had
+drifted to five — 11, 10.5, 10, 9.5, 9, with three of them inside the detail drawer alone,
+where 10.5 against 11 and 9.5 against 10 are differences no reader can see but which stop
+anything lining up. 11 heads a block, 10 labels a section or a field, 9 is only for a
+label in a multi-column row that has no width to spare (the drawer's 3-up `Metric` cells).
+**Nothing below 9px** — 8.5px had reached three places in the drawer.
+
 ---
 
 ## 4. Spacing, radius, motion
@@ -278,15 +300,46 @@ Anything sentence-like → `--font-display`, tight negative tracking on large si
 - **Page gutter:** `5vw` left/right; content `max-width: 1760px`, centered.
 - **Hover:** cards lift `translateY(-4px)` and shift border to `--card-hover-border` over `.18s`.
 - **Theme transition:** `background .25s, color .25s` on `body`.
-- **Borders:** `1px solid var(--line)` everywhere; never use shadows for separation except the floating toggle (`0 14px 44px rgba(0,0,0,0.4)`).
+- **Borders:** `1px solid var(--line)` everywhere; never use shadows for separation — a
+  shadow says "this floats above the page", a border says "this is part of it".
+
+### Elevation
+
+Four tokens, per-theme. Nine hand-written `rgba()` shadows used to sit inline across the
+components — `0 24px 48px -24px .45` beside `0 24px 48px -20px .45` beside
+`0 28px 56px -28px .5`, differences no eye can resolve but which meant nothing lined up —
+and every one of them was mixed for a white page, so they vanished on `#000`.
+
+| Token               | Use |
+|---------------------|-----|
+| `--shadow-pop`      | Tooltips, the chat launcher — attached to the thing they explain |
+| `--shadow-menu`     | Dropdowns, popovers, the filter sheet, the chat panel |
+| `--shadow-overlay`  | The detail drawer, the compare dock, the compare modal |
+| `--shadow-lift`     | The `.lift` card hover only |
+
+Pick by **how far the thing floats off the page**, not by how big you want the shadow.
+Never write a raw `rgba()` shadow in a component.
 
 ---
 
 ## 5. Components
 
 ### Card
-`background: var(--surface); border: 1px solid var(--line); border-radius: 20–24px;`
-Hover: lift + `border-color: var(--card-hover-border)`.
+Use the `.card` class (`index.html`) — `--surface` fill, `1px solid var(--line)`, radius
+`18px`. **Do not repeat those three inline.** Beyond DRY: `.lift:hover` shifts
+`border-color` to `--card-hover-border`, and an inline `border` shorthand sets
+border-color inline, which beats a class rule — written that way round the hover border
+silently never applies, which is why `--card-hover-border` sat unused in both themes for
+so long.
+
+Hover (`.lift`): `translateY(-4px)` + `--shadow-lift` + `border-color:
+var(--card-hover-border)`, with the same treatment on `:focus-visible`.
+
+**`.lift` means "this responds to you."** Put it on cards you can act on — the chart
+panels, the clickable stat cell — and leave it off cards that only display (the hero
+copy, the feature figure). A card that lifts under the cursor and then does nothing is a
+lie; a clickable card that does not move is a control nobody finds. A clickable card also
+renders as a real `<button>`, so it is in the tab order and takes the focus ring.
 
 ### Feature card
 Inverted highlight card using `--feature*` tokens. One per screen, max.
@@ -354,11 +407,9 @@ palette above.
   mode toggle" in §5 describe the pre-redesign build. The toggle now lives in the nav
   menu, not a bottom-center pill. Colors (§1–§2) are current; treat the rest as stale
   until someone does a pass.
-- **`--accent-ink` on the static pages is `#6F7610`, not the app's `#6C8118`** — and that
-  is the better value, so it was left alone when the accent drift was fixed. It scores
-  4.48:1 on `--bg` / 4.91 on `--surface`, against 4.00 / 4.38 for the app's. "Aligning"
-  the two would make contrast worse. Both should converge on `#617416` when the
-  `--accent-text` AA fix lands; until then the mismatch is deliberate.
+- **`--accent-ink` on the static pages has converged with the app.** It was `#6F7610`
+  against the app's `#6C8118` — deliberately, because it was the better value of the two
+  — and both are now `#617416`. There is one light accent-text value in the project.
 - **`site.webmanifest` is split across themes, deliberately.** `theme_color` is `#000000`
   (dark `--bg`) so installed-app chrome reads as an extension of the dark theme;
   `background_color` is `#F4F5F0` (light `--bg`) because the app boots into the light
@@ -367,17 +418,29 @@ palette above.
   has proper light/dark variants. **This is only self-consistent while the app defaults to
   light** (`src/app.jsx`, `localStorage.getItem('sov-theme') || 'light'`). If that default
   changes, `background_color` has to move with it.
-- **`--accent-text` fails AA on light** — see the callout in §2 for the measurement and
-  the one-value fix.
 - **The light theme's ink surfaces stay olive.** `--feature`, `--nav-band`, and
   `--foot-surface` are `#14150F`/`#16170F` — 17–21% saturation, but at **7% lightness**,
   where that works out to a 6/255 spread across the channels. The tint is not perceivable,
   and neutralizing them to `#000000` would change their *weight* on a light page, not just
   their hue. Left alone deliberately; this is not the dark theme's no-hue rule leaking.
-- **`--nav-accent-text` fails AA on light** for the same reason as `--accent-text`:
-  `#6C8118` is 4.38:1 on `--nav-surface`, 3.93 on `--nav-field`. It renders the "Insights"
-  half of the wordmark at 17px/600 — just under WCAG's 18.66px bold threshold, so the
-  4.5:1 bar applies. Fixing `--accent-text` should fix this one in the same pass.
 - **`--nav-sub` was removed**, not renamed. It had zero consumers — the restructure would
   have duplicated a dead token into both theme blocks. Nav secondary text uses
   `--nav-soft`.
+- **The sector fold in `src/sectors.js` is a display-layer patch, not a fix.** `data.json`
+  carries two taxonomies — Yahoo's `sector` for most rows, GICS `industry` for the 51 with
+  no sector — and they disagree on five labels, so the same sector arrived under two
+  spellings (Healthcare/Health Care, Financial Services/Financials, Consumer
+  Cyclical/Consumer Discretionary, Consumer Defensive/Consumer Staples, Communication
+  Services/Telecommunications). Nineteen rows out of 1,398, but enough for five duplicate
+  entries in the Sector filter with split counts, five duplicate slivers in the treemap,
+  and "16 sectors" on a stat card whose honest answer is 11. `sectorOf()` folds them for
+  both the app and the static build. **The durable fix is normalising `sector` in
+  `backend/pipeline/merge_and_enrich.py`** — that changes the shape of `data.json` and so
+  affects the chatbot, the CSVs and the static pages, which is a call for whoever owns the
+  dataset.
+- **The holdings table needs 324px of track at a 290px viewport on a 320px phone.** The
+  five phone-default columns' `min` widths (`ALL_COLUMNS`) sum past what an iPhone SE
+  offers, so the ledger scrolls ~34px sideways inside its card. Contained — it does not
+  push the page — but it defeats the point of the `--cols-m` template. There is no set of
+  five minimums that fits: closing it means dropping a column below ~360px (24h change,
+  or the pin), which is a product call about what the smallest phone shows.

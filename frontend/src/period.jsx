@@ -27,7 +27,7 @@ export function PeriodPicker({ manifest, period, onChange }) {
 
   return (
     <div>
-      <div className="eyebrow" style={{ fontSize: 9.5, color: 'var(--soft)', marginBottom: 10 }}>
+      <div className="eyebrow" style={{ fontSize: 10, color: 'var(--soft)', marginBottom: 10 }}>
         Annual holdings are as of 31 Dec · half-year as of 30 Jun
       </div>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
@@ -100,7 +100,7 @@ export function PeriodBar({ manifest, period, loading, marketAsOf }) {
           display: 'flex', gap: 10, alignItems: 'flex-start',
           padding: '10px 14px',
           background: 'color-mix(in oklch, var(--accent) 22%, var(--surface))',
-          border: '1px solid var(--line)', borderRadius: 10,
+          border: '1px solid var(--line)', borderRadius: 18,
           fontSize: 12, lineHeight: 1.5, color: 'var(--ink)',
         }}>
           <Icon name="clock" size={15} color="var(--ink)" />

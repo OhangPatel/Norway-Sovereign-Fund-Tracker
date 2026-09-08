@@ -97,10 +97,15 @@ export function ChatWidget() {
         style={{
           position: 'fixed', right: 24, bottom: 24, zIndex: 1000,
           width: 54, height: 54, borderRadius: '50%',
-          background: 'var(--accent)', color: 'var(--feature-ink, #08080A)',
-          border: '1px solid var(--line)', cursor: 'pointer',
+          // --treemap-cell-fg is the app's "dark ink that reads on a lime fill" token,
+          // the same one the icon inside uses; --feature-ink is the feature CARD's text
+          // colour and is near-white on the light theme, and it carried a hardcoded
+          // #08080A fallback the style guide forbids in components. The border was a
+          // --line grey hairline drawn on lime, which only ever read as a smudge.
+          background: 'var(--accent)', color: 'var(--treemap-cell-fg)',
+          border: 'none', cursor: 'pointer',
           display: 'grid', placeItems: 'center',
-          boxShadow: '0 8px 24px rgba(0,0,0,.18)',
+          boxShadow: 'var(--shadow-pop)',
         }}
       >
         <Icon name="sparkle" size={22} color="var(--treemap-cell-fg)" />
@@ -117,7 +122,7 @@ export function ChatWidget() {
         width: 'min(380px, calc(100vw - 48px))',
         height: 'min(620px, calc(100vh - 48px))',
         display: 'flex', flexDirection: 'column', overflow: 'hidden',
-        boxShadow: '0 16px 48px rgba(0,0,0,.24)', animation: 'rise .2s ease-out',
+        boxShadow: 'var(--shadow-menu)', animation: 'rise .2s ease-out',
       }}
     >
       {/* Header */}
@@ -219,7 +224,7 @@ var primaryBtn = {
 function IconButton({ children, onClick, title }) {
   return (
     <button
-      onClick={onClick} title={title}
+      onClick={onClick} title={title} aria-label={title}
       style={{
         width: 30, height: 30, borderRadius: 8, flexShrink: 0,
         display: 'grid', placeItems: 'center', cursor: 'pointer',

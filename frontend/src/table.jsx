@@ -1,6 +1,7 @@
 import React from 'react';
 import { fmt, Chip, Delta, RangeBar, MicroBar, Icon } from './format.jsx';
 import { SECTOR_COLORS } from './summary.jsx';
+import { sectorOf } from './sectors.js';
 import { ColumnsMenu, CompareButton, FilterPanel } from './filters.jsx';
 
 // Core data table — sortable, virtualized scroll, sticky header, compare/pin support
@@ -37,6 +38,13 @@ function colTemplate(visibleCols, compareOn, fluid) {
     return c.fr ? 'minmax(' + c.min + 'px, ' + c.fr + 'fr)' : c.min + 'px';
   }).join(' ');
 }
+
+// sort.key is an internal field name; the caption under the ledger title is read by
+// people. Derived from ALL_COLUMNS rather than a second hand-kept list, so a column
+// that is renamed cannot leave the caption describing the old name.
+const SORT_LABEL = Object.fromEntries(
+  Object.values(ALL_COLUMNS).filter(c => c.sortKey).map(c => [c.sortKey, c.label])
+);
 
 export const REC_TONE = {
   strong_buy: 'pos',
@@ -124,7 +132,7 @@ export function DataTable({
   };
 
   return (
-    <div className="enter" style={{ '--i': 9, background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: 18, padding: 0, overflow: 'hidden' }}>
+    <div className="card enter" style={{ '--i': 9, padding: 0, overflow: 'hidden' }}>
       {/* Three compact triggers, so they sit beside the title rather than costing a
           row of their own. Filters open as a panel at every width — a large screen
           gets a centred dialog, a phone the bottom sheet. */}
@@ -137,7 +145,7 @@ export function DataTable({
             </span>
           </div>
           <div className="mono" style={{ fontSize: 10.5, color: 'var(--soft)', marginTop: 6 }}>
-            Sorted by <span style={{ color:'var(--sub)' }}>{sort.key}</span> {sort.dir === 'desc' ? '↓' : '↑'}
+            Sorted by <span style={{ color:'var(--sub)' }}>{SORT_LABEL[sort.key] || sort.key}</span> {sort.dir === 'desc' ? '↓' : '↑'}
           </div>
         </div>
         <div className="r-ledger-tools">
@@ -167,23 +175,38 @@ export function DataTable({
       <div ref={scrollRef} onScroll={onScroll} className="r-tscroll">
         {/* Both templates are published as custom properties; the media query in
             index.html picks which one applies, and rows inherit them. */}
-        <div className="r-twrap" style={{
+        <div className="r-twrap" role="table" aria-label="Holdings ledger" style={{
           '--cols': colTemplate(visibleCols, compareOn, false),
           '--cols-m': colTemplate(visibleCols, compareOn, true),
           '--tmin': minTableWidth + 'px',
         }}>
           {/* Header row */}
-          <div className="r-trow r-thead" style={{ position: 'sticky', top: 0, zIndex: 3 }}>
-            {compareOn && <div style={headerCellStyle({ align:'center', sortable: false })}></div>}
+          <div className="r-trow r-thead" role="row" style={{ position: 'sticky', top: 0, zIndex: 3 }}>
+            {compareOn && <div role="columnheader" style={headerCellStyle({ align:'center', sortable: false })}></div>}
             {visibleCols.map(k => {
               const col = ALL_COLUMNS[k];
               const isSorted = sort.key === col.sortKey;
               const isDragging = dragKey === k;
               const isOver = overKey === k && dragKey && dragKey !== k;
               return (
+                /* Sorting the ledger was mouse-only: these are plain divs, so nothing
+                   here was in the tab order and a screen reader was told neither that
+                   the cell was a control nor which way the column was sorted. They stay
+                   divs because a <button> cannot also be a drag source without fighting
+                   its own default drag behaviour, so the roles are declared by hand:
+                   columnheader + aria-sort, focusable when sortable, Enter/Space to
+                   sort. The global :focus-visible ring in index.html does the rest. */
                 <div key={k}
                   draggable
+                  role="columnheader"
+                  aria-sort={col.sortable ? (isSorted ? (sort.dir === 'desc' ? 'descending' : 'ascending') : 'none') : undefined}
+                  tabIndex={col.sortable ? 0 : undefined}
+                  title={col.sortable ? `Sort by ${col.label}` : undefined}
                   onClick={() => { if (!dragKey) headerSortClick(k); }}
+                  onKeyDown={(e) => {
+                    if (!col.sortable) return;
+                    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); headerSortClick(k); }
+                  }}
                   onDragStart={(e) => { setDragKey(k); e.dataTransfer.effectAllowed = 'move'; }}
                   onDragOver={(e) => { e.preventDefault(); if (overKey !== k) setOverKey(k); }}
                   onDrop={(e) => { e.preventDefault(); moveColumn(dragKey, k); setDragKey(null); setOverKey(null); }}
@@ -279,6 +302,7 @@ export function Row({ row, rank, visibleCols, onOpen, pinned, togglePin, compare
   return (
     <div
       className="r-trow"
+      role="row"
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       onClick={onRowClick}
@@ -289,7 +313,7 @@ export function Row({ row, rank, visibleCols, onOpen, pinned, togglePin, compare
       }}
     >
       {compareOn && (
-        <div style={{ ...cellBase, padding: 0, justifyContent:'center' }}>
+        <div role="cell" style={{ ...cellBase, padding: 0, justifyContent:'center' }}>
           <span style={{
             width:16, height:16, borderRadius:4,
             border:`1.5px solid ${compared ? 'var(--accent)' : 'var(--line)'}`,
@@ -301,37 +325,45 @@ export function Row({ row, rank, visibleCols, onOpen, pinned, togglePin, compare
         </div>
       )}
       {visibleCols.map(k => <Cell key={k} colKey={k} row={row} rank={rank} cellBase={cellBase}
-        pinned={pinned} togglePin={togglePin} hover={hover} maxOwnership={maxOwnership}/>)}
+        pinned={pinned} togglePin={togglePin} hover={hover} maxOwnership={maxOwnership}
+        hasSectorCol={visibleCols.includes('sector')}/>)}
     </div>
   );
 }
 
-export function Cell({ colKey, row, rank, cellBase, pinned, togglePin, hover, maxOwnership }) {
+export function Cell({ colKey, row, rank, cellBase, pinned, togglePin, hover, maxOwnership, hasSectorCol }) {
   const col = ALL_COLUMNS[colKey];
   const style = { ...cellBase, justifyContent: col.align === 'right' ? 'flex-end' : col.align === 'center' ? 'center' : 'flex-start' };
 
   switch (colKey) {
     case 'rank':
-      return <div style={style}>
+      return <div role="cell" style={style}>
         <span className="mono" style={{ fontSize: 11, color: 'var(--soft)' }}>{String(rank).padStart(3,'0')}</span>
       </div>;
 
     case 'name':
-      return <div style={style}>
+      // The second line is the sector, and only when the Sector column is not on
+      // screen — which is the phone default. It used to print row.industry, a second
+      // and often contradictory taxonomy (Cameco: "Basic Materials" here, "Energy" in
+      // the column beside it, on the same row). Now it is the same canonical value the
+      // column shows, and it stands down when the column is there to say it.
+      return <div role="cell" style={style}>
         <div style={{ minWidth: 0 }}>
           <div style={{
             color: 'var(--ink)', fontSize: 13, fontWeight: 500,
             whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis',
             maxWidth: 240
           }}>{row.name}</div>
-          <div className="mono" style={{ fontSize: 10.5, color: 'var(--soft)', marginTop: 1, whiteSpace:'nowrap' }}>
-            {row.industry || row.sector || '—'}
-          </div>
+          {!hasSectorCol && (
+            <div className="mono" style={{ fontSize: 10.5, color: 'var(--soft)', marginTop: 1, whiteSpace:'nowrap' }}>
+              {sectorOf(row, '—')}
+            </div>
+          )}
         </div>
       </div>;
 
     case 'ticker':
-      return <div style={style}>
+      return <div role="cell" style={style}>
         <span className="mono" style={{
           fontSize: 11.5, fontWeight: 500, color: 'var(--sub)',
           background: 'var(--row-hover)',
@@ -341,38 +373,38 @@ export function Cell({ colKey, row, rank, cellBase, pinned, togglePin, hover, ma
       </div>;
 
     case 'country':
-      return <div style={style}>
+      return <div role="cell" style={style}>
         <span style={{ fontSize: 12.5, color: 'var(--sub)' }}>{row.country}</span>
       </div>;
 
     case 'sector':
-      return <div style={style}>
+      return <div role="cell" style={style}>
         <span style={{
           fontSize: 11.5, color: 'var(--sub)',
           display:'inline-flex', alignItems:'center', gap: 6
         }}>
           <span style={{
             width: 6, height: 6, borderRadius: 99,
-            background: (SECTOR_COLORS && SECTOR_COLORS[row.sector]) || 'var(--soft)'
+            background: SECTOR_COLORS[sectorOf(row)] || 'var(--soft)'
           }}/>
-          {row.sector || row.industry || '—'}
+          {sectorOf(row, '—')}
         </span>
       </div>;
 
     case 'price':
-      return <div style={style}>
+      return <div role="cell" style={style}>
         <span className="mono" style={{ fontSize: 13, color: 'var(--ink)' }}>
           {fmt.price(row.price)}
         </span>
       </div>;
 
     case 'change':
-      return <div style={style}>
+      return <div role="cell" style={style}>
         <Delta value={row.change} fmt="pct"/>
       </div>;
 
     case 'range':
-      return <div style={{ ...style, padding: '0 14px' }}>
+      return <div role="cell" style={{ ...style, padding: '0 14px' }}>
         <div style={{ width: '100%' }}>
           <RangeBar low={row.low52} high={row.high52} value={row.price}/>
           <div className="mono" style={{
@@ -386,7 +418,7 @@ export function Cell({ colKey, row, rank, cellBase, pinned, togglePin, hover, ma
       </div>;
 
     case 'mvUsd':
-      return <div style={style}>
+      return <div role="cell" style={style}>
         <span className="mono" style={{ fontSize: 13, color: 'var(--ink)' }}>
           {fmt.money(row.mvUsd, 'USD', 1)}
         </span>
@@ -395,7 +427,7 @@ export function Cell({ colKey, row, rank, cellBase, pinned, togglePin, hover, ma
     case 'ownership': {
       const o = row.ownership || 0;
       const isHigh = o >= 5;
-      return <div style={{ ...style, padding: '0 14px' }}>
+      return <div role="cell" style={{ ...style, padding: '0 14px' }}>
         <div style={{ width: '100%' }}>
           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'baseline', marginBottom: 4 }}>
             <span className="mono" style={{ fontSize: 13, color: isHigh ? 'var(--accent-text)' : 'var(--ink)', fontWeight: isHigh ? 600 : 400 }}>
@@ -409,19 +441,19 @@ export function Cell({ colKey, row, rank, cellBase, pinned, togglePin, hover, ma
     }
 
     case 'rec':
-      return <div style={style}>
+      return <div role="cell" style={style}>
         <Chip tone={REC_TONE[row.rec] || 'neutral'}>{fmt.rec(row.rec)}</Chip>
       </div>;
 
     case 'pe':
-      return <div style={style}>
+      return <div role="cell" style={style}>
         <span className="mono" style={{ fontSize: 12.5, color: row.pe ? 'var(--sub)' : 'var(--soft)' }}>
           {row.pe ? row.pe.toFixed(1) : '—'}
         </span>
       </div>;
 
     case 'pin':
-      return <div style={style}>
+      return <div role="cell" style={style}>
         <button
           onClick={(e) => { e.stopPropagation(); togglePin(row.id); }}
           style={{
@@ -434,6 +466,8 @@ export function Cell({ colKey, row, rank, cellBase, pinned, togglePin, hover, ma
           onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.15)'}
           onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
           title={pinned ? 'Unpin' : 'Pin'}
+          aria-label={`${pinned ? 'Unpin' : 'Pin'} ${row.name}`}
+          aria-pressed={pinned}
         >
           <Icon name={pinned ? 'pinned' : 'pin'} size={14}/>
         </button>

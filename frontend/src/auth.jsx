@@ -126,7 +126,7 @@ export function AdminLogin() {
 
   return (
     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-      {error && <span style={{ color: 'var(--danger, #d66)' }} title={error}>Sign-in failed</span>}
+      {error && <span style={{ color: 'var(--bear-text)' }} title={error}>Sign-in failed</span>}
       <button style={link} onClick={signIn} disabled={busy}>
         {busy ? 'Redirecting…' : 'Admin sign in with Google'}
       </button>

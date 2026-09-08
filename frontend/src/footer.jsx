@@ -35,10 +35,10 @@ export function Footer({ positions, period, pricesAsOf }) {
       background: 'var(--foot-surface)',
       borderTop: '1px solid var(--foot-line)',
       color: 'var(--foot-sub)',
-      // AdminLogin styles its link with --accent-text, which in the light theme
-      // is olive (#6C8118) — tuned for the cream surface it used to sit on, and
-      // under 4.5:1 against this band. Re-pointing the token here fixes it for
-      // anything the footer adopts later, without auth.jsx knowing where it is.
+      // AdminLogin styles its link with --accent-text, which in the light theme is a
+      // dark olive tuned for a white card and far under 4.5:1 against this ink band.
+      // Re-pointing the token here fixes it for anything the footer adopts later,
+      // without auth.jsx needing to know where it is mounted.
       '--accent-text': 'var(--foot-accent)',
     }}>
       <div style={{
@@ -163,7 +163,10 @@ function FooterCol({ title, children }) {
   return (
     <div>
       <div className="eyebrow" style={{ fontSize: 10, color: 'var(--foot-soft)' }}>{title}</div>
-      <div style={{ display: 'grid', gap: 14, justifyItems: 'start', marginTop: 26 }}>
+      {/* gap 6 + 4px of link padding, not gap 14 against a bare 23px line box: same
+          37px pitch on screen, but each link is now a 31px target rather than one
+          under WCAG 2.2's 24px minimum. */}
+      <div style={{ display: 'grid', gap: 6, justifyItems: 'start', marginTop: 22 }}>
         {children}
       </div>
     </div>
@@ -174,8 +177,8 @@ function FooterCol({ title, children }) {
 // so "Back to top" is reachable by keyboard as the control it actually is.
 function FooterLink({ href, children, external, onClick }) {
   const style = {
-    padding: 0, border: 'none', background: 'none', textAlign: 'left',
-    fontFamily: 'var(--font-display)', fontSize: 15,
+    padding: '4px 0', border: 'none', background: 'none', textAlign: 'left',
+    fontFamily: 'var(--font-display)', fontSize: 15, lineHeight: 1.5,
     color: 'var(--foot-sub)', textDecoration: 'none', cursor: 'pointer',
   };
   if (!href) return <button className="r-flink" style={style} onClick={onClick}>{children}</button>;

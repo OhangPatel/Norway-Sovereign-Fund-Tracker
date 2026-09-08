@@ -4,6 +4,7 @@ import { PriceChart } from './charts.jsx';
 import { REC_TONE } from './table.jsx';
 import { PIPELINE_API } from './app.jsx';
 import { formatPeriod, periodLabel } from './snapshot.js';
+import { sectorOf } from './sectors.js';
 
 // Slide-over detail drawer for a single company
 
@@ -73,7 +74,7 @@ function RangeDelta({ delta }) {
   const pos = delta.pct >= 0;
   return (
     <span className="mono" style={{
-      color: pos ? 'var(--bull)' : 'var(--bear)',
+      color: pos ? 'var(--bull-text)' : 'var(--bear-text)',
       fontSize: 12, fontWeight: 500,
       display: 'inline-flex', alignItems: 'baseline', gap: 4, flexWrap: 'wrap',
     }}>
@@ -213,7 +214,7 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
     : null;
 
   const peerSet = allData
-    .filter(c => (c.sector || c.industry) === (company.sector || company.industry) && c.id !== company.id)
+    .filter(c => sectorOf(c) === sectorOf(company) && c.id !== company.id)
     .sort((a, b) => b.mvUsd - a.mvUsd)
     .slice(0, 5);
 
@@ -228,14 +229,14 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
         opacity: entered ? 1 : 0,
         transition: 'opacity .18s ease',
       }}/>
-      <aside style={{
+      <aside role="dialog" aria-modal="true" aria-label={`${company.name} — position detail`} style={{
         position:'fixed', top: 0, right: 0, bottom: 0,
         width: 'min(640px, 96vw)',
         background: 'var(--bg)',
         borderLeft: '1px solid var(--line)',
         zIndex: 81,
         overflowY: 'auto',
-        boxShadow: '-30px 0 60px -20px rgba(0,0,0,.6)',
+        boxShadow: 'var(--shadow-overlay)',
         transform: entered ? 'translateX(0)' : 'translateX(100%)',
         transition: 'transform .3s cubic-bezier(.22,.61,.36,1)',
       }}>
@@ -253,7 +254,7 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
           <div className="eyebrow" style={{ display:'flex', alignItems:'center', gap: 7 }}>
             <span style={{
               width: 6, height: 6, borderRadius: 99, flexShrink: 0,
-              background: headline.live ? 'var(--bull)' : 'var(--soft)',
+              background: headline.live ? 'var(--bull-text)' : 'var(--soft)',
             }}/>
             Position detail
           </div>
@@ -275,15 +276,15 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
               the chip is what a returning eye lands on first. */}
           <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap: 16 }}>
             <div style={{ minWidth: 0 }}>
-              <div className="eyebrow" style={{ fontSize: 10.5 }}>
-                {company.ticker} · {company.country} · {company.industry}
+              <div className="eyebrow" style={{ fontSize: 11 }}>
+                {company.ticker} · {company.country} · {sectorOf(company, '—')}
               </div>
               <h2 className="display" style={{
                 fontSize: 30, lineHeight: 1.06, margin: '6px 0 0',
                 letterSpacing: '-0.015em',
               }}>{company.name}</h2>
               {company.reason && (
-                <div className="eyebrow" style={{ fontSize: 9.5, marginTop: 7 }}>
+                <div className="eyebrow" style={{ fontSize: 10, marginTop: 7 }}>
                   Inclusion basis · <span style={{ color:'var(--sub)' }}>{company.reason}</span>
                 </div>
               )}
@@ -376,7 +377,7 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
               <div className="mono" style={{ display:'flex', alignItems:'center', gap: 6, fontSize: 10, color: 'var(--soft)' }}>
                 <span style={{
                   width: 6, height: 6, borderRadius: 99, flexShrink: 0,
-                  background: headline.live ? 'var(--bull)' : 'var(--soft)',
+                  background: headline.live ? 'var(--bull-text)' : 'var(--soft)',
                 }}/>
                 <span>
                   {headline.live ? `Live · ${fmtClock(headline.at)}` : fmtSnapshotStamp(headline.at)}
@@ -396,7 +397,7 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
                 {fmt.price(company.targetPrice)}{' '}
                 <span style={{
                   fontSize: 12,
-                  color: company.targetPrice > headline.price ? 'var(--bull)' : 'var(--bear)',
+                  color: company.targetPrice > headline.price ? 'var(--bull-text)' : 'var(--bear-text)',
                 }}>({((company.targetPrice / headline.price - 1) * 100).toFixed(1)}%)</span>
               </>
             ) : '—'}/>
@@ -448,7 +449,10 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
               background:'var(--line)', borderRadius: 12, overflow:'hidden',
               border:'1px solid var(--line)'
             }}>
-              <KvCell label="P/E ratio (trailing)" value={company.pe?.toFixed(2) ?? '—'}/>
+              {/* "P/E (trailing)", matching the compare modal — the same figure was
+                  named two ways across two screens, and the longer name is also what
+                  pinned this label to 8.5px to survive a half-width phone cell. */}
+              <KvCell label="P/E (trailing)" value={company.pe?.toFixed(2) ?? '—'}/>
               <KvCell label="Forward P/E" value={company.fwdPe?.toFixed(2) ?? '—'}/>
               <KvCell label="Price / Book" value={company.pb?.toFixed(2) ?? '—'}/>
               <KvCell label="Dividend yield" value={company.divYield ? company.divYield.toFixed(2) + '%' : '—'}/>
@@ -460,7 +464,7 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
           {/* Peers */}
           {peerSet.length > 0 && (
             <div style={{ marginTop: 22 }}>
-              <div className="eyebrow" style={{ fontSize: 10, marginBottom: 10 }}>Top peers in {company.sector || company.industry}</div>
+              <div className="eyebrow" style={{ fontSize: 10, marginBottom: 10 }}>Top peers in {sectorOf(company, 'this sector')}</div>
               <div style={{ display: 'grid', gap: 1, background: 'var(--line)', borderRadius: 10, overflow:'hidden', border: '1px solid var(--line)' }}>
                 {peerSet.map(p => (
                   <div key={p.ticker} onClick={() => onPickCompany(p)}
@@ -626,7 +630,7 @@ export function Metric({ label, value, accent, note }) {
         color: accent ? 'var(--accent-text)' : 'var(--ink)'
       }}>{value}</div>
       {note && (
-        <div className="mono" style={{ fontSize: 8.5, color: 'var(--sub)', marginTop: 3 }}>{note}</div>
+        <div className="mono" style={{ fontSize: 10, color: 'var(--sub)', marginTop: 3, lineHeight: 1.35 }}>{note}</div>
       )}
     </div>
   );
@@ -650,7 +654,7 @@ export function SectionLabel({ text, tag, accent, divider }) {
     }}>
       <span className="eyebrow" style={{ fontSize: 10, color: accent ? 'var(--accent-text)' : undefined }}>{text}</span>
       {tag && (
-        <span className="mono" style={{ fontSize: 8.5, color: 'var(--sub)', fontWeight: 400 }}>
+        <span className="mono" style={{ fontSize: 10, color: 'var(--sub)', fontWeight: 400 }}>
           · {tag}
         </span>
       )}
@@ -666,7 +670,7 @@ export function KvCell({ label, value }) {
       background:'var(--surface)', padding: '12px 14px',
       display:'flex', alignItems:'center', justifyContent:'space-between', gap: 10,
     }}>
-      <span className="eyebrow" style={{ fontSize: 8.5 }}>{label}</span>
+      <span className="eyebrow" style={{ fontSize: 10 }}>{label}</span>
       <span className="mono" style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink)', textAlign:'right', flexShrink: 0 }}>{value}</span>
     </div>
   );
@@ -698,6 +702,7 @@ function RefreshQuoteBtn({ onClick, busy }) {
   const spinning = busy || minSpin;
   return (
     <button onClick={handleClick} disabled={spinning} title={spinning ? 'Refreshing…' : 'Refresh price'}
+      aria-label={spinning ? 'Refreshing price' : 'Refresh price'}
       style={{
         display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
         width: 16, height: 16, padding: 0,
@@ -716,7 +721,9 @@ function RefreshQuoteBtn({ onClick, busy }) {
 
 export function IconBtn({ children, onClick, title, active }) {
   return (
-    <button onClick={onClick} title={title}
+    // title is a hover tooltip; aria-label is what a screen reader or a voice
+    // command has to work from, and these buttons have no text of their own.
+    <button onClick={onClick} title={title} aria-label={title}
       style={{
         width: 32, height: 32,
         display:'grid', placeItems:'center',

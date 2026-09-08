@@ -107,7 +107,7 @@ As_Of,Country,Name,Industry,Market Value(NOK),Market Value(USD),Voting,Ownership
 2026-06-30,Germany,Evonik Industries AG,Basic Materials,922823429,93256877,1.1%,1.1,,Both,EVK.DE
 2026-06-30,Germany,FUCHS SE,Basic Materials,939647891,94957091,1.03%,1.74,,Both,FPE3.DE
 2026-06-30,Germany,Henkel AG & Co KGaA,Basic Materials,2430773180,245644301,0.71%,0.69,,Both,HEN3.DE
-2026-06-30,Germany,Kloeckner & Co SE,Basic Materials,78254590,7908099,0.56%,0.56,,Ownership,
+2026-06-30,Germany,Kloeckner & Co SE,Basic Materials,78254590,7908099,0.56%,0.56,,Ownership,KCO.DE
 2026-06-30,Germany,LANXESS AG,Basic Materials,318323917,32168553,2.15%,2.15,,Both,LXS.DE
 2026-06-30,Germany,Salzgitter AG,Basic Materials,667467609,67451630,2.17%,2.17,,Both,SZG.DE
 2026-06-30,Germany,Symrise AG,Basic Materials,3791554227,383159439,2.73%,2.73,,Both,SY1.DE
@@ -120,7 +120,7 @@ As_Of,Country,Name,Industry,Market Value(NOK),Market Value(USD),Voting,Ownership
 2026-06-30,Germany,Mercedes-Benz Group AG,Consumer Discretionary,6328323776,639515313,1.32%,1.32,,Both,MBG.DE
 2026-06-30,Germany,Porsche Automobil Holding SE,Consumer Discretionary,1273213950,128665954,0%,1.36,,Both,PAH3.DE
 2026-06-30,Germany,Puma SE,Consumer Discretionary,825788135,83450875,1.86%,1.86,,Ownership,PUM.DE
-2026-06-30,Germany,Rational AG,Consumer Discretionary,1153866628,116605187,1.4%,1.4,,Both,
+2026-06-30,Germany,Rational AG,Consumer Discretionary,1153866628,116605187,1.4%,1.4,,Both,RAA.DE
 2026-06-30,Germany,Schaeffler AG,Consumer Discretionary,1314309634,132818921,1.45%,1.45,,Both,SHA.DE
 2026-06-30,Germany,TUI AG,Consumer Discretionary,754746363,76271675,1.82%,1.82,,Ownership,TUI1.DE
 2026-06-30,Germany,Zalando SE,Consumer Discretionary,1666179972,168377543,2.32%,2.32,,Both,ZAL.DE
@@ -214,11 +214,11 @@ As_Of,Country,Name,Industry,Market Value(NOK),Market Value(USD),Voting,Ownership
 2026-06-30,India,Chemplast Sanmar Ltd,Basic Materials,12474060,1260579,0.38%,0.38,,Ownership,CHEMPLASTS.NS
 2026-06-30,India,Clean Science & Technology Ltd,Basic Materials,201085691,20320923,2.38%,2.38,,Both,CLEAN.NS
 2026-06-30,India,Coromandel International Ltd,Basic Materials,236587505,23908596,0.38%,0.38,,Both,COROMANDEL.NS
-2026-06-30,India,DCM Shriram Ltd,Basic Materials,33577002,3393159,0.2%,0.2,,Market Value,
+2026-06-30,India,DCM Shriram Ltd,Basic Materials,33577002,3393159,0.2%,0.2,,Market Value,DCMSHRIRAM.NS
 2026-06-30,India,Deepak Fertilisers & Petrochemicals Corp Ltd,Basic Materials,114556330,11576609,0.56%,0.56,,Both,DEEPAKFERT.NS
 2026-06-30,India,Deepak Nitrite Ltd,Basic Materials,102800158,10388577,0.47%,0.47,,Both,DEEPAKNTR.NS
 2026-06-30,India,Electrosteel Castings Ltd,Basic Materials,19442532,1964785,0.38%,0.38,,Ownership,ELECTCAST.NS
-2026-06-30,India,Fine Organic Industries Ltd,Basic Materials,37482010,3787783,0.22%,0.22,,Market Value,
+2026-06-30,India,Fine Organic Industries Ltd,Basic Materials,37482010,3787783,0.22%,0.22,,Market Value,FINEORG.NS
 2026-06-30,India,GHCL Ltd,Basic Materials,25727998,2599970,0.61%,0.61,,Ownership,GHCL.NS
 2026-06-30,India,Godawari Power and Ispat Ltd,Basic Materials,75439005,7623567,0.42%,0.42,,Both,GPIL.NS
 2026-06-30,India,Gravita India Ltd,Basic Materials,47836085,4834125,0.38%,0.38,,Both,GRAVITA.NS
@@ -273,7 +273,7 @@ As_Of,Country,Name,Industry,Market Value(NOK),Market Value(USD),Voting,Ownership
 2026-06-30,India,Endurance Technologies Ltd,Consumer Discretionary,124629432,12594557,0.32%,0.32,,Market Value,ENDURANCE.NS
 2026-06-30,India,FSN E-Commerce Ventures Ltd,Consumer Discretionary,824762563,83347236,0.89%,0.89,,Both,NYKAA.NS
 2026-06-30,India,Hero MotoCorp Ltd,Consumer Discretionary,2222538457,224600929,2.22%,2.22,,Both,HEROMOTOCO.NS
-2026-06-30,India,Honasa Consumer Ltd,Consumer Discretionary,61937312,6259139,0.4%,0.4,,Ownership,
+2026-06-30,India,Honasa Consumer Ltd,Consumer Discretionary,61937312,6259139,0.4%,0.4,,Ownership,HONASA.NS
 2026-06-30,India,Hyundai Motor India Ltd,Consumer Discretionary,211689970,21392550,0.13%,0.13,,Market Value,HYUNDAI.NS
 2026-06-30,India,Indian Hotels Co Ltd/The,Consumer Discretionary,887052728,89642034,0.83%,0.83,,Both,INDHOTEL.NS
 2026-06-30,India,Indian Railway Catering & Tourism Corp Ltd,Consumer Discretionary,159840579,16152856,0.38%,0.38,,Both,IRCTC.NS
@@ -281,7 +281,7 @@ As_Of,Country,Name,Industry,Market Value(NOK),Market Value(USD),Voting,Ownership
 2026-06-30,India,ITC Hotels Ltd,Consumer Discretionary,191737939,19376276,0.49%,0.49,,Both,ITCHOTELS.NS
 2026-06-30,India,Jubilant Foodworks Ltd,Consumer Discretionary,86696772,8761232,0.3%,0.3,,Market Value,JUBLFOOD.NS
 2026-06-30,India,Kalyan Jewellers India Ltd,Consumer Discretionary,112298957,11348488,0.27%,0.27,,Market Value,KALYANKJIL.NS
-2026-06-30,India,Landmark Cars Ltd,Consumer Discretionary,20106025,2031835,1.06%,1.06,,Ownership,
+2026-06-30,India,Landmark Cars Ltd,Consumer Discretionary,20106025,2031835,1.06%,1.06,,Ownership,LANDMARK.NS
 2026-06-30,India,Lemon Tree Hotels Ltd,Consumer Discretionary,86125508,8703503,0.89%,0.89,,Both,LEMONTREE.NS
 2026-06-30,India,Lenskart Solutions Ltd,Consumer Discretionary,152565535,15417668,0.16%,0.16,,Market Value,LENSKART.NS
 2026-06-30,India,LG Electronics India Ltd,Consumer Discretionary,585372029,59155378,0.53%,0.53,,Both,LGEINDIA.NS
@@ -306,7 +306,7 @@ As_Of,Country,Name,Industry,Market Value(NOK),Market Value(USD),Voting,Ownership
 2026-06-30,India,Titan Co Ltd,Consumer Discretionary,1736772516,175511348,0.42%,0.42,,Both,TITAN.NS
 2026-06-30,India,Travel Food Services Ltd,Consumer Discretionary,66656162,6736008,0.37%,0.37,,Ownership,TRAVELFOOD.NS
 2026-06-30,India,Trent Ltd,Consumer Discretionary,1230494813,124348930,0.67%,0.67,,Both,TRENT.NS
-2026-06-30,India,TVS Holdings Ltd,Consumer Discretionary,67470314,6818283,0.23%,0.23,,Market Value,
+2026-06-30,India,TVS Holdings Ltd,Consumer Discretionary,67470314,6818283,0.23%,0.23,,Market Value,TVSHLTD.NS
 2026-06-30,India,TVS Motor Co Ltd,Consumer Discretionary,1354013735,136831263,0.78%,2.98,,Both,TVSMOTOR.NS
 2026-06-30,India,UNO Minda Ltd,Consumer Discretionary,183631388,18557060,0.28%,0.28,,Market Value,UNOMINDA.NS
 2026-06-30,India,Varroc Engineering Ltd,Consumer Discretionary,217709098,22000819,2.15%,2.15,,Both,VARROC.NS
@@ -392,7 +392,7 @@ As_Of,Country,Name,Industry,Market Value(NOK),Market Value(USD),Voting,Ownership
 2026-06-30,India,ICICI Prudential Asset Management Co Ltd/India,Financials,545317897,55107666,0.32%,0.32,,Market Value,
 2026-06-30,India,ICICI Prudential Life Insurance Co Ltd,Financials,829552038,83831242,1.12%,1.12,,Both,ICICIPRULI.NS
 2026-06-30,India,IDFC First Bank Ltd,Financials,309541607,31281048,0.43%,0.43,,Both,IDFCFIRSTB.NS
-2026-06-30,India,IIFL Finance Ltd,Financials,93094172,9407728,0.41%,0.41,,Ownership,
+2026-06-30,India,IIFL Finance Ltd,Financials,93094172,9407728,0.41%,0.41,,Ownership,IIFL.NS
 2026-06-30,India,IndusInd Bank Ltd,Financials,1715425568,173354110,2.28%,2.28,,Both,INDUSINDBK.NS
 2026-06-30,India,Jio Financial Services Ltd,Financials,581336775,58747591,0.37%,0.37,,Market Value,JIOFIN.NS
 2026-06-30,India,Kotak Mahindra Bank Ltd,Financials,5356230532,541279433,1.31%,1.31,,Both,KOTAKBANK.NS
@@ -435,7 +435,7 @@ As_Of,Country,Name,Industry,Market Value(NOK),Market Value(USD),Voting,Ownership
 2026-06-30,India,Divi's Laboratories Ltd,Health Care,2233483113,225706953,1.22%,1.22,,Both,DIVISLAB.NS
 2026-06-30,India,Dr Lal PathLabs Ltd,Health Care,85670448,8657516,0.3%,0.3,,Both,LALPATHLAB.NS
 2026-06-30,India,Dr Reddy's Laboratories Ltd,Health Care,1271483619,128491096,1.07%,1.07,,Both,DRREDDY.NS
-2026-06-30,India,Emcure Pharmaceuticals Ltd,Health Care,383865996,38791976,1.05%,1.05,,Both,
+2026-06-30,India,Emcure Pharmaceuticals Ltd,Health Care,383865996,38791976,1.05%,1.05,,Both,EMCURE.NS
 2026-06-30,India,Eris Lifesciences Ltd,Health Care,48905865,4942233,0.24%,0.24,,Both,ERIS.NS
 2026-06-30,India,Fortis Healthcare Ltd,Health Care,635324811,64203408,0.84%,0.84,,Both,FORTIS.NS
 2026-06-30,India,Gland Pharma Ltd,Health Care,598621815,60494349,1.39%,1.39,,Both,GLAND.NS
@@ -630,7 +630,7 @@ As_Of,Country,Name,Industry,Market Value(NOK),Market Value(USD),Voting,Ownership
 2026-06-30,Singapore,Singapore Exchange Ltd,Financials,1668830880,168645433,0.85%,0.85,,Market Value,S68.SI
 2026-06-30,Singapore,United Overseas Bank Ltd,Financials,8793342552,888620338,1.75%,1.75,,Both,U11.SI
 2026-06-30,Singapore,Yangzijiang Maritime Development Ltd,Financials,156234464,15788436,0.99%,0.99,,Ownership,8YZ.SI
-2026-06-30,Singapore,Haw Par Corp Ltd,Health Care,292238837,29532498,1.09%,1.09,,Both,
+2026-06-30,Singapore,Haw Par Corp Ltd,Health Care,292238837,29532498,1.09%,1.09,,Both,H02.SI
 2026-06-30,Singapore,Raffles Medical Group Ltd,Health Care,90956843,9191738,0.71%,0.71,,Both,BSL.SI
 2026-06-30,Singapore,Riverstone Holdings Ltd,Health Care,63390954,6406039,0.65%,0.65,,Both,AP4.SI
 2026-06-30,Singapore,UltraGreen.ai Ltd,Health Care,48466922,4897875,0.36%,0.36,,Both,UGN.SI
@@ -647,7 +647,7 @@ As_Of,Country,Name,Industry,Market Value(NOK),Market Value(USD),Voting,Ownership
 2026-06-30,Singapore,Digital Core REIT Management Pte Ltd,Real Estate,97195075,9822149,1.5%,1.5,,Ownership,DCRU.SI
 2026-06-30,Singapore,Keppel DC REIT,Real Estate,581982788,58812873,1.39%,1.39,,Market Value,AJBU.SI
 2026-06-30,Singapore,NTT DC REIT,Real Estate,180585493,18249254,1.88%,1.88,,Ownership,NTTU.SI
-2026-06-30,Singapore,UOL Group Ltd,Real Estate,582240255,58838892,0.94%,0.94,,Market Value,
+2026-06-30,Singapore,UOL Group Ltd,Real Estate,582240255,58838892,0.94%,0.94,,Market Value,U14.SI
 2026-06-30,Singapore,AEM Holdings Ltd,Technology,1396016,141076,0.01%,0.01,,Both,AWX.SI
 2026-06-30,Singapore,CSE Global Ltd,Technology,5075284,512888,0.07%,0.07,,Both,544.SI
 2026-06-30,Singapore,Sea Ltd,Technology,5796959072,585817702,0.92%,1.07,,Both,SE
@@ -662,7 +662,7 @@ As_Of,Country,Name,Industry,Market Value(NOK),Market Value(USD),Voting,Ownership
 2026-06-30,United Kingdom,Antofagasta PLC,Basic Materials,1761355180,177995572,0.36%,0.36,,Market Value,ANTO.L
 2026-06-30,United Kingdom,Croda International PLC,Basic Materials,4250373606,429525906,7.66%,7.66,,Both,CRDA.L
 2026-06-30,United Kingdom,Endeavour Mining PLC,Basic Materials,2864306163,289455426,2.4%,2.4,,Both,EDV.L
-2026-06-30,United Kingdom,Ferrexpo PLC,Basic Materials,24203355,2445895,1.08%,1.08,,Ownership,
+2026-06-30,United Kingdom,Ferrexpo PLC,Basic Materials,24203355,2445895,1.08%,1.08,,Ownership,FXPO.L
 2026-06-30,United Kingdom,Hill & Smith PLC,Basic Materials,973997253,98428301,3.44%,3.44,,Ownership,HILS.L
 2026-06-30,United Kingdom,Hochschild Mining PLC,Basic Materials,281851765,28482822,0.9%,0.9,,Ownership,HOC.L
 2026-06-30,United Kingdom,Pan African Resources PLC,Basic Materials,713676236,72121291,2.3%,2.3,,Ownership,PAF.L
@@ -670,7 +670,7 @@ As_Of,Country,Name,Industry,Market Value(NOK),Market Value(USD),Voting,Ownership
 2026-06-30,United Kingdom,Victrex PLC,Basic Materials,604154909,61053500,9.18%,9.18,,Ownership,VCT.L
 2026-06-30,United Kingdom,Yellow Cake PLC,Basic Materials,230169683,23260036,1.32%,1.32,,Ownership,YCA.L
 2026-06-30,United Kingdom,ASOS PLC,Consumer Discretionary,62542326,6320280,1.38%,1.38,,Ownership,ASC.L
-2026-06-30,United Kingdom,B&M European Value Retail plc,Consumer Discretionary,421611321,42606369,1.64%,1.64,,Both,
+2026-06-30,United Kingdom,B&M European Value Retail plc,Consumer Discretionary,421611321,42606369,1.64%,1.64,,Both,BME.L
 2026-06-30,United Kingdom,Barratt Redrow PLC,Consumer Discretionary,943726691,95369278,1.81%,1.81,,Both,BTRW.L
 2026-06-30,United Kingdom,Bellway PLC,Consumer Discretionary,568277195,57427840,1.97%,1.97,,Both,BWY.L
 2026-06-30,United Kingdom,Berkeley Group Holdings PLC,Consumer Discretionary,787800791,79612025,1.86%,1.86,,Both,BKG.L
@@ -765,7 +765,7 @@ As_Of,Country,Name,Industry,Market Value(NOK),Market Value(USD),Voting,Ownership
 2026-06-30,United Kingdom,Sunbelt Rentals Holdings Inc,Industrials,5195088956,524995094,1.76%,1.76,,Market Value,SUNB.L
 2026-06-30,United Kingdom,Volution Group PLC,Industrials,442399752,44707165,2.78%,2.78,,Ownership,FAN.L
 2026-06-30,United Kingdom,Weir Group PLC/The,Industrials,1633936953,165119191,1.99%,1.99,,Both,WEIR.L
-2026-06-30,United Kingdom,Wise Group PLC,Industrials,1844125493,186360011,0%,0.0,,Market Value,
+2026-06-30,United Kingdom,Wise Group PLC,Industrials,1844125493,186360011,0%,0.0,,Market Value,WISE.L
 2026-06-30,United Kingdom,British Land Co PLC/The,Real Estate,1131790147,114374225,2.03%,2.03,,Ownership,BLND.L
 2026-06-30,United Kingdom,Derwent London PLC,Real Estate,1473361141,148892036,5.19%,5.19,,Ownership,DLN.L
 2026-06-30,United Kingdom,Grainger PLC,Real Estate,1500804543,151665357,9.08%,9.08,,Ownership,GRI.L
@@ -778,7 +778,7 @@ As_Of,Country,Name,Industry,Market Value(NOK),Market Value(USD),Voting,Ownership
 2026-06-30,United Kingdom,UNITE Group PLC/The,Real Estate,3051669548,308389626,8.89%,8.89,,Both,UTG.L
 2026-06-30,United Kingdom,Aptitude Software Group PLC,Technology,14762384,1491828,0.95%,0.95,,Ownership,APTD.L
 2026-06-30,United Kingdom,Auction Technology Group PLC,Technology,63519242,6419003,0.96%,0.96,,Ownership,ATG.L
-2026-06-30,United Kingdom,Autotrader Group PLC,Technology,1587533976,160429890,3.07%,3.07,,Both,
+2026-06-30,United Kingdom,Autotrader Group PLC,Technology,1587533976,160429890,3.07%,3.07,,Both,AUTO.L
 2026-06-30,United Kingdom,Bytes Technology Group PLC,Technology,349971304,35366712,2.97%,2.97,,Both,BYIT.L
 2026-06-30,United Kingdom,Computacenter PLC,Technology,667527720,67457705,1.12%,1.12,,Both,CCC.L
 2026-06-30,United Kingdom,FDM Group Holdings PLC,Technology,43546447,4400631,2.92%,2.92,,Ownership,FDM.L
@@ -895,7 +895,7 @@ As_Of,Country,Name,Industry,Market Value(NOK),Market Value(USD),Voting,Ownership
 2026-06-30,United States,Starbucks Corp,Consumer Discretionary,12592688380,1272567165,1.09%,1.09,,Market Value,SBUX
 2026-06-30,United States,Take-Two Interactive Software Inc,Consumer Discretionary,8158157359,824431040,1.78%,1.78,,Both,TTWO
 2026-06-30,United States,Target Corp,Consumer Discretionary,7311540212,738875268,1.25%,1.25,,Market Value,TGT
-2026-06-30,United States,Taylor Morrison Home Corp,Consumer Discretionary,889229680,89862026,1.36%,1.36,,Ownership,
+2026-06-30,United States,Taylor Morrison Home Corp,Consumer Discretionary,889229680,89862026,1.36%,1.36,,Ownership,TMHC
 2026-06-30,United States,Tesla Inc,Consumer Discretionary,155557421002,15720016270,1%,1.0,,Market Value,TSLA
 2026-06-30,United States,Texas Roadhouse Inc,Consumer Discretionary,2778559842,280790242,2.21%,2.21,,Both,TXRH
 2026-06-30,United States,TJX Cos Inc/The,Consumer Discretionary,21337045544,2156237234,1.29%,1.29,,Both,TJX
@@ -930,7 +930,7 @@ As_Of,Country,Name,Industry,Market Value(NOK),Market Value(USD),Voting,Ownership
 2026-06-30,United States,Darling Ingredients Inc,Consumer Staples,1031519654,104241287,1.2%,1.2,,Ownership,DAR
 2026-06-30,United States,General Mills Inc,Consumer Staples,3394710292,343055964,1.85%,1.85,,Both,GIS
 2026-06-30,United States,Hershey Co/The,Consumer Staples,2606477449,263400278,0.22%,0.74,,Market Value,HSY
-2026-06-30,United States,J M Smucker Co/The,Consumer Staples,1681545778,169930350,1.41%,1.41,,Ownership,
+2026-06-30,United States,J M Smucker Co/The,Consumer Staples,1681545778,169930350,1.41%,1.41,,Ownership,SJM
 2026-06-30,United States,Kenvue Inc,Consumer Staples,5578207150,563711500,1.54%,1.54,,Both,KVUE
 2026-06-30,United States,Keurig Dr Pepper Inc,Consumer Staples,4903653215,495543754,1.11%,1.11,,Market Value,KDP
 2026-06-30,United States,Kimberly-Clark Corp,Consumer Staples,6411234426,647893934,1.78%,1.78,,Both,KMB
@@ -941,12 +941,12 @@ As_Of,Country,Name,Industry,Market Value(NOK),Market Value(USD),Voting,Ownership
 2026-06-30,United States,Molson Coors Beverage Co,Consumer Staples,1101541412,111317408,1.52%,1.52,,Ownership,TAP
 2026-06-30,United States,Mondelez International Inc,Consumer Staples,9044828123,914034473,1.23%,1.23,,Both,MDLZ
 2026-06-30,United States,Monster Beverage Corp,Consumer Staples,7046954814,712137316,0.76%,0.76,,Market Value,MNST
-2026-06-30,United States,Nomad Foods Ltd,Consumer Staples,229140177,23155998,1.49%,1.49,,Ownership,
+2026-06-30,United States,Nomad Foods Ltd,Consumer Staples,229140177,23155998,1.49%,1.49,,Ownership,NOMD
 2026-06-30,United States,PepsiCo Inc,Consumer Staples,24055600417,2430963611,1.31%,1.31,,Both,PEP
 2026-06-30,United States,Performance Food Group Co,Consumer Staples,2083801549,210580723,1.2%,1.2,,Both,PFGC
 2026-06-30,United States,Post Holdings Inc,Consumer Staples,1143630189,115570733,2.89%,2.89,,Ownership,POST
 2026-06-30,United States,Procter & Gamble Co/The,Consumer Staples,44057906903,4452317407,1.3%,1.3,,Both,PG
-2026-06-30,United States,Simply Good Foods Co/The,Consumer Staples,302981038,30618063,2.55%,2.55,,Ownership,
+2026-06-30,United States,Simply Good Foods Co/The,Consumer Staples,302981038,30618063,2.55%,2.55,,Ownership,SMPL
 2026-06-30,United States,Sprouts Farmers Market Inc,Consumer Staples,2506918647,253339260,3.18%,3.18,,Both,SFM
 2026-06-30,United States,Sysco Corp,Consumer Staples,5011639670,506456437,1.27%,1.27,,Both,SYY
 2026-06-30,United States,Tyson Foods Inc,Consumer Staples,2501944108,252836553,0.45%,1.26,,Both,TSN
@@ -991,7 +991,7 @@ As_Of,Country,Name,Industry,Market Value(NOK),Market Value(USD),Voting,Ownership
 2026-06-30,United States,Arch Capital Group Ltd,Financials,6532206006,660118843,1.95%,1.95,,Both,ACGL
 2026-06-30,United States,Arthur J Gallagher & Co,Financials,15467636779,1563098053,2.66%,2.66,,Both,AJG
 2026-06-30,United States,Assurant Inc,Financials,1750918297,176940862,1.33%,1.33,,Ownership,AIZ
-2026-06-30,United States,Axis Capital Holdings Ltd,Financials,1009466360,102012668,1.29%,1.29,,Ownership,
+2026-06-30,United States,Axis Capital Holdings Ltd,Financials,1009466360,102012668,1.29%,1.29,,Ownership,AXS
 2026-06-30,United States,Bank of America Corp,Financials,46549899377,4704148287,1.16%,1.16,,Market Value,BAC
 2026-06-30,United States,Bank of New York Mellon Corp/The,Financials,16632767148,1680841509,1.71%,1.71,,Both,BK
 2026-06-30,United States,Bank OZK,Financials,821778532,83045681,1.45%,1.45,,Ownership,OZK
@@ -1035,14 +1035,14 @@ As_Of,Country,Name,Industry,Market Value(NOK),Market Value(USD),Voting,Ownership
 2026-06-30,United States,Nasdaq Inc,Financials,4984578602,503721753,1.13%,1.13,,Market Value,NDAQ
 2026-06-30,United States,NU Holdings Ltd/Cayman Islands,Financials,8564531575,865497608,0.27%,1.34,,Both,NU
 2026-06-30,United States,Pinnacle Financial Partners Inc,Financials,3428998399,346520984,2.27%,2.27,,Both,PNFP
-2026-06-30,United States,Piper Sandler Cos,Financials,636465931,64318724,1.32%,1.32,,Ownership,
+2026-06-30,United States,Piper Sandler Cos,Financials,636465931,64318724,1.32%,1.32,,Ownership,PIPR
 2026-06-30,United States,PNC Financial Services Group Inc/The,Financials,24541829033,2480099948,2.51%,2.51,,Both,PNC
 2026-06-30,United States,Progressive Corp/The,Financials,17262498478,1744479660,1.37%,1.37,,Both,PGR
 2026-06-30,United States,Prosperity Bancshares Inc,Financials,974520458,98481174,1.34%,1.34,,Ownership,PB
 2026-06-30,United States,Radian Group Inc,Financials,694497885,70183203,1.4%,1.4,,Ownership,RDN
 2026-06-30,United States,Rithm Capital Corp,Financials,741965006,74980042,1.43%,1.43,,Ownership,RITM
 2026-06-30,United States,Robinhood Markets Inc,Financials,9885473412,998986753,0.53%,1.11,,Market Value,HOOD
-2026-06-30,United States,Rocket Cos Inc,Financials,3749487263,378908318,0.85%,0.85,,Market Value,
+2026-06-30,United States,Rocket Cos Inc,Financials,3749487263,378908318,0.85%,0.85,,Market Value,RKT
 2026-06-30,United States,S&P Global Inc,Financials,14554155740,1470785280,1.19%,1.19,,Market Value,SPGI
 2026-06-30,United States,Stifel Financial Corp,Financials,1423408023,143843972,1.34%,1.34,,Ownership,SF
 2026-06-30,United States,Travelers Cos Inc/The,Financials,8234853829,832181682,1.19%,1.19,,Market Value,TRV
@@ -1195,7 +1195,7 @@ As_Of,Country,Name,Industry,Market Value(NOK),Market Value(USD),Voting,Ownership
 2026-06-30,United States,Ryder System Inc,Industrials,1602944572,161987224,1.6%,1.6,,Ownership,R
 2026-06-30,United States,Saia Inc,Industrials,1782923653,180175196,1.6%,1.6,,Ownership,SAIA
 2026-06-30,United States,Sherwin-Williams Co/The,Industrials,10888359765,1100334472,1.32%,1.32,,Market Value,SHW
-2026-06-30,United States,Smurfit Westrock PLC,Industrials,4763101527,481340157,1.98%,1.98,,Both,
+2026-06-30,United States,Smurfit Westrock PLC,Industrials,4763101527,481340157,1.98%,1.98,,Both,SW
 2026-06-30,United States,StandardAero Inc,Industrials,2643677719,267159590,2.69%,2.69,,Ownership,SARO
 2026-06-30,United States,StoneCo Ltd,Industrials,353067158,35679567,0.89%,1.35,,Ownership,STNE
 2026-06-30,United States,Teledyne Technologies Inc,Industrials,5490116900,554809449,1.8%,1.8,,Both,TDY
@@ -1277,7 +1277,7 @@ As_Of,Country,Name,Industry,Market Value(NOK),Market Value(USD),Voting,Ownership
 2026-06-30,United States,Datadog Inc,Technology,10515898465,1062695009,0.7%,1.15,,Market Value,DDOG
 2026-06-30,United States,Dell Technologies Inc,Technology,15877202384,1604487129,0.11%,0.58,,Market Value,DELL
 2026-06-30,United States,DoorDash Inc,Technology,9438347548,953801986,0.57%,1.19,,Market Value,DASH
-2026-06-30,United States,Elastic NV,Technology,910999918,92062040,1.55%,1.55,,Ownership,
+2026-06-30,United States,Elastic NV,Technology,910999918,92062040,1.55%,1.55,,Ownership,ESTC
 2026-06-30,United States,Entegris Inc,Technology,3675355295,371416835,1.35%,1.35,,Ownership,ENTG
 2026-06-30,United States,F5 Inc,Technology,3034811908,306686060,1.28%,1.28,,Ownership,FFIV
 2026-06-30,United States,Flex Ltd,Technology,7918486969,800210901,1.35%,1.35,,Both,FLEX
@@ -1315,11 +1315,11 @@ As_Of,Country,Name,Industry,Market Value(NOK),Market Value(USD),Voting,Ownership
 2026-06-30,United States,Rubrik Inc,Technology,3051639089,308386548,0.36%,1.87,,Ownership,RBRK
 2026-06-30,United States,SailPoint Inc,Technology,2110324197,213260997,2.57%,2.57,,Ownership,SAIL
 2026-06-30,United States,Salesforce Inc,Technology,14047521273,1419586809,1.11%,1.11,,Market Value,CRM
-2026-06-30,United States,Sandisk Corp,Technology,45200897700,4567823526,1.36%,1.36,,Both,
+2026-06-30,United States,Sandisk Corp,Technology,45200897700,4567823526,1.36%,1.36,,Both,SNDK
 2026-06-30,United States,Seagate Technology Holdings PLC,Technology,28730235048,2903363655,1.34%,1.34,,Both,STX
 2026-06-30,United States,ServiceNow Inc,Technology,11915647110,1204148058,1.17%,1.17,,Market Value,NOW
 2026-06-30,United States,Silicon Laboratories Inc,Technology,936410405,94629923,1.31%,1.31,,Ownership,SLAB
-2026-06-30,United States,SkyWater Technology Inc,Technology,379017441,38302000,2.24%,2.24,,Ownership,
+2026-06-30,United States,SkyWater Technology Inc,Technology,379017441,38302000,2.24%,2.24,,Ownership,SKYT
 2026-06-30,United States,Snowflake Inc,Technology,9649000849,975089773,1.11%,1.11,,Market Value,SNOW
 2026-06-30,United States,Synopsys Inc,Technology,7013840903,708790956,0.83%,0.83,,Market Value,SNPS
 2026-06-30,United States,TE Connectivity PLC,Technology,6685335451,675593497,1.13%,1.13,,Market Value,TEL
@@ -1349,7 +1349,7 @@ As_Of,Country,Name,Industry,Market Value(NOK),Market Value(USD),Voting,Ownership
 2026-06-30,United States,Liberty Global Ltd,Telecommunications,460412511,46527463,0.67%,1.23,,Both,LBTYA
 2026-06-30,United States,Lumen Technologies Inc,Telecommunications,920380525,93010007,1.18%,1.18,,Both,LUMN
 2026-06-30,United States,Lumentum Holdings Inc,Telecommunications,8088751210,817417130,1.22%,1.22,,Both,LITE
-2026-06-30,United States,Millicom International Cellular SA,Telecommunications,1040021434,105100443,0.69%,0.69,,Both,
+2026-06-30,United States,Millicom International Cellular SA,Telecommunications,1040021434,105100443,0.69%,0.69,,Both,TIGO
 2026-06-30,United States,Motorola Solutions Inc,Telecommunications,8808894664,890191972,1.29%,1.29,,Both,MSI
 2026-06-30,United States,Roku Inc,Telecommunications,97014828,9803934,0.02%,0.05,,Both,ROKU
 2026-06-30,United States,Space Exploration Technologies Corp,Telecommunications,12145907235,1227417234,0.01%,0.05,,Both,SPCX
