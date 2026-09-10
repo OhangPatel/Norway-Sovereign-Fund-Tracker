@@ -1,34 +1,24 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
-import { fmt, Icon } from './format.jsx';
+import { fmt, Icon, btn } from './format.jsx';
 import { sectorOf } from './sectors.js';
 
 // Filters strip — country/sector multi-select chips + ownership range slider + reset
 
-// Shared ghost-pill trigger style (STYLE_GUIDE §5): mono/uppercase, rounded.
-function pillStyle(active) {
-  return {
-    display:'inline-flex', alignItems:'center', gap: 6,
-    padding: '7px 13px',
-    background: active ? 'var(--row-hover)' : 'transparent',
-    color: 'var(--ink)',
-    border: `1px solid ${active ? 'var(--ink)' : 'var(--line)'}`,
-    borderRadius: 999, cursor: 'pointer',
-    fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 500,
-    letterSpacing: '0.04em', textTransform: 'uppercase',
-    transition: 'border-color .14s, background .14s',
-  };
-}
+// The three ledger triggers are ghost pills. Geometry comes from btn() in
+// format.jsx so they match every other control in the app; this wrapper only
+// carries the one thing that is local to them, which is what "active" means here.
+const pillStyle = (active) => btn({ variant: 'ghost', shape: 'pill', active });
 
 const countBadge = {
-  padding: '1px 6px', borderRadius: 999,
+  padding: '1px 6px', borderRadius: 'var(--r-pill)',
   background: 'var(--accent)', color: 'var(--treemap-cell-fg)',
   fontSize: 10, fontWeight: 600,
 };
 
 const popoverStyle = {
   background: 'var(--surface)', border: '1px solid var(--line)',
-  borderRadius: 16, zIndex: 30,
+  borderRadius: 'var(--r-lg)', zIndex: 30,
   boxShadow: 'var(--shadow-menu)',
   animation: 'rise .12s ease-out',
 };
@@ -218,7 +208,7 @@ function OptionList({ options, selected, onToggle, onClear, format = (v) => v, c
               display:'grid', gridTemplateColumns:'16px 1fr auto', alignItems:'center', gap: 10,
               width:'100%', padding:'8px 10px',
               background: sel ? 'var(--row-hover)' : 'transparent',
-              border:'none', borderRadius: 8,
+              border:'none', borderRadius: 'var(--r-sm)',
               textAlign:'left', cursor:'pointer',
               color:'var(--ink)', fontFamily:'var(--font-display)', fontSize: 13,
             }}
@@ -340,7 +330,7 @@ export function ColumnsPopover({ columns, setColumns }) {
           style={{
             display:'grid', gridTemplateColumns:'16px 1fr', alignItems:'center', gap: 10,
             width:'100%', padding:'7px 10px',
-            background: 'transparent', border:'none', borderRadius: 8,
+            background: 'transparent', border:'none', borderRadius: 'var(--r-sm)',
             textAlign:'left', cursor:'pointer',
             color: col.visible ? 'var(--ink)' : 'var(--soft)',
             fontFamily:'var(--font-display)', fontSize: 13,
@@ -357,7 +347,7 @@ export function ColumnsPopover({ columns, setColumns }) {
 function Check({ on }) {
   return (
     <span style={{
-      width:16, height:16, borderRadius:4,
+      width:16, height:16, borderRadius:'var(--r-xs)',
       border:`1.5px solid ${on ? 'var(--accent)' : 'var(--line)'}`,
       background: on ? 'var(--accent)' : 'transparent',
       display:'grid', placeItems:'center',

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Icon } from './format.jsx';
+import { Icon, btn } from './format.jsx';
 import { TopBar } from './topbar.jsx';
 import { Summary } from './summary.jsx';
 import { DataTable } from './table.jsx';
@@ -49,7 +49,7 @@ export function ToolRow(props) {
       disabled={disabled}
       style={{
         display: 'flex', alignItems: 'center', gap: 13, width: '100%', textAlign: 'left',
-        padding: '11px 12px', background: 'transparent', border: 'none', borderRadius: 12,
+        padding: '11px 12px', background: 'transparent', border: 'none', borderRadius: 'var(--r-md)',
         cursor: disabled ? 'not-allowed' : 'pointer', opacity: disabled ? 0.5 : 1,
         transition: 'background .12s ease',
       }}
@@ -57,7 +57,7 @@ export function ToolRow(props) {
       onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
     >
       <span style={{
-        width: 38, height: 38, borderRadius: 10, flexShrink: 0,
+        width: 38, height: 38, borderRadius: 'var(--r-sm)', flexShrink: 0,
         display: 'grid', placeItems: 'center',
         background: 'var(--row-hover)', border: '1px solid var(--line)', color: 'var(--ink)',
       }}>{props.icon}</span>
@@ -249,8 +249,8 @@ export function PipelineControls(props) {
   function chip(kind) {
     var warn = kind === 'warn', soon = kind === 'soon';
     return {
-      fontFamily: 'var(--font-mono)', fontSize: 9.5, flexShrink: 0,
-      padding: '2px 9px', borderRadius: 999,
+      fontFamily: 'var(--font-mono)', fontSize: 10, flexShrink: 0,
+      padding: '2px 9px', borderRadius: 'var(--r-pill)',
       letterSpacing: '0.08em', textTransform: 'uppercase',
       border: '1px solid ' + (warn ? 'color-mix(in srgb, var(--bear) 45%, transparent)'
         : soon ? 'var(--line)'
@@ -263,8 +263,8 @@ export function PipelineControls(props) {
   return (
     <div style={{ borderBottom: '1px solid var(--line)', background: 'transparent' }}>
       <div style={{
-        maxWidth: 1680, margin: '0 auto',
-        padding: '16px clamp(16px, 3vw, 32px)',
+        maxWidth: 'var(--page-max)', margin: '0 auto',
+        padding: '16px var(--gutter)',
         display: 'flex', flexDirection: 'column', gap: 12,
       }}>
 
@@ -273,9 +273,8 @@ export function PipelineControls(props) {
 
           {/* Left — live data status card */}
           <div style={{
-            border: '1.5px solid ' + stateColor,
-            borderRadius: 14, padding: '11px 22px',
-            boxShadow: '0 0 22px -8px color-mix(in srgb, ' + stateColor + ' 55%, transparent)',
+            border: '1px solid ' + stateColor,
+            borderRadius: 'var(--r-xl)', padding: '11px 22px',
             transition: 'border-color .2s ease',
           }}>
             <div className="eyebrow" style={{ fontSize: 10 }}>Live Data</div>
@@ -291,17 +290,7 @@ export function PipelineControls(props) {
           <div ref={menuRef} style={{ marginLeft: 'auto', position: 'relative' }}>
             <button
               onClick={() => setOpen(o => !o)}
-              style={{
-                display: 'inline-flex', alignItems: 'center', gap: 9,
-                padding: '10px 16px',
-                background: open ? 'var(--ink)' : 'transparent',
-                color: open ? 'var(--bg)' : 'var(--ink)',
-                border: '1px solid ' + (open ? 'var(--ink)' : 'var(--line)'),
-                borderRadius: 999, cursor: 'pointer',
-                fontFamily: 'var(--font-mono)', fontSize: 11.5, fontWeight: 500,
-                letterSpacing: '0.06em', textTransform: 'uppercase',
-                transition: 'all .14s ease',
-              }}
+              style={btn({ variant: open ? 'solid' : 'ghost', shape: 'pill' })}
               onMouseEnter={(e) => { if (!open) { e.currentTarget.style.background = 'var(--ink)'; e.currentTarget.style.color = 'var(--bg)'; } }}
               onMouseLeave={(e) => { if (!open) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--ink)'; } }}
             >
@@ -316,7 +305,7 @@ export function PipelineControls(props) {
               <div style={{
                 position: 'absolute', top: 'calc(100% + 10px)', right: 0, width: 344, zIndex: 60,
                 background: 'var(--surface)', border: '1px solid var(--line)',
-                borderRadius: 18, padding: 8,
+                borderRadius: 'var(--r-lg)', padding: 8,
                 boxShadow: 'var(--shadow-menu)',
                 animation: 'rise .12s ease-out',
               }}>
@@ -362,11 +351,11 @@ export function PipelineControls(props) {
                 {pct}%
               </span>
             </div>
-            <div style={{ height: 4, borderRadius: 999, background: 'var(--track)', overflow: 'hidden', position: 'relative' }}>
+            <div style={{ height: 4, borderRadius: 'var(--r-pill)', background: 'var(--track)', overflow: 'hidden', position: 'relative' }}>
               <div style={{
                 position: 'absolute', left: 0, top: 0, bottom: 0,
                 width: pct + '%', background: barColor,
-                borderRadius: 999, transition: 'width .7s ease',
+                borderRadius: 'var(--r-pill)', transition: 'width .7s ease',
               }}/>
               {isRunning && !isError && (
                 <div style={{
@@ -670,12 +659,12 @@ export function App() {
       )}
 
       <main style={{
-        maxWidth: 1680, margin: '0 auto',
+        maxWidth: 'var(--page-max)', margin: '0 auto',
         // The bottom pad used to be 120px, holding the page clear of the chat
         // launcher. The footer band sits under here now and carries that job;
         // what is left is the gap before the ink edge.
-        padding: '22px clamp(14px, 2vw, 22px) 32px',
-        display: 'grid', gap: 16,
+        padding: '22px var(--gutter) 32px',
+        display: 'grid', gap: 'var(--gap)',
       }}>
         <PeriodBar
           manifest={manifest}
@@ -791,7 +780,7 @@ function Skel({ height, className = '', delay = 0 }) {
       height,
       background: 'var(--surface)',
       border: '1px solid var(--line)',
-      borderRadius: 18,
+      borderRadius: 'var(--r-xl)',
       animation: 'pulse 1.6s ease-in-out infinite',
       animationDelay: `${delay}s`,
     }}/>
@@ -813,9 +802,9 @@ export function LoadingState() {
     <div
       role="status" aria-live="polite" aria-busy="true"
       style={{
-        maxWidth: 1680, margin: '0 auto',
-        padding: '22px clamp(14px, 2vw, 22px) 32px',
-        display: 'grid', gap: 16,
+        maxWidth: 'var(--page-max)', margin: '0 auto',
+        padding: '22px var(--gutter) 32px',
+        display: 'grid', gap: 'var(--gap)',
       }}>
       <span className="sr-only">Loading holdings…</span>
       <div className="r-bento" aria-hidden="true">
@@ -842,8 +831,8 @@ export function LoadingState() {
 export function ErrorState({ message }) {
   return (
     <div style={{
-      maxWidth: 1680, margin: '0 auto',
-      padding: '22px clamp(14px, 2vw, 22px) 32px',
+      maxWidth: 'var(--page-max)', margin: '0 auto',
+      padding: '22px var(--gutter) 32px',
     }}>
       <div className="card" role="alert" style={{ padding: 'clamp(24px, 4vw, 40px)', maxWidth: 640 }}>
         <div className="eyebrow" style={{ color: 'var(--bear-text)' }}>Could not load</div>
@@ -859,18 +848,12 @@ export function ErrorState({ message }) {
             page sideways on a phone. */}
         <div className="mono" style={{
           marginTop: 16, padding: '10px 12px',
-          background: 'var(--row-hover)', border: '1px solid var(--line)', borderRadius: 10,
+          background: 'var(--row-hover)', border: '1px solid var(--line)', borderRadius: 'var(--r-md)',
           fontSize: 11, color: 'var(--soft)', overflowWrap: 'anywhere',
         }}>{message}</div>
         <button
           onClick={() => window.location.reload()}
-          style={{
-            marginTop: 18, padding: '11px 20px',
-            background: 'var(--accent)', color: 'var(--treemap-cell-fg)',
-            border: 'none', borderRadius: 999, cursor: 'pointer',
-            fontFamily: 'var(--font-mono)', fontSize: 12, fontWeight: 600,
-            letterSpacing: '0.06em', textTransform: 'uppercase',
-          }}>
+          style={{ ...btn({ variant: 'primary', shape: 'pill' }), marginTop: 18 }}>
           Reload the page
         </button>
       </div>

@@ -80,7 +80,7 @@ export function Summary({ data, filtered, onPickCompany, onSetFilter, activeSect
   }), [owns]);
 
   return (
-    <section style={{ display:'grid', gridTemplateColumns:'1fr', gap: 16 }}>
+    <section style={{ display:'grid', gridTemplateColumns:'1fr', gap: 'var(--gap)' }}>
       {/* Hero bento (STYLE_GUIDE §6) — column counts come from .r-bento so they
           can collapse 4→2→1 with viewport; see index.html. */}
       <div className="r-bento">
@@ -90,8 +90,8 @@ export function Summary({ data, filtered, onPickCompany, onSetFilter, activeSect
           '--i': 0,
           background: 'var(--hero-surface)', border: '1px solid var(--hero-line)',
           color: 'var(--hero-ink)',
-          borderRadius: 18,
-          padding: 'clamp(28px, 3vw, 40px)',
+          borderRadius: 'var(--r-xl)',
+          padding: 'var(--pad-card-lg)',
           display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
         }}>
           <h1 className="display" style={{
@@ -110,7 +110,7 @@ export function Summary({ data, filtered, onPickCompany, onSetFilter, activeSect
         <div className="r-bento-feature enter" style={{
           '--i': 1,
           background: 'var(--feature)', color: 'var(--feature-ink)',
-          borderRadius: 18, padding: '28px 26px',
+          borderRadius: 'var(--r-xl)', padding: '26px 24px',
           display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
         }}>
           <div className="mono" style={{ fontSize: 10, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--feature-sub)' }}>Total holdings</div>
@@ -139,7 +139,7 @@ export function Summary({ data, filtered, onPickCompany, onSetFilter, activeSect
       </div>
 
       {/* Detail row: holdings table + sector treemap (STYLE_GUIDE §6) */}
-      <div style={{ display: 'grid', gap: 16 }}>
+      <div style={{ display: 'grid', gap: 'var(--gap)' }}>
         <div className="r-split">
           <Card i={5} title="Top holdings" eyebrow="Market value · NOK"
             rightSlot={<span className="eyebrow">Top 8 / {filtered.length.toLocaleString()}</span>}
@@ -162,7 +162,7 @@ export function Summary({ data, filtered, onPickCompany, onSetFilter, activeSect
           <Card i={6} title="Sector weight*" eyebrow="By USD value"
             rightSlot={activeSectors.length ? (
               <button onClick={onClearSectors} className="eyebrow" style={{
-                cursor: 'pointer', border: '1px solid var(--line)', borderRadius: 6,
+                cursor: 'pointer', border: '1px solid var(--line)', borderRadius: 'var(--r-xs)',
                 background: 'var(--surface)', color: 'var(--ink)', padding: '3px 9px',
               }}>← All sectors</button>
             ) : (
@@ -227,7 +227,7 @@ export function StatCell({ label, value, sub, clickable, onClick, i = 0 }) {
       type={clickable ? 'button' : undefined}
       style={{
         '--i': i,
-        padding: '22px 24px',
+        padding: 'var(--pad-card)',
         display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
         cursor: clickable ? 'pointer' : 'default',
         // A <button> brings its own font, alignment and colour; the cell has to look
@@ -254,7 +254,7 @@ export function StatMini({ label, value }) {
   );
 }
 
-export function Card({ title, eyebrow, rightSlot, children, padding = 24, i = 0, className = '' }) {
+export function Card({ title, eyebrow, rightSlot, children, padding = 'var(--pad-card)', i = 0, className = '' }) {
   return (
     // Surface, border and radius come from .card rather than being repeated inline.
     // .keep-edge holds the border at its resting colour through hover — these panels

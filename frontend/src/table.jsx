@@ -1,5 +1,5 @@
 import React from 'react';
-import { fmt, Chip, Delta, RangeBar, MicroBar, Icon } from './format.jsx';
+import { fmt, Chip, Tag, Delta, RangeBar, MicroBar, Icon } from './format.jsx';
 import { SECTOR_COLORS } from './summary.jsx';
 import { sectorOf } from './sectors.js';
 import { ColumnsMenu, CompareButton, FilterPanel } from './filters.jsx';
@@ -294,8 +294,8 @@ export function Row({ row, rank, visibleCols, onOpen, pinned, togglePin, compare
   // hue is too weak to carry: this hover turned the olive row pink. srgb is
   // rectangular, so the mix is exactly the base colour at n% alpha. Keep it srgb
   // anywhere the second colour is `transparent`.
-  const bg = compared ? 'color-mix(in srgb, var(--accent) 10%, transparent)'
-    : pinned ? 'color-mix(in srgb, var(--accent) 4%, transparent)'
+  const bg = compared ? 'var(--accent-tint)'
+    : pinned ? 'var(--accent-tint-soft)'
     : hover ? 'color-mix(in srgb, var(--row-hover) 50%, transparent)'
     : 'transparent';
 
@@ -315,7 +315,7 @@ export function Row({ row, rank, visibleCols, onOpen, pinned, togglePin, compare
       {compareOn && (
         <div role="cell" style={{ ...cellBase, padding: 0, justifyContent:'center' }}>
           <span style={{
-            width:16, height:16, borderRadius:4,
+            width:16, height:16, borderRadius:'var(--r-xs)',
             border:`1.5px solid ${compared ? 'var(--accent)' : 'var(--line)'}`,
             background: compared ? 'var(--accent)' : 'transparent',
             display:'grid', placeItems:'center',
@@ -364,27 +364,22 @@ export function Cell({ colKey, row, rank, cellBase, pinned, togglePin, hover, ma
 
     case 'ticker':
       return <div role="cell" style={style}>
-        <span className="mono" style={{
-          fontSize: 11.5, fontWeight: 500, color: 'var(--sub)',
-          background: 'var(--row-hover)',
-          padding: '3px 7px', borderRadius: 4,
-          border: '1px solid var(--line)',
-        }}>{row.ticker}</span>
+        <Tag>{row.ticker}</Tag>
       </div>;
 
     case 'country':
       return <div role="cell" style={style}>
-        <span style={{ fontSize: 12.5, color: 'var(--sub)' }}>{row.country}</span>
+        <span style={{ fontSize: 12, color: 'var(--sub)' }}>{row.country}</span>
       </div>;
 
     case 'sector':
       return <div role="cell" style={style}>
         <span style={{
-          fontSize: 11.5, color: 'var(--sub)',
+          fontSize: 12, color: 'var(--sub)',
           display:'inline-flex', alignItems:'center', gap: 6
         }}>
           <span style={{
-            width: 6, height: 6, borderRadius: 99,
+            width: 6, height: 6, borderRadius: 'var(--r-pill)',
             background: SECTOR_COLORS[sectorOf(row)] || 'var(--soft)'
           }}/>
           {sectorOf(row, '—')}
@@ -409,7 +404,7 @@ export function Cell({ colKey, row, rank, cellBase, pinned, togglePin, hover, ma
           <RangeBar low={row.low52} high={row.high52} value={row.price}/>
           <div className="mono" style={{
             display:'flex', justifyContent:'space-between',
-            fontSize: 9.5, color:'var(--soft)', marginTop: 4
+            fontSize: 10, color:'var(--soft)', marginTop: 4
           }}>
             <span>{fmt.price(row.low52)}</span>
             <span>{fmt.price(row.high52)}</span>
@@ -447,7 +442,7 @@ export function Cell({ colKey, row, rank, cellBase, pinned, togglePin, hover, ma
 
     case 'pe':
       return <div role="cell" style={style}>
-        <span className="mono" style={{ fontSize: 12.5, color: row.pe ? 'var(--sub)' : 'var(--soft)' }}>
+        <span className="mono" style={{ fontSize: 12, color: row.pe ? 'var(--sub)' : 'var(--soft)' }}>
           {row.pe ? row.pe.toFixed(1) : '—'}
         </span>
       </div>;

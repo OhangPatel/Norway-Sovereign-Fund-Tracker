@@ -21,7 +21,7 @@ function Row({ c }) {
                      overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
         {c.name}
       </span>
-      <span className="mono" style={{ fontSize: 9.5, color: 'var(--soft)', flexShrink: 0 }}>
+      <span className="mono" style={{ fontSize: 10, color: 'var(--soft)', flexShrink: 0 }}>
         {c.country || '—'}
       </span>
       <span className="mono" style={{ fontSize: 10.5, color: 'var(--sub)', flexShrink: 0,
@@ -45,7 +45,7 @@ function List({ title, tone, count, rows, shown }) {
         {rows.map(c => <Row key={c.name} c={c} />)}
       </div>
       {count > shown && (
-        <div className="mono" style={{ fontSize: 9.5, color: 'var(--soft)', marginTop: 6 }}>
+        <div className="mono" style={{ fontSize: 10, color: 'var(--soft)', marginTop: 6 }}>
           showing the {shown} largest of {count.toLocaleString()}
         </div>
       )}
@@ -58,7 +58,7 @@ function Level({ eyebrow, headline, note, data, shown }) {
     <div style={{ display: 'grid', gap: 10 }}>
       <div>
         <div className="eyebrow" style={{ fontSize: 10 }}>{eyebrow}</div>
-        <div style={{ fontSize: 12.5, color: 'var(--ink)', marginTop: 3 }}>{headline}</div>
+        <div style={{ fontSize: 12, color: 'var(--ink)', marginTop: 3 }}>{headline}</div>
         {note && (
           <div style={{ fontSize: 11, color: 'var(--sub)', marginTop: 5, lineHeight: 1.5 }}>
             {note}
@@ -118,7 +118,7 @@ export function ChangesPanel({ period, manifest, open, onClose }) {
        kind of object from the cards immediately above and below it. */
     <section style={{
       padding: 20, background: 'var(--surface)',
-      border: '1px solid var(--line)', borderRadius: 18,
+      border: '1px solid var(--line)', borderRadius: 'var(--r-xl)',
       display: 'grid', gap: 24,
     }}>
       {/* The panel is opened from a menu that is closed by the time it appears, so
@@ -133,7 +133,7 @@ export function ChangesPanel({ period, manifest, open, onClose }) {
           aria-label="Close what changed"
           style={{
             display: 'inline-flex', padding: 6, background: 'transparent',
-            border: '1px solid var(--line)', borderRadius: 8,
+            border: '1px solid var(--line)', borderRadius: 'var(--r-md)',
             color: 'var(--soft)', cursor: 'pointer',
           }}
         >

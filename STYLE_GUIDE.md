@@ -248,7 +248,7 @@ the tokens, so **changing a dark neutral means changing all four files**:
 | File | What it renders | Notes |
 |------|-----------------|-------|
 | `frontend/index.html` | The app's tokens | Source of truth |
-| `frontend/scripts/build-static.mjs` | Static `/holdings/*` SEO pages | Own token names, same values; OS preference only, no toggle |
+| `frontend/scripts/build-static.mjs` | Static `/holdings/*` SEO pages | Same token names and values as the app now, plus the same radius/gutter/control scale. Reads `sov-theme` from `localStorage` before first paint, so the reader's chosen theme follows them here; falls back to the OS preference. |
 | `frontend/scripts/generate-images.py` | `og-image.png`, icon PNGs | Not part of `npm run build`; re-run by hand |
 | `frontend/index.html` `<meta name="theme-color">` | Mobile browser chrome | Dark value must equal `--bg` |
 
@@ -294,11 +294,93 @@ label in a multi-column row that has no width to spare (the drawer's 3-up `Metri
 
 ## 4. Spacing, radius, motion
 
-- **Radii:** large cards `24px`, small cards/stats `20px`, pills/buttons `999px`, chart containers `6px`.
-- **Grid gap:** `14px` between bento/grid cells.
-- **Card padding:** large `48px 44px`, panels `34px 38px`, small cards `24px 26px`.
-- **Page gutter:** `5vw` left/right; content `max-width: 1760px`, centered.
-- **Hover:** cards lift `translateY(-4px)` and shift border to `--card-hover-border` over `.18s`.
+**Geometry is theme-independent and lives on bare `:root` in `index.html`** — the palette
+is per-theme, but a radius is the same object in both. Reference these through `var()`
+exactly as you would a colour; a bare number in a `style={{}}` object is how the drift
+below happened in the first place.
+
+### Radius
+
+| Token | Value | Use |
+|-------|-------|-----|
+| `--r-xs` | `4px` | Micro tags, key hints, the 16px checkbox |
+| `--r-sm` | `8px` | Chips, icon tiles, tooltips |
+| `--r-md` | `12px` | **Controls** — buttons, inputs, icon buttons |
+| `--r-lg` | `16px` | **Floating surfaces** — nav shell, modals, popovers, sheets — and panels nested *inside* a card |
+| `--r-xl` | `18px` | **Cards** — the page's own surfaces |
+| `--r-pill` | `999px` | Pills, status dots, progress rails |
+
+`lg` and `xl` are one step apart on purpose, and the gap is the rule: **18px is a card,
+16px is anything that floats above one or sits inside one.** That is what keeps a drawer's
+sub-panels reading as subordinate to the card they are in rather than as more cards.
+
+Chart internals — legend swatches, the sparkline marker — stay at `2px` inline. They are
+graphics, not surfaces, and do not belong on this scale.
+
+This replaced sixteen radii in live use (`0 2 3 4 6 7 8 10 11 12 13 14 16 18 50% 999`),
+with the *same* component drawn three ways: the ticker chip at 3px in the compare modal,
+4px in the table and 8px in the drawer.
+
+### Rhythm and layout
+
+| Token | Value | Use |
+|-------|-------|-----|
+| `--page-max` | `1680px` | Content column, centred |
+| `--gutter` | `clamp(14px, 2vw, 22px)` | Page gutter — nav, main, admin bar and footer, all of them |
+| `--gap` | `16px` | Bento, split, metric groups, the section stack |
+| `--gap-tight` | `10px` | Dense groups inside a card; the phone bento |
+| `--pad-card` | `24px` | Standard card padding |
+| `--pad-card-lg` | `clamp(28px, 3vw, 40px)` | The hero card |
+
+**One gutter, no exceptions.** The nav, the main column, the admin bar and the footer each
+held their own clamp — `clamp(14,2vw,22)`, `clamp(16,3vw,32)`, `clamp(20,3vw,44)` — so at
+1440px the footer's columns began 21px inboard of the cards above them. It was the one
+misalignment visible on every page, and a single token is what closes it.
+
+### Controls
+
+| Token | Value | Use |
+|-------|-------|-----|
+| `--control-h` | `34px` | Pills, ghost buttons, compact icon buttons |
+| `--control-h-lg` | `40px` | Nav search field and nav icon buttons; full-width panel actions |
+
+A control's **height** is fixed, not derived from symmetric padding. That is what makes a
+pill, an icon button and a search field line up when they share a row — the nav's buttons
+were 40px beside a 34px field and never did.
+
+### Scrim and accent tints
+
+| Token | Value | Use |
+|-------|-------|-----|
+| `--scrim` / `--scrim-blur` | `rgba(0,0,0,.5)` / `blur(3px)` | Every overlay: drawer, compare modal, phone filter sheet |
+| `--accent-tint` | `accent 12%` over transparent | A **compared** row, a live tab |
+| `--accent-tint-soft` | `accent 5%` over transparent | A **pinned** row |
+| `--accent-edge` | `accent 40%` | The border of an accent-marked panel |
+| `--accent-ring` | `accent 55%` | Focus ring on the search field |
+| `--accent-wash` | **per-theme** | The ground of a highlighted panel |
+
+The scrim was three values (`.45`, `.5`, `.55`) with two blur radii for one gesture. The
+tints were eleven ad-hoc `color-mix()` percentages.
+
+The ledger's two marked states take the two tint strengths — compared strong, pinned weak
+— and **neither may borrow `--accent-wash`**: on dark that token is `--row-hover`, so a
+pinned row would be indistinguishable from a hovered one.
+
+**Always mix the accent `in srgb`.** A polar space drags the lime's hue toward whatever
+neutral it is mixed with; two `oklch` mixes had survived in `detail.jsx` and `period.jsx`
+next to sixteen `srgb` ones.
+
+**`--accent-wash` is the one tint that is per-theme, and it has to be.** On light it is the
+lime laid thinly over the card. On dark, 8% of the lime over `#1C1C1E` lands on `#2B2D22` —
+a 12-point spread across the channels, i.e. a visibly olive panel in a page of true greys.
+That is precisely the "Ink field" mistake this theme was rebuilt to undo, and a whole panel
+ground is the worst place to make it. On dark the token resolves to `--row-hover`: the panel
+rises one step up the surface scale like everything else, and the accent border and lime
+label carry the emphasis.
+
+### Motion
+
+- **Hover:** cards lift `translateY(-4px)` and shift border to `--card-hover-border` over `.25s`.
 - **Theme transition:** `background .25s, color .25s` on `body`.
 - **Borders:** `1px solid var(--line)` everywhere; never use shadows for separation — a
   shadow says "this floats above the page", a border says "this is part of it".
@@ -344,9 +426,44 @@ renders as a real `<button>`, so it is in the tab order and takes the focus ring
 ### Feature card
 Inverted highlight card using `--feature*` tokens. One per screen, max.
 
-### Ghost button
-`border: 1.5px solid var(--ink); border-radius: 999px;` uppercase mono. Hover inverts:
-`background: var(--ink); color: var(--bg)`.
+### Buttons
+
+**One primitive: `btn()` in `src/format.jsx`.** Do not write a button's geometry inline,
+and do not add a local `pillStyle`/`btnStyle` — that is exactly how this ended up as five
+near-copies (`filters.jsx`, `compare.jsx`, `period.jsx`, `app.jsx`, `.r-sheet-done`) that
+agreed on intent and on nothing else: radius 7 / 12 / 999, four different paddings, two
+font families, three accent fills.
+
+`btn({ variant, shape, tone, active })`:
+
+| Axis | Values | Meaning |
+|------|--------|---------|
+| `variant` | `primary` · `ghost` · `solid` | The button's **weight** in the hierarchy |
+| `shape` | `pill` · `block` | A **mode** you toggle, vs. a **committed action** in a panel |
+| `tone` | `label` · `text` | Mono/uppercase for a **command**; sentence case for a **destination** |
+
+- **`primary`** — the accent fill. One per view; it is the thing to press.
+- **`ghost`** — a hairline. Everything else. The app has no destructive/red button and
+  does not need one.
+- **`solid`** — `--ink` fill. Only for a trigger whose menu is **open**, where it must read
+  as pressed rather than as the page's primary action.
+- **`tone: 'text'`** exists because uppercasing "Yahoo Finance" mangles it. Use it when the
+  label names an object or a destination, not a command.
+
+Icon-only buttons use `iconBtnStyle({ active, large })` — same heights, `--r-md`, so they
+sit on one baseline with everything else in the row.
+
+### Chips and tags
+
+Two primitives, and the difference is semantic, not decorative:
+
+- **`Chip`** — rounded (`--r-pill`), takes a `tone`. Says something about **state**: an
+  analyst rating, a delta, a status.
+- **`Tag`** — square-ish (`--r-xs`). Names an **identifier**: a ticker, a keyboard key, a
+  data-source marker. Never coloured by tone alone.
+
+There were six hand-rolled versions of `Tag` at three radii, each with its own padding and
+font size, all rendering the same ticker symbol.
 
 ### Stat
 Mono uppercase `--soft` label + large `--ink` value.
@@ -368,20 +485,46 @@ baseline and faint horizontal gridlines via `repeating-linear-gradient` in `--li
 labels and stat labels are mono/uppercase `--soft`; stat values are `--ink` at 22px/600.
 Use for any single-variable distribution (ownership %, returns, etc.).
 
-### Floating mode toggle
-Fixed bottom-center pill, dark glass (`rgba(18,18,20,0.92)` + blur). Active segment = white
-fill / dark text; inactive = transparent / translucent white text. Keep this consistent
-site-wide as the theme switcher.
+### Theme switcher
+A row in the nav menu (`topbar.jsx`), not a floating pill. It writes `sov-theme` to
+`localStorage`, and **the static `/holdings/*` pages read that same key before first
+paint** — so the choice follows the reader across the whole site, not just the SPA.
 
 ---
 
 ## 6. Layout patterns
 
-- **Bento hero:** 4-column grid. Lead card spans `3×2`, feature card spans `1×3`, remaining
-  stats fill single cells. `grid-auto-rows: minmax(110px, auto)`.
-- **Detail row:** `1.5fr / 1fr` two-column split — primary data table left, supporting
-  visual (treemap/chart) right, matched heights.
-- Everything sits inside `.wrap` (`max-width:1760px; margin:0 auto`) with `5vw` section gutters.
+- **Footer:** four columns, introduced by mono eyebrow labels and separated by whitespace
+  alone. **No vertical rules.** There were decorative hairlines down the column edges; they
+  were the only free-floating vertical rules in the product — everywhere else grouping is
+  carried by a card border, a horizontal divider or an eyebrow — so they read as borrowed
+  from another site. (They were also misaligned: painted every 25% while the columns are
+  four `1fr` tracks with a ~38px gap, which drifted 10/19/29px across the row.) Do not
+  reintroduce them.
+- **Bento hero:** 3-column grid (`.r-bento`). Lead card spans 2, feature card spans 1, then
+  a 3-up stat row. `grid-auto-rows: minmax(118px, auto)`. Collapses 3 → 2 at 900px, and the
+  stat cards pair off two-up at 640px rather than taking a row each.
+- **Detail row:** `1.5fr / 1fr` two-column split (`.r-split`) — primary data table left,
+  supporting visual (treemap/chart) right, matched heights. One column below 900px.
+- Every section — nav, admin bar, main column, footer — sits in `max-width: var(--page-max)`
+  with `var(--gutter)` left and right. **Nothing invents its own container.**
+
+**Column counts live in `index.html`, not in components.** Components style themselves with
+inline `style={{}}` objects, which cannot express media queries, so any grid whose column
+count changes with viewport is an `.r-*` class. Breakpoints: `900px` (tablet), `640px`
+(phone).
+
+### The static `/holdings/*` pages
+
+`scripts/build-static.mjs` emits them at build time, so they cannot import the app's
+`<style>` block and carry their own copy of the palette. **The geometry is no longer
+copied — it is the same scale, written out** (`--r-*`, `--page-max`, `--gutter`,
+`--control-h`), and the chrome is the app's: the floating nav card, the `.card` + lift
+sector tiles, the ledger-styled table, the ink footer band with the oversized lockup.
+
+They also load Space Grotesk and JetBrains Mono. Before this pass they rendered in
+`system-ui` and `ui-monospace`, which was the single loudest signal that they belonged to
+a different product.
 
 ---
 
@@ -403,10 +546,15 @@ site-wide as the theme switcher.
 Recorded rather than silently fixed. Each is a separate decision, not a bug in the
 palette above.
 
-- **§3–§6 predate UI 2.0.** The type scale, radii, layout patterns, and the "floating
-  mode toggle" in §5 describe the pre-redesign build. The toggle now lives in the nav
-  menu, not a bottom-center pill. Colors (§1–§2) are current; treat the rest as stale
-  until someone does a pass.
+- **§3–§6 have had their pass.** They previously described the pre-redesign build — 24px
+  radii, a 14px grid gap, a 1760px container, a floating theme pill — none of which
+  matched the code. They now document what ships, and the geometry they describe is
+  tokenised rather than prose, so the two can no longer drift silently.
+- **The static pages still carry a copy of the palette**, and that is unavoidable: they are
+  written by a build script and served without the app bundle, so they cannot read
+  `index.html`'s `<style>` block. Changing a colour token still means changing both files.
+  What they no longer duplicate is the *geometry* — radius, gutter, container width and
+  control height are the same scale, spelled out.
 - **`--accent-ink` on the static pages has converged with the app.** It was `#6F7610`
   against the app's `#6C8118` — deliberately, because it was the better value of the two
   — and both are now `#617416`. There is one light accent-text value in the project.
@@ -418,11 +566,26 @@ palette above.
   has proper light/dark variants. **This is only self-consistent while the app defaults to
   light** (`src/app.jsx`, `localStorage.getItem('sov-theme') || 'light'`). If that default
   changes, `background_color` has to move with it.
-- **The light theme's ink surfaces stay olive.** `--feature`, `--nav-band`, and
-  `--foot-surface` are `#14150F`/`#16170F` — 17–21% saturation, but at **7% lightness**,
-  where that works out to a 6/255 spread across the channels. The tint is not perceivable,
-  and neutralizing them to `#000000` would change their *weight* on a light page, not just
-  their hue. Left alone deliberately; this is not the dark theme's no-hue rule leaking.
+- **The light theme's ink surfaces are now neutral too** — this reverses an earlier entry
+  here. `--feature`, `--nav-band` and `--foot-surface` were `#14150F`/`#16170F`, kept olive
+  on the argument that at 7% lightness a 6-point channel spread is not perceivable. **It
+  is**, and the reason the old entry missed it is that it only looked at the grounds. The
+  secondary text on those grounds was far more tinted — `--foot-sub` `#A9AB9C` and
+  `--foot-soft` `#8A8C7D` at **15 points**, `--feature-sub`/`--nav-band-ink` `#8F9180` at
+  **17** — and a yellow-green grey set over a slightly olive ground compounds, so the whole
+  band read green.
+
+  The old entry's other point was sound and is preserved: neutralizing to `#000000` would
+  have changed these surfaces' *weight* on a light page. So each new value is the **exact
+  neutral equivalent** of the one it replaces — the grey with identical relative luminance
+  — `#141414`, `#161616`. Same weight, zero hue. The no-hue rule now holds on both themes.
+
+  The footer's text was also raised while it was being neutralized: `--foot-soft` carries
+  the 12px provenance paragraphs and the 10px column headings but sat at 5.36:1, the
+  *lowest* contrast in the footer, which is backwards for its smallest type. Both themes
+  now step **16.5 / 9.5 / 7.0** (`--foot-ink` / `--foot-sub` / `--foot-soft`). The app-wide
+  `--sub` and `--soft` are untouched — the footer has its own tokens precisely so it can be
+  tuned on its own.
 - **`--nav-sub` was removed**, not renamed. It had zero consumers — the restructure would
   have duplicated a dead token into both theme blocks. Nav secondary text uses
   `--nav-soft`.

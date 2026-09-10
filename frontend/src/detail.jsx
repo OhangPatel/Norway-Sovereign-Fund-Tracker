@@ -1,5 +1,5 @@
 import React from 'react';
-import { fmt, Chip, RangeBar, Icon } from './format.jsx';
+import { fmt, Chip, Tag, RangeBar, Icon, iconBtnStyle } from './format.jsx';
 import { PriceChart } from './charts.jsx';
 import { REC_TONE } from './table.jsx';
 import { PIPELINE_API } from './app.jsx';
@@ -224,8 +224,8 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
     <>
       <div onClick={onClose} style={{
         position:'fixed', inset:0, zIndex: 80,
-        background: 'rgba(0,0,0,0.45)',
-        backdropFilter: 'blur(2px)',
+        background: 'var(--scrim)',
+        backdropFilter: 'var(--scrim-blur)',
         opacity: entered ? 1 : 0,
         transition: 'opacity .18s ease',
       }}/>
@@ -253,7 +253,7 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
         }}>
           <div className="eyebrow" style={{ display:'flex', alignItems:'center', gap: 7 }}>
             <span style={{
-              width: 6, height: 6, borderRadius: 99, flexShrink: 0,
+              width: 6, height: 6, borderRadius: 'var(--r-pill)', flexShrink: 0,
               background: headline.live ? 'var(--bull-text)' : 'var(--soft)',
             }}/>
             Position detail
@@ -289,14 +289,7 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
                 </div>
               )}
             </div>
-            <span className="mono" style={{
-              fontSize: 12, fontWeight: 600, letterSpacing:'0.04em', flexShrink: 0,
-              color: 'var(--accent-text)',
-              // srgb, not oklch — see the note on Row's `bg` in table.jsx.
-              background: 'color-mix(in srgb, var(--accent) 12%, var(--surface))',
-              border: '1px solid color-mix(in srgb, var(--accent) 45%, transparent)',
-              padding: '6px 12px', borderRadius: 8,
-            }}>{company.ticker}</span>
+            <Tag size="lg" tone="accent">{company.ticker}</Tag>
           </div>
 
           {/* Price + chart card. Price and its window sit at the top, the chart itself
@@ -304,7 +297,7 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
               on the page, and the range tabs live at the BOTTOM — under the chart
               they control, not above it, so the eye reads price → chart → range. */}
           <div style={{
-            marginTop: 22, border: '1px solid var(--line)', borderRadius: 16,
+            marginTop: 22, border: '1px solid var(--line)', borderRadius: 'var(--r-lg)',
             background: 'var(--surface)', overflow: 'hidden',
           }}>
             <div style={{ padding: '16px 18px 0', display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap: 12, flexWrap:'wrap' }}>
@@ -356,7 +349,7 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
                         fontWeight: on ? 600 : 500,
                         color: on ? 'var(--accent-text)' : 'var(--soft)',
                         // srgb, not oklch — see the note on Row's `bg` in table.jsx.
-                        background: on ? 'color-mix(in srgb, var(--accent) 10%, transparent)' : 'transparent',
+                        background: on ? 'var(--accent-tint)' : 'transparent',
                         transition: 'color .12s, background .12s',
                       }}
                       onMouseEnter={e => { if (!on) e.currentTarget.style.color = 'var(--ink)'; }}
@@ -376,7 +369,7 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
                   days old is the whole problem. */}
               <div className="mono" style={{ display:'flex', alignItems:'center', gap: 6, fontSize: 10, color: 'var(--soft)' }}>
                 <span style={{
-                  width: 6, height: 6, borderRadius: 99, flexShrink: 0,
+                  width: 6, height: 6, borderRadius: 'var(--r-pill)', flexShrink: 0,
                   background: headline.live ? 'var(--bull-text)' : 'var(--soft)',
                 }}/>
                 <span>
@@ -415,9 +408,9 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
           <div style={{
             marginTop: 22,
             padding: 18,
-            border:'1px solid var(--line)',
-            background: 'color-mix(in oklch, var(--accent) 7%, var(--surface))',
-            borderRadius: 18,
+            border:'1px solid var(--accent-edge)',
+            background: 'var(--accent-wash)',
+            borderRadius: 'var(--r-lg)',
           }}>
             <SectionLabel text="Norway GPFG holding" accent divider
               tag={historical ? `disclosed as of ${formatPeriod(period)}` : null}/>
@@ -446,7 +439,7 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
             <SectionLabel text="Financials"
               tag={historical ? 'current market data, not the period’s' : null}/>
             <div className="r-kv2" style={{
-              background:'var(--line)', borderRadius: 12, overflow:'hidden',
+              background:'var(--line)', borderRadius: 'var(--r-lg)', overflow:'hidden',
               border:'1px solid var(--line)'
             }}>
               {/* "P/E (trailing)", matching the compare modal — the same figure was
@@ -465,7 +458,7 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
           {peerSet.length > 0 && (
             <div style={{ marginTop: 22 }}>
               <div className="eyebrow" style={{ fontSize: 10, marginBottom: 10 }}>Top peers in {sectorOf(company, 'this sector')}</div>
-              <div style={{ display: 'grid', gap: 1, background: 'var(--line)', borderRadius: 10, overflow:'hidden', border: '1px solid var(--line)' }}>
+              <div style={{ display: 'grid', gap: 1, background: 'var(--line)', borderRadius: 'var(--r-lg)', overflow:'hidden', border: '1px solid var(--line)' }}>
                 {peerSet.map(p => (
                   <div key={p.ticker} onClick={() => onPickCompany(p)}
                     style={{
@@ -478,11 +471,11 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
                     onMouseLeave={e => e.currentTarget.style.background = 'var(--surface)'}
                   >
                     <div style={{ minWidth: 0 }}>
-                      <div style={{ fontSize: 12.5, color:'var(--ink)', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{p.name}</div>
+                      <div style={{ fontSize: 12, color:'var(--ink)', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{p.name}</div>
                       <div className="mono" style={{ fontSize: 10, color:'var(--soft)' }}>{p.ticker} · {p.country}</div>
                     </div>
-                    <span className="mono" style={{ fontSize: 11.5, color:'var(--sub)' }}>{fmt.money(p.mvUsd, 'USD', 1)}</span>
-                    <span className="mono" style={{ fontSize: 11.5, color:'var(--soft)' }}>{fmt.pct(p.ownership, 2)}</span>
+                    <span className="mono" style={{ fontSize: 12, color:'var(--sub)' }}>{fmt.money(p.mvUsd, 'USD', 1)}</span>
+                    <span className="mono" style={{ fontSize: 12, color:'var(--soft)' }}>{fmt.pct(p.ownership, 2)}</span>
                     <Icon name="arrow-right" size={13} color="var(--soft)"/>
                   </div>
                 ))}
@@ -576,10 +569,10 @@ function ExtLink({ href, children, brand, title }) {
     <a href={href} target="_blank" rel="noopener noreferrer" className="mono" title={title}
       style={{
         display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7,
-        fontSize: 11.5, lineHeight: 1, color: 'var(--sub)', textDecoration: 'none',
+        fontSize: 12, lineHeight: 1, color: 'var(--sub)', textDecoration: 'none',
         background: 'var(--surface)',
         border: '1px solid var(--line)',
-        padding: '10px', borderRadius: 8,
+        padding: '0 10px', height: 'var(--control-h-lg)', borderRadius: 'var(--r-md)',
         transition: 'background .12s, color .12s, border-color .12s',
       }}
       onMouseEnter={e => {
@@ -609,7 +602,7 @@ function ExtLink({ href, children, brand, title }) {
 function MetricBox({ label, value }) {
   return (
     <div style={{
-      border: '1px solid var(--line)', borderRadius: 12,
+      border: '1px solid var(--line)', borderRadius: 'var(--r-md)',
       background: 'var(--surface)', padding: '11px 14px',
     }}>
       <div className="eyebrow" style={{ fontSize: 9 }}>{label}</div>
@@ -724,15 +717,7 @@ export function IconBtn({ children, onClick, title, active }) {
     // title is a hover tooltip; aria-label is what a screen reader or a voice
     // command has to work from, and these buttons have no text of their own.
     <button onClick={onClick} title={title} aria-label={title}
-      style={{
-        width: 32, height: 32,
-        display:'grid', placeItems:'center',
-        background: active ? 'var(--accent)' : 'transparent',
-        color: active ? 'var(--treemap-cell-fg)' : 'var(--sub)',
-        border: `1px solid ${active ? 'var(--accent)' : 'var(--line)'}`,
-        borderRadius: 8, cursor:'pointer',
-        transition: 'all .12s',
-      }}
+      style={iconBtnStyle({ active })}
       onMouseEnter={e => { if (!active) e.currentTarget.style.background = 'var(--row-hover)'; }}
       onMouseLeave={e => { if (!active) e.currentTarget.style.background = 'transparent'; }}
     >{children}</button>

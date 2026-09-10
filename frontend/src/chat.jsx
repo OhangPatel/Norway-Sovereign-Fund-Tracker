@@ -96,7 +96,7 @@ export function ChatWidget() {
         title="Open assistant"
         style={{
           position: 'fixed', right: 24, bottom: 24, zIndex: 1000,
-          width: 54, height: 54, borderRadius: '50%',
+          width: 54, height: 54, borderRadius: 'var(--r-pill)',
           // --treemap-cell-fg is the app's "dark ink that reads on a lime fill" token,
           // the same one the icon inside uses; --feature-ink is the feature CARD's text
           // colour and is near-white on the light theme, and it carried a hardcoded
@@ -130,7 +130,7 @@ export function ChatWidget() {
         display: 'flex', alignItems: 'center', gap: 10,
         padding: '13px 14px', borderBottom: '1px solid var(--line)',
       }}>
-        <span style={{ width: 30, height: 30, borderRadius: 8, display: 'grid', placeItems: 'center', background: 'var(--accent)' }}>
+        <span style={{ width: 30, height: 30, borderRadius: 'var(--r-sm)', display: 'grid', placeItems: 'center', background: 'var(--accent)' }}>
           <Icon name="sparkle" size={16} color="var(--treemap-cell-fg)" />
         </span>
         <div style={{ flex: 1, minWidth: 0 }}>
@@ -158,7 +158,7 @@ export function ChatWidget() {
           return (
             <div key={i} style={{ alignSelf: isUser ? 'flex-end' : 'flex-start', maxWidth: '85%' }}>
               <div style={{
-                padding: '9px 12px', borderRadius: 13,
+                padding: '9px 12px', borderRadius: 'var(--r-md)',
                 borderBottomRightRadius: isUser ? 4 : 13,
                 borderBottomLeftRadius: isUser ? 13 : 4,
                 background: isUser ? 'var(--accent)' : 'var(--row-hover)',
@@ -171,7 +171,7 @@ export function ChatWidget() {
         })}
         {busy && (
           <div style={{ alignSelf: 'flex-start' }}>
-            <div className="mono" style={{ padding: '9px 12px', borderRadius: 13, background: 'var(--row-hover)', border: '1px solid var(--line)', color: 'var(--soft)', fontSize: 12 }}>thinking…</div>
+            <div className="mono" style={{ padding: '9px 12px', borderRadius: 'var(--r-md)', background: 'var(--row-hover)', border: '1px solid var(--line)', color: 'var(--soft)', fontSize: 12 }}>thinking…</div>
           </div>
         )}
       </div>
@@ -186,7 +186,7 @@ export function ChatWidget() {
           rows={1}
           disabled={busy || !available}
           style={{
-            flex: 1, resize: 'none', maxHeight: 96, padding: '9px 11px', borderRadius: 11,
+            flex: 1, resize: 'none', maxHeight: 96, padding: '9px 11px', borderRadius: 'var(--r-md)',
             border: '1px solid var(--line)', background: 'var(--surface)', color: 'var(--ink)',
             fontFamily: 'var(--font-display)', fontSize: 13, lineHeight: 1.4,
           }}
@@ -216,7 +216,7 @@ export function ChatWidget() {
 }
 
 var primaryBtn = {
-  background: 'var(--accent)', color: 'var(--treemap-cell-fg)', border: 'none', borderRadius: 10,
+  background: 'var(--accent)', color: 'var(--treemap-cell-fg)', border: 'none', borderRadius: 'var(--r-md)',
   padding: '8px 14px', fontFamily: 'var(--font-mono)', fontSize: 12, fontWeight: 600,
   cursor: 'pointer', flexShrink: 0,
 };
@@ -226,7 +226,7 @@ function IconButton({ children, onClick, title }) {
     <button
       onClick={onClick} title={title} aria-label={title}
       style={{
-        width: 30, height: 30, borderRadius: 8, flexShrink: 0,
+        width: 30, height: 30, borderRadius: 'var(--r-sm)', flexShrink: 0,
         display: 'grid', placeItems: 'center', cursor: 'pointer',
         background: 'transparent', border: '1px solid var(--line)', color: 'var(--ink)',
       }}

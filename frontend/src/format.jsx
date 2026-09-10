@@ -37,6 +37,75 @@ export const fmt = {
   }
 };
 
+// ── Controls ────────────────────────────────────────────────────────────────
+// One geometry for everything the user can press.
+//
+// This used to be five near-copies: pillStyle() in filters.jsx, btnStyle() in
+// compare.jsx, the year pills in period.jsx, the Data Tools trigger in app.jsx and
+// .r-sheet-done in index.html. They agreed on intent and on nothing else — radius
+// 7 / 12 / 999, padding 6/12 · 7/12 · 7/13 · 11/20, two font families, and three
+// different accent fills — so a primary action looked like a different control on
+// every screen it appeared on.
+//
+// `variant` is the button's WEIGHT in the hierarchy, `shape` is its silhouette:
+//   primary — the accent fill. One per view; it is the thing to press.
+//   ghost   — a hairline. Everything else, including destructive-adjacent actions;
+//             the app has no red button and does not need one.
+//   solid   — --ink fill. Only for a trigger whose menu is open, where the button
+//             has to read as pressed rather than as the page's primary action.
+//   pill    — a mode or a filter: something toggled, living in a row of peers.
+//   block   — a committed action inside a panel: Done, Open comparison, a link out.
+//
+// `tone` picks the type treatment, and the two mean different things:
+//   label — mono, uppercase, tracked. Names a MODE or a COMMAND.
+//   text  — display, sentence case. Names a DESTINATION or an OBJECT
+//           ("Yahoo Finance"), which uppercasing would mangle.
+export function btn({ variant = 'ghost', shape = 'pill', tone = 'label', active = false } = {}) {
+  const fill = {
+    primary: { bg: 'var(--accent)', fg: 'var(--treemap-cell-fg)', bd: 'var(--accent)' },
+    solid:   { bg: 'var(--ink)',    fg: 'var(--bg)',              bd: 'var(--ink)' },
+    ghost:   active
+      ? { bg: 'var(--row-hover)', fg: 'var(--ink)', bd: 'var(--ink)' }
+      : { bg: 'transparent',      fg: 'var(--ink)', bd: 'var(--line)' },
+  }[variant] || {};
+
+  return {
+    display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 7,
+    // A fixed height rather than symmetric padding: it is what makes a pill, an
+    // icon button and a select line up when they share a row, whatever is inside them.
+    height: 'var(--control-h)',
+    padding: '0 14px',
+    background: fill.bg, color: fill.fg,
+    border: `1px solid ${fill.bd}`,
+    borderRadius: shape === 'pill' ? 'var(--r-pill)' : 'var(--r-md)',
+    cursor: 'pointer',
+    textDecoration: 'none', whiteSpace: 'nowrap',
+    fontFamily: tone === 'label' ? 'var(--font-mono)' : 'var(--font-display)',
+    fontSize: tone === 'label' ? 11 : 13,
+    fontWeight: variant === 'ghost' ? 500 : 600,
+    letterSpacing: tone === 'label' ? '0.06em' : '0',
+    textTransform: tone === 'label' ? 'uppercase' : 'none',
+    transition: 'background .14s ease, border-color .14s ease, color .14s ease',
+  };
+}
+
+// Square icon-only button. Same height as btn() so the two sit on one baseline;
+// --r-md so it reads as a control rather than as a small card. The drawer drew
+// these at 32px/radius 8 and the nav at 40px/radius 10, which is why the nav's
+// buttons never lined up with the search field beside them.
+export function iconBtnStyle({ active = false, large = false } = {}) {
+  const side = large ? 'var(--control-h-lg)' : 'var(--control-h)';
+  return {
+    width: side, height: side, flexShrink: 0,
+    display: 'grid', placeItems: 'center',
+    background: active ? 'var(--accent)' : 'transparent',
+    color: active ? 'var(--treemap-cell-fg)' : 'var(--sub)',
+    border: `1px solid ${active ? 'var(--accent)' : 'var(--line)'}`,
+    borderRadius: 'var(--r-md)', cursor: 'pointer',
+    transition: 'background .14s ease, border-color .14s ease, color .14s ease',
+  };
+}
+
 // Small chip / badge
 export function Chip({ children, tone = 'neutral', style = {} }) {
   const tones = {
@@ -53,7 +122,7 @@ export function Chip({ children, tone = 'neutral', style = {} }) {
     <span style={{
       display: 'inline-flex', alignItems:'center', gap: 6,
       padding: '2px 8px',
-      borderRadius: 999,
+      borderRadius: 'var(--r-pill)',
       fontFamily: 'var(--font-mono)',
       fontSize: 10.5,
       letterSpacing: '0.04em',
@@ -63,6 +132,37 @@ export function Chip({ children, tone = 'neutral', style = {} }) {
       border: `1px solid ${t.bd}`,
       whiteSpace: 'nowrap',
       ...style
+    }}>{children}</span>
+  );
+}
+
+// Squared monospace tag, for an IDENTIFIER rather than a status: a ticker, a
+// keyboard key, a source marker. Chip above is its rounded counterpart and says
+// something about state ("Buy", "+2.4%"); a Tag just names a thing, which is why
+// it is square-ish and never coloured by tone alone.
+//
+// There were six of these — radius 3 in the compare modal, 4 in the table, the nav
+// and the period bar, 8 in the drawer, 3 in the footer — each with its own padding
+// and font size, all rendering the same ticker symbol.
+export function Tag({ children, size = 'sm', tone = 'neutral', style = {} }) {
+  const lg = size === 'lg';
+  const tones = {
+    neutral: { bg: 'var(--row-hover)', fg: 'var(--sub)', bd: 'var(--line)' },
+    accent:  { bg: 'var(--accent-wash)', fg: 'var(--accent-text)', bd: 'var(--accent-edge)' },
+  };
+  const t = tones[tone] || tones.neutral;
+  return (
+    <span className="mono" style={{
+      display: 'inline-flex', alignItems: 'center', gap: 5,
+      padding: lg ? '5px 10px' : '2px 7px',
+      borderRadius: 'var(--r-xs)',
+      fontSize: lg ? 12 : 10.5,
+      fontWeight: lg ? 600 : 500,
+      letterSpacing: '0.04em',
+      background: t.bg, color: t.fg,
+      border: `1px solid ${t.bd}`,
+      whiteSpace: 'nowrap', flexShrink: 0,
+      ...style,
     }}>{children}</span>
   );
 }
@@ -87,14 +187,14 @@ export function Delta({ value, fmt: f = 'pct' }) {
 // 52-week range visual: low ─── current ─── high
 export function RangeBar({ low, high, value, height = 8, showLabels = false }) {
   if (low == null || high == null || value == null) {
-    return <div style={{ height, background: 'var(--row-hover)', borderRadius: 99 }}/>;
+    return <div style={{ height, background: 'var(--row-hover)', borderRadius: 'var(--r-pill)' }}/>;
   }
   const range = Math.max(high - low, 0.0001);
   const t = Math.max(0, Math.min(1, (value - low) / range));
   return (
     <div style={{ width: '100%' }}>
       <div style={{
-        position: 'relative', height, borderRadius: 99,
+        position: 'relative', height, borderRadius: 'var(--r-pill)',
         background: 'linear-gradient(90deg, color-mix(in srgb, var(--bear) 40%, transparent), color-mix(in srgb, var(--soft) 30%, transparent) 50%, color-mix(in srgb, var(--bull) 40%, transparent))',
         border: '1px solid var(--line)',
         overflow: 'visible',
@@ -135,7 +235,7 @@ export function MicroBar({ value, max, tone = 'accent', height = 4 }) {
   return (
     <div style={{
       height, background: 'var(--row-hover)',
-      borderRadius: 2, overflow: 'hidden',
+      borderRadius: 'var(--r-pill)', overflow: 'hidden',
       border: '1px solid var(--line)',
     }}>
       <div style={{ height: '100%', width: pct + '%', background: tones[tone], transition: 'width .3s ease' }}/>
@@ -196,4 +296,4 @@ export function Icon({ name, size = 16, color = 'currentColor', strokeWidth = 1.
 }
 
 // Expose
-Object.assign(window, { fmt, Chip, Delta, RangeBar, MicroBar, Icon });
+Object.assign(window, { fmt, Chip, Tag, Delta, RangeBar, MicroBar, Icon, btn, iconBtnStyle });

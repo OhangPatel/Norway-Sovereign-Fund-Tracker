@@ -1,5 +1,5 @@
 import React from 'react';
-import { fmt, Chip, Delta, Icon } from './format.jsx';
+import { fmt, Chip, Tag, Delta, Icon, btn } from './format.jsx';
 import { REC_TONE } from './table.jsx';
 import { IconBtn } from './detail.jsx';
 import { sectorOf } from './sectors.js';
@@ -31,7 +31,7 @@ export function CompareDock({ companies, onRemove, onClear, onExpand, onOpenComp
         background: 'color-mix(in srgb, var(--surface) 92%, transparent)',
         backdropFilter: 'blur(20px) saturate(140%)',
         border: '1px solid var(--line)',
-        borderRadius: 14,
+        borderRadius: 'var(--r-lg)',
         boxShadow: 'var(--shadow-overlay)',
         overflow: 'hidden',
       }}>
@@ -62,7 +62,7 @@ export function CompareDock({ companies, onRemove, onClear, onExpand, onOpenComp
                 padding: '12px 14px',
                 background: 'var(--bg)',
                 border: '1px solid var(--line)',
-                borderRadius: 10,
+                borderRadius: 'var(--r-md)',
                 cursor: 'pointer',
                 position: 'relative',
                 transition: 'background .12s'
@@ -78,7 +78,7 @@ export function CompareDock({ companies, onRemove, onClear, onExpand, onOpenComp
                   width: 20, height: 20, padding:0,
                   background:'transparent', border:'none',
                   cursor:'pointer', color:'var(--soft)',
-                  display:'grid', placeItems:'center', borderRadius: 4,
+                  display:'grid', placeItems:'center', borderRadius: 'var(--r-xs)',
                 }}
                 onMouseEnter={e => e.currentTarget.style.background = 'var(--line)'}
                 onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
@@ -104,15 +104,10 @@ export function CompareDock({ companies, onRemove, onClear, onExpand, onOpenComp
   );
 }
 
+// "Open comparison" and "Clear" name an action on the thing in front of you, so
+// they take the sentence-case treatment rather than the mono label one.
 export function btnStyle(primary) {
-  return {
-    padding: '6px 12px',
-    background: primary ? 'var(--accent)' : 'transparent',
-    color: primary ? 'var(--treemap-cell-fg)' : 'var(--sub)',
-    border: `1px solid ${primary ? 'var(--accent)' : 'var(--line)'}`,
-    borderRadius: 7, cursor: 'pointer',
-    fontFamily: 'var(--font-display)', fontSize: 12, fontWeight: 500,
-  };
+  return btn({ variant: primary ? 'primary' : 'ghost', shape: 'block', tone: 'text' });
 }
 
 // Modal: side-by-side comparison
@@ -150,7 +145,7 @@ export function CompareModal({ companies, onClose, allData }) {
     <>
       <div onClick={onClose} style={{
         position:'fixed', inset:0, zIndex: 90,
-        background:'rgba(0,0,0,.55)', backdropFilter: 'blur(4px)',
+        background: 'var(--scrim)', backdropFilter: 'var(--scrim-blur)',
         animation:'fadeIn .15s ease'
       }}/>
       <div role="dialog" aria-modal="true" aria-label="Side-by-side comparison" style={{
@@ -158,7 +153,7 @@ export function CompareModal({ companies, onClose, allData }) {
         zIndex: 91,
         background: 'var(--bg)',
         border: '1px solid var(--line)',
-        borderRadius: 16,
+        borderRadius: 'var(--r-lg)',
         overflow: 'hidden',
         display:'flex', flexDirection:'column',
         animation: 'rise .25s cubic-bezier(.22,.61,.36,1)'
@@ -186,11 +181,7 @@ export function CompareModal({ companies, onClose, allData }) {
             <div className="r-cmp-label"></div>
             {companies.map(c => (
               <div key={c.id} style={{ padding: '0 14px', borderLeft: '1px solid var(--line)' }}>
-                <span className="mono" style={{
-                  fontSize: 10.5, color:'var(--sub)',
-                  background:'var(--surface)', padding:'2px 6px', borderRadius:3,
-                  border:'1px solid var(--line)'
-                }}>{c.ticker}</span>
+                <Tag>{c.ticker}</Tag>
                 <div className="display" style={{
                   fontSize: 20, lineHeight: 1.1, marginTop: 8, letterSpacing:'-0.01em',
                 }}>{c.name}</div>

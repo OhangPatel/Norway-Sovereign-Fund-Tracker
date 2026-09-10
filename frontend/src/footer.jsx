@@ -42,17 +42,9 @@ export function Footer({ positions, period, pricesAsOf }) {
       '--accent-text': 'var(--foot-accent)',
     }}>
       <div style={{
-        maxWidth: 1680, margin: '0 auto', position: 'relative',
-        padding: '0 clamp(20px, 3vw, 44px)',
+        maxWidth: 'var(--page-max)', margin: '0 auto', position: 'relative',
+        padding: '0 var(--gutter)',
       }}>
-        {/* Wrapper exists to bound the column rules: they trace the four columns
-            and the legal text, and stop at the lockup band rather than running
-            behind the wordmark. */}
-        <div style={{ position: 'relative' }}>
-        {/* Column rules. Decorative, and dropped on phones where the columns no
-            longer sit on quarters for them to trace. */}
-        <div className="r-foot-rules" aria-hidden="true"/>
-
         <div className="r-foot-cols">
           {/* Statement */}
           <div>
@@ -106,14 +98,13 @@ export function Footer({ positions, period, pricesAsOf }) {
           <p style={legal}>
             Holdings sourced from NBIM&rsquo;s published GPFG equity disclosure, joined
             with market data from Yahoo Finance. USD values are estimated at acquisition
-            FX. The dataset is a point-in-time snapshot — not a live feed.
+            FX. The dataset is a point-in-time snapshot, not a live feed.
           </p>
           <p style={legal}>
             Sovereign Insights is an independent research tool published by Basecase. It
             is not affiliated with or endorsed by NBIM, Norges Bank, or the Norwegian
             government. Nothing here is investment advice.
           </p>
-        </div>
         </div>
 
         {/* Lockup band — the oversized mark that closes the page. */}
@@ -132,10 +123,6 @@ export function Footer({ positions, period, pricesAsOf }) {
           </div>
 
           <div className="mono r-foot-meta">
-            <span className="r-hide-sm">
-              Press <kbd style={kbd}>/</kbd> to search · <kbd style={kbd}>Esc</kbd> to close
-              {' · '}
-            </span>
             <AdminLogin/>
             <span style={{ display: 'block', marginTop: 8, color: 'var(--foot-soft)' }}>
               © {new Date().getFullYear()} Basecase
@@ -148,16 +135,6 @@ export function Footer({ positions, period, pricesAsOf }) {
 }
 
 var legal = { margin: 0, maxWidth: 900 };
-
-// Moved here with the keyboard hints it styles, which were the only thing using it.
-var kbd = {
-  fontFamily: 'var(--font-mono)',
-  padding: '1px 5px',
-  border: '1px solid var(--foot-line)',
-  borderRadius: 3,
-  fontSize: 10,
-  color: 'var(--foot-sub)',
-};
 
 function FooterCol({ title, children }) {
   return (

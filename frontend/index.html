@@ -168,6 +168,84 @@
          dark = "Onyx field" (neutral greys — only --accent and the sector hues
          carry colour on the dark theme).
          ============================================================ */
+
+      /* ------------------------------------------------------------
+         GEOMETRY — the theme-independent half of the system.
+         The palette is per-theme and stays that way; radius, rhythm and
+         control sizing are the same object in both themes, so they live on
+         bare :root. This is the layer the components were missing: every
+         value below was previously written as a number inside a style={{}}
+         object, which is why the same chip existed at 3px, 4px and 8px and
+         the same button at 7px, 12px and 999px.
+         ------------------------------------------------------------ */
+      :root {
+        /* Radius. Six steps, chosen from what the homepage already draws:
+             xs  micro tags, key hints, 16px checkboxes
+             sm  chips, icon tiles, tooltips
+             md  controls — buttons, inputs, icon buttons
+             lg  floating surfaces — nav shell, modals, popovers, sheets, and
+                 panels nested INSIDE a card (they must read as subordinate to it)
+             xl  cards — the page's own surfaces
+             pill fully round
+           lg and xl are deliberately one step apart rather than merged: 18px is
+           the card, 16px is anything that floats above one or sits inside one.
+           Chart internals (bar rails, legend swatches) stay at 2-3px inline —
+           they are graphics, not surfaces, and do not belong on this scale. */
+        --r-xs: 4px;
+        --r-sm: 8px;
+        --r-md: 12px;
+        --r-lg: 16px;
+        --r-xl: 18px;
+        --r-pill: 999px;
+
+        /* Page gutter and content width. ONE value, used by the nav, the main
+           column, the admin bar and the footer. They used to hold three
+           different clamps, so the footer's left edge sat 21px inboard of every
+           other section at 1440px — the one misalignment visible on every page. */
+        --page-max: 1680px;
+        --gutter: clamp(14px, 2vw, 22px);
+
+        /* Rhythm. The bento, the split and the section stack are all 16px; the
+           dense groups inside a card step down to 10px. */
+        --gap: 16px;
+        --gap-tight: 10px;
+
+        /* Card padding, by surface size. */
+        --pad-card: 24px;
+        --pad-card-lg: clamp(28px, 3vw, 40px);
+
+        /* Controls. One height for anything the user presses, so a pill, an
+           icon button and a select line up when they share a row. */
+        --control-h: 34px;
+        --control-h-lg: 40px;
+
+        /* Modal scrims. There were three — .45, .5 and .55, two of them with
+           different blur radii — for the drawer, the phone sheet and the compare
+           modal, which are the same gesture. */
+        --scrim: rgba(0, 0, 0, .5);
+        --scrim-blur: blur(3px);
+
+        /* Accent tints. Eleven ad-hoc color-mix percentages had accumulated
+           (4/7/10/12/14/18/22/30/45/55); these are the four the UI actually
+           needs. srgb throughout — mixing the lime in a polar space drops its
+           hue toward the neutral it is mixed with, which is the bug three
+           separate comments in this codebase already warn about.
+
+           These four are the accent behaving AS an accent — a marked row, a live
+           tab, a focus ring — so they carry the hue on both themes.
+           --accent-wash is different and lives in the theme blocks below.
+
+           -tint and -tint-soft are two strengths because the ledger has two
+           marked states: compared (strong) and pinned (weak). Pinned cannot
+           borrow --accent-wash for this — on the dark theme that token resolves
+           to --row-hover, which would make a pinned row indistinguishable from
+           a hovered one. */
+        --accent-tint: color-mix(in srgb, var(--accent) 12%, transparent);
+        --accent-tint-soft: color-mix(in srgb, var(--accent) 5%, transparent);
+        --accent-edge: color-mix(in srgb, var(--accent) 40%, transparent);
+        --accent-ring: color-mix(in srgb, var(--accent) 55%, transparent);
+      }
+
       :root[data-theme="light"] {
         /* — canonical Lime tokens — WHISPER OLIVE
            The field keeps the lime's hue (72deg) but at a fraction of its former
@@ -202,6 +280,11 @@
         --soft: #5E624C;
 
         --accent: #D8F34A;
+        /* Ground for a highlighted panel — the drawer's fund-holding card, a
+           pinned row, an accent Tag. On the light theme it is what it says: the
+           lime laid thinly over the card. See the dark theme for why that value
+           cannot simply be mirrored. */
+        --accent-wash: color-mix(in srgb, var(--accent) 8%, var(--surface));
         /* Was #6C8118 — 4.00:1 on --bg, 4.38 on --surface, 3.93 on --row-hover, all
            under AA, and it carries 9-13px text (the table's HIGH labels, sorted column
            headers, compare.jsx ownership figures). Lightness-only darkening, the same
@@ -210,9 +293,21 @@
            holdings pages carry their own copy of this value — keep them in step. */
         --accent-text: #617416;
 
-        --feature: #14150F;
-        --feature-ink: #F4F2EC;
-        --feature-sub: #8F9180;
+        /* The three ink surfaces on this theme — --feature here, --nav-band and
+           --foot-surface below — used to be #14150F / #16170F: a 6-8 point spread
+           across the channels, i.e. olive rather than grey. They were left that way
+           on the argument that at 7% lightness the tint is not perceivable. It is:
+           a dark olive ground under olive secondary text compounds, and the whole
+           band reads green. Each is now the EXACT neutral equivalent of the value
+           it replaces — identical relative luminance, zero hue — so the surfaces
+           carry the same weight on a light page as before and only the cast is gone.
+           The dark theme's no-hue rule now holds on both themes. */
+        --feature: #141414;
+        --feature-ink: #F2F2F2;
+        /* Was #8F9180 — a 17-point spread, the most olive token in the palette, and
+           it labels the largest figure on the homepage. Neutral, and lifted from
+           5.7:1 to 7:1 on the new ground. */
+        --feature-sub: #9F9F9F;
         --feature-num: #D8F34A;
 
         /* Row hover happens inside a white card, so it steps DOWN from --surface
@@ -241,19 +336,25 @@
            pair — changing one without the other is what breaks the button. */
         --nav-invert: #16170F;
         --nav-invert-ink: #D8F34A;
-        --nav-band: #16170F;
-        --nav-band-ink: #8F9180;
+        --nav-band: #161616;
+        --nav-band-ink: #9F9F9F;
         --tick-up: #9BE04A;
         --tick-down: #FF7A6B;
 
         /* Footer band. Ink in BOTH themes, so like the nav band it carries its
            own colours instead of the page tokens — on the olive field it is the
            third ink surface, after the ticker band and the holdings card. */
-        --foot-surface: #14150F;
-        --foot-ink: #F4F2EC;
-        --foot-sub: #A9AB9C;
-        --foot-soft: #8A8C7D;
-        --foot-line: rgba(244, 242, 236, .11);
+        --foot-surface: #141414;
+        --foot-ink: #F2F2F2;
+        /* --foot-sub and --foot-soft were #A9AB9C and #8A8C7D: 15-point spreads,
+           which is a yellow-green grey at these lightnesses and is what made the
+           band read tinted. Both are neutral now, and both were raised, because
+           --foot-soft carries the 12px provenance paragraphs and the 10px column
+           headings — the smallest type in the footer sat at the LOWEST contrast in
+           it (5.36:1), which is backwards. The three now step 16.5 / 9.5 / 7.0. */
+        --foot-sub: #BABABA;
+        --foot-soft: #9F9F9F;
+        --foot-line: rgba(242, 242, 242, .11);
         --foot-accent: #D8F34A;
 
         /* Shimmer across the total-holdings figure: lime → white → lime. */
@@ -343,6 +444,15 @@
 
         --accent: #D8F34A;
         --accent-text: #D8F34A;
+        /* NOT the light theme's lime mix. 8% of the lime over #1C1C1E lands on
+           #2B2D22 — a 12-point spread across the channels, which is a visibly
+           olive card sitting in a page of true greys. That is the "Ink field"
+           mistake this theme was rebuilt to undo, and a whole panel ground is
+           the worst place to make it: the no-hue rule exists so the accent means
+           something when it does appear. The dark theme raises a panel the way
+           it raises everything else — one step up the surface scale — and lets
+           the accent border and the lime label carry the emphasis. */
+        --accent-wash: var(--row-hover);
 
         /* Total-holdings card flips to a solid lime fill with ink numerals. */
         --feature: #D8F34A;
@@ -379,8 +489,13 @@
            page's last card, not a fourth elevation. */
         --foot-surface: #1C1C1E;
         --foot-ink: #FFFFFF;
-        --foot-sub: #98989D;
-        --foot-soft: #8E8E93;
+        /* Raised to the same 9.5 / 7.0 steps as the light theme. These were the
+           app-wide --sub / --soft greys at 6.6 and 5.2 on this ground, which is
+           fine for a label beside its value but thin for two paragraphs of 12px
+           prose. The footer has its own tokens precisely so it can be tuned
+           independently; --sub and --soft elsewhere are untouched. */
+        --foot-sub: #C1C1C1;
+        --foot-soft: #A6A6A6;
         --foot-line: rgba(255, 255, 255, .11);
         --foot-accent: #D8F34A;
 
@@ -448,7 +563,7 @@
       .display-italic { font-style: italic; }
       .eyebrow { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--soft); font-weight: 500; }
       .mono { font-family: var(--font-mono); }
-      .card { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; }
+      .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-xl); }
 
       @keyframes pulse {
         0%, 100% { opacity: 1; }
@@ -524,17 +639,6 @@
          highlight read as a selection outline drawn around the whole box. */
       .lift.keep-edge:hover, .lift.keep-edge:focus-visible { border-color: var(--line); }
 
-      /* 7 · Live dot. */
-      @keyframes pulseDot {
-        0%, 100% { opacity: 1; transform: scale(1); }
-        50%      { opacity: .35; transform: scale(.7); }
-      }
-      .live-dot {
-        width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
-        background: var(--accent);
-        animation: pulseDot 1.8s infinite;
-      }
-
       @keyframes pipeShimmer {
         0%   { transform: translateX(-100%); }
         100% { transform: translateX(400%);  }
@@ -551,8 +655,8 @@
       /* Skip link — first tab stop, becomes visible on focus. */
       .skip-link {
         position: absolute; left: 8px; top: -60px; z-index: 200;
-        padding: 10px 16px; border-radius: 8px;
-        background: var(--accent); color: #1B1A17;
+        padding: 10px 16px; border-radius: var(--r-md);
+        background: var(--accent); color: var(--treemap-cell-fg);
         font-family: var(--font-mono); font-size: 13px; text-decoration: none;
         transition: top .15s ease;
       }
@@ -596,21 +700,21 @@
       /* Hero bento — summary.jsx. Hero row is hero card + total holdings
          (spec §05 "1fr 380px", held as 2:1 so it scales with the page),
          then a 3-up stat row underneath. */
-      .r-bento { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: minmax(118px, auto); gap: 16px; }
+      .r-bento { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: minmax(118px, auto); gap: var(--gap); }
       .r-bento-lead { grid-column: span 2; }
       .r-bento-feature { grid-column: span 1; }
 
       /* Two-pane split — top holdings beside the sector treemap */
-      .r-split { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 16px; }
+      .r-split { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: var(--gap); }
 
       /* Metric groups — summary.jsx + detail.jsx */
-      .r-metrics3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+      .r-metrics3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gap); }
       .r-kv2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; }
       /* Research links — detail.jsx. Equal-width buttons instead of left-aligned
          flex-wrap, so three destinations read as one row of equal weight. */
       .r-research3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
       /* Added / removed columns — changes.jsx */
-      .r-changes2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+      .r-changes2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gap); }
 
       /* Filter strip, top bar, detail price block */
       /* Ledger header: title on the left, its three triggers on the right. They are
@@ -634,7 +738,7 @@
         width: 300px; max-height: min(70vh, 560px);
         display: flex; flex-direction: column;
         background: var(--surface); border: 1px solid var(--line);
-        border-radius: 16px; padding: 6px 16px 16px;
+        border-radius: var(--r-lg); padding: 6px 16px 16px;
         box-shadow: var(--shadow-menu);
         animation: rise .12s ease-out;
       }
@@ -655,23 +759,30 @@
         letter-spacing: .04em; text-transform: uppercase;
       }
       .r-sheet-sec-body { padding: 0 0 10px; }
-      .r-sheet-reset {
-        width: 100%; margin-top: 14px; padding: 11px;
-        background: none; border: 1px dashed var(--line); border-radius: 10px;
-        color: var(--soft); cursor: pointer;
+      /* The sheet's two actions, matching btn() in format.jsx: same height, radius,
+         font and tracking, differing only in weight — ghost for reset, primary for
+         done. They were 11px/.06em on a DASHED border beside 12px/600/.04em on a
+         solid fill, and the dashed edge was the only one in the product. */
+      .r-sheet-reset, .r-sheet-done {
+        width: 100%; margin-top: 14px;
+        height: var(--control-h-lg); padding: 0 14px;
+        border-radius: var(--r-md); cursor: pointer;
         font-family: var(--font-mono); font-size: 11px;
         letter-spacing: .06em; text-transform: uppercase;
+        transition: background .14s ease, border-color .14s ease, color .14s ease;
       }
+      .r-sheet-reset {
+        background: transparent; border: 1px solid var(--line);
+        color: var(--ink); font-weight: 500;
+      }
+      .r-sheet-reset:hover { background: var(--row-hover); border-color: var(--ink); }
       .r-sheet-done {
-        margin-top: 14px; padding: 13px;
         background: var(--accent); color: var(--treemap-cell-fg);
-        border: none; border-radius: 12px; cursor: pointer;
-        font-family: var(--font-mono); font-size: 12px; font-weight: 600;
-        letter-spacing: .04em; text-transform: uppercase;
+        border: 1px solid var(--accent); font-weight: 600;
       }
       @keyframes sheet-up { from { transform: translateY(100%); } to { transform: none; } }
       @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
-      .r-topbar { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 16px; }
+      .r-topbar { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: var(--gap); }
       /* Nav actions cluster — the menu button at every width, and on phones a search
          toggle beside it. The toggle is hidden here because the search field itself
          is in the bar until the phone layout; !important because NavIconBtn sets
@@ -694,18 +805,20 @@
       .r-cmp-row { display: grid; grid-template-columns: 180px repeat(var(--cmp-n), minmax(180px, 1fr)); }
       .r-cmp-label { position: sticky; left: 0; z-index: 2; background: var(--bg); }
 
-      /* Footer — statement, then three link columns, on even quarters so the
-         rules behind them have something to trace. */
+      /* Footer — statement, then three link columns.
+         There were decorative vertical hairlines down the column edges here, and
+         they are gone. They were the only free-floating vertical rules in the
+         product: everywhere else grouping is carried by a card's border, a
+         horizontal divider, or a mono eyebrow label, so a magazine-style column
+         grid in this one place read as borrowed from another site. The eyebrow
+         headings already say where each column starts, which is exactly how every
+         other block on the page is introduced. */
       .r-foot-cols {
-        display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 40px clamp(24px, 3vw, 48px);
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        column-gap: clamp(24px, 3vw, 48px);
+        row-gap: 40px;
         padding: clamp(56px, 7vw, 104px) 0 clamp(48px, 6vw, 88px);
-      }
-      /* Hairlines on the quarters. One element with a repeating gradient rather
-         than four divs — they are decoration, not structure. */
-      .r-foot-rules {
-        position: absolute; inset: 0; pointer-events: none;
-        background-image: repeating-linear-gradient(to right, var(--foot-line) 0 1px, transparent 1px 25%);
       }
       .r-foot-bar {
         display: flex; justify-content: space-between; align-items: flex-end; gap: 28px;
@@ -739,11 +852,9 @@
            its content and supplies the vertical padding itself. */
         .nav-shell { height: auto !important; padding: 12px 0; }
         /* Three link columns still fit; the statement takes its own row rather
-           than being squeezed into a quarter. The rules go with the quarters
-           they were tracing. */
+           than being squeezed into a quarter. */
         .r-foot-cols { grid-template-columns: repeat(3, minmax(0, 1fr)); }
         .r-foot-cols > *:first-child { grid-column: 1 / -1; }
-        .r-foot-rules { display: none; }
       }
 
       @media (max-width: 640px) {
@@ -752,7 +863,7 @@
            Only the hero headline keeps the full width — it is a paragraph, not a
            figure. grid-auto-rows drops from 118px because the cards no longer need
            to hold a 38px numeral. */
-        .r-bento { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; grid-auto-rows: minmax(86px, auto); }
+        .r-bento { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gap-tight); grid-auto-rows: minmax(86px, auto); }
         .r-bento-lead { grid-column: span 2; }
         .r-bento-feature { grid-column: span 1; padding: 16px !important; }
         /* Type scaled to a ~165px-wide card. These are inline styles, so overriding
@@ -761,12 +872,12 @@
         .r-bento-feature .display { font-size: 26px !important; }
         .r-bento > .card { padding: 16px 14px !important; }
         .r-bento > .card .display { font-size: 22px !important; white-space: normal !important; }
-        .r-metrics3 { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+        .r-metrics3 { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gap-tight); }
         /* Financials stays two-up rather than collapsing: six one-line figures in a
            single column was ~350px of scrolling, and the widest label
            ("P/E RATIO (TRAILING)", ~126px) still clears a half-width cell. */
         .r-kv2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-        .r-changes2 { grid-template-columns: minmax(0, 1fr); gap: 22px; }
+        .r-changes2 { grid-template-columns: minmax(0, 1fr); gap: var(--gap); }
 
         /* Ownership distribution — 370px of phone for one histogram. The header was
            91px of it: "Ownership distribution" and "1,422 cos" each wrapped to two
@@ -794,11 +905,11 @@
         /* Same panel, re-seated as a bottom sheet: fixed to the bottom edge rather
            than hung off the button, full width, thumb-reachable, with the grab
            handle that implies it. The catcher becomes a dimming scrim. */
-        .r-sheet-back { background: rgba(0,0,0,.5); z-index: 200; animation: fade .16s ease-out; }
+        .r-sheet-back { background: var(--scrim); backdrop-filter: var(--scrim-blur); z-index: 200; animation: fade .16s ease-out; }
         .r-sheet {
           position: fixed; inset: auto 0 0 0; z-index: 201;
           width: 100%; max-height: 85vh; margin-top: 0;
-          border: none; border-radius: 20px 20px 0 0;
+          border: none; border-radius: var(--r-xl) var(--r-xl) 0 0;
           padding: 10px 18px calc(18px + env(safe-area-inset-bottom));
           animation: sheet-up .2s cubic-bezier(.2,.8,.2,1);
         }
@@ -832,14 +943,14 @@
         .r-topbar.search-open .r-search { display: block; }
         .r-nav-menu { left: 0; width: auto; }
         /* The eyebrow is the brand block's second line — dropping it is what makes
-           the bar single-line. Its only content here is "Norway GPFG"; the date and
-           "Equity Holdings" are already hidden at this width by .r-hide-sm. */
+           the bar single-line. Its only content is the period label, which the
+           page's own header repeats. */
         .r-brand .eyebrow { display: none !important; }
         .nav-shell { padding: 10px 0 !important; }
 
         /* Three link columns in 340px leaves "Browse by sector" wrapping to
            three lines; two columns keep every label on one. */
-        .r-foot-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 34px 24px; }
+        .r-foot-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 34px; column-gap: 24px; }
         /* The lockup owns the width at this size, so the meta stacks under it
            and reads from the same left edge as everything else. */
         .r-foot-bar { flex-direction: column; align-items: flex-start; gap: 24px; }

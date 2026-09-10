@@ -43,10 +43,10 @@ export function TopBarList({ items, max, valueFmt, height = 280, onClick, accent
                 <span style={{ overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', color: 'var(--ink)' }}>{it.label}</span>
                 <span className="mono" style={{ fontSize: 11, color:'var(--soft)' }}>{it.sub}</span>
               </div>
-              <div style={{ position: 'relative', height: 4, background:'var(--track)', borderRadius:3 }}>
+              <div style={{ position: 'relative', height: 4, background:'var(--track)', borderRadius:'var(--r-pill)' }}>
                 <div style={{
                   position:'absolute', left:0, top:0, bottom:0, width: pct + '%',
-                  background: accent, borderRadius: 3
+                  background: accent, borderRadius: 'var(--r-pill)'
                 }}/>
               </div>
             </div>
@@ -236,7 +236,7 @@ export function Treemap({ items, height = 300, gap = 5, radius = 4, minShare = 0
               outlineOffset: -1.5,
             }}>
             {showName && (
-              <div style={{ fontSize: 11.5, fontWeight: 600, lineHeight: 1.15, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{it.label}</div>
+              <div style={{ fontSize: 12, fontWeight: 600, lineHeight: 1.15, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{it.label}</div>
             )}
             {showPct && (
               <div className="mono" style={{ fontSize: 10.5, opacity: 0.82, marginTop: 1 }}>{it.pct.toFixed(1)}%</div>
@@ -256,11 +256,11 @@ export function Treemap({ items, height = 300, gap = 5, radius = 4, minShare = 0
           transform: flip ? 'translateX(-100%)' : 'none',
           pointerEvents: 'none', whiteSpace: 'nowrap',
           background: 'var(--surface)', border: '1px solid var(--line)',
-          borderRadius: 8, padding: '7px 10px', boxShadow: 'var(--shadow-pop)',
+          borderRadius: 'var(--r-sm)', padding: '7px 10px', boxShadow: 'var(--shadow-pop)',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
             <span style={{ width: 9, height: 9, borderRadius: 2, background: hovered.color, flexShrink: 0 }}/>
-            <span style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--ink)' }}>{hovered.label}</span>
+            <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--ink)' }}>{hovered.label}</span>
           </div>
           <div className="mono" style={{ fontSize: 11, color: 'var(--soft)', marginTop: 3 }}>{hovered.pct.toFixed(2)}% of value</div>
         </div>
@@ -340,7 +340,7 @@ export function PriceChart({ points, dates, height = 84, color = 'auto', valueFm
             transform: 'translateY(-100%)',
             pointerEvents: 'none',
             background: 'var(--surface)', border: '1px solid var(--line)',
-            borderRadius: 6, padding: '4px 8px', whiteSpace: 'nowrap',
+            borderRadius: 'var(--r-sm)', padding: '4px 8px', whiteSpace: 'nowrap',
             boxShadow: 'var(--shadow-pop)',
           }}>
             <div style={{ fontSize: 10, color: 'var(--soft)' }}>{dates ? fmtDay(dates[hover]) : ''}</div>

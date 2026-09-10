@@ -1,5 +1,5 @@
 import React from 'react';
-import { Icon } from './format.jsx';
+import { Icon, Tag, btn } from './format.jsx';
 import { formatPeriod, formatSnapshot, periodLabel } from './snapshot.js';
 
 // Reporting-period selector, mirroring NBIM's own control: annual years by default,
@@ -37,18 +37,11 @@ export function PeriodPicker({ manifest, period, onChange }) {
             <button
               key={p.period}
               onClick={() => onChange(p.period)}
-              style={{
-                padding: '7px 12px',
-                background: on ? 'var(--accent)' : 'transparent',
-                border: `1px solid ${on ? 'var(--accent)' : 'var(--line)'}`,
-                borderRadius: 999, cursor: 'pointer',
-                // --treemap-cell-fg, not --accent-text: in dark mode the latter
-                // IS --accent (#D8F34A), so the selected pill rendered lime text
-                // on a lime background and the active year vanished.
-                color: on ? 'var(--treemap-cell-fg)' : 'var(--ink)',
-                fontFamily: 'var(--font-mono)', fontSize: 12,
-                fontWeight: on ? 600 : 400,
-              }}
+              // btn() resolves the selected fill to --treemap-cell-fg on --accent.
+              // It has to: in dark mode --accent-text IS --accent (#D8F34A), so a
+              // selected pill drawn that way put lime text on a lime ground and the
+              // active year vanished.
+              style={btn({ variant: on ? 'primary' : 'ghost', shape: 'pill' })}
             >
               {p.label}
             </button>
@@ -99,8 +92,8 @@ export function PeriodBar({ manifest, period, loading, marketAsOf }) {
         <div style={{
           display: 'flex', gap: 10, alignItems: 'flex-start',
           padding: '10px 14px',
-          background: 'color-mix(in oklch, var(--accent) 22%, var(--surface))',
-          border: '1px solid var(--line)', borderRadius: 18,
+          background: 'var(--accent-wash)',
+          border: '1px solid var(--accent-edge)', borderRadius: 'var(--r-lg)',
           fontSize: 12, lineHeight: 1.5, color: 'var(--ink)',
         }}>
           <Icon name="clock" size={15} color="var(--ink)" />
@@ -124,14 +117,8 @@ export function PeriodBar({ manifest, period, loading, marketAsOf }) {
 export function OriginTag({ origin, period }) {
   const nbim = origin === 'nbim';
   return (
-    <span className="mono" style={{
-      fontSize: 9.5, padding: '2px 6px', borderRadius: 4,
-      whiteSpace: 'nowrap',
-      background: nbim ? 'color-mix(in srgb, var(--accent) 30%, transparent)' : 'transparent',
-      border: `1px solid ${nbim ? 'transparent' : 'var(--line)'}`,
-      color: nbim ? 'var(--ink)' : 'var(--soft)',
-    }}>
+    <Tag tone={nbim ? 'accent' : 'neutral'}>
       {nbim ? `NBIM ${periodLabel(period)}` : 'Current'}
-    </span>
+    </Tag>
   );
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { fmt, Icon, BrandMark } from './format.jsx';
+import { fmt, Icon, BrandMark, iconBtnStyle } from './format.jsx';
 import { PeriodPicker } from './period.jsx';
 import { periodLabel } from './snapshot.js';
 import { sectorOf } from './sectors.js';
@@ -121,18 +121,29 @@ export function TopBar({
   };
 
   return (
+    // --page-max and the gutter sit on the HEADER, not on navRef, and both matter.
+    // On the header they give the nav the same box model as <main> and the footer,
+    // which put max-width and padding on one element — with the cap on navRef
+    // instead, the nav card ran the full 1680px while the cards below it were
+    // inset by the gutter, so above ~1724px the nav was 22px wider on each side
+    // than everything it sat on top of.
+    // Leaving navRef unpadded is what keeps the dropdowns right: it is the
+    // containing block for the search results, the nav menu and the columns
+    // popover, and an absolutely positioned `right: 0` resolves against its
+    // padding edge — pad it and every panel hangs a gutter's width off the card.
     <header style={{
       position: 'sticky', top: 0, zIndex: 50,
-      padding: '16px clamp(14px, 2vw, 22px) 0',
+      maxWidth: 'var(--page-max)', margin: '0 auto',
+      padding: '16px var(--gutter) 0',
     }}>
-      <div ref={navRef} style={{ maxWidth: 1680, margin: '0 auto', position: 'relative' }}>
+      <div ref={navRef} style={{ position: 'relative' }}>
         {/* Nav shell — top corners only; the band below carries the bottom. */}
         <div className="nav-shell" style={{
           '--nav-h': condensed ? '56px' : '68px',
           background: 'var(--nav-surface)',
           border: '1px solid var(--nav-line)',
           borderBottom: condensed ? '1px solid var(--nav-line)' : 'none',
-          borderRadius: condensed ? 16 : '16px 16px 0 0',
+          borderRadius: condensed ? 'var(--r-lg)' : 'var(--r-lg) var(--r-lg) 0 0',
         }}>
           <div className={`r-topbar${searchOpen ? ' search-open' : ''}`} style={{
             height: '100%',
@@ -147,12 +158,9 @@ export function TopBar({
                   Sovereign <span style={{ color: 'var(--nav-accent-text)' }}>Insights</span>
                 </div>
                 <div className="eyebrow" style={{
-                  marginTop: 4, fontSize: 9.5, whiteSpace: 'nowrap', color: 'var(--nav-soft)',
-                  display: 'flex', alignItems: 'center', gap: 6,
+                  marginTop: 4, fontSize: 10, whiteSpace: 'nowrap', color: 'var(--nav-soft)',
                 }}>
-                  {/* Animation 7 — live dot */}
-                  <span className="live-dot"/>
-                  Norway GPFG<span className="r-hide-sm"> · Equity Holdings · {lastFetched}</span>
+                  {lastFetched}
                 </div>
               </div>
               <span className="r-hide-sm" style={{
@@ -165,11 +173,11 @@ export function TopBar({
             <div ref={wrapRef} className="r-search" style={{ position: 'relative', width: '100%', justifySelf:'stretch' }}>
               <div style={{
                 display:'flex', alignItems:'center', gap: 10,
-                padding: '8px 14px',
+                padding: '0 14px',
                 background: 'var(--nav-field)',
                 border: `1px solid ${focused ? 'var(--nav-ink)' : 'var(--nav-line)'}`,
-                borderRadius: 10,
-                boxShadow: focused ? '0 0 0 4px color-mix(in srgb, var(--accent) 55%, transparent)' : 'none',
+                borderRadius: 'var(--r-md)', height: 'var(--control-h-lg)',
+                boxShadow: focused ? '0 0 0 3px var(--accent-ring)' : 'none',
                 transition: 'border-color .15s ease, box-shadow .15s ease',
               }}>
                 <Icon name="search" size={15} color="var(--nav-soft)"/>
@@ -186,17 +194,13 @@ export function TopBar({
                     color: 'var(--nav-ink)', fontFamily: 'var(--font-display)', fontSize: 13,
                   }}
                 />
-                <span className="mono" style={{
-                  fontSize: 10.5, color: 'var(--nav-soft)',
-                  padding: '2px 6px', border: '1px solid var(--nav-line)', borderRadius: 4,
-                }}>/</span>
               </div>
 
               {focused && query && matches.length > 0 && (
                 <div style={{
                   position: 'absolute', top: 'calc(100% + 8px)', left: 0, right: 0,
                   background: 'var(--surface)', border: '1px solid var(--line)',
-                  borderRadius: 16, overflow: 'hidden',
+                  borderRadius: 'var(--r-lg)', overflow: 'hidden',
                   boxShadow: 'var(--shadow-menu)',
                   animation: 'rise .12s ease-out'
                 }}>
@@ -225,7 +229,7 @@ export function TopBar({
                 <div style={{
                   position: 'absolute', top: 'calc(100% + 8px)', left: 0, right: 0,
                   background: 'var(--surface)', border: '1px solid var(--line)',
-                  borderRadius: 16, padding: '16px',
+                  borderRadius: 'var(--r-lg)', padding: '16px',
                   color: 'var(--soft)', fontSize: 12,
                 }}>
                   No companies matched &ldquo;{query}&rdquo;. Try a ticker, country, or partial name.
@@ -268,7 +272,7 @@ export function TopBar({
             position: 'absolute', top: '100%', marginTop: 8,
             zIndex: 60,
             background: 'var(--surface)', border: '1px solid var(--line)',
-            borderRadius: 16, overflow: 'hidden auto',
+            borderRadius: 'var(--r-lg)', overflow: 'hidden auto',
             // A menu taller than the viewport cannot be scrolled to; the picker's
             // year pills are what can push it there on a short screen.
             maxHeight: 'min(70vh, 560px)',
@@ -320,7 +324,7 @@ export function TopBar({
           height: condensed ? 0 : 27,
           opacity: condensed ? 0 : 1,
           background: 'var(--nav-band)',
-          borderRadius: '0 0 16px 16px',
+          borderRadius: '0 0 var(--r-lg) var(--r-lg)',
           overflow: 'hidden',
         }}>
           <div className="tick-track">
@@ -365,17 +369,16 @@ function NavIconBtn({ children, onClick, label, expanded, className }) {
       aria-expanded={expanded}
       title={label}
       style={{
+        ...iconBtnStyle({ large: true }),
         position: 'relative',
-        display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-        width: 40, height: 40, flexShrink: 0,
         // The expanded fill is --nav-invert, not --nav-ink: --nav-ink is a TEXT
         // colour and follows the nav card, so on the dark theme it is white —
-        // filling with it would put lime on white at 1.2:1.
+        // filling with it would put lime on white at 1.2:1. And the nav's own
+        // --nav-* line/ink tokens, not iconBtnStyle's --line/--sub: the shell is
+        // a self-contained surface (STYLE_GUIDE §2) and does not inherit them.
         background: expanded ? 'var(--nav-invert)' : 'transparent',
         color: expanded ? 'var(--nav-invert-ink)' : 'var(--nav-ink)',
         border: `1px solid ${expanded ? 'var(--nav-invert)' : 'var(--nav-line)'}`,
-        borderRadius: 10, cursor: 'pointer',
-        transition: 'background .14s ease, color .14s ease, border-color .14s ease',
       }}
     >
       {children}
