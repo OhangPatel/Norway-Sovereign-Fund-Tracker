@@ -6,7 +6,7 @@ import { OptionList, SheetSection, useIsPhone } from './filters.jsx';
 import { Card, SECTOR_COLORS } from './summary.jsx';
 import { formatPeriod, periodLabel } from './snapshot.js';
 import { sectorOf } from './sectors.js';
-import { navigate, changesHash, DASHBOARD_HASH } from './router.js';
+import { navigate, changesHash } from './router.js';
 
 // What NBIM added and removed in one reporting period, against the one before it.
 //
@@ -528,17 +528,7 @@ function PageHeader({ period, previous, pills }) {
   return (
     <section className="r-chg-head enter" style={{ '--i': 0 }}>
       <div style={{ minWidth: 0 }}>
-        <button type="button" onClick={() => navigate(DASHBOARD_HASH)} className="mono"
-          style={{
-            display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 0',
-            background: 'none', border: 'none', cursor: 'pointer',
-            fontSize: 11, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--sub)',
-          }}
-          onMouseEnter={e => { e.currentTarget.style.color = 'var(--ink)'; }}
-          onMouseLeave={e => { e.currentTarget.style.color = 'var(--sub)'; }}>
-          ← Dashboard
-        </button>
-        <div className="eyebrow" style={{ marginTop: 14 }}>
+        <div className="eyebrow">
           Portfolio changes{previous && <> · {formatPeriod(previous)} → {formatPeriod(period)}</>}
         </div>
         <h1 className="display" style={{

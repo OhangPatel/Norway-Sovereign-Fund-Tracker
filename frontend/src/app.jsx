@@ -47,6 +47,10 @@ var LOAD_ID = Date.now();
 // via null instead of a collision.
 const withIds = (rows) => rows.map((row, i) => ({ ...row, id: `${row.ticker || 'x'}#${i}` }));
 
+// Cache key for one period's rows. dataKey is part of it so that the bump a finished
+// pipeline run makes retires every row cached under the files it has just rewritten.
+const cacheKey = (dataKey, p) => `${dataKey}:${p ?? '__latest__'}`;
+
 // A single row inside the Data Tools dropdown: icon tile · title + caption · chip.
 export function ToolRow(props) {
   var disabled = props.disabled;
@@ -437,10 +441,12 @@ export function App() {
     };
   });
 
-  // period -> promise of rows. Switching back to a period already seen costs nothing.
+  // cacheKey -> promise of rows. Switching back to a period already seen costs nothing,
+  // and nothing survives the dataKey bump that follows a pipeline run.
   const cacheRef = React.useRef(new Map());
-  // metrics.json is shared by every period, so it is fetched at most once per session.
-  const metricsRef = React.useRef(null);
+  // metrics.json is shared by every period, so it is fetched at most once per dataKey —
+  // the pipeline's metrics_merge job rewrites it, so a run must not replay the old one.
+  const metricsRef = React.useRef({ key: null, data: null });
 
   // Which reporting period is on screen. null until periods.json loads, and null
   // forever on a deploy that predates it — in which case the app behaves exactly as
@@ -465,7 +471,7 @@ export function App() {
   // at the same moment share one request; a failed request is dropped so the next ask
   // retries instead of replaying the error.
   const loadRows = React.useCallback((p) => {
-    const key = p ?? '__latest__';
+    const key = cacheKey(dataKey, p);
     const hit = cacheRef.current.get(key);
     if (hit) return hit;
     const bust = dataKey === 0 ? LOAD_ID : dataKey;
@@ -483,12 +489,12 @@ export function App() {
       // place instead of copied into all six period files.
       const holdings = fetch(`data-${p}.json?v=${bust}`)
         .then(r => { if (!r.ok) throw new Error(`data-${p}.json returned ${r.status}`); return r.json(); });
-      const metrics = metricsRef.current
-        ? Promise.resolve(metricsRef.current)
+      const metrics = metricsRef.current.key === dataKey
+        ? Promise.resolve(metricsRef.current.data)
         : fetch('metrics.json?v=' + bust)
             .then(r => { if (!r.ok) throw new Error(`metrics.json returned ${r.status}`); return r.json(); });
       req = Promise.all([holdings, metrics]).then(([hold, mets]) => {
-        metricsRef.current = mets;
+        metricsRef.current = { key: dataKey, data: mets };
         assertSplit(hold[0]);
         return withIds(hold.map(h => {
           const m = mets[h.ticker] || {};
@@ -513,12 +519,12 @@ export function App() {
     let cancelled = false;
     // Only a past period that is not yet cached shows the loading line: the latest one
     // is on screen from first paint, and a cached period resolves before it could show.
-    if (!latest && !cacheRef.current.has(period)) setSwitching(true);
+    if (!latest && !cacheRef.current.has(cacheKey(dataKey, period))) setSwitching(true);
     loadRows(period)
       .then(rows => { if (!cancelled) { setData(rows); setSwitching(false); } })
       .catch(e => { if (!cancelled) setErr(e.message); });
     return () => { cancelled = true; };
-  }, [period, loadRows, manifest]);
+  }, [period, loadRows, manifest, dataKey]);
 
   // Theme effect
   React.useEffect(() => {

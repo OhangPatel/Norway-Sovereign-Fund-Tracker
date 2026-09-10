@@ -3,6 +3,7 @@ import { fmt, Icon, BrandMark, iconBtnStyle } from './format.jsx';
 import { PeriodPicker } from './period.jsx';
 import { periodLabel } from './snapshot.js';
 import { sectorOf } from './sectors.js';
+import { navigate, DASHBOARD_HASH } from './router.js';
 
 // Top navigation bar with brand, search, theme toggle, and the menu holding the
 // controls that scope the whole page — reporting period and what changed in it.
@@ -150,8 +151,22 @@ export function TopBar({
             padding: '0 18px',
             gap: 18,
           }}>
-            {/* Brand — the existing mark, re-mounted with a hairline divider after it */}
-            <div className="r-brand" style={{ display:'flex', alignItems:'center', gap: 12 }}>
+            {/* Brand — the existing mark, re-mounted with a hairline divider after it.
+                A button, not a div: the mark and wordmark are the way back to the
+                dashboard from the changes page, which is what a site's logo is
+                expected to do. It stays .r-brand so the phone rules that shrink and
+                truncate this block (index.html) keep matching it. */}
+            <button
+              type="button"
+              className="r-brand"
+              onClick={() => navigate(DASHBOARD_HASH)}
+              aria-label="Sovereign Insights — go to the dashboard"
+              style={{
+                display:'flex', alignItems:'center', gap: 12,
+                background:'none', border:'none', padding: 0,
+                font:'inherit', color:'inherit', textAlign:'left', cursor:'pointer',
+              }}
+            >
               <BrandMark size={28}/>
               <div>
                 <div className="display" style={{ fontSize: 17, lineHeight: 1, letterSpacing: '-0.02em', fontWeight: 600, color: 'var(--nav-ink)', whiteSpace: 'nowrap' }}>
@@ -167,7 +182,7 @@ export function TopBar({
                 width: 1, height: 30, marginLeft: 6,
                 background: 'var(--nav-line)', flexShrink: 0,
               }}/>
-            </div>
+            </button>
 
             {/* Search */}
             <div ref={wrapRef} className="r-search" style={{ position: 'relative', width: '100%', justifySelf:'stretch' }}>
