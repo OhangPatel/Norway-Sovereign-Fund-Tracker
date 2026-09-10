@@ -11,7 +11,7 @@ import { sectorOf } from './sectors.js';
 
 export function TopBar({
   data, query, setQuery, theme, setTheme, onPick, lastFetched,
-  manifest, period, onChangePeriod, changesOpen, onToggleChanges, hasChanges,
+  manifest, period, onChangePeriod, changesActive, onOpenChanges, hasChanges,
 }) {
   const [focused, setFocused] = React.useState(false);
   const [active, setActive] = React.useState(0);
@@ -303,11 +303,14 @@ export function TopBar({
                 )}
               </>
             )}
+            {/* Opens the what-changed page (#/changes/<period>) — a route, so the
+                row reads as active while that page is up. */}
             {hasChanges && (
               <MenuRow
                 icon="compare"
-                active={changesOpen}
-                onClick={() => { setMenuOpen(false); onToggleChanges(); }}
+                active={changesActive}
+                hint={changesActive ? 'Viewing' : null}
+                onClick={() => { setMenuOpen(false); onOpenChanges(); }}
               >What changed in {periodLabel(period)}</MenuRow>
             )}
             <MenuRow

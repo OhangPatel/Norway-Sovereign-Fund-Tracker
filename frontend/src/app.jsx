@@ -8,7 +8,8 @@ import { CompareDock, CompareModal } from './compare.jsx';
 import { ChatWidget } from './chat.jsx';
 import { useSession } from './auth.jsx';
 import { PeriodBar } from './period.jsx';
-import { ChangesPanel, hasPreviousPeriod } from './changes.jsx';
+import { ChangesPage, hasPreviousPeriod } from './changes.jsx';
+import { useRoute, navigate, changesHash } from './router.js';
 import { Footer } from './footer.jsx';
 import { MARKET_FIELDS, assertSplit } from './origin.js';
 import { snapshotDate, formatSnapshot, periodLabel } from './snapshot.js';
@@ -39,6 +40,12 @@ export var PIPELINE_ENABLED = import.meta.env.VITE_ENABLE_PIPELINE === 'true';
 // arrives, say) must reuse the same URL, or the browser refetches data.json instead of
 // serving it from cache.
 var LOAD_ID = Date.now();
+
+// Identity is `id`, not `ticker`. Unlisted holdings legitimately have no ticker, so
+// keying rows or the pin/compare Sets off it would make every tickerless company the
+// same company — the bug that used to alias George Weston with Canada Packers, just
+// via null instead of a collision.
+const withIds = (rows) => rows.map((row, i) => ({ ...row, id: `${row.ticker || 'x'}#${i}` }));
 
 // A single row inside the Data Tools dropdown: icon tile · title + caption · chip.
 export function ToolRow(props) {
@@ -430,13 +437,7 @@ export function App() {
     };
   });
 
-  // Identity is `id`, not `ticker`. Unlisted holdings legitimately have no ticker, so
-  // keying rows or the pin/compare Sets off it would make every tickerless company the
-  // same company — the bug that used to alias George Weston with Canada Packers, just
-  // via null instead of a collision.
-  const withIds = (rows) => rows.map((row, i) => ({ ...row, id: `${row.ticker || 'x'}#${i}` }));
-
-  // period -> rows. Switching back to a period already seen costs nothing.
+  // period -> promise of rows. Switching back to a period already seen costs nothing.
   const cacheRef = React.useRef(new Map());
   // metrics.json is shared by every period, so it is fetched at most once per session.
   const metricsRef = React.useRef(null);
@@ -447,8 +448,9 @@ export function App() {
   const [manifest, setManifest] = React.useState(null);
   const [period, setPeriod] = React.useState(null);
   const [switching, setSwitching] = React.useState(false);
-  // Opened from the nav menu; the panel itself renders in main.
-  const [changesOpen, setChangesOpen] = React.useState(false);
+  // Which page is on screen. What-changed is a route rather than a panel so it has a
+  // URL of its own — see router.js.
+  const route = useRoute();
 
   React.useEffect(() => {
     fetch('periods.json?v=' + LOAD_ID)
@@ -457,50 +459,38 @@ export function App() {
       .catch(() => { /* no manifest: single-period site, nothing to select */ });
   }, []);
 
-  // Load (or reload) data — re-runs when dataKey increments after pipeline completes,
-  // and when the visitor picks a different period.
-  React.useEffect(() => {
+  // One loader for a period's joined rows, shared by the dashboard and the what-changed
+  // page — which needs the rows of BOTH periods it compares, to open a removed company
+  // in the drawer. The cache holds promises, so two callers asking for the same period
+  // at the same moment share one request; a failed request is dropped so the next ask
+  // retries instead of replaying the error.
+  const loadRows = React.useCallback((p) => {
+    const key = p ?? '__latest__';
+    const hit = cacheRef.current.get(key);
+    if (hit) return hit;
     const bust = dataKey === 0 ? LOAD_ID : dataKey;
-    const latest = !manifest || !period || period === manifest.latest;
-    let cancelled = false;
-
-    const cached = cacheRef.current.get(period ?? '__latest__');
-    if (cached) { setData(cached); setSwitching(false); return; }
-
-    const fail = (e) => { if (!cancelled) setErr(e.message); };
-    const done = (rows) => {
-      if (cancelled) return;
-      cacheRef.current.set(period ?? '__latest__', rows);
-      setData(rows);
-      setSwitching(false);
-    };
-
+    const latest = !manifest || !p || p === manifest.latest;
+    let req;
     if (latest) {
       // data.json is already joined, so the first paint is one request — exactly as
       // fast as before any of this existed.
-      fetch('data.json?v=' + bust)
+      req = fetch('data.json?v=' + bust)
         .then(r => { if (!r.ok) throw new Error(`data.json returned ${r.status}`); return r.json(); })
-        .then(rows => done(withIds(rows)))
-        .catch(fail);
-      return;
-    }
-
-    // A past period: NBIM's figures come from its own file, market data from the one
-    // shared metrics.json. Joining here is what keeps the current price in a single
-    // place instead of copied into all six period files.
-    setSwitching(true);
-    const holdings = fetch(`data-${period}.json?v=${bust}`)
-      .then(r => { if (!r.ok) throw new Error(`data-${period}.json returned ${r.status}`); return r.json(); });
-    const metrics = metricsRef.current
-      ? Promise.resolve(metricsRef.current)
-      : fetch('metrics.json?v=' + bust)
-          .then(r => { if (!r.ok) throw new Error(`metrics.json returned ${r.status}`); return r.json(); });
-
-    Promise.all([holdings, metrics])
-      .then(([hold, mets]) => {
+        .then(rows => withIds(rows));
+    } else {
+      // A past period: NBIM's figures come from its own file, market data from the one
+      // shared metrics.json. Joining here is what keeps the current price in a single
+      // place instead of copied into all six period files.
+      const holdings = fetch(`data-${p}.json?v=${bust}`)
+        .then(r => { if (!r.ok) throw new Error(`data-${p}.json returned ${r.status}`); return r.json(); });
+      const metrics = metricsRef.current
+        ? Promise.resolve(metricsRef.current)
+        : fetch('metrics.json?v=' + bust)
+            .then(r => { if (!r.ok) throw new Error(`metrics.json returned ${r.status}`); return r.json(); });
+      req = Promise.all([holdings, metrics]).then(([hold, mets]) => {
         metricsRef.current = mets;
         assertSplit(hold[0]);
-        done(withIds(hold.map(h => {
+        return withIds(hold.map(h => {
           const m = mets[h.ticker] || {};
           const row = { ...h };
           // Every market field is set even when Yahoo has nothing, so a period row has
@@ -508,12 +498,27 @@ export function App() {
           // which path loaded it.
           for (const f of MARKET_FIELDS) row[f] = m[f] ?? null;
           return row;
-        })));
-      })
-      .catch(fail);
+        }));
+      });
+    }
+    cacheRef.current.set(key, req);
+    req.catch(() => cacheRef.current.delete(key));
+    return req;
+  }, [dataKey, manifest]);
 
+  // Load (or reload) data — re-runs when dataKey increments after pipeline completes,
+  // and when the visitor picks a different period.
+  React.useEffect(() => {
+    const latest = !manifest || !period || period === manifest.latest;
+    let cancelled = false;
+    // Only a past period that is not yet cached shows the loading line: the latest one
+    // is on screen from first paint, and a cached period resolves before it could show.
+    if (!latest && !cacheRef.current.has(period)) setSwitching(true);
+    loadRows(period)
+      .then(rows => { if (!cancelled) { setData(rows); setSwitching(false); } })
+      .catch(e => { if (!cancelled) setErr(e.message); });
     return () => { cancelled = true; };
-  }, [dataKey, period, manifest]);
+  }, [period, loadRows, manifest]);
 
   // Theme effect
   React.useEffect(() => {
@@ -625,10 +630,28 @@ export function App() {
   const marketAsOf = React.useMemo(() => (data ? snapshotDate(data) : null), [data]);
   const lastFetched = React.useMemo(() => formatSnapshot(marketAsOf), [marketAsOf]);
 
+  // The what-changed page carries its period in the URL, independent of the dashboard's
+  // picker, so a link to it means the same thing whoever opens it. A bare #/changes, or
+  // a period the manifest does not know, resolves to the latest.
+  const onChangesPage = route.name === 'changes' && !!manifest;
+  const changesPeriod = onChangesPage
+    ? (manifest.periods.some(p => p.period === route.period) ? route.period : manifest.latest)
+    : null;
+  // The nav menu's period row, and the label under the brand, follow whichever page is up.
+  const navPeriod = onChangesPage ? changesPeriod : period;
+
   // The header must follow the picker. Showing the fetch date there instead would put
   // "Aug 2026" above a table of 2022 holdings — the same class of mismatch that has
   // already produced three date bugs in this project.
-  const headerDate = period ? periodLabel(period) : lastFetched;
+  const headerDate = navPeriod ? periodLabel(navPeriod) : lastFetched;
+
+  // A new page starts at the top. Skipped on mount, where the browser's own scroll
+  // restoration is the right behaviour.
+  const firstRoute = React.useRef(true);
+  React.useEffect(() => {
+    if (firstRoute.current) { firstRoute.current = false; return; }
+    window.scrollTo(0, 0);
+  }, [route.name]);
 
   if (err) {
     return <ErrorState message={err}/>;
@@ -647,17 +670,30 @@ export function App() {
         onPick={(c) => setSelected(c)}
         lastFetched={headerDate}
         manifest={manifest}
-        period={period}
-        onChangePeriod={setPeriod}
-        changesOpen={changesOpen}
-        onToggleChanges={() => setChangesOpen(o => !o)}
-        hasChanges={hasPreviousPeriod(manifest, period)}
+        period={navPeriod}
+        onChangePeriod={onChangesPage ? (p) => navigate(changesHash(p)) : setPeriod}
+        changesActive={onChangesPage}
+        onOpenChanges={() => navigate(changesHash(
+          // The dashboard's period, unless it is the oldest on file and so has nothing
+          // before it to compare against — then the latest.
+          hasPreviousPeriod(manifest, period) ? period : manifest.latest
+        ))}
+        hasChanges={!!manifest && manifest.periods.length > 1}
       />
 
       {(PIPELINE_ENABLED || isAdmin) && (
         <PipelineControls onComplete={() => setDataKey(k => k + 1)} lastFetched={lastFetched} />
       )}
 
+      {onChangesPage ? (
+        <ChangesPage
+          manifest={manifest}
+          period={changesPeriod}
+          loadRows={loadRows}
+          pinned={pinned} togglePin={togglePin}
+          lastFetched={lastFetched}
+        />
+      ) : (
       <main style={{
         maxWidth: 'var(--page-max)', margin: '0 auto',
         // The bottom pad used to be 120px, holding the page clear of the chat
@@ -671,13 +707,6 @@ export function App() {
           period={period}
           loading={switching}
           marketAsOf={marketAsOf}
-        />
-
-        <ChangesPanel
-          period={period}
-          manifest={manifest}
-          open={changesOpen}
-          onClose={() => setChangesOpen(false)}
         />
 
         <Summary
@@ -728,10 +757,11 @@ export function App() {
           </div>
         </section>
       </main>
+      )}
 
       <Footer
         positions={data.length}
-        period={period}
+        period={navPeriod}
         pricesAsOf={lastFetched}
       />
 

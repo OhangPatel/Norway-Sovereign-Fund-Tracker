@@ -25,7 +25,8 @@ const popoverStyle = {
 
 // Which presentation the filter panel takes. A media query in JS rather than CSS
 // because the two mount at different points in the tree, not just different boxes.
-function useIsPhone() {
+// Shared with the what-changed page, whose ledger folds into the same sheet.
+export function useIsPhone() {
   const [isPhone, setIsPhone] = React.useState(
     () => typeof window !== 'undefined' && window.matchMedia('(max-width: 640px)').matches
   );
@@ -196,8 +197,8 @@ export function ColumnsMenu({ columns, setColumns, open, setOpen }) {
 }
 
 // The checkbox rows themselves, with no chrome of their own — the sheet's sections
-// render them inline.
-function OptionList({ options, selected, onToggle, onClear, format = (v) => v, counter }) {
+// render them inline, and the what-changed page's filter dropdowns reuse them.
+export function OptionList({ options, selected, onToggle, onClear, format = (v) => v, counter }) {
   return (
     <>
       {options.map(opt => {
@@ -287,7 +288,7 @@ function RangeBody({ min, max, step, valueMin, valueMax, onChange, formatValue }
 }
 
 // One collapsible row of the phone sheet.
-function SheetSection({ label, icon, count, children }) {
+export function SheetSection({ label, icon, count, children }) {
   const [open, setOpen] = React.useState(false);
   return (
     <div className="r-sheet-sec">

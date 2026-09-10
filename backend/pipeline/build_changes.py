@@ -20,6 +20,12 @@ ISIN, only a name, so "Facebook Inc" leaving and "Meta Platforms Inc" arriving l
 two trades. Where both names resolve to the SAME ticker we collapse the pair. That only
 works on the filtered set, which has tickers; the raw list mostly does not, so its counts
 carry an honest caveat rather than a false precision.
+
+WHAT THE FILE CARRIES
+Counts are exact at both levels, and so are the per-sector and per-country tallies: they
+are computed over the full sets before anything is cut. The tracked set is listed in full
+(a few hundred rows, each with its ticker, which is what lets the changes page open one in
+the detail drawer). The raw lists are capped at TOP_N per side — see the note there.
 """
 import argparse
 import json
@@ -51,9 +57,10 @@ ROOT = SCRIPT_DIR.parent.parent
 PERIODS_DIR = ROOT / "data" / "periods"
 FRONTEND_DIR = ROOT / "frontend" / "public"
 
-# Per side, per level. The full removed list can run to 1,652 companies; carrying every
-# one would put ~200 KB in a file the page loads just to show a headline. The largest
-# positions are what anyone actually reads, and the counts above them stay exact.
+# Per side, raw level only. The full raw removed list can run to 1,652 companies; carrying
+# every one would put ~200 KB in the file. The largest positions are what anyone actually
+# reads, and the counts and tallies above them stay exact. The tracked set is not capped —
+# it is the set the page can open in the drawer, and it is small enough to list in full.
 TOP_N = 100
 
 
@@ -107,13 +114,42 @@ def load_filtered(period):
     return out
 
 
-def biggest(keys, source):
-    """Entries sorted by position size, largest first. Unsized companies sort last."""
-    rows = [{"name": source[k]["name"], "country": source[k]["country"],
-             "industry": source[k]["industry"], "mvUsd": source[k]["mvUsd"]}
-            for k in keys if k in source]
+def biggest(keys, source, cap=None):
+    """Entries sorted by position size, largest first. Unsized companies sort last.
+
+    A tracked row carries its ticker. It is the join key the changes page uses to open a
+    company in the detail drawer — matching on the name instead would break the moment
+    NBIM respells it, which is the same instability match_key() exists for.
+    """
+    rows = []
+    for k in keys:
+        if k not in source:
+            continue
+        s = source[k]
+        row = {"name": s["name"], "country": s["country"],
+               "industry": s["industry"], "mvUsd": s["mvUsd"]}
+        if s.get("ticker"):
+            row["ticker"] = s["ticker"]
+        rows.append(row)
     rows.sort(key=lambda r: (r["mvUsd"] is None, -(r["mvUsd"] or 0)))
-    return rows
+    return rows if cap is None else rows[:cap]
+
+
+def tally(added, removed, curr, prev, field):
+    """{value: {"added": n, "removed": n}} for one field, over the FULL sets.
+
+    The listed rows are capped, so a chart drawn from them would show the sectors of the
+    100 largest positions and call that the fund's. These are exact. Ordered by total
+    movement so the biggest movers come first; a missing value is keyed as "".
+    """
+    out = {}
+    for k in added:
+        v = curr[k].get(field) or ""
+        out.setdefault(v, {"added": 0, "removed": 0})["added"] += 1
+    for k in removed:
+        v = prev[k].get(field) or ""
+        out.setdefault(v, {"added": 0, "removed": 0})["removed"] += 1
+    return dict(sorted(out.items(), key=lambda kv: -(kv[1]["added"] + kv[1]["removed"])))
 
 
 def suppress_renames(added, removed, curr, prev):
@@ -153,16 +189,20 @@ def build(curr, prev):
             "heldBefore": len(raw_p),
             "added": len(raw_added),
             "removed": len(raw_removed),
-            "addedTop": biggest(raw_added, raw_c)[:TOP_N],
-            "removedTop": biggest(raw_removed, raw_p)[:TOP_N],
+            "addedTop": biggest(raw_added, raw_c, TOP_N),
+            "removedTop": biggest(raw_removed, raw_p, TOP_N),
+            "bySector": tally(raw_added, raw_removed, raw_c, raw_p, "industry"),
+            "byCountry": tally(raw_added, raw_removed, raw_c, raw_p, "country"),
         },
         "filtered": {
             "trackedNow": len(flt_c),
             "trackedBefore": len(flt_p),
             "added": len(flt_added),
             "removed": len(flt_removed),
-            "addedTop": biggest(flt_added, flt_c)[:TOP_N],
-            "removedTop": biggest(flt_removed, flt_p)[:TOP_N],
+            "addedTop": biggest(flt_added, flt_c),
+            "removedTop": biggest(flt_removed, flt_p),
+            "bySector": tally(flt_added, flt_removed, flt_c, flt_p, "industry"),
+            "byCountry": tally(flt_added, flt_removed, flt_c, flt_p, "country"),
             "renamesSuppressed": len(renames),
             "renames": renames,
         },

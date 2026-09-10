@@ -713,8 +713,18 @@
       /* Research links — detail.jsx. Equal-width buttons instead of left-aligned
          flex-wrap, so three destinations read as one row of equal weight. */
       .r-research3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
-      /* Added / removed columns — changes.jsx */
-      .r-changes2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gap); }
+      /* What-changed page — changes.jsx. Same rule as every grid here: the column
+         COUNT lives in CSS because the components style themselves inline. */
+      .r-chg-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 24px; }
+      .r-chg-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--gap); }
+      .r-chg-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+      .r-chg-search { width: min(260px, 100%); }
+      /* Change ledger rows: rank · company · country · sector · side · value · arrow.
+         A grid rather than a table so the cells can be hidden per breakpoint below. */
+      .r-chg-row { display: grid; grid-template-columns: 44px minmax(0, 2.4fr) minmax(0, 1fr) minmax(0, 1.2fr) 112px 168px 34px; align-items: center; }
+      /* Second line of the company cell: hidden while country and sector have columns
+         of their own, revealed piece by piece as those columns go. */
+      .r-chg-sub { display: none; font-size: 10.5px; color: var(--soft); margin-top: 2px; }
 
       /* Filter strip, top bar, detail price block */
       /* Ledger header: title on the left, its three triggers on the right. They are
@@ -840,6 +850,13 @@
         .r-bento-lead { grid-column: span 2; }
         .r-bento-feature { grid-column: span 2; }
         .r-split { grid-template-columns: minmax(0, 1fr); }
+        .r-chg-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        /* Sector drops first: it is the widest text column, and the company cell
+           can carry it as a second line once the column is gone. */
+        .r-chg-row { grid-template-columns: 44px minmax(0, 2fr) minmax(0, 1fr) 112px 150px 34px; }
+        .r-chg-sector { display: none !important; }
+        .r-chg-sub { display: block; }
+        .r-chg-sub-country { display: none; }
         /* Brand and actions share row 1; search gets its own full-width row.
            The brand column is 1fr rather than auto so it can shrink below its
            content instead of pushing the whole bar past the viewport. */
@@ -877,7 +894,17 @@
            single column was ~350px of scrolling, and the widest label
            ("P/E RATIO (TRAILING)", ~126px) still clears a half-width cell. */
         .r-kv2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-        .r-changes2 { grid-template-columns: minmax(0, 1fr); gap: var(--gap); }
+        /* Change ledger on a phone: company · side · value. Country and sector are
+           on the second line of the company cell, so nothing is lost, only stacked. */
+        .r-chg-row { grid-template-columns: minmax(0, 1fr) 92px 96px; }
+        /* The search takes its own row; the Filters and Export triggers share the next. */
+        .r-chg-search { width: 100%; }
+        .r-chg-rank, .r-chg-country, .r-chg-sector, .r-chg-arrow { display: none !important; }
+        .r-chg-sub-country { display: inline; }
+        .r-chg-row > * { padding-left: 10px !important; padding-right: 10px !important; }
+        /* Same step the holdings ledger's header takes: "VALUE · USD" at 10.5px does
+           not fit a 96px column. !important because HeadCell sets the size inline. */
+        .r-chg-thead > * { font-size: 9px !important; letter-spacing: .03em !important; }
 
         /* Ownership distribution — 370px of phone for one histogram. The header was
            91px of it: "Ownership distribution" and "1,422 cos" each wrapped to two
