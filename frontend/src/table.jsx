@@ -12,17 +12,17 @@ import { ColumnsMenu, CompareButton, FilterPanel } from './filters.jsx';
 // the column stays fixed at `min` (narrow, non-textual columns).
 export var ALL_COLUMNS = {
   rank:    { label: '#',         width: 48,  min: 34,  fr: 0,   align: 'right', sortable: false },
-  name:    { label: 'Company',   width: 280, min: 96,  fr: 2.2, align: 'left',  sortable: true,  sortKey: 'name' },
+  name:    { label: 'Company',   width: 240, min: 96,  fr: 2.2, align: 'left',  sortable: true,  sortKey: 'name' },
   ticker:  { label: 'Ticker',    width: 86,  min: 60,  fr: 0.8, align: 'left',  sortable: true,  sortKey: 'ticker' },
   country: { label: 'Country',   width: 120, min: 70,  fr: 1,   align: 'left',  sortable: true,  sortKey: 'country' },
-  sector:  { label: 'Sector',    width: 150, min: 84,  fr: 1.1, align: 'left',  sortable: true,  sortKey: 'sector' },
+  sector:  { label: 'Sector',    width: 144, min: 84,  fr: 1.1, align: 'left',  sortable: true,  sortKey: 'sector' },
   price:   { label: 'Price',     width: 100, min: 62,  fr: 0.8, align: 'right', sortable: true,  sortKey: 'price' },
   change:  { label: '24h',       width: 78,  min: 52,  fr: 0.7, align: 'right', sortable: true,  sortKey: 'change' },
-  range:   { label: '52-week range',  width: 200, min: 108, fr: 1.4, align: 'left',  sortable: false },
+  range:   { label: '52-week range',  width: 160, min: 108, fr: 1.4, align: 'left',  sortable: false },
   // The header carries the currency because the cell is USD-only — 80px is what
   // "$ 56.9B" needs at 13px mono once the 9px phone padding is taken off.
   mvUsd:   { label: 'USD value',     width: 132, min: 80,  fr: 1,   align: 'right', sortable: true,  sortKey: 'mvUsd' },
-  ownership: { label: 'Ownership %', width: 154, min: 68,  fr: 1,   align: 'left',  sortable: true,  sortKey: 'ownership' },
+  ownership: { label: 'Ownership %', width: 132, min: 68,  fr: 1,   align: 'left',  sortable: true,  sortKey: 'ownership' },
   rec:     { label: 'Rec',       width: 110, min: 72,  fr: 0.9, align: 'left',  sortable: true,  sortKey: 'rec' },
   pe:      { label: 'P/E',       width: 70,  min: 46,  fr: 0.6, align: 'right', sortable: true,  sortKey: 'pe' },
   pin:     { label: '',          width: 38,  min: 28,  fr: 0,   align: 'center', sortable: false },
@@ -112,8 +112,8 @@ export function DataTable({
 
   const headerCellStyle = (col) => ({
     padding: '12px 14px',
-    fontSize: 10.5, fontFamily: 'var(--font-mono)', fontWeight: 500,
-    color: 'var(--soft)', textTransform: 'uppercase', letterSpacing: '0.08em',
+    fontSize: 'var(--text-xs)', fontFamily: 'var(--font-body)', fontWeight: 500,
+    color: 'var(--soft)',
     textAlign: col.align,
     cursor: col.sortable ? 'pointer' : 'default',
     userSelect: 'none', whiteSpace: 'nowrap', overflow: 'hidden',
@@ -132,21 +132,19 @@ export function DataTable({
   };
 
   return (
-    <div className="card enter" style={{ '--i': 9, padding: 0, overflow: 'hidden' }}>
+    <div className="glass" style={{ padding: 0, overflow: 'hidden' }}>
       {/* Three compact triggers, so they sit beside the title rather than costing a
           row of their own. Filters open as a panel at every width — a large screen
           gets a centred dialog, a phone the bottom sheet. */}
       <div className="r-ledger-head" style={{ padding: '16px 20px', borderBottom: '1px solid var(--line)' }}>
         <div style={{ minWidth: 0 }}>
-          <div className="eyebrow r-ledger-eyebrow">Holdings ledger</div>
-          <div className="display" style={{ fontSize: 22, marginTop: 2, letterSpacing:'-0.01em', whiteSpace: 'nowrap' }}>
-            All positions <span className="display-italic r-ledger-count" style={{ color:'var(--soft)' }}>
-              · {data.length.toLocaleString()}{totalRows > data.length && ` of ${totalRows.toLocaleString()}`} rows
+          <h2 style={{ fontSize: 'var(--text-xl)', lineHeight: 1.15, margin: 0, whiteSpace: 'nowrap' }}>All positions</h2>
+          <p className="mono" style={{ fontSize: 'var(--text-sm)', color: 'var(--soft)', margin: '2px 0 0' }}>
+            <span className="r-ledger-count">
+              {data.length.toLocaleString()}{totalRows > data.length && ` of ${totalRows.toLocaleString()}`} rows,{' '}
             </span>
-          </div>
-          <div className="mono" style={{ fontSize: 10.5, color: 'var(--soft)', marginTop: 6 }}>
-            Sorted by <span style={{ color:'var(--sub)' }}>{SORT_LABEL[sort.key] || sort.key}</span> {sort.dir === 'desc' ? '↓' : '↑'}
-          </div>
+            sorted by <span style={{ color:'var(--sub)' }}>{SORT_LABEL[sort.key] || sort.key}</span> {sort.dir === 'desc' ? '↓' : '↑'}
+          </p>
         </div>
         <div className="r-ledger-tools">
           <FilterPanel
@@ -221,9 +219,9 @@ export function DataTable({
                     {col.label}
                     {col.sortable && (
                       <span style={{
-                        opacity: isSorted ? 1 : 0.25,
+                        opacity: isSorted ? 1 : 0.35,
                         color: isSorted ? 'var(--accent-text)' : 'var(--soft)',
-                        fontSize: 9, marginLeft: 2,
+                        fontSize: 10, marginLeft: 2,
                       }}>
                         {isSorted ? (sort.dir === 'desc' ? '▼' : '▲') : '⇅'}
                       </span>
@@ -259,10 +257,10 @@ export function DataTable({
               padding: '64px 24px', textAlign:'center',
               color:'var(--soft)',
             }}>
-              <div className="display-italic" style={{ fontSize: 24, color:'var(--sub)' }}>
+              <h3 className="display" style={{ fontSize: 'var(--text-xl)', color:'var(--sub)', margin: '0 auto' }}>
                 No companies match these filters.
-              </div>
-              <div style={{ marginTop: 8, fontSize: 13 }}>Try clearing a filter or widening the ownership range.</div>
+              </h3>
+              <p style={{ marginTop: 8, fontSize: 'var(--text-sm)' }}>Try clearing a filter or widening the ownership range.</p>
             </div>
           )}
         </div>
@@ -355,8 +353,8 @@ export function Cell({ colKey, row, rank, cellBase, pinned, togglePin, hover, ma
             maxWidth: 240
           }}>{row.name}</div>
           {!hasSectorCol && (
-            <div className="mono" style={{ fontSize: 10.5, color: 'var(--soft)', marginTop: 1, whiteSpace:'nowrap' }}>
-              {sectorOf(row, '—')}
+            <div className="mono" style={{ fontSize: 'var(--text-xs)', color: 'var(--soft)', marginTop: 1, whiteSpace:'nowrap' }}>
+              {sectorOf(row, 'n/a')}
             </div>
           )}
         </div>
@@ -382,7 +380,7 @@ export function Cell({ colKey, row, rank, cellBase, pinned, togglePin, hover, ma
             width: 6, height: 6, borderRadius: 'var(--r-pill)',
             background: SECTOR_COLORS[sectorOf(row)] || 'var(--soft)'
           }}/>
-          {sectorOf(row, '—')}
+          {sectorOf(row, 'n/a')}
         </span>
       </div>;
 
@@ -404,7 +402,7 @@ export function Cell({ colKey, row, rank, cellBase, pinned, togglePin, hover, ma
           <RangeBar low={row.low52} high={row.high52} value={row.price}/>
           <div className="mono" style={{
             display:'flex', justifyContent:'space-between',
-            fontSize: 10, color:'var(--soft)', marginTop: 4
+            fontSize: 'var(--text-xs)', color:'var(--soft)', marginTop: 4
           }}>
             <span>{fmt.price(row.low52)}</span>
             <span>{fmt.price(row.high52)}</span>
@@ -428,7 +426,7 @@ export function Cell({ colKey, row, rank, cellBase, pinned, togglePin, hover, ma
             <span className="mono" style={{ fontSize: 13, color: isHigh ? 'var(--accent-text)' : 'var(--ink)', fontWeight: isHigh ? 600 : 400 }}>
               {fmt.pct(o, 2)}
             </span>
-            {isHigh && <span style={{ fontSize: 9, color: 'var(--accent-text)', letterSpacing: '0.04em', fontFamily:'var(--font-mono)' }}>HIGH</span>}
+            {isHigh && <span style={{ fontSize: 'var(--text-xs)', color: 'var(--accent-text)', fontWeight: 500 }}>High</span>}
           </div>
           <MicroBar value={o} max={maxOwnership} tone={isHigh ? 'accent' : 'muted'}/>
         </div>
@@ -443,7 +441,7 @@ export function Cell({ colKey, row, rank, cellBase, pinned, togglePin, hover, ma
     case 'pe':
       return <div role="cell" style={style}>
         <span className="mono" style={{ fontSize: 12, color: row.pe ? 'var(--sub)' : 'var(--soft)' }}>
-          {row.pe ? row.pe.toFixed(1) : '—'}
+          {row.pe ? row.pe.toFixed(1) : 'n/a'}
         </span>
       </div>;
 
@@ -454,9 +452,8 @@ export function Cell({ colKey, row, rank, cellBase, pinned, togglePin, hover, ma
           style={{
             background:'transparent', border:'none', padding: 6,
             cursor:'pointer', display:'grid', placeItems:'center',
-            opacity: pinned ? 1 : hover ? 0.6 : 0.2,
-            color: pinned ? 'var(--accent-text)' : 'var(--sub)',
-            transition: 'opacity .15s, transform .12s',
+            color: pinned ? 'var(--accent-text)' : hover ? 'var(--ink)' : 'var(--soft)',
+            transition: 'color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out)',
           }}
           onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.15)'}
           onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}

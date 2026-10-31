@@ -45,7 +45,7 @@ function fmtClock(iso) {
 // "2026-08-06 13:35:28" -> "2026-08-06 13:35". lastFetched arrives already formatted
 // ("Aug 6 2026"), so anything that is not the raw stamp passes straight through.
 function fmtStamp(s) {
-  return (typeof s === 'string' && /^\d{4}-\d{2}-\d{2} /.test(s)) ? s.slice(0, 16) : (s || '—');
+  return (typeof s === 'string' && /^\d{4}-\d{2}-\d{2} /.test(s)) ? s.slice(0, 16) : (s || 'n/a');
 }
 
 const MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -70,7 +70,7 @@ const groupedPct = (n) =>
 // Headline delta: "▲ +12.40 (+6.14%)". The window it measures is named in the
 // eyebrow above the price, not repeated here.
 function RangeDelta({ delta }) {
-  if (!delta) return <span className="mono" style={{ fontSize: 11, color: 'var(--soft)' }}>—</span>;
+  if (!delta) return <span className="mono" style={{ fontSize: 'var(--text-xs)', color: 'var(--soft)' }}>n/a</span>;
   const pos = delta.pct >= 0;
   return (
     <span className="mono" style={{
@@ -78,7 +78,7 @@ function RangeDelta({ delta }) {
       fontSize: 12, fontWeight: 500,
       display: 'inline-flex', alignItems: 'baseline', gap: 4, flexWrap: 'wrap',
     }}>
-      <span style={{ fontSize: 9 }}>{pos ? '▲' : '▼'}</span>
+      <span aria-hidden="true" style={{ fontSize: 9 }}>{pos ? '▲' : '▼'}</span>
       <span>{(pos ? '+' : '-') + fmt.price(Math.abs(delta.abs))} ({groupedPct(delta.pct)})</span>
     </span>
   );
@@ -227,9 +227,9 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
         background: 'var(--scrim)',
         backdropFilter: 'var(--scrim-blur)',
         opacity: entered ? 1 : 0,
-        transition: 'opacity .18s ease',
+        transition: 'opacity var(--dur-short) var(--ease-out)',
       }}/>
-      <aside role="dialog" aria-modal="true" aria-label={`${company.name} — position detail`} style={{
+      <aside role="dialog" aria-modal="true" aria-label={`${company.name}, position detail`} style={{
         position:'fixed', top: 0, right: 0, bottom: 0,
         width: 'min(640px, 96vw)',
         background: 'var(--bg)',
@@ -238,7 +238,7 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
         overflowY: 'auto',
         boxShadow: 'var(--shadow-overlay)',
         transform: entered ? 'translateX(0)' : 'translateX(100%)',
-        transition: 'transform .3s cubic-bezier(.22,.61,.36,1)',
+        transition: 'transform var(--dur-long) var(--ease-out)',
       }}>
         {/* Sticky header strip */}
         <div style={{
@@ -276,17 +276,16 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
               the chip is what a returning eye lands on first. */}
           <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap: 16 }}>
             <div style={{ minWidth: 0 }}>
-              <div className="eyebrow" style={{ fontSize: 11 }}>
-                {company.ticker} · {company.country} · {sectorOf(company, '—')}
-              </div>
               <h2 className="display" style={{
-                fontSize: 30, lineHeight: 1.06, margin: '6px 0 0',
-                letterSpacing: '-0.015em',
+                fontSize: 'var(--text-2xl)', lineHeight: 1.08, margin: 0,
               }}>{company.name}</h2>
+              <p className="eyebrow" style={{ margin: '6px 0 0' }}>
+                {company.country}, {sectorOf(company, 'n/a')}
+              </p>
               {company.reason && (
-                <div className="eyebrow" style={{ fontSize: 10, marginTop: 7 }}>
-                  Inclusion basis · <span style={{ color:'var(--sub)' }}>{company.reason}</span>
-                </div>
+                <p className="eyebrow" style={{ fontSize: 'var(--text-xs)', margin: '4px 0 0' }}>
+                  Inclusion basis: <span style={{ color:'var(--sub)' }}>{company.reason}</span>
+                </p>
               )}
             </div>
             <Tag size="lg" tone="accent">{company.ticker}</Tag>
@@ -302,12 +301,12 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
           }}>
             <div style={{ padding: '16px 18px 0', display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap: 12, flexWrap:'wrap' }}>
               <div style={{ display:'flex', alignItems:'baseline', gap: 10, flexWrap:'wrap' }}>
-                <span className="display" style={{ fontSize: 32, lineHeight: 1, letterSpacing:'-0.02em' }}>
+                <span className="display mono" style={{ fontSize: 'var(--text-3xl)', lineHeight: 1 }}>
                   {fmt.price(headline.price)}
                 </span>
                 <RangeDelta delta={delta}/>
               </div>
-              <div className="eyebrow" style={{ fontSize: 9 }}>Last price · {DELTA_LABEL[range]}</div>
+              <div className="eyebrow" style={{ fontSize: 'var(--text-xs)' }}>Last price · {DELTA_LABEL[range]}</div>
             </div>
 
             {/* Faint grid behind the line — a bare chart on a blank field read as
@@ -320,9 +319,9 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
               backgroundSize: '100% 100%', opacity: 1,
             }}>
               {loading ? (
-                <span className="mono" style={{ fontSize: 11, color:'var(--soft)' }}>Loading price history…</span>
+                <span style={{ fontSize: 'var(--text-xs)', color:'var(--soft)' }}>Loading price history…</span>
               ) : (history.error || !chart.points || chart.points.length < 2) ? (
-                <span className="mono" style={{ fontSize: 11, color:'var(--soft)' }}>{history.error || 'No price history'}</span>
+                <span style={{ fontSize: 'var(--text-xs)', color:'var(--soft)' }}>{history.error || 'No price history'}</span>
               ) : (
                 <PriceChart points={chart.points} dates={chart.dates} valueFmt={fmt.price} height={130} color="auto"/>
               )}
@@ -340,22 +339,21 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
                 {['1d', '1y', '5y', 'max'].map(r => {
                   const on = range === r;
                   return (
-                    <button key={r} onClick={() => setRange(r)}
-                      className="mono"
+                    <button key={r} type="button" onClick={() => setRange(r)} aria-pressed={on}
                       style={{
                         position: 'relative',
-                        fontSize: 10.5, padding: '11px 12px', border: 'none', borderRadius: 0,
-                        cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '0.1em',
+                        fontSize: 'var(--text-xs)', padding: '11px 12px', border: 'none', borderRadius: 0,
+                        cursor: 'pointer', fontFamily: 'var(--font-body)',
                         fontWeight: on ? 600 : 500,
                         color: on ? 'var(--accent-text)' : 'var(--soft)',
                         // srgb, not oklch — see the note on Row's `bg` in table.jsx.
                         background: on ? 'var(--accent-tint)' : 'transparent',
-                        transition: 'color .12s, background .12s',
+                        transition: 'color var(--dur-micro) var(--ease-out), background-color var(--dur-micro) var(--ease-out)',
                       }}
                       onMouseEnter={e => { if (!on) e.currentTarget.style.color = 'var(--ink)'; }}
                       onMouseLeave={e => { if (!on) e.currentTarget.style.color = 'var(--soft)'; }}
                     >
-                      {r}
+                      {r === 'max' ? 'Max' : r.toUpperCase()}
                       {on && <span style={{
                         position:'absolute', left: 0, right: 0, top: -1, height: 2,
                         background: 'var(--accent)',
@@ -367,7 +365,7 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
               {/* Which clock the price above is on, plus a manual refresh. Never
                   omitted: an unlabelled price that is sometimes live and sometimes
                   days old is the whole problem. */}
-              <div className="mono" style={{ display:'flex', alignItems:'center', gap: 6, fontSize: 10, color: 'var(--soft)' }}>
+              <div className="mono" role="status" style={{ display:'flex', alignItems:'center', gap: 6, fontSize: 'var(--text-xs)', color: 'var(--soft)' }}>
                 <span style={{
                   width: 6, height: 6, borderRadius: 'var(--r-pill)', flexShrink: 0,
                   background: headline.live ? 'var(--bull-text)' : 'var(--soft)',
@@ -393,8 +391,8 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
                   color: company.targetPrice > headline.price ? 'var(--bull-text)' : 'var(--bear-text)',
                 }}>({((company.targetPrice / headline.price - 1) * 100).toFixed(1)}%)</span>
               </>
-            ) : '—'}/>
-            <MetricBox label="52w position" value={pos52 != null ? `${pos52.toFixed(0)}%` : '—'}/>
+            ) : 'n/a'}/>
+            <MetricBox label="52w position" value={pos52 != null ? `${pos52.toFixed(0)}%` : 'n/a'}/>
           </div>
 
           {/* 52w range */}
@@ -429,7 +427,7 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
                   period that is one moment; on 2022 it divides a 2022 numerator by a
                   2026 denominator, so it says so rather than presenting a clean number. */}
               <Metric label="% of mkt cap"
-                value={company.marketCap ? fmt.pct((company.mvUsd / company.marketCap) * 100, 3) : '—'}
+                value={company.marketCap ? fmt.pct((company.mvUsd / company.marketCap) * 100, 3) : 'n/a'}
                 note={historical ? `${periodLabel(period)} holding ÷ today's cap` : null}/>
             </div>
           </div>
@@ -445,11 +443,11 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
               {/* "P/E (trailing)", matching the compare modal — the same figure was
                   named two ways across two screens, and the longer name is also what
                   pinned this label to 8.5px to survive a half-width phone cell. */}
-              <KvCell label="P/E (trailing)" value={company.pe?.toFixed(2) ?? '—'}/>
-              <KvCell label="Forward P/E" value={company.fwdPe?.toFixed(2) ?? '—'}/>
-              <KvCell label="Price / Book" value={company.pb?.toFixed(2) ?? '—'}/>
-              <KvCell label="Dividend yield" value={company.divYield ? company.divYield.toFixed(2) + '%' : '—'}/>
-              <KvCell label="Beta (5y)" value={company.beta?.toFixed(2) ?? '—'}/>
+              <KvCell label="P/E (trailing)" value={company.pe?.toFixed(2) ?? 'n/a'}/>
+              <KvCell label="Forward P/E" value={company.fwdPe?.toFixed(2) ?? 'n/a'}/>
+              <KvCell label="Price / Book" value={company.pb?.toFixed(2) ?? 'n/a'}/>
+              <KvCell label="Dividend yield" value={company.divYield ? company.divYield.toFixed(2) + '%' : 'n/a'}/>
+              <KvCell label="Beta (5y)" value={company.beta?.toFixed(2) ?? 'n/a'}/>
               <KvCell label="Analyst rec" value={<Chip tone={REC_TONE[company.rec] || 'neutral'}>{fmt.rec(company.rec)}</Chip>}/>
             </div>
           </div>
@@ -457,7 +455,7 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
           {/* Peers */}
           {peerSet.length > 0 && (
             <div style={{ marginTop: 22 }}>
-              <div className="eyebrow" style={{ fontSize: 10, marginBottom: 10 }}>Top peers in {sectorOf(company, 'this sector')}</div>
+              <div className="eyebrow" style={{ fontSize: 'var(--text-xs)', marginBottom: 10 }}>Top peers in {sectorOf(company, 'this sector')}</div>
               <div style={{ display: 'grid', gap: 1, background: 'var(--line)', borderRadius: 'var(--r-lg)', overflow:'hidden', border: '1px solid var(--line)' }}>
                 {peerSet.map(p => (
                   <div key={p.ticker} onClick={() => onPickCompany(p)}
@@ -465,14 +463,14 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
                       display:'grid', gridTemplateColumns: '1fr auto auto auto', gap: 12, alignItems:'center',
                       padding: '9px 12px',
                       background: 'var(--surface)',
-                      cursor:'pointer', transition:'background .12s'
+                      cursor:'pointer', transition: 'background-color var(--dur-micro) var(--ease-out)'
                     }}
                     onMouseEnter={e => e.currentTarget.style.background = 'var(--row-hover)'}
                     onMouseLeave={e => e.currentTarget.style.background = 'var(--surface)'}
                   >
                     <div style={{ minWidth: 0 }}>
                       <div style={{ fontSize: 12, color:'var(--ink)', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{p.name}</div>
-                      <div className="mono" style={{ fontSize: 10, color:'var(--soft)' }}>{p.ticker} · {p.country}</div>
+                      <div className="mono" style={{ fontSize: 'var(--text-xs)', color:'var(--soft)' }}>{p.ticker} · {p.country}</div>
                     </div>
                     <span className="mono" style={{ fontSize: 12, color:'var(--sub)' }}>{fmt.money(p.mvUsd, 'USD', 1)}</span>
                     <span className="mono" style={{ fontSize: 12, color:'var(--soft)' }}>{fmt.pct(p.ownership, 2)}</span>
@@ -510,7 +508,7 @@ function ResearchLinks({ ticker, name }) {
   const q = encodeURIComponent(`${name} ${ticker} stock`);
   return (
     <div style={{ marginTop: 18 }}>
-      <div className="eyebrow" style={{ fontSize: 9, marginBottom: 8 }}>Research</div>
+      <div className="eyebrow" style={{ fontSize: 'var(--text-xs)', marginBottom: 8 }}>Research</div>
       <div className="r-research3">
         <ExtLink href={`https://www.perplexity.ai/finance/${sym}`} brand="perplexity"
           title={`Open ${ticker} on Perplexity Finance`}>Perplexity</ExtLink>
@@ -573,7 +571,7 @@ function ExtLink({ href, children, brand, title }) {
         background: 'var(--surface)',
         border: '1px solid var(--line)',
         padding: '0 10px', height: 'var(--control-h-lg)', borderRadius: 'var(--r-md)',
-        transition: 'background .12s, color .12s, border-color .12s',
+        transition: 'background-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out)',
       }}
       onMouseEnter={e => {
         e.currentTarget.style.background = 'var(--row-hover)';
@@ -605,7 +603,7 @@ function MetricBox({ label, value }) {
       border: '1px solid var(--line)', borderRadius: 'var(--r-md)',
       background: 'var(--surface)', padding: '11px 14px',
     }}>
-      <div className="eyebrow" style={{ fontSize: 9 }}>{label}</div>
+      <div className="eyebrow" style={{ fontSize: 'var(--text-xs)' }}>{label}</div>
       <div className="mono" style={{
         fontSize: 15, fontWeight: 600, marginTop: 5, lineHeight: 1.3,
         color: 'var(--ink)',
@@ -617,13 +615,13 @@ function MetricBox({ label, value }) {
 export function Metric({ label, value, accent, note }) {
   return (
     <div>
-      <div className="eyebrow" style={{ fontSize: 9 }}>{label}</div>
+      <div className="eyebrow" style={{ fontSize: 'var(--text-xs)' }}>{label}</div>
       <div className="display" style={{
-        fontSize: 18, marginTop: 3, letterSpacing: '-0.01em',
+        fontSize: 18, marginTop: 3,
         color: accent ? 'var(--accent-text)' : 'var(--ink)'
       }}>{value}</div>
       {note && (
-        <div className="mono" style={{ fontSize: 10, color: 'var(--sub)', marginTop: 3, lineHeight: 1.35 }}>{note}</div>
+        <div className="mono" style={{ fontSize: 'var(--text-xs)', color: 'var(--sub)', marginTop: 3, lineHeight: 1.35 }}>{note}</div>
       )}
     </div>
   );
@@ -645,9 +643,9 @@ export function SectionLabel({ text, tag, accent, divider }) {
       paddingBottom: divider ? 12 : 0,
       borderBottom: divider ? '1px solid var(--line)' : 'none',
     }}>
-      <span className="eyebrow" style={{ fontSize: 10, color: accent ? 'var(--accent-text)' : undefined }}>{text}</span>
+      <span className="eyebrow" style={{ fontSize: 'var(--text-xs)', color: accent ? 'var(--accent-text)' : undefined }}>{text}</span>
       {tag && (
-        <span className="mono" style={{ fontSize: 10, color: 'var(--sub)', fontWeight: 400 }}>
+        <span className="mono" style={{ fontSize: 'var(--text-xs)', color: 'var(--sub)', fontWeight: 400 }}>
           · {tag}
         </span>
       )}
@@ -663,7 +661,7 @@ export function KvCell({ label, value }) {
       background:'var(--surface)', padding: '12px 14px',
       display:'flex', alignItems:'center', justifyContent:'space-between', gap: 10,
     }}>
-      <span className="eyebrow" style={{ fontSize: 10 }}>{label}</span>
+      <span className="eyebrow" style={{ fontSize: 'var(--text-xs)' }}>{label}</span>
       <span className="mono" style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink)', textAlign:'right', flexShrink: 0 }}>{value}</span>
     </div>
   );

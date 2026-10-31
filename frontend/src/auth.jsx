@@ -117,7 +117,7 @@ export function AdminLogin() {
           ? <Icon name="check" size={11} color="var(--accent-text)" />
           : null}
         <span title={session.user.email}>
-          {isAdmin ? 'Admin' : 'Signed in — not an admin'}
+          {isAdmin ? 'Admin' : 'Signed in, not an admin'}
         </span>
         <button style={link} onClick={() => supabase.auth.signOut()}>Sign out</button>
       </span>

@@ -50,14 +50,14 @@ export function Footer({ positions, period, pricesAsOf }) {
           <div>
             <p className="display" style={{
               margin: 0, maxWidth: 340,
-              fontSize: 'clamp(19px, 1.5vw, 23px)', lineHeight: 1.3,
-              letterSpacing: '-0.02em', fontWeight: 500,
+              fontSize: 'clamp(19px, 1.5vw, 23px)', lineHeight: 1.35,
+              fontWeight: 500,
               color: 'var(--foot-ink)',
             }}>
               The world&rsquo;s largest sovereign wealth fund, tracked position by position.
             </p>
             <div className="mono" style={{
-              marginTop: 20, fontSize: 11, lineHeight: 1.9, color: 'var(--foot-soft)',
+              marginTop: 20, fontSize: 'var(--text-xs)', lineHeight: 1.9, color: 'var(--foot-soft)',
             }}>
               {positions.toLocaleString()} positions
               {holdingsAsOf && <><br/>Holdings as of {holdingsAsOf}</>}
@@ -105,6 +105,11 @@ export function Footer({ positions, period, pricesAsOf }) {
             is not affiliated with or endorsed by NBIM, Norges Bank, or the Norwegian
             government. Nothing here is investment advice.
           </p>
+          {/* CC BY asks for the credit wherever the picture shows. */}
+          <p style={legal} data-credits>
+            Photograph: <a href="https://commons.wikimedia.org/wiki/File:Vallee-brouillard.jpg"
+              target="_blank" rel="noopener noreferrer" style={{ color: 'inherit' }}>Thomas Bresson</a> (CC BY 3.0, Wikimedia Commons).
+          </p>
         </div>
 
         {/* Lockup band — the oversized mark that closes the page. */}
@@ -139,7 +144,7 @@ var legal = { margin: 0, maxWidth: 900 };
 function FooterCol({ title, children }) {
   return (
     <div>
-      <div className="eyebrow" style={{ fontSize: 10, color: 'var(--foot-soft)' }}>{title}</div>
+      <div className="eyebrow" style={{ fontSize: 'var(--text-xs)', color: 'var(--foot-soft)' }}>{title}</div>
       {/* gap 6 + 4px of link padding, not gap 14 against a bare 23px line box: same
           37px pitch on screen, but each link is now a 31px target rather than one
           under WCAG 2.2's 24px minimum. */}

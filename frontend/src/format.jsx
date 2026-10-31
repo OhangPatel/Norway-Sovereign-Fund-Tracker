@@ -3,7 +3,7 @@
 export const fmt = {
   // Compact short form: 1.2B, 845M, 3.4K
   short(n, digits = 1) {
-    if (n == null || isNaN(n)) return '—';
+    if (n == null || isNaN(n)) return 'n/a';
     const a = Math.abs(n);
     if (a >= 1e12) return (n / 1e12).toFixed(digits) + 'T';
     if (a >= 1e9)  return (n / 1e9).toFixed(digits) + 'B';
@@ -13,26 +13,26 @@ export const fmt = {
   },
   // money in NOK or USD with prefix
   money(n, ccy = 'USD', digits = 2) {
-    if (n == null || isNaN(n)) return '—';
+    if (n == null || isNaN(n)) return 'n/a';
     const sym = ccy === 'NOK' ? 'kr ' : '$ ';
     return sym + fmt.short(n, digits);
   },
   pct(n, digits = 2) {
-    if (n == null || isNaN(n)) return '—';
+    if (n == null || isNaN(n)) return 'n/a';
     return n.toFixed(digits) + '%';
   },
   // n is already a percent value (e.g. -1.74 -> "-1.74%"), matching pct().
   signedPct(n, digits = 2) {
-    if (n == null || isNaN(n)) return '—';
+    if (n == null || isNaN(n)) return 'n/a';
     const s = n >= 0 ? '+' : '';
     return s + n.toFixed(digits) + '%';
   },
   price(n, digits = 2) {
-    if (n == null || isNaN(n)) return '—';
+    if (n == null || isNaN(n)) return 'n/a';
     return n.toLocaleString('en-US', { minimumFractionDigits: digits, maximumFractionDigits: digits });
   },
   rec(r) {
-    if (!r) return '—';
+    if (!r) return 'n/a';
     return r.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
   }
 };
@@ -56,11 +56,10 @@ export const fmt = {
 //   pill    — a mode or a filter: something toggled, living in a row of peers.
 //   block   — a committed action inside a panel: Done, Open comparison, a link out.
 //
-// `tone` picks the type treatment, and the two mean different things:
-//   label — mono, uppercase, tracked. Names a MODE or a COMMAND.
-//   text  — display, sentence case. Names a DESTINATION or an OBJECT
-//           ("Yahoo Finance"), which uppercasing would mangle.
-export function btn({ variant = 'ghost', shape = 'pill', tone = 'label', active = false } = {}) {
+// Every control speaks in one voice: the body face, sentence case, untracked. There
+// used to be a `tone` that switched commands into tracked mono capitals; a control's
+// job is told by its verb, not its typeface, so that switch is gone.
+export function btn({ variant = 'ghost', shape = 'pill', active = false } = {}) {
   const fill = {
     primary: { bg: 'var(--accent)', fg: 'var(--treemap-cell-fg)', bd: 'var(--accent)' },
     solid:   { bg: 'var(--ink)',    fg: 'var(--bg)',              bd: 'var(--ink)' },
@@ -80,12 +79,10 @@ export function btn({ variant = 'ghost', shape = 'pill', tone = 'label', active 
     borderRadius: shape === 'pill' ? 'var(--r-pill)' : 'var(--r-md)',
     cursor: 'pointer',
     textDecoration: 'none', whiteSpace: 'nowrap',
-    fontFamily: tone === 'label' ? 'var(--font-mono)' : 'var(--font-display)',
-    fontSize: tone === 'label' ? 11 : 13,
+    fontFamily: 'var(--font-body)',
+    fontSize: 'var(--text-sm)',
     fontWeight: variant === 'ghost' ? 500 : 600,
-    letterSpacing: tone === 'label' ? '0.06em' : '0',
-    textTransform: tone === 'label' ? 'uppercase' : 'none',
-    transition: 'background .14s ease, border-color .14s ease, color .14s ease',
+    transition: 'background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out)',
   };
 }
 
@@ -102,7 +99,7 @@ export function iconBtnStyle({ active = false, large = false } = {}) {
     color: active ? 'var(--treemap-cell-fg)' : 'var(--sub)',
     border: `1px solid ${active ? 'var(--accent)' : 'var(--line)'}`,
     borderRadius: 'var(--r-md)', cursor: 'pointer',
-    transition: 'background .14s ease, border-color .14s ease, color .14s ease',
+    transition: 'background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out)',
   };
 }
 
@@ -123,10 +120,9 @@ export function Chip({ children, tone = 'neutral', style = {} }) {
       display: 'inline-flex', alignItems:'center', gap: 6,
       padding: '2px 8px',
       borderRadius: 'var(--r-pill)',
-      fontFamily: 'var(--font-mono)',
-      fontSize: 10.5,
-      letterSpacing: '0.04em',
-      textTransform: 'uppercase',
+      fontFamily: 'var(--font-body)',
+      fontSize: 'var(--text-xs)',
+      fontWeight: 500,
       background: t.bg,
       color: t.fg,
       border: `1px solid ${t.bd}`,
@@ -156,9 +152,8 @@ export function Tag({ children, size = 'sm', tone = 'neutral', style = {} }) {
       display: 'inline-flex', alignItems: 'center', gap: 5,
       padding: lg ? '5px 10px' : '2px 7px',
       borderRadius: 'var(--r-xs)',
-      fontSize: lg ? 12 : 10.5,
+      fontSize: lg ? 'var(--text-sm)' : 'var(--text-xs)',
       fontWeight: lg ? 600 : 500,
-      letterSpacing: '0.04em',
       background: t.bg, color: t.fg,
       border: `1px solid ${t.bd}`,
       whiteSpace: 'nowrap', flexShrink: 0,
@@ -169,7 +164,7 @@ export function Tag({ children, size = 'sm', tone = 'neutral', style = {} }) {
 
 // Tiny up/down delta
 export function Delta({ value, fmt: f = 'pct' }) {
-  if (value == null) return <span className="mono" style={{color:'var(--soft)'}}>—</span>;
+  if (value == null) return <span className="mono" style={{color:'var(--soft)'}}>n/a</span>;
   const pos = value >= 0;
   const arrow = pos ? '▲' : '▼';
   const label = f === 'pct' ? fmt.signedPct(value) : (pos ? '+' : '') + fmt.short(value, 2);
@@ -179,7 +174,7 @@ export function Delta({ value, fmt: f = 'pct' }) {
       fontSize: 12, fontWeight: 500,
       display: 'inline-flex', alignItems:'center', gap: 4,
     }}>
-      <span style={{ fontSize: 9 }}>{arrow}</span>{label}
+      <span aria-hidden="true" style={{ fontSize: 9 }}>{arrow}</span>{label}
     </span>
   );
 }
@@ -206,13 +201,13 @@ export function RangeBar({ low, high, value, height = 8, showLabels = false }) {
           width: 2,
           background: 'var(--ink)',
           borderRadius: 2,
-          boxShadow: '0 0 0 3px var(--bg)'
+          boxShadow: '0 0 0 3px var(--surface)'
         }}/>
       </div>
       {showLabels && (
         <div className="mono" style={{
           display:'flex', justifyContent:'space-between',
-          fontSize: 10.5, color:'var(--soft)', marginTop: 4
+          fontSize: 'var(--text-xs)', color:'var(--soft)', marginTop: 4
         }}>
           <span>{fmt.price(low)}</span>
           <span>{fmt.price(high)}</span>
@@ -238,7 +233,11 @@ export function MicroBar({ value, max, tone = 'accent', height = 4 }) {
       borderRadius: 'var(--r-pill)', overflow: 'hidden',
       border: '1px solid var(--line)',
     }}>
-      <div style={{ height: '100%', width: pct + '%', background: tones[tone], transition: 'width .3s ease' }}/>
+      <div style={{
+        height: '100%', width: '100%', background: tones[tone],
+        transform: `scaleX(${pct / 100})`, transformOrigin: 'left',
+        transition: 'transform var(--dur-short) var(--ease-out)',
+      }}/>
     </div>
   );
 }
@@ -263,34 +262,37 @@ export function BrandMark({ size = 28 }) {
 export function Icon({ name, size = 16, color = 'currentColor', strokeWidth = 1.5 }) {
   const props = {
     width: size, height: size, viewBox: '0 0 24 24', fill: 'none',
-    stroke: color, strokeWidth, strokeLinecap: 'round', strokeLinejoin: 'round'
+    stroke: color, strokeWidth, strokeLinecap: 'round', strokeLinejoin: 'round',
+    focusable: 'false',
   };
   switch (name) {
-    case 'search':  return <svg {...props}><circle cx="11" cy="11" r="6"/><path d="m20 20-4-4"/></svg>;
-    case 'sun':     return <svg {...props}><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>;
-    case 'moon':    return <svg {...props}><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>;
-    case 'pin':     return <svg {...props}><path d="M12 2v6M12 8l4 4v3H8v-3l4-4zM12 15v7"/></svg>;
-    case 'pinned':  return <svg {...props} fill="currentColor"><path d="M12 2v6M12 8l4 4v3H8v-3l4-4zM12 15v7"/></svg>;
-    case 'x':       return <svg {...props}><path d="M5 5l14 14M19 5 5 19"/></svg>;
-    case 'menu':    return <svg {...props}><path d="M4 7h16M4 12h16M4 17h16"/></svg>;
-    case 'arrow-up': return <svg {...props}><path d="M12 19V5M5 12l7-7 7 7"/></svg>;
-    case 'arrow-down': return <svg {...props}><path d="M12 5v14M19 12l-7 7-7-7"/></svg>;
-    case 'arrow-right': return <svg {...props}><path d="M5 12h14M12 5l7 7-7 7"/></svg>;
-    case 'filter':  return <svg {...props}><path d="M3 5h18M6 12h12M10 19h4"/></svg>;
-    case 'sliders': return <svg {...props}><path d="M4 7h8M16 7h4M4 17h4M12 17h8"/><circle cx="14" cy="7" r="2.2"/><circle cx="10" cy="17" r="2.2"/></svg>;
-    case 'columns': return <svg {...props}><rect x="3" y="4" width="6" height="16" rx="1"/><rect x="11" y="4" width="4" height="16" rx="1"/><rect x="17" y="4" width="4" height="16" rx="1"/></svg>;
-    case 'compare': return <svg {...props}><rect x="3" y="4" width="8" height="16" rx="1"/><rect x="13" y="4" width="8" height="16" rx="1"/></svg>;
-    case 'chev-down': return <svg {...props}><path d="m6 9 6 6 6-6"/></svg>;
-    case 'chev-up':   return <svg {...props}><path d="m6 15 6-6 6 6"/></svg>;
-    case 'check':   return <svg {...props}><path d="m5 13 4 4L19 7"/></svg>;
-    case 'globe':   return <svg {...props}><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>;
-    case 'wave':    return <svg {...props}><path d="M3 12c2-4 4-4 6 0s4 4 6 0 4-4 6 0"/></svg>;
-    case 'sparkle': return <svg {...props}><path d="M12 3v6M12 15v6M3 12h6M15 12h6M5.6 5.6 9 9M15 15l3.4 3.4M5.6 18.4 9 15M15 9l3.4-3.4"/></svg>;
-    case 'dot':     return <svg {...props} fill="currentColor"><circle cx="12" cy="12" r="3" stroke="none"/></svg>;
-    case 'download': return <svg {...props}><path d="M12 3v12M8 11l4 4 4-4M5 21h14"/></svg>;
-    case 'refresh':  return <svg {...props}><path d="M21 12a9 9 0 1 1-2.64-6.36M21 4v5h-5"/></svg>;
-    case 'clock':    return <svg {...props}><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/></svg>;
-    case 'export':   return <svg {...props}><path d="M12 15V3M8 7l4-4 4 4M5 15v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"/></svg>;
+    case 'search':  return <svg aria-hidden="true" {...props}><circle cx="11" cy="11" r="6"/><path d="m20 20-4-4"/></svg>;
+    case 'sun':     return <svg aria-hidden="true" {...props}><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>;
+    case 'moon':    return <svg aria-hidden="true" {...props}><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>;
+    case 'pin':     return <svg aria-hidden="true" {...props}><path d="M12 2v6M12 8l4 4v3H8v-3l4-4zM12 15v7"/></svg>;
+    case 'pinned':  return <svg aria-hidden="true" {...props} fill="currentColor"><path d="M12 2v6M12 8l4 4v3H8v-3l4-4zM12 15v7"/></svg>;
+    case 'x':       return <svg aria-hidden="true" {...props}><path d="M5 5l14 14M19 5 5 19"/></svg>;
+    case 'menu':    return <svg aria-hidden="true" {...props}><path d="M4 7h16M4 12h16M4 17h16"/></svg>;
+    case 'arrow-up': return <svg aria-hidden="true" {...props}><path d="M12 19V5M5 12l7-7 7 7"/></svg>;
+    case 'arrow-down': return <svg aria-hidden="true" {...props}><path d="M12 5v14M19 12l-7 7-7-7"/></svg>;
+    case 'arrow-right': return <svg aria-hidden="true" {...props}><path d="M5 12h14M12 5l7 7-7 7"/></svg>;
+    case 'filter':  return <svg aria-hidden="true" {...props}><path d="M3 5h18M6 12h12M10 19h4"/></svg>;
+    case 'sliders': return <svg aria-hidden="true" {...props}><path d="M4 7h8M16 7h4M4 17h4M12 17h8"/><circle cx="14" cy="7" r="2.2"/><circle cx="10" cy="17" r="2.2"/></svg>;
+    case 'columns': return <svg aria-hidden="true" {...props}><rect x="3" y="4" width="6" height="16" rx="1"/><rect x="11" y="4" width="4" height="16" rx="1"/><rect x="17" y="4" width="4" height="16" rx="1"/></svg>;
+    case 'compare': return <svg aria-hidden="true" {...props}><rect x="3" y="4" width="8" height="16" rx="1"/><rect x="13" y="4" width="8" height="16" rx="1"/></svg>;
+    case 'chev-down': return <svg aria-hidden="true" {...props}><path d="m6 9 6 6 6-6"/></svg>;
+    case 'chev-up':   return <svg aria-hidden="true" {...props}><path d="m6 15 6-6 6 6"/></svg>;
+    case 'check':   return <svg aria-hidden="true" {...props}><path d="m5 13 4 4L19 7"/></svg>;
+    case 'globe':   return <svg aria-hidden="true" {...props}><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>;
+    case 'wave':    return <svg aria-hidden="true" {...props}><path d="M3 12c2-4 4-4 6 0s4 4 6 0 4-4 6 0"/></svg>;
+    case 'sparkle': return <svg aria-hidden="true" {...props}><path d="M12 3v6M12 15v6M3 12h6M15 12h6M5.6 5.6 9 9M15 15l3.4 3.4M5.6 18.4 9 15M15 9l3.4-3.4"/></svg>;
+    case 'dot':     return <svg aria-hidden="true" {...props} fill="currentColor"><circle cx="12" cy="12" r="3" stroke="none"/></svg>;
+    case 'download': return <svg aria-hidden="true" {...props}><path d="M12 3v12M8 11l4 4 4-4M5 21h14"/></svg>;
+    case 'refresh':  return <svg aria-hidden="true" {...props}><path d="M21 12a9 9 0 1 1-2.64-6.36M21 4v5h-5"/></svg>;
+    case 'clock':    return <svg aria-hidden="true" {...props}><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/></svg>;
+    case 'export':   return <svg aria-hidden="true" {...props}><path d="M12 15V3M8 7l4-4 4 4M5 15v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"/></svg>;
+    case 'pause':    return <svg aria-hidden="true" {...props}><path d="M9 5v14M15 5v14"/></svg>;
+    case 'play':     return <svg aria-hidden="true" {...props}><path d="M8 5v14l11-7z"/></svg>;
     default: return null;
   }
 }

@@ -26,6 +26,8 @@ export function TopBar({
   // anchoring one panel to another that can close under it is how menus lose their
   // alignment. Reset whenever the menu closes, so it always reopens on the root list.
   const [periodOpen, setPeriodOpen] = React.useState(false);
+  // The ticker loops for as long as the page is open, so it carries its own pause.
+  const [tickPaused, setTickPaused] = React.useState(false);
   const wrapRef = React.useRef(null);
   const navRef = React.useRef(null);
 
@@ -141,7 +143,11 @@ export function TopBar({
         {/* Nav shell — top corners only; the band below carries the bottom. */}
         <div className="nav-shell" style={{
           '--nav-h': condensed ? '56px' : '68px',
+          // Glass: the bar rides over the photograph, then over the slate below it.
           background: 'var(--nav-surface)',
+          backdropFilter: 'blur(var(--glass-blur)) saturate(1.35)',
+          WebkitBackdropFilter: 'blur(var(--glass-blur)) saturate(1.35)',
+          boxShadow: 'var(--glass-hi)',
           border: '1px solid var(--nav-line)',
           borderBottom: condensed ? '1px solid var(--nav-line)' : 'none',
           borderRadius: condensed ? 'var(--r-lg)' : 'var(--r-lg) var(--r-lg) 0 0',
@@ -160,7 +166,7 @@ export function TopBar({
               type="button"
               className="r-brand"
               onClick={() => navigate(DASHBOARD_HASH)}
-              aria-label="Sovereign Insights — go to the dashboard"
+              aria-label="Sovereign Insights, go to the dashboard"
               style={{
                 display:'flex', alignItems:'center', gap: 12,
                 background:'none', border:'none', padding: 0,
@@ -169,11 +175,11 @@ export function TopBar({
             >
               <BrandMark size={28}/>
               <div>
-                <div className="display" style={{ fontSize: 17, lineHeight: 1, letterSpacing: '-0.02em', fontWeight: 600, color: 'var(--nav-ink)', whiteSpace: 'nowrap' }}>
+                <div className="display" style={{ fontSize: 17, lineHeight: 1, fontWeight: 600, color: 'var(--nav-ink)', whiteSpace: 'nowrap' }}>
                   Sovereign <span style={{ color: 'var(--nav-accent-text)' }}>Insights</span>
                 </div>
                 <div className="eyebrow" style={{
-                  marginTop: 4, fontSize: 10, whiteSpace: 'nowrap', color: 'var(--nav-soft)',
+                  marginTop: 4, fontSize: 'var(--text-xs)', whiteSpace: 'nowrap', color: 'var(--nav-soft)',
                 }}>
                   {lastFetched}
                 </div>
@@ -186,14 +192,12 @@ export function TopBar({
 
             {/* Search */}
             <div ref={wrapRef} className="r-search" style={{ position: 'relative', width: '100%', justifySelf:'stretch' }}>
-              <div style={{
+              <div className="r-field" style={{
                 display:'flex', alignItems:'center', gap: 10,
                 padding: '0 14px',
                 background: 'var(--nav-field)',
-                border: `1px solid ${focused ? 'var(--nav-ink)' : 'var(--nav-line)'}`,
-                borderRadius: 'var(--r-md)', height: 'var(--control-h-lg)',
-                boxShadow: focused ? '0 0 0 3px var(--accent-ring)' : 'none',
-                transition: 'border-color .15s ease, box-shadow .15s ease',
+                border: '1px solid var(--field-line)',
+                borderRadius: 'var(--r-pill)', height: 'var(--control-h-lg)',
               }}>
                 <Icon name="search" size={15} color="var(--nav-soft)"/>
                 <input
@@ -202,11 +206,11 @@ export function TopBar({
                   onFocus={() => setFocused(true)}
                   onBlur={() => setTimeout(() => setFocused(false), 120)}
                   onKeyDown={handleKey}
-                  placeholder="Search companies — by name, ticker, or country"
+                  placeholder="Search companies by name, ticker or country"
                   style={{
-                    flex: 1, minWidth: 0,
+                    flex: 1, minWidth: 0, height: '100%',
                     border: 'none', outline: 'none', background: 'transparent',
-                    color: 'var(--nav-ink)', fontFamily: 'var(--font-display)', fontSize: 13,
+                    color: 'var(--nav-ink)', fontFamily: 'var(--font-body)', fontSize: 'var(--text-sm)',
                   }}
                 />
               </div>
@@ -232,10 +236,10 @@ export function TopBar({
                       }}>
                       <div>
                         <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--ink)' }}>{m.name}</div>
-                        <div className="mono" style={{ fontSize: 10.5, color: 'var(--soft)' }}>{m.country} · {sectorOf(m, '—')}</div>
+                        <div style={{ fontSize: 'var(--text-xs)', color: 'var(--soft)' }}>{m.country} · {sectorOf(m, 'n/a')}</div>
                       </div>
-                      <span className="mono" style={{ fontSize: 11, color: 'var(--sub)' }}>{m.ticker}</span>
-                      <span className="mono" style={{ fontSize: 11, color: 'var(--soft)' }}>{fmt.money(m.mvUsd, 'USD', 1)}</span>
+                      <span className="mono" style={{ fontSize: 'var(--text-xs)', color: 'var(--sub)' }}>{m.ticker}</span>
+                      <span className="mono" style={{ fontSize: 'var(--text-xs)', color: 'var(--soft)' }}>{fmt.money(m.mvUsd, 'USD', 1)}</span>
                     </div>
                   ))}
                 </div>
@@ -338,13 +342,27 @@ export function TopBar({
         )}
 
         {/* Ticker band — one continuous marquee line; carries the bottom corners. */}
-        <div className="tick-band" style={{
+        <div className={`tick-band${tickPaused ? ' is-paused' : ''}`} style={{
+          position: 'relative',
           height: condensed ? 0 : 27,
           opacity: condensed ? 0 : 1,
           background: 'var(--nav-band)',
           borderRadius: '0 0 var(--r-lg) var(--r-lg)',
           overflow: 'hidden',
         }}>
+          {!condensed && (
+            <button type="button" onClick={() => setTickPaused(p => !p)}
+              aria-label={tickPaused ? 'Play the ticker' : 'Pause the ticker'}
+              aria-pressed={tickPaused}
+              style={{
+                position: 'absolute', right: 0, top: 0, bottom: 0, zIndex: 1,
+                width: 34, display: 'grid', placeItems: 'center',
+                background: 'var(--nav-band)', color: 'var(--nav-band-ink)',
+                border: 'none', borderLeft: '1px solid var(--foot-line)', cursor: 'pointer',
+              }}>
+              <Icon name={tickPaused ? 'play' : 'pause'} size={12}/>
+            </button>
+          )}
           <div className="tick-track">
             {[0, 1].map(copy => (
               <div key={copy} aria-hidden={copy === 1 ? 'true' : undefined}
@@ -419,16 +437,13 @@ function MenuRow({ children, icon, onClick, active, hint, last, expanded }) {
         border: 'none',
         borderBottom: last ? 'none' : '1px solid var(--line)',
         color: 'var(--ink)', cursor: 'pointer', textAlign: 'left',
-        fontFamily: 'var(--font-display)', fontSize: 14, fontWeight: 500,
+        fontFamily: 'var(--font-body)', fontSize: 14, fontWeight: 500,
       }}
     >
       <Icon name={icon} size={16} color="var(--sub)"/>
       <span style={{ flex: 1 }}>{children}</span>
       {hint && (
-        <span className="mono" style={{
-          fontSize: 10.5, color: 'var(--soft)',
-          letterSpacing: '0.06em', textTransform: 'uppercase',
-        }}>{hint}</span>
+        <span style={{ fontSize: 'var(--text-xs)', color: 'var(--soft)' }}>{hint}</span>
       )}
       {expanded !== undefined && (
         <Icon name={expanded ? 'chev-up' : 'chev-down'} size={14} color="var(--soft)"/>

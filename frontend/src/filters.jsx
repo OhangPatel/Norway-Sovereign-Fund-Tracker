@@ -13,7 +13,7 @@ const pillStyle = (active) => btn({ variant: 'ghost', shape: 'pill', active });
 const countBadge = {
   padding: '1px 6px', borderRadius: 'var(--r-pill)',
   background: 'var(--accent)', color: 'var(--treemap-cell-fg)',
-  fontSize: 10, fontWeight: 600,
+  fontSize: 'var(--text-xs)', fontWeight: 600,
 };
 
 const popoverStyle = {
@@ -211,14 +211,14 @@ export function OptionList({ options, selected, onToggle, onClear, format = (v) 
               background: sel ? 'var(--row-hover)' : 'transparent',
               border:'none', borderRadius: 'var(--r-sm)',
               textAlign:'left', cursor:'pointer',
-              color:'var(--ink)', fontFamily:'var(--font-display)', fontSize: 13,
+              color:'var(--ink)', fontFamily:'var(--font-body)', fontSize: 13,
             }}
             onMouseEnter={e => { if (!sel) e.currentTarget.style.background = 'var(--row-hover)'; }}
             onMouseLeave={e => { if (!sel) e.currentTarget.style.background = 'transparent'; }}
           >
             <Check on={sel}/>
             <span>{format(opt)}</span>
-            {counter && <span className="mono" style={{ fontSize: 10.5, color:'var(--soft)' }}>{counter(opt)}</span>}
+            {counter && <span className="mono" style={{ fontSize: 'var(--text-xs)', color:'var(--soft)' }}>{counter(opt)}</span>}
           </button>
         );
       })}
@@ -228,9 +228,8 @@ export function OptionList({ options, selected, onToggle, onClear, format = (v) 
             width:'100%', padding:'8px 10px', marginTop: 4,
             background:'transparent', border:'none',
             borderTop: '1px solid var(--line)',
-            color:'var(--soft)', fontFamily:'var(--font-mono)', fontSize: 10.5,
+            color:'var(--soft)', fontFamily:'var(--font-body)', fontSize: 'var(--text-xs)',
             cursor:'pointer', textAlign:'left',
-            letterSpacing:'0.08em', textTransform: 'uppercase',
           }}>
           Clear selection
         </button>
@@ -264,7 +263,7 @@ function RangeBody({ min, max, step, valueMin, valueMax, onChange, formatValue }
       </div>
       <div className="mono" style={{
         display:'flex', justifyContent:'space-between',
-        fontSize: 11, color:'var(--sub)', marginTop: 8
+        fontSize: 'var(--text-xs)', color:'var(--sub)', marginTop: 8
       }}>
         <span>{formatValue(valueMin)}</span>
         <span>{formatValue(valueMax)}</span>
@@ -325,7 +324,7 @@ export function ColumnsPopover({ columns, setColumns }) {
       position:'absolute', top: 'calc(100% + 8px)',
       width: 240, padding: 8, zIndex: 40,
     }}>
-      <div className="eyebrow" style={{ padding: '6px 10px', fontSize: 10 }}>Visible columns</div>
+      <div className="eyebrow" style={{ padding: '6px 10px', fontSize: 'var(--text-xs)' }}>Visible columns</div>
       {Object.entries(columns).map(([key, col]) => (
         <button key={key} onClick={() => setColumns(c => ({ ...c, [key]: { ...c[key], visible: !c[key].visible } }))}
           style={{
@@ -334,7 +333,7 @@ export function ColumnsPopover({ columns, setColumns }) {
             background: 'transparent', border:'none', borderRadius: 'var(--r-sm)',
             textAlign:'left', cursor:'pointer',
             color: col.visible ? 'var(--ink)' : 'var(--soft)',
-            fontFamily:'var(--font-display)', fontSize: 13,
+            fontFamily:'var(--font-body)', fontSize: 13,
           }}>
           <Check on={col.visible}/>
           {col.label}

@@ -1,0 +1,33 @@
+[
+  {
+    "mode": "redesign",
+    "depth": "full",
+    "scope": "app",
+    "shape": "app screen",
+    "theme": "dusk",
+    "axes": "dark/grotesk-sans/cool",
+    "hero": "Stage (/), Banner (/changes)",
+    "nav": "glass bar over the hour, ticker band kept",
+    "footer": "kept: statement, three link columns, slate band",
+    "imagery": "photographs, library 1, natural",
+    "photos": [
+      "Vallee-brouillard.jpg"
+    ],
+    "entry": "none",
+    "sections": [
+      "stage hero: head on the hour, top holdings as a run of accounts in glass",
+      "ruled tally in a glass strip",
+      "sector weight: ruled list beside the treemap in glass",
+      "ownership: slim bars over a ruled tally",
+      "holdings ledger in glass"
+    ],
+    "signature": "the top holdings as a run of accounts in glass, and the holdings ledger",
+    "waived": [
+      "39b",
+      "72"
+    ],
+    "prompt": "a public research dashboard tracking every equity holding of Norway sovereign wealth fund: ledger, sector and market weights, ownership stakes, what changed between disclosures",
+    "modes": "dark (default) + light",
+    "date": "2026-10-31"
+  }
+]

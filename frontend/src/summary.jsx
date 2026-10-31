@@ -1,11 +1,11 @@
 import React from 'react';
-import { fmt } from './format.jsx';
-import { TopBarList, Histogram, Treemap } from './charts.jsx';
+import { fmt, btn } from './format.jsx';
+import { Histogram, Treemap } from './charts.jsx';
 import { sectorOf } from './sectors.js';
 
-// Summary section: hero bento + charts (top holdings, sector treemap, ownership histogram)
+// Summary: the photo hero with the top holdings in glass, the ruled tally, then the sector and ownership sections.
 
-// Each sector mapped to its semantic Lime --sector-* token (STYLE_GUIDE §2).
+// Each sector mapped to its --sector-* token (index.html, one quiet family under Dusk).
 export var SECTOR_COLORS = {
   'Technology':            'var(--sector-tech)',
   'Communication Services':'var(--sector-tech)',
@@ -51,14 +51,13 @@ export function Summary({ data, filtered, onPickCompany, onSetFilter, activeSect
     () => [...filtered].sort((a, b) => b.mvNok - a.mvNok).slice(0, 8),
     [filtered]
   );
-  const topMax = top10[0]?.mvNok || 1;
 
   // Sector breakdown (share of total USD value)
   const sectors = React.useMemo(() => {
     const bySector = new Map();
     let tot = 0;
     for (const c of filtered) {
-      const k = sectorOf(c, '—');
+      const k = sectorOf(c, 'n/a');
       bySector.set(k, (bySector.get(k) || 0) + c.mvUsd);
       tot += c.mvUsd || 0;
     }
@@ -79,128 +78,136 @@ export function Summary({ data, filtered, onPickCompany, onSetFilter, activeSect
     max: owns.length ? Math.max(...owns) : 0,
   }), [owns]);
 
+  // The hero's one action: down to the ledger, without touching the hash router.
+  const toLedger = () => {
+    const el = document.getElementById('ledger');
+    if (!el) return;
+    const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    el.scrollIntoView({ behavior: still ? 'auto' : 'smooth', block: 'start' });
+  };
+
   return (
-    <section style={{ display:'grid', gridTemplateColumns:'1fr', gap: 'var(--gap)' }}>
-      {/* Hero bento (STYLE_GUIDE §6) — column counts come from .r-bento so they
-          can collapse 4→2→1 with viewport; see index.html. */}
-      <div className="r-bento">
-        {/* Lead card — hero half of the top row. Keeps its own cream surface so
-            it stays cream on the ink field (spec 02B). */}
-        <div className="r-bento-lead enter" style={{
-          '--i': 0,
-          background: 'var(--hero-surface)', border: '1px solid var(--hero-line)',
-          color: 'var(--hero-ink)',
-          borderRadius: 'var(--r-xl)',
-          padding: 'var(--pad-card-lg)',
-          display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
-        }}>
-          <h1 className="display" style={{
-            fontSize: 'clamp(32px, 4.2vw, 54px)', fontWeight: 600,
-            lineHeight: 0.99, letterSpacing: '-0.03em', margin: '20px 0', maxWidth: 760, textWrap: 'balance',
-          }}>
-            The world&apos;s largest sovereign wealth fund, tracked equity by equity.
-          </h1>
-          <p style={{ fontSize: 15, lineHeight: 1.6, color: 'var(--hero-sub)', maxWidth: 560, margin: 0 }}>
+    <>
+      {/* Stage hero. The head sits on the photograph's fog; the top holdings sit in
+          glass over its dark hills, as a run of accounts. */}
+      <section className="r-hero" aria-labelledby="hero-head">
+        <div className="on-photo">
+          <h1 id="hero-head">The world&apos;s largest sovereign wealth fund, tracked equity by equity.</h1>
+          <p className="r-hero-lede">
             Norway&apos;s Government Pension Fund Global holds positions in {data.length.toLocaleString()} public companies across six markets.
             Filter, compare, and click through to see how every krone is allocated.
           </p>
-        </div>
-
-        {/* Feature card — total holdings; ink on the olive wash, lime on the ink field */}
-        <div className="r-bento-feature enter" style={{
-          '--i': 1,
-          background: 'var(--feature)', color: 'var(--feature-ink)',
-          borderRadius: 'var(--r-xl)', padding: '26px 24px',
-          display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
-        }}>
-          <div className="mono" style={{ fontSize: 10, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--feature-sub)' }}>Total holdings</div>
-          <div>
-            {/* Animation 2 — gradient sweeps across the numerals */}
-            <div className="display shimmer" style={{ fontSize: 'clamp(34px, 3vw, 46px)', fontWeight: 600, letterSpacing: '-0.03em', lineHeight: 0.95 }}>
-              {fmt.money(totalUsd, 'USD', 1)}
-            </div>
-            <div className="mono" style={{ fontSize: 10.5, color: 'var(--feature-sub)', marginTop: 10 }}>
-              {fmt.money(totalNok, 'NOK', 1)} · {filtered.length.toLocaleString()} cos
-            </div>
+          <div className="r-hero-actions">
+            <button type="button" onClick={toLedger} style={{
+              ...btn({ variant: 'primary', shape: 'pill' }),
+              height: 'var(--control-h-lg)', padding: '0 var(--space-lg)',
+            }}>Browse all holdings</button>
           </div>
         </div>
 
-        {/* Stat cells — 3-up row under the hero */}
-        <StatCell i={2} label="Avg ownership" value={fmt.pct(avgOwn, 2)} sub={`${ownStats.above5} positions above 5%`} />
-        <StatCell i={3} label="Markets covered" value={countries.toString()} sub={`${sectorCount} sectors`} />
-        <StatCell
-          i={4}
+        <div className="glass" style={{ padding: 'var(--space-lg) var(--space-xl) var(--space-md)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 'var(--space-sm)', marginBottom: 'var(--space-2xs)' }}>
+            <div>
+              <h2 style={{ fontSize: 'var(--text-lg)', lineHeight: 1.2, margin: 0 }}>Top holdings</h2>
+              <p className="eyebrow" style={{ margin: '2px 0 0' }}>Market value in NOK</p>
+            </div>
+            <span className="eyebrow">Top 8 of {filtered.length.toLocaleString()}</span>
+          </div>
+          <ol className="r-acct">
+            {top10.map(c => (
+              <li key={c.ticker || c.name}>
+                <button type="button" className="r-acct-row" onClick={() => onPickCompany(c)}>
+                  <span className="r-acct-init" aria-hidden="true">{(c.name || '').charAt(0)}</span>
+                  <span style={{ minWidth: 0 }}>
+                    <span className="r-acct-name" style={{ display: 'block', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{c.name}</span>
+                    <span className="mono" style={{ display: 'block', fontSize: 'var(--text-xs)', color: 'var(--soft)' }}>{c.ticker}, {countryCode(c.country)}</span>
+                  </span>
+                  <span className="mono" style={{ fontSize: 'var(--text-sm)', whiteSpace: 'nowrap' }}>{fmt.money(c.mvNok, 'NOK', 1)}</span>
+                </button>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      {/* The ruled tally, in one glass strip at the foot of the photograph. */}
+      <dl className="r-tally glass" style={{ margin: 0 }}>
+        <TallyCell lead label="Total holdings" value={fmt.money(totalUsd, 'USD', 1)}
+          sub={`${fmt.money(totalNok, 'NOK', 1)}, across ${filtered.length.toLocaleString()} companies`} />
+        <TallyCell label="Avg ownership" value={fmt.pct(avgOwn, 2)} sub={`${ownStats.above5} positions above 5%`} />
+        <TallyCell label="Markets covered" value={countries.toString()} sub={`${sectorCount} sectors`} />
+        <TallyCell
           label="Top position"
-          value={top10[0] ? top10[0].name : '—'}
-          sub={top10[0] ? `${top10[0].ticker} · ${fmt.money(top10[0].mvUsd, 'USD', 1)}` : ''}
-          clickable
-          onClick={() => top10[0] && onPickCompany(top10[0])}
+          value={top10[0] ? top10[0].name : 'n/a'}
+          sub={top10[0] ? `${top10[0].ticker}, ${fmt.money(top10[0].mvUsd, 'USD', 1)}` : ''}
+          onClick={top10[0] ? () => onPickCompany(top10[0]) : undefined}
         />
-      </div>
+      </dl>
 
-      {/* Detail row: holdings table + sector treemap (STYLE_GUIDE §6) */}
-      <div style={{ display: 'grid', gap: 'var(--gap)' }}>
-        <div className="r-split">
-          <Card i={5} title="Top holdings" eyebrow="Market value · NOK"
-            rightSlot={<span className="eyebrow">Top 8 / {filtered.length.toLocaleString()}</span>}
-          >
-            <TopBarList
-              items={top10.map(c => ({
-                key: c.ticker,
-                label: c.name,
-                sub: (c.ticker || '') + ' · ' + ((c.country || '').slice(0,3).toUpperCase()),
-                value: c.mvNok,
-                raw: c
-              }))}
-              max={topMax}
-              valueFmt={v => fmt.money(v, 'NOK', 1)}
-              onClick={(it) => onPickCompany(it.raw)}
-              accent="var(--accent)"
-            />
-          </Card>
-
-          <Card i={6} title="Sector weight*" eyebrow="By USD value"
-            rightSlot={activeSectors.length ? (
-              <button onClick={onClearSectors} className="eyebrow" style={{
-                cursor: 'pointer', border: '1px solid var(--line)', borderRadius: 'var(--r-xs)',
-                background: 'var(--surface)', color: 'var(--ink)', padding: '3px 9px',
-              }}>← All sectors</button>
-            ) : (
-              <span className="eyebrow">{sectors.length} sectors</span>
-            )}
-          >
-            {/* The asterisk in the title above points at the page footnote in
-                app.jsx, not at anything here. Three lines of caveat sat directly
-                under the treemap and read as part of the chart. */}
-            <Treemap items={sectors} height={300}
-              onClick={(it) => onSetFilter && it.label !== '—' && onSetFilter({ sector: it.label })}
-            />
-          </Card>
-        </div>
-
-        {/* Ownership distribution — full-width histogram panel */}
-        <Card i={7} title="Ownership distribution" eyebrow="% per holding"
-          className="r-owncard"
-          rightSlot={<span className="eyebrow">{owns.length.toLocaleString()} cos</span>}
-        >
-          <div style={{ paddingTop: 6 }}>
-            <Histogram data={owns} bins={28} height={130} accent="var(--accent)"
-              xFmt={v => v.toFixed(1) + '%'} onSelect={onOwnSelect}/>
-            <div style={{
-              display:'flex', justifyContent:'space-between', alignItems:'baseline',
-              marginTop: 12, paddingTop: 12, borderTop: '1px solid var(--line)'
-            }}>
-              <StatMini label="Median" value={fmt.pct(ownStats.median, 2)}/>
-              <StatMini label="Top decile" value={fmt.pct(ownStats.topDecile, 2)}/>
-              <StatMini label="Above 5%" value={ownStats.above5.toLocaleString()}/>
-              <StatMini label="Max" value={fmt.pct(ownStats.max, 2)}/>
-            </div>
+      {/* Sectors: a ruled list beside one pane. Every row and every tile filters the ledger. */}
+      <section className="r-sec" aria-labelledby="sector-head">
+        <div className="r-sec-head">
+          <div>
+            {/* The asterisk points at the page footnote in app.jsx. */}
+            <h2 id="sector-head">Sector weight*</h2>
+            <p>By USD value</p>
           </div>
-        </Card>
-      </div>
-    </section>
+          {activeSectors.length ? (
+            <button type="button" onClick={onClearSectors} style={{ ...btn(), height: 32 }}>Show all sectors</button>
+          ) : (
+            <span className="eyebrow">{sectors.length} sectors</span>
+          )}
+        </div>
+        <div className="r-duo">
+          <ul className="r-rows">
+            {sectors.map(it => (
+              <li key={it.label}>
+                <button type="button" className="r-row-btn" aria-pressed={activeSectors.includes(it.label)}
+                  onClick={() => onSetFilter && it.label !== 'n/a' && onSetFilter({ sector: it.label })}>
+                  <span className="r-row-name">{it.label}</span>
+                  <span className="mono" style={{ fontSize: 'var(--text-sm)' }}>{it.pct.toFixed(1)}%</span>
+                  <span className="r-row-bar" aria-hidden="true">
+                    <span style={{ transform: `scaleX(${sectors[0].pct ? it.pct / sectors[0].pct : 0})`, background: it.color }}/>
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+          <div className="glass" style={{ padding: 'var(--space-md)' }}>
+            <Treemap items={sectors} height={580}
+              onClick={(it) => onSetFilter && it.label !== 'n/a' && onSetFilter({ sector: it.label })}
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* Ownership: slim bars, then the ruled tally of four figures under them. */}
+      <section className="r-sec" aria-labelledby="own-head">
+        <div className="r-sec-head">
+          <div>
+            <h2 id="own-head">Ownership distribution</h2>
+            <p>Share held, per company</p>
+          </div>
+          <span className="eyebrow">{owns.length.toLocaleString()} companies</span>
+        </div>
+        <Histogram data={owns} bins={28} height={160} accent="var(--accent)"
+          xFmt={v => v.toFixed(1) + '%'} onSelect={onOwnSelect}/>
+        <dl className="r-tally" style={{ margin: 'var(--space-lg) 0 0' }}>
+          <TallyCell label="Median" value={fmt.pct(ownStats.median, 2)}/>
+          <TallyCell label="Top decile" value={fmt.pct(ownStats.topDecile, 2)}/>
+          <TallyCell label="Above 5%" value={ownStats.above5.toLocaleString()}/>
+          <TallyCell label="Max" value={fmt.pct(ownStats.max, 2)}/>
+        </dl>
+      </section>
+    </>
   );
 }
+
+// Two-letter codes for the six markets the dataset covers. Anything else is spelled
+// out rather than guessed: slicing the name gave "UNI" for both United States and
+// United Kingdom.
+const ISO2 = { 'United States': 'US', 'United Kingdom': 'GB', 'Canada': 'CA', 'Germany': 'DE', 'India': 'IN', 'Singapore': 'SG' };
+function countryCode(name) { return ISO2[name] || name || ''; }
 
 export function median(arr) {
   if (!arr.length) return 0;
@@ -214,67 +221,28 @@ export function percentile(arr, p) {
   return s[Math.min(s.length-1, Math.floor(p * s.length))];
 }
 
-// Hover and focus mean "this responds to you". A clickable stat cell therefore takes
-// the same .lift treatment the chart panels have, and renders as a real <button> so it
-// is reachable by keyboard and announced as a control; a static one stays a plain div,
-// because a card that lifts under the cursor and then does nothing is a lie.
-export function StatCell({ label, value, sub, clickable, onClick, i = 0 }) {
-  const Tag = clickable ? 'button' : 'div';
-  return (
-    <Tag
-      className={`card enter${clickable ? ' lift' : ''}`}
-      onClick={clickable ? onClick : undefined}
-      type={clickable ? 'button' : undefined}
-      style={{
-        '--i': i,
-        padding: 'var(--pad-card)',
-        display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
-        cursor: clickable ? 'pointer' : 'default',
-        // A <button> brings its own font, alignment and colour; the cell has to look
-        // identical to the two plain cells beside it.
-        font: 'inherit', color: 'inherit', textAlign: 'left', width: '100%',
-      }}
-    >
-      <div className="mono" style={{ fontSize: 10, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--soft)' }}>{label}</div>
-      <div className="display" style={{
-        fontSize: 38, fontWeight: 600, lineHeight: 1.1, marginTop: 8, letterSpacing: '-0.03em',
-        overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap'
-      }}>{value}</div>
-      <div className="mono" style={{ fontSize: 11, color:'var(--soft)', marginTop: 4 }}>{sub}</div>
-    </Tag>
-  );
-}
-
-export function StatMini({ label, value }) {
+// One cell of the ruled tally: a label, the figure, one line under it. A cell that
+// opens something renders its figure as a real <button>, so it is reachable by
+// keyboard and announced as a control; a static one stays text.
+export function TallyCell({ label, value, sub, onClick, lead = false }) {
+  const fig = `r-tally-fig${lead ? ' is-lead' : ''}`;
   return (
     <div>
-      <div className="eyebrow" style={{ fontSize: 9 }}>{label}</div>
-      <div className="mono" style={{ fontSize: 13, color: 'var(--ink)', marginTop: 2 }}>{value}</div>
+      <dt className="eyebrow">{label}</dt>
+      <dd style={{ margin: 0 }}>
+        {onClick ? (
+          <button type="button" onClick={onClick} className={`${fig} lift`} style={{
+            display: 'block', maxWidth: '100%', padding: '0 var(--space-xs)', marginLeft: 'calc(-1 * var(--space-xs))',
+            background: 'transparent', border: '1px solid transparent', borderRadius: 'var(--r-sm)',
+            color: 'inherit', textAlign: 'left', cursor: 'pointer',
+          }}>{value}</button>
+        ) : (
+          <div className={fig}>{value}</div>
+        )}
+      </dd>
+      {sub && <dd className="r-tally-sub" style={{ margin: 0 }}>{sub}</dd>}
     </div>
   );
 }
 
-export function Card({ title, eyebrow, rightSlot, children, padding = 'var(--pad-card)', i = 0, className = '' }) {
-  return (
-    // Surface, border and radius come from .card rather than being repeated inline.
-    // .keep-edge holds the border at its resting colour through hover — these panels
-    // lift and shadow, but the edge highlight read as an outline around the whole box.
-    <div className={`card enter lift keep-edge ${className}`} style={{ '--i': i, padding }}>
-      <div style={{
-        display:'flex', justifyContent:'space-between', alignItems:'baseline',
-        marginBottom: 14, gap: 10
-      }}>
-        <div>
-          {eyebrow && <div className="eyebrow">{eyebrow}</div>}
-          <div className="display" style={{ fontSize: 24, marginTop: 2, letterSpacing: '-0.02em' }}>
-            {title}
-          </div>
-        </div>
-        {rightSlot}
-      </div>
-      {children}
-    </div>
-  );
-}
-
-Object.assign(window, { Summary, Card, SECTOR_COLORS });
+Object.assign(window, { Summary, SECTOR_COLORS });

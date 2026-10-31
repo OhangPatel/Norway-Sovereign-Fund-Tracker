@@ -52,7 +52,7 @@ export function snapshotDate(rows) {
  * timezone day-roll this module exists to prevent.
  */
 export function formatSnapshot(iso, style = 'short') {
-  if (!iso || !ISO_DATE.test(iso)) return '—';
+  if (!iso || !ISO_DATE.test(iso)) return 'n/a';
   const [y, m, d] = iso.split('-').map(Number);
   return style === 'long'
     ? `${d} ${MONTHS_LONG[m - 1]} ${y}`
@@ -78,10 +78,10 @@ export function isHalfYear(iso) {
 
 /**
  * Short name for a period, using NBIM's own wording: "2025", "H1 2025".
- * Returns '—' for anything that is not a real period, rather than inventing a label.
+ * Returns 'n/a' for anything that is not a real period, rather than inventing a label.
  */
 export function periodLabel(iso) {
-  if (!isPeriod(iso)) return '—';
+  if (!isPeriod(iso)) return 'n/a';
   return isHalfYear(iso) ? `H1 ${iso.slice(0, 4)}` : iso.slice(0, 4);
 }
 
@@ -93,5 +93,5 @@ export function periodLabel(iso) {
  * URL says 12-31. We use the real period end, not their off-by-one label.
  */
 export function formatPeriod(iso, style = 'long') {
-  return isPeriod(iso) ? formatSnapshot(iso, style) : '—';
+  return isPeriod(iso) ? formatSnapshot(iso, style) : 'n/a';
 }
