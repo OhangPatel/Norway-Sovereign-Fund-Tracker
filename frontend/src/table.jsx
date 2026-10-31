@@ -139,7 +139,7 @@ export function DataTable({
       <div className="r-ledger-head" style={{ padding: '16px 20px', borderBottom: '1px solid var(--line)' }}>
         <div style={{ minWidth: 0 }}>
           <h2 style={{ fontSize: 'var(--text-xl)', lineHeight: 1.15, margin: 0, whiteSpace: 'nowrap' }}>All positions</h2>
-          <p className="mono" style={{ fontSize: 'var(--text-sm)', color: 'var(--soft)', margin: '2px 0 0' }}>
+          <p style={{ fontSize: 'var(--text-sm)', color: 'var(--soft)', margin: '2px 0 0' }}>
             <span className="r-ledger-count">
               {data.length.toLocaleString()}{totalRows > data.length && ` of ${totalRows.toLocaleString()}`} rows,{' '}
             </span>

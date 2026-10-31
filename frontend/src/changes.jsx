@@ -372,7 +372,7 @@ export function ChangesPage({ manifest, period, loadRows, pinned, togglePin, las
                     <h2 style={{ fontSize: 'var(--text-xl)', lineHeight: 1.15, margin: 0 }}>
                       {visible.length.toLocaleString()} {visible.length === 1 ? 'company' : 'companies'} changed
                     </h2>
-                    <p className="mono" style={{ fontSize: 'var(--text-sm)', color: 'var(--soft)', margin: '2px 0 0' }}>
+                    <p style={{ fontSize: 'var(--text-sm)', color: 'var(--soft)', margin: '2px 0 0' }}>
                       <span style={{ color: 'var(--bull-text)' }}>+{addedShown.toLocaleString()}</span>
                       {' / '}
                       <span style={{ color: 'var(--bear-text)' }}>−{removedShown.toLocaleString()}</span>,

@@ -301,7 +301,7 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
           }}>
             <div style={{ padding: '16px 18px 0', display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap: 12, flexWrap:'wrap' }}>
               <div style={{ display:'flex', alignItems:'baseline', gap: 10, flexWrap:'wrap' }}>
-                <span className="display mono" style={{ fontSize: 'var(--text-3xl)', lineHeight: 1 }}>
+                <span className="display" style={{ fontSize: 'var(--text-3xl)', lineHeight: 1 }}>
                   {fmt.price(headline.price)}
                 </span>
                 <RangeDelta delta={delta}/>

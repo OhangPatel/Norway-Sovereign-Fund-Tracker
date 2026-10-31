@@ -43,7 +43,7 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Wix+Madefor+Display:wght@400;500;600&family=Wix+Madefor+Text:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Structured data. One @graph so entities can cross-reference by @id. -->
     <script type="application/ld+json">
@@ -166,6 +166,7 @@
        * dusk: fog/periwinkle-apricot/glass · imagery: photographs, library 1, natural · the hour behind both heads, a stand-in in slot "hour" · axes: dark/grotesk-sans/cool · posture: committed · contrast: pass · modes: dark (default) + light · v2.0.0 */
       /* Hallmark · pre-emit critique: P4 H4 E4 S4 R4 V5 · weakest: S, the hour is a stand-in valley, not Norway; it sits in a slot the owner's own fjord photograph replaces */
       /* Hallmark · theme rule set aside · gains stay green and losses red, retuned to the slate · the owner chose the finance convention over Dusk's no-red-debit rule */
+      /* Hallmark · theme faces set aside · Space Grotesk and JetBrains Mono, the project's own faces, replace Dusk's Wix Madefor at the owner's request */
       /* Hallmark · waive 39b · app UI, every pressable control stands 32 to 40px and only chart marks run taller · treemap tiles and top-holding rows are sized by the holdings they draw, each one a filter or an open */
       /* Hallmark · waive 72 · the crowded text is a treemap tile label cut by its own ellipsis · tiles the sector data makes small keep their full name and share in the aria-label and the hover card */
       /* Hallmark · dismissed 41 · .card sets no text colour because it inherits --ink, and every theme block pairs that --ink with its own --surface */
@@ -238,11 +239,12 @@
         --z-base: 1; --z-raised: 10; --z-dropdown: 100; --z-sticky: 200; --z-sticky-nav: 300;
         --z-modal: 400; --z-toast: 500; --z-tooltip: 600;
 
-        --font-display: "Wix Madefor Display", ui-sans-serif, system-ui, sans-serif;
-        --font-body: "Wix Madefor Text", ui-sans-serif, system-ui, sans-serif;
-        /* Dusk sets figures in the body face with tabular numerals, so the old mono
-           token now resolves there; .mono adds the tabular figures. */
-        --font-mono: var(--font-body);
+        /* The project's own faces, kept over Dusk's Wix Madefor at the owner's
+           request: Space Grotesk for heads and text, JetBrains Mono for figures and
+           tickers (.mono). */
+        --font-display: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+        --font-body: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+        --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
         --tracking-display: -0.022em;
         --display-weight: 500;
 
