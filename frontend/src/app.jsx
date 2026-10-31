@@ -815,16 +815,17 @@ export function App() {
 /**
  * The hour: Dusk's photograph of land at dusk behind the head. A stand-in from
  * Hallmark's library (Wikimedia Commons, credited in the footer) in a slot the
- * owner's own Norway photograph replaces. It sits under every section (.r-hour,
- * index.html) and is the page's largest paint, so it loads first.
+ * owner's own Norway photograph replaces. Served from public/photos, because the
+ * production CSP allows same-origin images only. It sits under every section
+ * (.r-hour, index.html) and is the page's largest paint, so it loads first.
  */
 export function Hour({ banner = false }) {
   return (
     <div className={`r-hour${banner ? ' is-banner' : ''}`} data-slot="hour"
       data-alt="A Norwegian landscape at dusk: a fjord or mountains in evening haze, pale sky on the left, 2400px wide or more">
       <img
-        src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Vallee-brouillard.jpg/1920px-Vallee-brouillard.jpg"
-        srcSet="https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Vallee-brouillard.jpg/960px-Vallee-brouillard.jpg 960w, https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Vallee-brouillard.jpg/1280px-Vallee-brouillard.jpg 1280w, https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Vallee-brouillard.jpg/1920px-Vallee-brouillard.jpg 1920w"
+        src="/photos/vallee-brouillard-1920.jpg"
+        srcSet="/photos/vallee-brouillard-960.jpg 960w, /photos/vallee-brouillard-1280.jpg 1280w, /photos/vallee-brouillard-1920.jpg 1920w"
         sizes="100vw" width="4210" height="2750" fetchPriority="high"
         alt="A sea of fog filling a valley below dark hills at sunset"/>
     </div>
