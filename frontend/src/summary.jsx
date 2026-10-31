@@ -2,6 +2,7 @@ import React from 'react';
 import { fmt, btn } from './format.jsx';
 import { Histogram, Treemap } from './charts.jsx';
 import { sectorOf } from './sectors.js';
+import { useSeen } from './motion.js';
 
 // Summary: the photo hero with the top holdings in glass, the ruled tally, then the sector and ownership sections.
 
@@ -78,6 +79,13 @@ export function Summary({ data, filtered, onPickCompany, onSetFilter, activeSect
     max: owns.length ? Math.max(...owns) : 0,
   }), [owns]);
 
+  // The sector a pointer or focus rests on, in the list or on the treemap: each lights
+  // the other's matching mark.
+  const [hot, setHot] = React.useState(null);
+  // Each chart section grows its marks the first time it is on screen (motion.js).
+  const [sectorRef, sectorSeen] = useSeen();
+  const [ownRef, ownSeen] = useSeen();
+
   // The hero's one action: down to the ledger, without touching the hash router.
   const toLedger = () => {
     const el = document.getElementById('ledger');
@@ -114,13 +122,16 @@ export function Summary({ data, filtered, onPickCompany, onSetFilter, activeSect
             <span className="eyebrow">Top 8 of {filtered.length.toLocaleString()}</span>
           </div>
           <ol className="r-acct">
-            {top10.map(c => (
-              <li key={c.ticker || c.name}>
+            {top10.map((c, i) => (
+              <li key={c.ticker || c.name} style={{ '--i': i }}>
                 <button type="button" className="r-acct-row" onClick={() => onPickCompany(c)}>
                   <span className="r-acct-init" aria-hidden="true">{(c.name || '').charAt(0)}</span>
                   <span style={{ minWidth: 0 }}>
                     <span className="r-acct-name" style={{ display: 'block', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{c.name}</span>
                     <span className="mono" style={{ display: 'block', fontSize: 'var(--text-xs)', color: 'var(--soft)' }}>{c.ticker}, {countryCode(c.country)}</span>
+                    <span className="r-acct-bar" aria-hidden="true">
+                      <span style={{ '--w': top10[0].mvNok ? c.mvNok / top10[0].mvNok : 0 }}/>
+                    </span>
                   </span>
                   <span className="mono" style={{ fontSize: 'var(--text-sm)', whiteSpace: 'nowrap' }}>{fmt.money(c.mvNok, 'NOK', 1)}</span>
                 </button>
@@ -132,10 +143,10 @@ export function Summary({ data, filtered, onPickCompany, onSetFilter, activeSect
 
       {/* The ruled tally, in one glass strip at the foot of the photograph. */}
       <dl className="r-tally glass" style={{ margin: 0 }}>
-        <TallyCell lead label="Total holdings" value={fmt.money(totalUsd, 'USD', 1)}
+        <TallyCell lead count label="Total holdings" value={fmt.money(totalUsd, 'USD', 1)}
           sub={`${fmt.money(totalNok, 'NOK', 1)}, across ${filtered.length.toLocaleString()} companies`} />
-        <TallyCell label="Avg ownership" value={fmt.pct(avgOwn, 2)} sub={`${ownStats.above5} positions above 5%`} />
-        <TallyCell label="Markets covered" value={countries.toString()} sub={`${sectorCount} sectors`} />
+        <TallyCell count label="Avg ownership" value={fmt.pct(avgOwn, 2)} sub={`${ownStats.above5} positions above 5%`} />
+        <TallyCell count label="Markets covered" value={countries.toString()} sub={`${sectorCount} sectors`} />
         <TallyCell
           label="Top position"
           value={top10[0] ? top10[0].name : 'n/a'}
@@ -145,7 +156,8 @@ export function Summary({ data, filtered, onPickCompany, onSetFilter, activeSect
       </dl>
 
       {/* Sectors: a ruled list beside one pane. Every row and every tile filters the ledger. */}
-      <section className="r-sec" aria-labelledby="sector-head">
+      <section className="r-sec" aria-labelledby="sector-head" ref={sectorRef} data-seen={sectorSeen}>
+        <div className="r-plate" style={{ '--plate-pos': '82% 64%' }}>
         <div className="r-sec-head">
           <div>
             {/* The asterisk points at the page footnote in app.jsx. */}
@@ -160,29 +172,32 @@ export function Summary({ data, filtered, onPickCompany, onSetFilter, activeSect
         </div>
         <div className="r-duo">
           <ul className="r-rows">
-            {sectors.map(it => (
+            {sectors.map((it, i) => (
               <li key={it.label}>
-                <button type="button" className="r-row-btn" aria-pressed={activeSectors.includes(it.label)}
+                <button type="button" className={`r-row-btn${hot === it.label ? ' is-hot' : ''}`} aria-pressed={activeSectors.includes(it.label)}
+                  onMouseEnter={() => setHot(it.label)} onMouseLeave={() => setHot(null)}
+                  onFocus={() => setHot(it.label)} onBlur={() => setHot(null)}
                   onClick={() => onSetFilter && it.label !== 'n/a' && onSetFilter({ sector: it.label })}>
                   <span className="r-row-name">{it.label}</span>
                   <span className="mono" style={{ fontSize: 'var(--text-sm)' }}>{it.pct.toFixed(1)}%</span>
                   <span className="r-row-bar" aria-hidden="true">
-                    <span style={{ transform: `scaleX(${sectors[0].pct ? it.pct / sectors[0].pct : 0})`, background: it.color }}/>
+                    <span style={{ '--i': i, transform: `scaleX(${sectors[0].pct ? it.pct / sectors[0].pct : 0})`, background: it.color }}/>
                   </span>
                 </button>
               </li>
             ))}
           </ul>
           <div className="glass" style={{ padding: 'var(--space-md)' }}>
-            <Treemap items={sectors} height={580}
+            <Treemap items={sectors} height={580} highlight={hot} onHover={setHot}
               onClick={(it) => onSetFilter && it.label !== 'n/a' && onSetFilter({ sector: it.label })}
             />
           </div>
         </div>
+        </div>
       </section>
 
       {/* Ownership: slim bars, then the ruled tally of four figures under them. */}
-      <section className="r-sec" aria-labelledby="own-head">
+      <section className="r-sec" aria-labelledby="own-head" ref={ownRef} data-seen={ownSeen}>
         <div className="r-sec-head">
           <div>
             <h2 id="own-head">Ownership distribution</h2>
@@ -221,11 +236,46 @@ export function percentile(arr, p) {
   return s[Math.min(s.length-1, Math.floor(p * s.length))];
 }
 
+// A figure that counts up from zero once, when it first renders, keeping its prefix,
+// decimals and thousands separators ("$ 1.0T", "1.43%", "7,077"). Text with no number
+// stays as it is. A screen reader is only ever given the final value, and with
+// reduced motion the figure simply appears.
+export function CountUp({ text }) {
+  const str = String(text);
+  const m = /^(.*?)(\d[\d,]*(?:\.\d+)?)(.*)$/.exec(str);
+  const [k, setK] = React.useState(() =>
+    m && !window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 1);
+  React.useEffect(() => {
+    if (k === 1) return;
+    let raf, start;
+    const step = (t) => {
+      if (start === undefined) start = t;
+      const p = Math.min(1, (t - start) / 1100);
+      setK(p === 1 ? 1 : 1 - Math.pow(1 - p, 3));
+      if (p < 1) raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  // Runs once: the count is the arrival, not a reaction to later changes.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  if (!m || k === 1) return str;
+  const [, pre, num, post] = m;
+  const dec = (num.split('.')[1] || '').length;
+  const n = parseFloat(num.replace(/,/g, '')) * k;
+  const shown = num.includes(',')
+    ? n.toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec })
+    : n.toFixed(dec);
+  return <><span aria-hidden="true">{pre}{shown}{post}</span><span className="sr-only">{str}</span></>;
+}
+
 // One cell of the ruled tally: a label, the figure, one line under it. A cell that
 // opens something renders its figure as a real <button>, so it is reachable by
-// keyboard and announced as a control; a static one stays text.
-export function TallyCell({ label, value, sub, onClick, lead = false }) {
+// keyboard and announced as a control; a static one stays text. `count` makes a
+// text figure count up once (CountUp).
+export function TallyCell({ label, value, sub, onClick, lead = false, count = false }) {
   const fig = `r-tally-fig${lead ? ' is-lead' : ''}`;
+  if (count && typeof value === 'string') value = <CountUp text={value}/>;
   return (
     <div>
       <dt className="eyebrow">{label}</dt>

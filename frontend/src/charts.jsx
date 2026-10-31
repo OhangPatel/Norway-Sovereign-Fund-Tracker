@@ -46,9 +46,9 @@ export function Histogram({ data, bins = 20, height = 140, accent = 'var(--accen
           const dimmed = selected != null && selected !== i;
           return (
             <g key={i}>
-              <rect x={i*barW + barW * 0.18} y={h - bh} width={barW * 0.64} height={bh}
+              <rect className="r-hist-bar" x={i*barW + barW * 0.18} y={h - bh} width={barW * 0.64} height={bh}
                 fill={accent} opacity={dimmed ? 0.25 : 1} rx={barW * 0.32}
-                style={{ cursor: 'pointer', transition: 'opacity var(--dur-micro) var(--ease-out)' }}
+                style={{ cursor: 'pointer', '--i': i }}
                 onClick={() => toggle(i)}/>
               {/* Full-height hit area so thin/empty bars stay clickable */}
               <rect x={i*barW} y={0} width={barW} height={h} fill="transparent"
@@ -116,7 +116,9 @@ function computeSquarified(values, W, H) {
   return result;
 }
 
-export function Treemap({ items, height = 300, gap = 5, radius = 4, minShare = 0.011, onClick }) {
+// `highlight` lights the tile with that label from outside (a list beside it), and
+// `onHover` reports the tile under the pointer back, so the two stay in step.
+export function Treemap({ items, height = 300, gap = 5, radius = 4, minShare = 0.011, onClick, highlight = null, onHover }) {
   const ref = useRef(null);
   const [width, setWidth] = useState(0);
   useEffect(() => {
@@ -163,10 +165,14 @@ export function Treemap({ items, height = 300, gap = 5, radius = 4, minShare = 0
             type={onClick ? 'button' : undefined}
             aria-label={onClick ? `${it.label}: ${it.pct.toFixed(1)}% of value. Filter to this sector.` : undefined}
             onClick={() => onClick && onClick(it)}
-            onMouseEnter={e => setHover({ i, x: e.clientX, y: e.clientY })}
+            className="r-tile"
+            onMouseEnter={e => { setHover({ i, x: e.clientX, y: e.clientY }); onHover && onHover(it.label); }}
             onMouseMove={e => setHover({ i, x: e.clientX, y: e.clientY })}
-            onMouseLeave={() => setHover(null)}
+            onMouseLeave={() => { setHover(null); onHover && onHover(null); }}
+            onFocus={() => onHover && onHover(it.label)}
+            onBlur={() => onHover && onHover(null)}
             style={{
+              '--i': i,
               position: 'absolute',
               border: 'none', font: 'inherit', textAlign: 'left', display: 'block',
               left: r.x + gx / 2, top: r.y + gy / 2,
@@ -177,8 +183,8 @@ export function Treemap({ items, height = 300, gap = 5, radius = 4, minShare = 0
               cursor: onClick ? 'pointer' : 'default',
               // Hover draws an inset ring; at rest no outline is set inline, so the
               // stylesheet's :focus-visible ring shows for keyboard users.
-              outline: hover && hover.i === i ? '2px solid var(--treemap-cell-fg)' : undefined,
-              outlineOffset: hover && hover.i === i ? -2 : undefined,
+              outline: (hover && hover.i === i) || highlight === it.label ? '2px solid var(--ink)' : undefined,
+              outlineOffset: (hover && hover.i === i) || highlight === it.label ? -2 : undefined,
             }}>
             {showName && (
               <div style={{ fontSize: 'var(--text-xs)', fontWeight: 600, lineHeight: 1.15, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{it.label}</div>

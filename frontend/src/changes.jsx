@@ -3,7 +3,8 @@ import { createPortal } from 'react-dom';
 import { fmt, Chip, Tag, Icon, MicroBar, btn } from './format.jsx';
 import { Detail } from './detail.jsx';
 import { OptionList, SheetSection, useIsPhone } from './filters.jsx';
-import { TallyCell, SECTOR_COLORS } from './summary.jsx';
+import { TallyCell, CountUp, SECTOR_COLORS } from './summary.jsx';
+import { useSeen } from './motion.js';
 import { formatPeriod, periodLabel } from './snapshot.js';
 import { sectorOf } from './sectors.js';
 import { navigate, changesHash } from './router.js';
@@ -149,6 +150,8 @@ export function ChangesPage({ manifest, period, loadRows, pinned, togglePin, las
   // back to the first page without an effect having to reset it.
   const [more, setMore] = React.useState({ key: '', n: PAGE });
   const [selected, setSelected] = React.useState(null);
+  // The opened-against-closed bars grow from the centre line the first time they are seen.
+  const [chartsRef, chartsSeen] = useSeen();
 
   // On a phone the toolbar folds into the bottom sheet the holdings ledger uses: one
   // Filters trigger, sections that expand inline, Done with the row count. Portalled
@@ -305,15 +308,15 @@ export function ChangesPage({ manifest, period, loadRows, pinned, togglePin, las
           <>
             {/* The ruled tally. The fund's own figures first; the tracked set is one cell. */}
             <dl className="r-tally glass" style={{ margin: 0 }}>
-              <TallyCell lead label="Companies held" value={d.raw.heldNow.toLocaleString()}
+              <TallyCell lead count label="Companies held" value={d.raw.heldNow.toLocaleString()}
                 sub={<>was {d.raw.heldBefore.toLocaleString()}, net <Signed n={d.raw.heldNow - d.raw.heldBefore}/></>}/>
               <TallyCell label="Positions opened"
-                value={<span style={{ color: 'var(--bull-text)' }}>{'+' + d.raw.added.toLocaleString()}</span>}
+                value={<span style={{ color: 'var(--bull-text)' }}><CountUp text={'+' + d.raw.added.toLocaleString()}/></span>}
                 sub="companies the fund did not hold before"/>
               <TallyCell label="Positions closed"
-                value={<span style={{ color: 'var(--bear-text)' }}>{'−' + d.raw.removed.toLocaleString()}</span>}
+                value={<span style={{ color: 'var(--bear-text)' }}><CountUp text={'−' + d.raw.removed.toLocaleString()}/></span>}
                 sub="companies sold out of entirely"/>
-              <TallyCell label="Tracked by this site" value={d.filtered.trackedNow.toLocaleString()}
+              <TallyCell count label="Tracked by this site" value={d.filtered.trackedNow.toLocaleString()}
                 sub={<>
                   was {d.filtered.trackedBefore.toLocaleString()}:{' '}
                   <span style={{ color: 'var(--bull-text)' }}>+{d.filtered.added.toLocaleString()}</span>
@@ -327,7 +330,7 @@ export function ChangesPage({ manifest, period, loadRows, pinned, togglePin, las
 
             {/* Charts. Exact at either level — drawn from the tallies, not the listed
                 rows — and each bar is a filter on the ledger below. */}
-            <div className="r-pair r-sec">
+            <div className="r-pair r-sec" ref={chartsRef} data-seen={chartsSeen}>
               <section aria-labelledby="by-sector-head">
                 <div className="r-sec-head">
                   <div>
@@ -588,7 +591,7 @@ function DivergingBars({ items, selected, onToggle, colorOf, maxItems = 12, othe
   }
   return (
     <div style={{ display: 'grid', gap: 2 }}>
-      {shown.map(it => {
+      {shown.map((it, i) => {
         const on = selected.includes(it.label);
         const dim = selected.length > 0 && !on;
         return (
@@ -613,12 +616,12 @@ function DivergingBars({ items, selected, onToggle, colorOf, maxItems = 12, othe
               {it.removed ? `−${it.removed}` : '·'}
             </span>
             <span style={{ position: 'relative', height: 10, background: 'var(--track)', borderRadius: 'var(--r-pill)', overflow: 'hidden' }}>
-              <span style={{
-                position: 'absolute', top: 0, bottom: 0, right: '50%',
+              <span className="r-div-fill" style={{
+                position: 'absolute', top: 0, bottom: 0, right: '50%', '--i': i, transformOrigin: 'right',
                 width: `${(it.removed / peak) * 50}%`, background: 'var(--bear)',
               }}/>
-              <span style={{
-                position: 'absolute', top: 0, bottom: 0, left: '50%',
+              <span className="r-div-fill" style={{
+                position: 'absolute', top: 0, bottom: 0, left: '50%', '--i': i, transformOrigin: 'left',
                 width: `${(it.added / peak) * 50}%`, background: 'var(--bull)',
               }}/>
               <span style={{ position: 'absolute', top: 0, bottom: 0, left: 'calc(50% - 1px)', width: 2, background: 'var(--surface)' }}/>

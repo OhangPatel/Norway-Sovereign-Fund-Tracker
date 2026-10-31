@@ -728,6 +728,8 @@ export function App() {
         />
 
         <section id="ledger" className="r-sec" style={{ display:'grid', gap: 16, position: 'relative', scrollMarginTop: 'var(--space-3xl)' }}>
+          {/* The ledger's glass over the hour, framed by it. */}
+          <div className="r-plate is-frame" style={{ '--plate-pos': '50% 30%' }}>
           <DataTable
             data={filtered}
             allData={data}
@@ -749,6 +751,7 @@ export function App() {
             onOpen={setSelected}
             maxOwnership={maxOwn}
           />
+          </div>
 
           {/* Footnote.
               Caveats live down here rather than beside the chart they describe.

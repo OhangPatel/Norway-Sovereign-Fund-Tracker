@@ -12,13 +12,13 @@ import { ColumnsMenu, CompareButton, FilterPanel } from './filters.jsx';
 // the column stays fixed at `min` (narrow, non-textual columns).
 export var ALL_COLUMNS = {
   rank:    { label: '#',         width: 48,  min: 34,  fr: 0,   align: 'right', sortable: false },
-  name:    { label: 'Company',   width: 240, min: 96,  fr: 2.2, align: 'left',  sortable: true,  sortKey: 'name' },
+  name:    { label: 'Company',   width: 224, min: 96,  fr: 2.2, align: 'left',  sortable: true,  sortKey: 'name' },
   ticker:  { label: 'Ticker',    width: 86,  min: 60,  fr: 0.8, align: 'left',  sortable: true,  sortKey: 'ticker' },
   country: { label: 'Country',   width: 120, min: 70,  fr: 1,   align: 'left',  sortable: true,  sortKey: 'country' },
   sector:  { label: 'Sector',    width: 144, min: 84,  fr: 1.1, align: 'left',  sortable: true,  sortKey: 'sector' },
   price:   { label: 'Price',     width: 100, min: 62,  fr: 0.8, align: 'right', sortable: true,  sortKey: 'price' },
   change:  { label: '24h',       width: 78,  min: 52,  fr: 0.7, align: 'right', sortable: true,  sortKey: 'change' },
-  range:   { label: '52-week range',  width: 160, min: 108, fr: 1.4, align: 'left',  sortable: false },
+  range:   { label: '52-week range',  width: 152, min: 108, fr: 1.4, align: 'left',  sortable: false },
   // The header carries the currency because the cell is USD-only — 80px is what
   // "$ 56.9B" needs at 13px mono once the 9px phone padding is taken off.
   mvUsd:   { label: 'USD value',     width: 132, min: 80,  fr: 1,   align: 'right', sortable: true,  sortKey: 'mvUsd' },
@@ -294,7 +294,7 @@ export function Row({ row, rank, visibleCols, onOpen, pinned, togglePin, compare
   // anywhere the second colour is `transparent`.
   const bg = compared ? 'var(--accent-tint)'
     : pinned ? 'var(--accent-tint-soft)'
-    : hover ? 'color-mix(in srgb, var(--row-hover) 50%, transparent)'
+    : hover ? 'color-mix(in srgb, var(--ink) 6%, transparent)'
     : 'transparent';
 
   return (
@@ -306,8 +306,10 @@ export function Row({ row, rank, visibleCols, onOpen, pinned, togglePin, compare
       onClick={onRowClick}
       style={{
         background: bg,
+        // A hovered row catches the light like the glass around it: a lit top edge.
+        boxShadow: hover && !compared && !pinned ? 'inset 0 1px 0 color-mix(in srgb, var(--ink) 12%, transparent)' : 'none',
         cursor: 'pointer',
-        transition: 'background .1s',
+        transition: 'background-color var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out)',
       }}
     >
       {compareOn && (
