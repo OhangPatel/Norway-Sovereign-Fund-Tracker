@@ -1,5 +1,5 @@
 import React from 'react';
-import { fmt, Chip, Tag, Delta, RangeBar, MicroBar, Icon } from './format.jsx';
+import { fmt, Chip, Tag, Delta, RangeBar, MicroBar, Icon, CompanyLogo } from './format.jsx';
 import { SECTOR_COLORS } from './summary.jsx';
 import { sectorOf } from './sectors.js';
 import { ColumnsMenu, CompareButton, FilterPanel } from './filters.jsx';
@@ -347,7 +347,8 @@ export function Cell({ colKey, row, rank, cellBase, pinned, togglePin, hover, ma
       // and often contradictory taxonomy (Cameco: "Basic Materials" here, "Energy" in
       // the column beside it, on the same row). Now it is the same canonical value the
       // column shows, and it stands down when the column is there to say it.
-      return <div role="cell" style={style}>
+      return <div role="cell" style={{ ...style, gap: 10 }}>
+        <CompanyLogo ticker={row.ticker} name={row.name} size={26}/>
         <div style={{ minWidth: 0 }}>
           <div style={{
             color: 'var(--ink)', fontSize: 13, fontWeight: 500,

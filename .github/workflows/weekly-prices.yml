@@ -20,6 +20,7 @@ name: Weekly price refresh
 #   python backend/pipeline/resolve_tickers.py --names   # only if it reported any
 #   python backend/pipeline/build_holdings.py            # re-run to bank them
 #   python backend/pipeline/fetch_yahoo_metrics.py       # new tickers need prices
+#   python backend/pipeline/fetch_logos.py               # ...and logos (commit public/logos/)
 #   python backend/pipeline/merge_and_enrich.py --all
 #   python backend/pipeline/build_changes.py
 #   python backend/pipeline/verify_periods.py            # must exit 0 before committing

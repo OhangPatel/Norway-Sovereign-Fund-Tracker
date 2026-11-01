@@ -1,5 +1,5 @@
 import React from 'react';
-import { fmt, btn } from './format.jsx';
+import { fmt, btn, CompanyLogo } from './format.jsx';
 import { Histogram, Treemap } from './charts.jsx';
 import { sectorOf } from './sectors.js';
 import { useSeen } from './motion.js';
@@ -125,7 +125,7 @@ export function Summary({ data, filtered, onPickCompany, onSetFilter, activeSect
             {top10.map((c, i) => (
               <li key={c.ticker || c.name} style={{ '--i': i }}>
                 <button type="button" className="r-acct-row" onClick={() => onPickCompany(c)}>
-                  <span className="r-acct-init" aria-hidden="true">{(c.name || '').charAt(0)}</span>
+                  <CompanyLogo ticker={c.ticker} name={c.name} size={32}/>
                   <span style={{ minWidth: 0 }}>
                     <span className="r-acct-name" style={{ display: 'block', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{c.name}</span>
                     <span className="mono" style={{ display: 'block', fontSize: 'var(--text-xs)', color: 'var(--soft)' }}>{c.ticker}, {countryCode(c.country)}</span>

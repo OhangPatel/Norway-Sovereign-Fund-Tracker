@@ -1,5 +1,5 @@
 import React from 'react';
-import { fmt, Chip, Tag, RangeBar, Icon, iconBtnStyle } from './format.jsx';
+import { fmt, Chip, Tag, RangeBar, Icon, iconBtnStyle, CompanyLogo } from './format.jsx';
 import { PriceChart } from './charts.jsx';
 import { REC_TONE } from './table.jsx';
 import { PIPELINE_API } from './app.jsx';
@@ -275,7 +275,8 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
               chip — because the two do different jobs: the line reads as a sentence,
               the chip is what a returning eye lands on first. */}
           <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap: 16 }}>
-            <div style={{ minWidth: 0 }}>
+            <CompanyLogo ticker={company.ticker} name={company.name} size={44}/>
+            <div style={{ minWidth: 0, flex: 1 }}>
               <h2 className="display" style={{
                 fontSize: 'var(--text-2xl)', lineHeight: 1.08, margin: 0,
               }}>{company.name}</h2>

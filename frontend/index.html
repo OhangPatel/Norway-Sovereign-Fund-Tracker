@@ -571,11 +571,10 @@
         border-radius: var(--r-xl); box-shadow: var(--glass-hi), var(--shadow-card);
       }
 
-      /* A run of accounts: a round initial, the name, the balance at the right. */
+      /* A run of accounts: a logo, the name, the balance at the right. */
       .r-acct { list-style: none; margin: 0; padding: 0; }
       .r-acct > li + li { border-top: 1px solid var(--glass-rule); }
       .r-acct-row { display: grid; grid-template-columns: 32px minmax(0, 1fr) auto; align-items: center; gap: var(--space-sm); width: 100%; padding: var(--space-sm) 0; background: none; border: 0; color: inherit; font: inherit; text-align: left; cursor: pointer; }
-      .r-acct-init { width: 32px; height: 32px; border-radius: var(--r-pill); display: grid; place-items: center; background: color-mix(in oklab, var(--ink) 9%, transparent); color: var(--sub); font-size: var(--text-sm); font-weight: 500; }
       /* Each row's value against the largest holding: a slim bar on a faint track,
          always shown. It grows in once, just after its row rises (motion set below),
          and brightens while the row is pointed at or focused. */

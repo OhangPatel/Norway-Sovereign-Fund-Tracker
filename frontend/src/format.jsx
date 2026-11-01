@@ -1,4 +1,5 @@
 // Formatting + small UI primitives shared across components.
+import React from 'react';
 
 export const fmt = {
   // Compact short form: 1.2B, 845M, 3.4K
@@ -255,6 +256,39 @@ export function BrandMark({ size = 28 }) {
       <path d="M9 32V16l7.5 8L24 14l7.5 10L39 16v16z" fill="var(--logo-crown)"/>
       <rect x="9" y="35" width="30" height="4" fill="var(--logo-gold)"/>
     </svg>
+  );
+}
+
+// Company logo from /logos/{ticker}.webp (backend/pipeline/fetch_logos.py).
+// The initial is always drawn underneath; the image covers it once it loads and
+// removes itself if there is no file, so ~5% of companies without a logo, or a slow
+// load, still show something. White tile because most favicons assume a white page
+// and a dark mark would vanish on the dark theme. Decorative: the name is beside it.
+export function CompanyLogo({ ticker, name, size = 28 }) {
+  // Keyed on the ticker so a reused instance (the drawer switching company) starts
+  // over. The white tile waits for 'loaded': painted while loading, it read as a
+  // blank square over the initial.
+  const [status, setStatus] = React.useState({ ticker: null, state: null });
+  const state = status.ticker === ticker ? status.state : null;
+  const failed = state === 'failed';
+  return (
+    <span aria-hidden="true" style={{
+      position: 'relative', width: size, height: size, flexShrink: 0,
+      borderRadius: 'var(--r-sm)', overflow: 'hidden',
+      display: 'grid', placeItems: 'center',
+      background: 'color-mix(in oklab, var(--ink) 9%, transparent)',
+      color: 'var(--sub)', fontSize: Math.round(size * 0.42), fontWeight: 500,
+    }}>
+      {(name || '').charAt(0)}
+      {ticker && !failed && (
+        <img src={`/logos/${encodeURIComponent(ticker)}.webp`} alt=""
+          width={size} height={size} loading="lazy" decoding="async"
+          onLoad={() => setStatus({ ticker, state: 'loaded' })}
+          onError={() => setStatus({ ticker, state: 'failed' })}
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain',
+            background: '#fff', opacity: state === 'loaded' ? 1 : 0 }}/>
+      )}
+    </span>
   );
 }
 
