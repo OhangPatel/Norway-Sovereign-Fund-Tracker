@@ -2,6 +2,7 @@ import React from 'react';
 import { createPortal } from 'react-dom';
 import { fmt, Icon, BrandMark, iconBtnStyle } from './format.jsx';
 import { useAnchoredMenu } from './filters.jsx';
+import { classicOffered, goClassic } from './classic.js';
 import { PeriodPicker } from './period.jsx';
 import { periodLabel } from './snapshot.js';
 import { sectorOf } from './sectors.js';
@@ -326,6 +327,11 @@ export function TopBar({
                 hint={changesActive ? 'Viewing' : null}
                 onClick={() => { setMenuOpen(false); onOpenChanges(); }}
               >What changed in {periodLabel(period)}</MenuRow>
+            )}
+            {classicOffered() && (
+              <MenuRow icon="export" hint="Until 1 Dec"
+                onClick={() => { setMenuOpen(false); goClassic(); }}
+              >Classic design</MenuRow>
             )}
             <MenuRow
               icon={theme === 'dark' ? 'sun' : 'moon'}

@@ -143,12 +143,7 @@ the ticker band and the footer keep a look of their own. The nav and hero cards 
 | `--nav-band-ink`  | `#8F9180`                 | `#2C3505`                 | Ticker band text |
 | `--tick-up`       | `#9BE04A`                 | `#15490A`                 | Ticker gain |
 | `--tick-down`     | `#FF7A6B`                 | `#8E1104`                 | Ticker loss |
-| `--foot-surface`  | `#14150F`                 | `#1C1C1E`                 | Footer band |
-| `--foot-ink`      | `#F4F2EC`                 | `#FFFFFF`                 | Footer primary text |
-| `--foot-sub`      | `#A9AB9C`                 | `#98989D`                 | Footer secondary text |
-| `--foot-soft`     | `#8A8C7D`                 | `#8E8E93`                 | Footer tertiary text |
-| `--foot-line`     | `rgba(244,242,236,.11)`   | `rgba(255,255,255,.11)`   | Footer rules |
-| `--foot-accent`   | `#D8F34A`                 | `#D8F34A`                 | Footer accent |
+| `--foot-line`     | `rgba(244,242,236,.11)`   | `rgba(255,255,255,.11)`   | Hairline on an ink band: the ticker's pause button |
 | `--hero-surface`  | `#FFFFFF`                 | `#1C1C1E`                 | Hero card |
 | `--hero-line`     | `#E2E4D7`                 | `#2C2C2E`                 | Hero card border |
 | `--hero-ink`      | `#16170F`                 | `#FFFFFF`                 | Hero card text |
@@ -162,10 +157,11 @@ the ticker band and the footer keep a look of their own. The nav and hero cards 
 > produced lime-on-white at **1.25:1**. Hence the explicit pair: a text token is not a
 > fill token. Verified at 14.47:1 (light) and 16.84:1 (dark).
 
-The footer inverts its old logic: on the ink field it sat a shade *under* the page, and
-nothing sits under `#000`, so on the onyx field it sits a shade *above* and reads as a
-band the same way. It shares `--surface`'s value on purpose — the footer is the page's
-last card, not a fourth elevation.
+The footer no longer has a token set of its own. It is the hero's composition closing the
+page (`footer.jsx`, `.r-foot` in `index.html`): the statement on the ledger's closing
+photograph with a glass "This snapshot" record beside it, then the links, the legal lines,
+and the site's name set as wide as the column with that photograph inside its letters. It
+reads the page tokens, so it follows the theme like everything else.
 
 ### Shimmer
 

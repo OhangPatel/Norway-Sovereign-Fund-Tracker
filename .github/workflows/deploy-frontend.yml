@@ -64,6 +64,42 @@ jobs:
         working-directory: frontend
         run: npm run build
 
+      # The classic design (the site before the Dusk redesign), frozen on the `classic`
+      # branch and served at /classic/ for a comparison period. It has to be built into
+      # this same dist/: the deploy below wipes the server first, so anything not in
+      # dist/ is deleted. Retires itself on CLASSIC_UNTIL; frontend/src/classic.js hides
+      # the switch on the same date. Change both together.
+      - name: Is the classic design still offered?
+        id: classic
+        env:
+          CLASSIC_UNTIL: '2026-12-01'
+        run: |
+          if [ "$(date -u +%Y-%m-%d)" \< "$CLASSIC_UNTIL" ]; then
+            echo "live=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "live=false" >> "$GITHUB_OUTPUT"
+            echo "The classic design retired on $CLASSIC_UNTIL; /classic/ is not built."
+          fi
+
+      - name: Check out the classic design
+        if: steps.classic.outputs.live == 'true'
+        uses: actions/checkout@v4
+        with:
+          ref: classic
+          path: classic
+
+      - name: Build the classic design into dist/classic
+        if: steps.classic.outputs.live == 'true'
+        working-directory: classic/frontend
+        # Vite only: the classic build's static /holdings/ pages would duplicate the
+        # live ones. Its data paths are relative (data.json, periods.json...), so they
+        # resolve under /classic/; this build's current data files are copied over its
+        # frozen ones, so both designs show the same holdings and prices.
+        run: |
+          npm ci
+          npx vite build --base=/classic/ --outDir "$GITHUB_WORKSPACE/frontend/dist/classic" --emptyOutDir
+          cp "$GITHUB_WORKSPACE"/frontend/dist/*.json "$GITHUB_WORKSPACE/frontend/dist/classic/"
+
       - name: Deploy frontend/dist/ to Hostinger via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:

@@ -525,6 +525,16 @@ export function App() {
     return () => { cancelled = true; };
   }, [period, loadRows, manifest, dataKey]);
 
+  // The switching screen (public/boot.js) holds until the page has its data and the
+  // hour's photograph, so it lifts on the finished page rather than a half-drawn one.
+  // An error lifts it too: the screen must never sit over the error state.
+  React.useEffect(() => {
+    if ((!data && !err) || !window.__bootDone) return;
+    const img = document.querySelector('.r-hour img');
+    const ready = img && !img.complete ? img.decode().catch(() => {}) : Promise.resolve();
+    ready.then(() => window.__bootDone());
+  }, [data, err]);
+
   // Theme effect
   React.useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -791,6 +801,8 @@ export function App() {
         positions={data.length}
         period={navPeriod}
         pricesAsOf={lastFetched}
+        hasChanges={!!manifest && manifest.periods.length > 1}
+        onPhoto={!onChangesPage}
       />
 
       {selected && (
