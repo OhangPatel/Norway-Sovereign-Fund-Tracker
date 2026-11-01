@@ -690,6 +690,8 @@
       /* Change ledger rows: rank, company, country, sector, side, value, arrow.
          A grid rather than a table so the cells can be hidden per breakpoint below. */
       .r-chg-row { display: grid; grid-template-columns: 44px minmax(0, 2.4fr) minmax(0, 1fr) minmax(0, 1.2fr) 112px 168px 34px; align-items: center; }
+      /* Same viewport as the ledger's .r-tscroll, but a max: a filtered list of five rows should not sit in 640px of empty card. */
+      .r-chg-scroll { max-height: 640px; overflow: auto; position: relative; }
       .r-chg-sub { display: none; font-size: var(--text-xs); color: var(--soft); margin-top: var(--space-3xs); }
 
       /* Ledger header: title on the left, its three triggers on the right. */
@@ -840,6 +842,7 @@
         .r-trow { grid-template-columns: var(--cols-m, var(--cols)); }
         .r-twrap { min-width: 0; }
         .r-tscroll { height: 68vh; }
+        .r-chg-scroll { max-height: 68vh; }
         /* These cells are styled inline, so overriding them needs !important. */
         .r-trow > * { padding-left: var(--space-xs) !important; padding-right: var(--space-xs) !important; }
         .r-thead > * { font-size: var(--text-xs) !important; }

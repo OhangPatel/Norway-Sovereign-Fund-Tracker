@@ -1,6 +1,6 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
-import { fmt, Chip, Tag, Icon, MicroBar, btn } from './format.jsx';
+import { fmt, Chip, Tag, Icon, MicroBar, btn, CompanyLogo } from './format.jsx';
 import { Detail } from './detail.jsx';
 import { OptionList, SheetSection, useIsPhone } from './filters.jsx';
 import { TallyCell, CountUp, SECTOR_COLORS } from './summary.jsx';
@@ -35,10 +35,6 @@ const SIDES = [
 ];
 const SORT_LABEL = { mvUsd: 'value', name: 'company', country: 'country', sector: 'sector', side: 'change' };
 const EMPTY_FILTERS = { sectors: [], countries: [], query: '' };
-// Rows rendered before a "show more". Six hundred rows of seven cells is a lot of DOM for
-// a list most readers scan from the top.
-const PAGE = 100;
-
 // Same normalisation as match_key() in build_changes.py, for the one place a row is
 // matched on its name: a raw-level company, which carries no ticker.
 const norm = (s) => String(s || '').replace(/\s+/g, ' ').trim().toLowerCase();
@@ -146,9 +142,6 @@ export function ChangesPage({ manifest, period, loadRows, pinned, togglePin, las
     [key]: filters[key].includes(value) ? filters[key].filter(v => v !== value) : [...filters[key], value],
   });
   const [sort, setSort] = React.useState({ key: 'mvUsd', dir: 'desc' });
-  // "Show more" is keyed to the exact list it extended, so any change to the list falls
-  // back to the first page without an effect having to reset it.
-  const [more, setMore] = React.useState({ key: '', n: PAGE });
   const [selected, setSelected] = React.useState(null);
   // The opened-against-closed bars grow from the centre line the first time they are seen.
   const [chartsRef, chartsSeen] = useSeen();
@@ -204,9 +197,6 @@ export function ChangesPage({ manifest, period, loadRows, pinned, togglePin, las
     return arr;
   }, [all, side, sectors, countries, query, sort]);
 
-  const listKey = [period, level, side, sectors.join('|'), countries.join('|'), query].join(' ');
-  const limit = more.key === listKey ? more.n : PAGE;
-  const shown = visible.slice(0, limit);
   const maxValue = Math.max(1, ...visible.map(r => r.mvUsd || 0));
   const addedShown = visible.filter(r => r.side === 'added').length;
   const removedShown = visible.length - addedShown;
@@ -426,7 +416,15 @@ export function ChangesPage({ manifest, period, loadRows, pinned, togglePin, las
               </div>
 
               <div style={{ overflow: 'hidden', borderRadius: '0 0 var(--r-xl) var(--r-xl)' }}>
-                <div className="r-chg-row r-chg-thead" style={{ borderBottom: '1px solid var(--line)' }}>
+                {/* Its own scroller, like the All positions ledger, so the page does not
+                    run on for hundreds of rows. Every row is rendered (585 at most, the
+                    tracked level for 2023), so there is no "show more"; logos are lazy,
+                    so only the rows scrolled into view fetch one. */}
+                <div className="r-chg-scroll">
+                <div className="r-chg-row r-chg-thead" style={{
+                  borderBottom: '1px solid var(--line)',
+                  position: 'sticky', top: 0, zIndex: 2, background: 'var(--surface)',
+                }}>
                   <HeadCell className="r-chg-rank" align="right">#</HeadCell>
                   <HeadCell sortKey="name" sort={sort} onSort={sortBy}>Company</HeadCell>
                   <HeadCell className="r-chg-country" sortKey="country" sort={sort} onSort={sortBy}>Country</HeadCell>
@@ -436,7 +434,7 @@ export function ChangesPage({ manifest, period, loadRows, pinned, togglePin, las
                   <HeadCell className="r-chg-arrow"/>
                 </div>
 
-                {shown.map((row, i) => (
+                {visible.map((row, i) => (
                   <ChangeRow key={`${row.side}:${row.ticker || row.name}`} row={row} rank={i + 1}
                     max={maxValue} openable={openable(row)} onOpen={open}/>
                 ))}
@@ -449,16 +447,7 @@ export function ChangesPage({ manifest, period, loadRows, pinned, togglePin, las
                     <p style={{ marginTop: 8, fontSize: 'var(--text-sm)' }}>Try clearing a filter, or switch the level or side above.</p>
                   </div>
                 )}
-
-                {visible.length > limit && (
-                  <div style={{ padding: 14, borderBottom: '1px solid var(--line)' }}>
-                    <button type="button"
-                      onClick={() => setMore({ key: listKey, n: limit + PAGE })}
-                      style={{ ...btn({ variant: 'ghost', shape: 'block' }), width: '100%' }}>
-                      Show {Math.min(PAGE, visible.length - limit)} more · {(visible.length - limit).toLocaleString()} remaining
-                    </button>
-                  </div>
-                )}
+                </div>
 
                 <p style={{ padding: '12px 20px', margin: 0, fontSize: 'var(--text-xs)', color: 'var(--soft)', lineHeight: 1.6, maxWidth: '75ch' }}>
                   Rows with a ticker open in the detail drawer; a removed company shows what the
@@ -814,7 +803,8 @@ function ChangeRow({ row, rank, max, openable, onOpen }) {
       <span className="mono r-chg-rank" style={{ ...cell, justifyContent: 'flex-end', fontSize: 11, color: 'var(--soft)' }}>
         {String(rank).padStart(3, '0')}
       </span>
-      <span style={{ ...cell, minWidth: 0 }}>
+      <span style={{ ...cell, minWidth: 0, gap: 10 }}>
+        <CompanyLogo ticker={row.ticker} name={row.name} size={26}/>
         <span style={{ minWidth: 0, padding: '8px 0' }}>
           <span style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
             <span style={{
@@ -856,13 +846,14 @@ function RenameRow({ rename, openable, onOpen }) {
     <Root type={openable ? 'button' : undefined} onClick={openable ? onOpen : undefined}
       title={openable ? `Open ${rename.to}` : undefined}
       style={{
-        display: 'grid', gridTemplateColumns: 'auto minmax(0, 1fr) auto', gap: 12, alignItems: 'center',
+        display: 'grid', gridTemplateColumns: 'auto auto minmax(0, 1fr) auto', gap: 12, alignItems: 'center',
         width: '100%', padding: 'var(--space-sm) 0', background: 'transparent',
         border: 'none', font: 'inherit', color: 'inherit', textAlign: 'left',
         cursor: openable ? 'pointer' : 'default', transition: 'background-color var(--dur-micro) var(--ease-out)',
       }}
       onMouseEnter={openable ? (e) => { e.currentTarget.style.background = 'var(--row-hover)'; } : undefined}
       onMouseLeave={openable ? (e) => { e.currentTarget.style.background = 'transparent'; } : undefined}>
+      <CompanyLogo ticker={rename.ticker} name={rename.to} size={26}/>
       <Tag>{rename.ticker}</Tag>
       <span style={{ fontSize: 'var(--text-sm)', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
         <span style={{ color: 'var(--sub)' }}>{rename.from}</span>
