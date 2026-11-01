@@ -37,7 +37,7 @@ export function PeriodPicker({ manifest, period, onChange }) {
             <button
               key={p.period}
               onClick={() => onChange(p.period)}
-              // btn() resolves the selected fill to --treemap-cell-fg on --accent.
+              // btn() resolves the selected fill to --accent-ink on --accent.
               // It has to: in dark mode --accent-text IS --accent (#D8F34A), so a
               // selected pill drawn that way put lime text on a lime ground and the
               // active year vanished.

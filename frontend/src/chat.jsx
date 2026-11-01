@@ -97,18 +97,18 @@ export function ChatWidget() {
         style={{
           position: 'fixed', right: 24, bottom: 24, zIndex: 1000,
           width: 54, height: 54, borderRadius: 'var(--r-pill)',
-          // --treemap-cell-fg is the app's "dark ink that reads on an accent fill" token,
+          // --accent-ink is the app's "ink that reads on an accent fill" token,
           // the same one the icon inside uses; --feature-ink is the feature CARD's text
           // colour and is near-white on the light theme, and it carried a hardcoded
           // near-black fallback that belonged in the tokens. The border was a --line
           // grey hairline drawn on the accent, which only ever read as a smudge.
-          background: 'var(--accent)', color: 'var(--treemap-cell-fg)',
+          background: 'var(--accent)', color: 'var(--accent-ink)',
           border: 'none', cursor: 'pointer',
           display: 'grid', placeItems: 'center',
           boxShadow: 'var(--shadow-pop)',
         }}
       >
-        <Icon name="sparkle" size={22} color="var(--treemap-cell-fg)" />
+        <Icon name="sparkle" size={22} color="var(--accent-ink)" />
       </button>
     );
   }
@@ -131,7 +131,7 @@ export function ChatWidget() {
         padding: '13px 14px', borderBottom: '1px solid var(--line)',
       }}>
         <span style={{ width: 30, height: 30, borderRadius: 'var(--r-sm)', display: 'grid', placeItems: 'center', background: 'var(--accent)' }}>
-          <Icon name="sparkle" size={16} color="var(--treemap-cell-fg)" />
+          <Icon name="sparkle" size={16} color="var(--accent-ink)" />
         </span>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ fontSize: 'var(--text-sm)', fontWeight: 600, color: 'var(--ink)' }}>Assistant</div>
@@ -162,7 +162,7 @@ export function ChatWidget() {
                 borderBottomRightRadius: isUser ? 4 : 13,
                 borderBottomLeftRadius: isUser ? 13 : 4,
                 background: isUser ? 'var(--accent)' : 'var(--row-hover)',
-                color: isUser ? 'var(--treemap-cell-fg)' : m.error ? 'var(--bear-text)' : 'var(--ink)',
+                color: isUser ? 'var(--accent-ink)' : m.error ? 'var(--bear-text)' : 'var(--ink)',
                 border: isUser ? 'none' : `1px solid ${m.error ? 'color-mix(in srgb, var(--bear) 45%, transparent)' : 'var(--line)'}`,
                 fontSize: 13, lineHeight: 1.5, whiteSpace: 'pre-wrap', wordBreak: 'break-word',
               }}>{m.text}</div>
@@ -195,7 +195,7 @@ export function ChatWidget() {
           ...primaryBtn, width: 40, height: 40, padding: 0, display: 'grid', placeItems: 'center',
           opacity: busy || !input.trim() || !available ? 0.55 : 1, cursor: busy || !input.trim() || !available ? 'not-allowed' : 'pointer',
         }}>
-          <Icon name="arrow-up" size={17} color="var(--treemap-cell-fg)" />
+          <Icon name="arrow-up" size={17} color="var(--accent-ink)" />
         </button>
       </div>
 
@@ -216,7 +216,7 @@ export function ChatWidget() {
 }
 
 var primaryBtn = {
-  background: 'var(--accent)', color: 'var(--treemap-cell-fg)', border: 'none', borderRadius: 'var(--r-md)',
+  background: 'var(--accent)', color: 'var(--accent-ink)', border: 'none', borderRadius: 'var(--r-md)',
   padding: '8px 14px', fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 600,
   cursor: 'pointer', flexShrink: 0,
 };

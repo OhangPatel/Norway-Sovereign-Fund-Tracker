@@ -256,7 +256,7 @@ export function PipelineControls(props) {
     headline = 'Current as of ' + (props.lastFetched || 'n/a');
   }
 
-  // Pill chip styling for the menu rows: periwinkle (ok), apricot (limit reached), grey (soon).
+  // Pill chip styling for the menu rows: gold (ok), neutral with a firmer edge (limit reached), dim grey (soon).
   function chip(kind) {
     var warn = kind === 'warn', soon = kind === 'soon';
     return {

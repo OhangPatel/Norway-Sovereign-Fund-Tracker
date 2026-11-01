@@ -61,7 +61,7 @@ export const fmt = {
 // job is told by its verb, not its typeface, so that switch is gone.
 export function btn({ variant = 'ghost', shape = 'pill', active = false } = {}) {
   const fill = {
-    primary: { bg: 'var(--accent)', fg: 'var(--treemap-cell-fg)', bd: 'var(--accent)' },
+    primary: { bg: 'var(--accent)', fg: 'var(--accent-ink)', bd: 'var(--accent)' },
     solid:   { bg: 'var(--ink)',    fg: 'var(--bg)',              bd: 'var(--ink)' },
     ghost:   active
       ? { bg: 'var(--row-hover)', fg: 'var(--ink)', bd: 'var(--ink)' }
@@ -96,7 +96,7 @@ export function iconBtnStyle({ active = false, large = false } = {}) {
     width: side, height: side, flexShrink: 0,
     display: 'grid', placeItems: 'center',
     background: active ? 'var(--accent)' : 'transparent',
-    color: active ? 'var(--treemap-cell-fg)' : 'var(--sub)',
+    color: active ? 'var(--accent-ink)' : 'var(--sub)',
     border: `1px solid ${active ? 'var(--accent)' : 'var(--line)'}`,
     borderRadius: 'var(--r-md)', cursor: 'pointer',
     transition: 'background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out)',

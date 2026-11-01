@@ -12,7 +12,7 @@ const pillStyle = (active) => btn({ variant: 'ghost', shape: 'pill', active });
 
 const countBadge = {
   padding: '1px 6px', borderRadius: 'var(--r-pill)',
-  background: 'var(--accent)', color: 'var(--treemap-cell-fg)',
+  background: 'var(--accent)', color: 'var(--accent-ink)',
   fontSize: 'var(--text-xs)', fontWeight: 600,
 };
 
@@ -352,7 +352,7 @@ function Check({ on }) {
       background: on ? 'var(--accent)' : 'transparent',
       display:'grid', placeItems:'center',
     }}>
-      {on && <Icon name="check" size={10} color="var(--treemap-cell-fg)" strokeWidth={2.5}/>}
+      {on && <Icon name="check" size={10} color="var(--accent-ink)" strokeWidth={2.5}/>}
     </span>
   );
 }

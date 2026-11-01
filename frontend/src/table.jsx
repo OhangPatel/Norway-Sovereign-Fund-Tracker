@@ -320,7 +320,7 @@ export function Row({ row, rank, visibleCols, onOpen, pinned, togglePin, compare
             background: compared ? 'var(--accent)' : 'transparent',
             display:'grid', placeItems:'center',
           }}>
-            {compared && <Icon name="check" size={11} color="var(--treemap-cell-fg)" strokeWidth={2.5}/>}
+            {compared && <Icon name="check" size={11} color="var(--accent-ink)" strokeWidth={2.5}/>}
           </span>
         </div>
       )}
