@@ -261,7 +261,7 @@ export function BrandMark({ size = 28 }) {
 
 // Company logo from /logos/{ticker}.webp (backend/pipeline/fetch_logos.py).
 // The initial is always drawn underneath; the image covers it once it loads and
-// removes itself if there is no file, so ~5% of companies without a logo, or a slow
+// removes itself if there is no file, so the ~25% of companies without a logo, or a slow
 // load, still show something. White tile because most favicons assume a white page
 // and a dark mark would vanish on the dark theme. Decorative: the name is beside it.
 export function CompanyLogo({ ticker, name, size = 28 }) {
@@ -274,7 +274,7 @@ export function CompanyLogo({ ticker, name, size = 28 }) {
   return (
     <span aria-hidden="true" style={{
       position: 'relative', width: size, height: size, flexShrink: 0,
-      borderRadius: 'var(--r-sm)', overflow: 'hidden',
+      borderRadius: 'var(--r-pill)', overflow: 'hidden',
       display: 'grid', placeItems: 'center',
       background: 'color-mix(in oklab, var(--ink) 9%, transparent)',
       color: 'var(--sub)', fontSize: Math.round(size * 0.42), fontWeight: 500,

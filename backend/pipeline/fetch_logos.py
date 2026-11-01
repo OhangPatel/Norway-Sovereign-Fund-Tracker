@@ -35,6 +35,9 @@ LOGO_DIR = SCRIPT_DIR.parent.parent / "frontend" / "public" / "logos"
 FAVICON_URL = "https://www.google.com/s2/favicons?domain={domain}&sz=64"
 SIZE = 64
 MIN_SOURCE_SIZE = 32
+# Where Yahoo's website is the wrong one to take a logo from. Alphabet's abc.xyz has
+# only a 16px icon, and the brand people recognise is Google's anyway.
+WEBSITE_OVERRIDES = {"GOOGL": "https://www.google.com"}
 
 
 def domains_of(website):
@@ -47,7 +50,7 @@ def domains_of(website):
 
 def fetch_logo(ticker):
     """Returns why it failed, or None on success."""
-    website = yf.Ticker(ticker).info.get("website")
+    website = WEBSITE_OVERRIDES.get(ticker) or yf.Ticker(ticker).info.get("website")
     if not website:
         return "no website on Yahoo"
     for domain in domains_of(website):
