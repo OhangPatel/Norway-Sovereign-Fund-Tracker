@@ -102,7 +102,8 @@ function computeSquarified(values, W, H) {
 
 // `highlight` lights the tile with that label from outside (a list beside it), and
 // `onHover` reports the tile under the pointer back, so the two stay in step.
-export function Treemap({ items, height = 300, gap = 5, radius = 4, minShare = 0.011, onClick, highlight = null, onHover }) {
+// `selected` labels stay at full strength and every other tile dims (.r-tile.is-dim).
+export function Treemap({ items, height = 300, gap = 5, radius = 4, minShare = 0.011, onClick, highlight = null, onHover, selected = [] }) {
   const ref = useRef(null);
   const [width, setWidth] = useState(0);
   useEffect(() => {
@@ -149,7 +150,8 @@ export function Treemap({ items, height = 300, gap = 5, radius = 4, minShare = 0
             type={onClick ? 'button' : undefined}
             aria-label={onClick ? `${it.label}: ${it.pct.toFixed(1)}% of value. Filter to this sector.` : undefined}
             onClick={() => onClick && onClick(it)}
-            className="r-tile"
+            aria-pressed={onClick ? selected.includes(it.label) : undefined}
+            className={selected.length && !selected.includes(it.label) ? 'r-tile is-dim' : 'r-tile'}
             onMouseEnter={e => { setHover({ i, x: e.clientX, y: e.clientY }); onHover && onHover(it.label); }}
             onMouseMove={e => setHover({ i, x: e.clientX, y: e.clientY })}
             onMouseLeave={() => { setHover(null); onHover && onHover(null); }}

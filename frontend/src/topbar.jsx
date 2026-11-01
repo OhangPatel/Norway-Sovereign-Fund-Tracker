@@ -1,5 +1,7 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
 import { fmt, Icon, BrandMark, iconBtnStyle } from './format.jsx';
+import { useAnchoredMenu } from './filters.jsx';
 import { PeriodPicker } from './period.jsx';
 import { periodLabel } from './snapshot.js';
 import { sectorOf } from './sectors.js';
@@ -28,7 +30,11 @@ export function TopBar({
   const [periodOpen, setPeriodOpen] = React.useState(false);
   // The ticker loops for as long as the page is open, so it carries its own pause.
   const [tickPaused, setTickPaused] = React.useState(false);
-  const wrapRef = React.useRef(null);
+  // The search results drop from the field but render into <body> (useAnchoredMenu):
+  // inside the bar they were glass nested in the bar's own glass, which only blurs
+  // what is inside the bar, so the page under the list showed through sharp.
+  const resultsOpen = focused && !!query;
+  const { anchorRef: wrapRef, setMenu: setResults } = useAnchoredMenu(resultsOpen, 'stretch');
   const navRef = React.useRef(null);
 
   const matches = React.useMemo(() => {
@@ -130,10 +136,10 @@ export function TopBar({
     // instead, the nav card ran the full 1680px while the cards below it were
     // inset by the gutter, so above ~1724px the nav was 22px wider on each side
     // than everything it sat on top of.
-    // Leaving navRef unpadded is what keeps the dropdowns right: it is the
-    // containing block for the search results, the nav menu and the columns
-    // popover, and an absolutely positioned `right: 0` resolves against its
-    // padding edge — pad it and every panel hangs a gutter's width off the card.
+    // Leaving navRef unpadded is what keeps the nav menu right: it is the menu's
+    // containing block, and an absolutely positioned `right: 0` resolves against its
+    // padding edge — pad it and the panel hangs a gutter's width off the card. (The
+    // search results render into <body>; see resultsOpen.)
     <header style={{
       position: 'sticky', top: 0, zIndex: 50,
       maxWidth: 'var(--page-max)', margin: '0 auto',
@@ -215,14 +221,14 @@ export function TopBar({
                 />
               </div>
 
-              {focused && query && matches.length > 0 && (
-                <div style={{
-                  position: 'absolute', top: 'calc(100% + 8px)', left: 0, right: 0,
-                  background: 'var(--surface)', border: '1px solid var(--line)',
-                  borderRadius: 'var(--r-lg)', overflow: 'hidden',
-                  boxShadow: 'var(--shadow-menu)',
-                  animation: 'rise .12s ease-out'
+              {resultsOpen && createPortal(
+                <div ref={setResults} className="glass-float" style={{
+                  position: 'fixed', zIndex: 'var(--z-dropdown)',
+                  overflow: 'hidden auto',
+                  animation: 'rise .12s ease-out',
+                  ...(matches.length ? null : { padding: '16px', color: 'var(--soft)', fontSize: 12 }),
                 }}>
+                  {matches.length === 0 && <>No companies matched &ldquo;{query}&rdquo;. Try a ticker, country, or partial name.</>}
                   {matches.map((m, i) => (
                     <div key={m.id}
                       onMouseDown={() => { onPick(m); setQuery(''); }}
@@ -242,17 +248,8 @@ export function TopBar({
                       <span className="mono" style={{ fontSize: 'var(--text-xs)', color: 'var(--soft)' }}>{fmt.money(m.mvUsd, 'USD', 1)}</span>
                     </div>
                   ))}
-                </div>
-              )}
-              {focused && query && matches.length === 0 && (
-                <div style={{
-                  position: 'absolute', top: 'calc(100% + 8px)', left: 0, right: 0,
-                  background: 'var(--surface)', border: '1px solid var(--line)',
-                  borderRadius: 'var(--r-lg)', padding: '16px',
-                  color: 'var(--soft)', fontSize: 12,
-                }}>
-                  No companies matched &ldquo;{query}&rdquo;. Try a ticker, country, or partial name.
-                </div>
+                </div>,
+                document.body
               )}
             </div>
 
@@ -287,15 +284,13 @@ export function TopBar({
             horizontal anchoring live in CSS (index.html) so the panel can hug the
             button on wide screens and go full-bleed on a phone. */}
         {menuOpen && (
-          <div className="r-nav-menu" role="menu" style={{
+          <div className="r-nav-menu glass-float" role="menu" style={{
             position: 'absolute', top: '100%', marginTop: 8,
             zIndex: 60,
-            background: 'var(--surface)', border: '1px solid var(--line)',
-            borderRadius: 'var(--r-lg)', overflow: 'hidden auto',
+            overflow: 'hidden auto',
             // A menu taller than the viewport cannot be scrolled to; the picker's
             // year pills are what can push it there on a short screen.
             maxHeight: 'min(70vh, 560px)',
-            boxShadow: 'var(--shadow-menu)',
             animation: 'rise .12s ease-out',
           }}>
             {manifest && (

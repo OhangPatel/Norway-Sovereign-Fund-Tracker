@@ -179,6 +179,7 @@
       /* Hallmark · dropped onMouseLeave={(e) => { if (!open) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--ink)'; } }} · the Data tools trigger rests on the nav's glass now, so its hover returns to var(--nav-surface) */
       /* Hallmark · dropped onMouseLeave={openable ? (e) => { e.currentTarget.style.background = 'var(--surface)'; } : undefined} · rename rows left their boxed card for a ruled list and rest on a transparent ground */
       /* Hallmark · dismissed 29 · the blur is Dusk's smoked glass with its lit edge over slate; no glow, bloom or halo sits behind it */
+      /* Hallmark · theme rule set aside · every floating panel is glass at the owner's request (.glass-float): a menu or popover that opens over a glass card frosts the card beneath it, and anything inside a floating panel sits on .r-inset, never on more glass */
       /* Hallmark · answered F7 · round initials are Dusk's account mark and the rounded bar ends are data, not boxes */
       /* Hallmark · note 76 · the photographs are Commons quality images outside the library, credited with their licences in the React footer (footer.jsx, data-credits); the checker reads html files only */
       /* Hallmark · reworded "onMouseEnter={e => setHover({ i, x: e.clientX, y: e.clientY })}" to "the same call, then onHover(it.label)" · each treemap tile now also reports its sector, so the list beside it lights the same row */
@@ -570,6 +571,19 @@
         backdrop-filter: blur(var(--glass-blur)) saturate(1.35);
         border-radius: var(--r-xl); box-shadow: var(--glass-hi), var(--shadow-card);
       }
+      /* The same glass for everything that floats: menus, popovers, the filter panel
+         and sheet, the detail drawer, the compare dock and modal, the chat panel. The
+         floating radius and shadow, and rules inside it drawn in the glass's own
+         hairline. A panel inside one sits on .r-inset, never on more glass. */
+      .glass-float {
+        background: var(--glass); color: var(--ink); box-sizing: border-box; border: 0;
+        -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.35);
+        backdrop-filter: blur(var(--glass-blur)) saturate(1.35);
+        border-radius: var(--r-lg); box-shadow: var(--glass-hi), var(--shadow-menu);
+        --line: var(--glass-rule);
+      }
+      /* Dusk's inner part: a 4% wash of the ink and a hairline, on glass. */
+      .r-inset { background: color-mix(in oklab, var(--ink) 4%, transparent); box-shadow: inset 0 0 0 1px var(--glass-rule); border-radius: var(--r-lg); }
 
       /* A run of accounts: a logo, the name, the balance at the right. */
       .r-acct { list-style: none; margin: 0; padding: 0; }
@@ -589,6 +603,7 @@
       .r-sec-head p { margin: var(--space-2xs) 0 0; font-size: var(--text-sm); color: var(--soft); }
       /* A list beside one pane, and a pair of equal columns. */
       .r-duo { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--space-2xl); align-items: start; }
+      .r-sector-map { padding: var(--space-md); }
       .r-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2xl); align-items: start; }
 
       /* A ruled list of rows that each filter something. */
@@ -598,6 +613,9 @@
       .r-row-btn:hover, .r-row-btn[aria-pressed="true"] { color: var(--ink); }
       .r-row-btn[aria-pressed="true"] .r-row-name { color: var(--accent-text); font-weight: 600; }
       .r-row-btn.is-hot { color: var(--ink); }
+      .r-rows.has-pick .r-row-btn { transition: color var(--dur-micro) var(--ease-out), opacity var(--dur-short) var(--ease-out); }
+      .r-rows.has-pick .r-row-btn:not([aria-pressed="true"]) { opacity: 0.4; }
+      .r-rows.has-pick .r-row-btn:not([aria-pressed="true"]):hover, .r-rows.has-pick .r-row-btn.is-hot { opacity: 0.8; }
       .r-row-btn.is-hot .r-row-bar { background: color-mix(in oklab, var(--ink) 16%, transparent); }
       .r-row-bar { grid-column: 1 / -1; height: 3px; border-radius: var(--r-pill); background: var(--track); overflow: hidden; }
       .r-row-bar > span { display: block; height: 100%; background: var(--accent); transform-origin: left; }
@@ -657,7 +675,10 @@
       @keyframes bar-grow { from { transform: scaleX(0); } }
       .r-row-bar > span { transition: transform 900ms var(--ease-out) calc(var(--i, 0) * 40ms); }
       .r-div-fill { transition: transform 800ms var(--ease-out) calc(var(--i, 0) * 35ms); }
-      .r-tile { transition: transform 600ms var(--ease-out) calc(var(--i, 0) * 40ms); }
+      .r-tile { transition: transform 600ms var(--ease-out) calc(var(--i, 0) * 40ms), opacity var(--dur-short) var(--ease-out); }
+      /* A sector is picked: the others stay, dimmed, so the pick stands out. */
+      .r-tile.is-dim { opacity: 0.3; }
+      .r-tile.is-dim:hover { opacity: 0.7; }
       @media (prefers-reduced-motion: no-preference) {
         .r-hour img { animation: hour-drift 48s var(--ease-in-out) both; }
         .r-acct > li { animation: rise-in 520ms var(--ease-out) both; animation-delay: calc(120ms + var(--i, 0) * 45ms); }
@@ -680,10 +701,64 @@
       .r-tally.glass { border: 0; padding: var(--space-md) var(--space-xl); }
       .r-tally.glass > * { border-color: var(--glass-rule); }
 
-      /* Metric groups: detail.jsx */
-      .r-metrics3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gap); }
-      .r-kv2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; }
+      /* Position detail: detail.jsx. A drawer from the right on a wide screen; the
+         media block below turns it into a bottom sheet (SHEET_QUERY in detail.jsx). */
+      .r-detail { position: fixed; top: 0; right: 0; bottom: 0; z-index: 81; width: min(640px, 96vw); overflow-y: auto; overscroll-behavior: contain; border-radius: 0; box-shadow: var(--glass-hi), var(--shadow-overlay); }
+      /* Frosts what scrolls under it, inside the drawer's own glass. */
+      .r-detail-head { position: sticky; top: 0; z-index: 5; background: color-mix(in oklab, var(--glass) 50%, transparent); -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.35); backdrop-filter: blur(var(--glass-blur)) saturate(1.35); border-bottom: 1px solid var(--line); }
+      .r-detail-bar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-sm); padding: var(--space-sm) var(--space-lg); }
+      .r-detail-title { font-size: var(--text-sm); color: var(--soft); }
+      .r-detail-actions { display: flex; gap: var(--space-xs); }
+      .r-detail-x { display: contents; }
+      .r-detail-grip, .r-detail-back { display: none; }
+      .r-detail-back { align-items: center; gap: var(--space-3xs); height: var(--control-h); padding: 0 var(--space-xs) 0 0; background: none; border: 0; color: var(--accent-text); font-family: var(--font-body); font-size: var(--text-sm); font-weight: 500; cursor: pointer; transition: color var(--dur-micro) var(--ease-out); }
+      .r-detail-back:hover { color: var(--ink); }
+      .r-detail-body { padding: var(--space-lg) var(--space-lg) var(--space-2xl); }
+      .r-dsec { margin-top: var(--space-lg); }
+      .r-dsec-head { margin-bottom: var(--space-sm); }
+      .r-dsec-head h3 { font-size: var(--text-lg); line-height: 1.2; margin: 0; }
+      .r-dsec-head p { margin: var(--space-3xs) 0 0; font-size: var(--text-xs); color: var(--soft); }
+      .r-dlabel { font-size: var(--text-xs); color: var(--soft); }
+      /* The price panel, an inset on the drawer's glass. */
+      .r-dprice { margin-top: var(--space-lg); padding: var(--space-md) var(--space-md) 0; }
+      .r-dchart { margin-top: var(--space-sm); height: 130px; display: grid; place-items: center; background-image: repeating-linear-gradient(to bottom, var(--glass-rule) 0 1px, transparent 1px 33%), repeating-linear-gradient(to right, var(--glass-rule) 0 1px, transparent 1px 20%); }
+      .r-dprice-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0 var(--space-sm); margin-top: var(--space-sm); border-top: 1px solid var(--glass-rule); }
+      .r-range { display: flex; margin-left: calc(-1 * var(--space-xs)); }
+      .r-range-btn { display: inline-flex; align-items: center; gap: 6px; min-height: var(--control-h-lg); padding: 0 var(--space-xs); background: none; border: 0; color: var(--soft); font-family: var(--font-body); font-size: var(--text-xs); font-weight: 500; cursor: pointer; transition: color var(--dur-micro) var(--ease-out); }
+      .r-range-btn:hover { color: var(--ink); }
+      .r-range-btn[aria-pressed="true"] { color: var(--ink); font-weight: 600; }
+      .r-range-btn[aria-pressed="true"]::before { content: ""; width: 6px; height: 6px; border-radius: var(--r-pill); background: var(--accent); }
+      .r-dstatus { display: flex; align-items: center; gap: var(--space-xs); margin: 0; padding: var(--space-xs) 0; font-size: var(--text-xs); color: var(--soft); }
+      /* A ruled tally of three, the drawer's size of .r-tally. */
+      .r-dtally { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+      .r-dtally > * { padding: var(--space-sm) var(--space-md); border-left: 1px solid var(--line); min-width: 0; }
+      .r-dtally > :first-child { padding-left: 0; border-left: 0; }
+      .r-dtally > :last-child { padding-right: 0; }
+      .r-dtally-fig { margin-top: var(--space-2xs); font-family: var(--font-display); font-weight: 500; font-size: var(--text-lg); letter-spacing: var(--tracking-display); line-height: 1.2; font-variant-numeric: tabular-nums; overflow-wrap: break-word; }
+      .r-dtally-note { margin-top: var(--space-3xs); font-size: var(--text-xs); color: var(--soft); line-height: 1.35; }
+      .r-dhold { padding: var(--space-md); }
+      .r-dhold .r-dtally { border: 0; }
+      .r-dhold .r-dtally > * { border-color: var(--glass-rule); }
+      .r-dhold .r-dtally + .r-dtally { border-top: 1px solid var(--glass-rule); }
+      .r-dkv { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--space-lg); border-top: 1px solid var(--line); }
+      .r-dkv-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-xs); min-height: 44px; border-bottom: 1px solid var(--line); }
+      .r-dkv-row > :first-child { font-size: var(--text-sm); color: var(--soft); }
+      .r-dpeers > li + li { border-top-color: var(--line); }
+      .r-dpeers .r-acct-row:hover .r-acct-name { color: var(--accent-text); }
       .r-research3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-xs); }
+
+      /* The sheet: full width up to 720px, a 24px peek of the page above it, the
+         floating radius on its top corners, and the lit top edge. */
+      @media (max-width: 640px), (orientation: portrait) and (max-width: 1024px) {
+        .r-detail { top: calc(env(safe-area-inset-top) + var(--space-lg)); left: 0; right: 0; width: auto; max-width: 720px; margin-inline: auto; border-radius: var(--r-lg) var(--r-lg) 0 0; }
+        .r-detail-grip { display: block; width: 40px; height: 5px; margin: var(--space-xs) auto 0; border-radius: var(--r-pill); background: color-mix(in oklab, var(--ink) 24%, transparent); }
+        .r-detail-bar { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); padding: var(--space-2xs) var(--space-md) var(--space-xs); }
+        .r-detail-back { display: inline-flex; justify-self: start; }
+        .r-detail-title { color: var(--ink); font-weight: 500; }
+        .r-detail-actions { justify-self: end; }
+        .r-detail-x { display: none; }
+        .r-detail-body { padding: var(--space-md) var(--space-md) calc(var(--space-2xl) + env(safe-area-inset-bottom)); }
+      }
       /* What-changed page: changes.jsx */
       .r-chg-tools { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-xs); }
       .r-chg-search { width: min(260px, 100%); }
@@ -697,7 +772,6 @@
       /* Ledger header: title on the left, its three triggers on the right. */
       .r-ledger-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: var(--space-sm); }
       .r-ledger-tools { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-xs); }
-      .r-colpop { right: 0; }
 
       /* The filter panel, hung off its trigger. */
       .r-sheet-back { position: fixed; inset: 0; z-index: 30; background: transparent; }
@@ -705,9 +779,12 @@
         position: absolute; top: 100%; right: 0; margin-top: var(--space-xs); z-index: 40;
         width: 300px; max-height: min(70vh, 560px);
         display: flex; flex-direction: column;
-        background: var(--surface); border: 1px solid var(--line);
+        /* .glass-float's glass, written out because the panel is a class of its own. */
+        background: var(--glass); border: 0; --line: var(--glass-rule);
+        -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.35);
+        backdrop-filter: blur(var(--glass-blur)) saturate(1.35);
         border-radius: var(--r-lg); padding: var(--space-2xs) var(--space-md) var(--space-md);
-        box-shadow: var(--glass-hi);
+        box-shadow: var(--glass-hi), var(--shadow-menu);
         animation: rise var(--dur-micro) var(--ease-out);
       }
       .r-sheet-grip { display: none; width: 40px; height: 4px; border-radius: var(--r-pill); background: var(--line); margin: var(--space-3xs) auto var(--space-sm); }
@@ -720,6 +797,24 @@
         font-family: var(--font-body); font-size: var(--text-sm); font-weight: 500;
       }
       .r-sheet-sec-body { padding: 0 0 var(--space-xs); }
+      .r-sheet-head { display: none; }
+      .r-sheet-hint { font-size: var(--text-sm); font-weight: 400; color: var(--soft); white-space: nowrap; }
+      .r-sheet-hint.is-on { color: var(--accent-text); }
+      .r-sheet-label { padding: var(--space-md) var(--space-3xs) var(--space-2xs); font-size: var(--text-xs); color: var(--soft); }
+      /* Option rows (OptionRow, filters.jsx): label, count, and a check on the chosen
+         ones only. Shared by the phone sheet and the desktop filter menus. */
+      .r-opt { display: grid; grid-template-columns: minmax(0, 1fr) auto 18px; align-items: center; gap: var(--space-sm); width: 100%; min-height: 36px; padding: var(--space-2xs) var(--space-xs); background: transparent; border: 0; border-radius: var(--r-sm); color: var(--sub); font-family: var(--font-body); font-size: var(--text-sm); text-align: left; cursor: pointer; transition: background-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out); }
+      .r-opt:hover { background: var(--row-hover); color: var(--ink); }
+      .r-opt[aria-checked="true"] { color: var(--ink); font-weight: 600; }
+      .r-opt-count { font-size: var(--text-xs); font-weight: 400; color: var(--soft); font-variant-numeric: tabular-nums; }
+      .r-opt-check { display: grid; place-items: center; color: var(--accent-text); }
+      .r-opt-clear { width: 100%; margin-top: var(--space-2xs); padding: var(--space-xs); background: transparent; border: 0; border-top: 1px solid var(--line); color: var(--soft); font-family: var(--font-body); font-size: var(--text-xs); text-align: left; cursor: pointer; transition: color var(--dur-micro) var(--ease-out); }
+      .r-opt-clear:hover { color: var(--ink); }
+      /* A switch, on a role="switch" button: Dusk's switches take the accent when on. */
+      .r-switch { position: relative; flex-shrink: 0; width: 38px; height: 22px; border-radius: var(--r-pill); background: var(--track); transition: background-color var(--dur-micro) var(--ease-out); }
+      .r-switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; border-radius: var(--r-pill); background: var(--ink); transition: transform var(--dur-short) var(--ease-out); }
+      [aria-checked="true"] > .r-switch { background: var(--accent); }
+      [aria-checked="true"] > .r-switch::after { transform: translateX(16px); background: var(--accent-ink); }
       .r-sheet-reset, .r-sheet-done {
         width: 100%; margin-top: var(--space-sm);
         height: var(--control-h-lg); padding: 0 var(--space-md);
@@ -745,7 +840,7 @@
 
       /* Compare modal: label column stays put while companies scroll. */
       .r-cmp-row { display: grid; grid-template-columns: 180px repeat(var(--cmp-n), minmax(180px, 1fr)); }
-      .r-cmp-label { position: sticky; left: 0; z-index: 2; background: var(--bg); }
+      .r-cmp-label { position: sticky; left: 0; z-index: 2; background: color-mix(in oklab, var(--glass) 70%, transparent); -webkit-backdrop-filter: blur(var(--glass-blur)); backdrop-filter: blur(var(--glass-blur)); }
 
       /* Footer: statement, then three link columns, on slate in both modes. */
       .r-foot-cols {
@@ -769,6 +864,11 @@
 
       @media (max-width: 900px) {
         .r-hero, .r-duo, .r-pair { grid-template-columns: minmax(0, 1fr); gap: var(--space-xl); }
+        /* Sector weight, stacked: tighter rows and a 260px treemap (summary.jsx),
+           so the list and the map together take about one phone screen, not two. */
+        .r-sector-duo { gap: var(--space-md); }
+        .r-sector-duo .r-row-btn { padding: 6px 0; row-gap: 4px; }
+        .r-sector-map { padding: var(--space-sm); }
         .r-nights-axis span:not(:nth-child(2n+1)) { visibility: hidden; }
         .r-hero h1, .r-banner h1 { font-size: 2.5rem; }
         .r-tally { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -811,31 +911,55 @@
         .r-div-row > :first-child { grid-column: 1 / -1; }
         .r-tally-fig { font-size: var(--text-xl); }
         .r-tally-fig.is-lead { font-size: var(--text-2xl); }
-        .r-metrics3 { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gap-tight); }
-        .r-kv2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         /* Change ledger on a phone: company, side, value. Country and sector are
            on the second line of the company cell, so nothing is lost, only stacked. */
         .r-chg-row { grid-template-columns: minmax(0, 1fr) 92px 96px; }
-        .r-chg-search { width: 100%; }
+        /* auto: the ledger-tools grid stretches it. 100% plus its padding overflowed. */
+        .r-chg-search { width: auto; }
         .r-chg-rank, .r-chg-country, .r-chg-sector, .r-chg-arrow { display: none !important; }
         .r-chg-sub-country { display: inline; }
         .r-chg-row > * { padding-left: var(--space-xs) !important; padding-right: var(--space-xs) !important; }
         .r-chg-thead > * { font-size: var(--text-xs) !important; }
 
-        .r-ledger-tools { gap: var(--space-2xs); }
+        /* Three triggers need ~340px and a phone row has ~290-300, so the row wrapped and
+           left one stranded. A two-up grid instead: the first control (Filters on the
+           ledger, the search field on What changed) takes its own row, the other two
+           share the next. Direct children only, so the search field's clear button and
+           the Columns popover's rows are left alone. */
+        .r-ledger-tools { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-xs); width: 100%; }
+        .r-ledger-tools > :first-child { grid-column: 1 / -1; }
+        .r-ledger-tools > button, .r-ledger-tools > div > button { width: 100%; }
         .r-ledger-count { display: none; }
-        .r-colpop { right: auto; left: 0; }
 
         /* Same panel, re-seated as a bottom sheet. */
         .r-sheet-back { background: var(--scrim); backdrop-filter: var(--scrim-blur); z-index: var(--z-sticky); animation: fade var(--dur-micro) var(--ease-out); }
         .r-sheet {
           position: fixed; inset: auto 0 0 0; z-index: calc(var(--z-sticky) + 1);
-          width: 100%; max-height: 85vh; margin-top: 0;
-          border: none; border-radius: var(--r-xl) var(--r-xl) 0 0;
+          /* auto, not 100%: left and right are pinned, and 100% plus the padding below
+             (content-box) made the sheet 32px wider than the screen, clipping its
+             chevrons, checkboxes and the Done button. */
+          width: auto; max-height: 85vh; margin-top: 0;
+          border: none; border-radius: var(--r-lg) var(--r-lg) 0 0;
           padding: var(--space-sm) var(--space-md) calc(var(--space-md) + env(safe-area-inset-bottom));
           animation: sheet-up var(--dur-short) var(--ease-out);
         }
         .r-sheet-grip { display: block; }
+        /* The sheet as a titled, ruled list at thumb size: rows 44px and up, body
+           text at 16px, hairlines in the glass's own rule colour. */
+        .r-sheet-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-sm); padding: var(--space-2xs) var(--space-3xs) var(--space-sm); border-bottom: 1px solid var(--glass-rule); }
+        .r-sheet-head h2 { margin: 0; font-size: var(--text-xl); line-height: 1.15; }
+        .r-sheet-head span { font-size: var(--text-sm); color: var(--accent-text); }
+        .r-sheet-sec { border-color: var(--glass-rule); }
+        .r-sheet-sec-head { min-height: 52px; padding-top: 0; padding-bottom: 0; font-size: var(--text-md); }
+        .r-sheet .r-opt { min-height: 44px; padding-left: var(--space-3xs); padding-right: var(--space-3xs); border-radius: 0; font-size: var(--text-md); }
+        .r-sheet .r-opt + .r-opt { border-top: 1px solid var(--glass-rule); }
+        .r-sheet .r-opt-clear { border-top-color: var(--glass-rule); }
+        /* The detail's tallies keep three across, a step smaller; its financials go to
+           one column, where a label and its figure never have to share 150px. */
+        .r-dtally > * { padding-left: var(--space-xs); padding-right: var(--space-xs); }
+        .r-dtally-fig { font-size: var(--text-md); }
+        .r-dhold { padding: var(--space-md) var(--space-sm); }
+        .r-dkv { grid-template-columns: minmax(0, 1fr); }
         .r-research3 { grid-template-columns: minmax(0, 1fr); }
 
         /* Table fits the viewport instead of scrolling sideways. */
@@ -851,7 +975,9 @@
 
         /* Nav collapses to one line: brand, then a search toggle and the menu button. */
         .r-topbar { grid-template-areas: "brand actions"; gap: var(--space-xs); }
-        .r-nav-search-toggle { display: inline-flex !important; }
+        /* grid, the display iconBtnStyle gives it: as a flex box its place-items only
+           centred the icon vertically, leaving it 4.5px left of centre. */
+        .r-nav-search-toggle { display: grid !important; }
         .r-search { display: none; }
         .r-topbar.search-open { grid-template-areas: "brand actions" "search search"; }
         .r-topbar.search-open .r-search { display: block; }

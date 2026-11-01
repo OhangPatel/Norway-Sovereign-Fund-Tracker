@@ -27,7 +27,19 @@ export var SECTOR_COLORS = {
   '':                      'var(--soft)',
 };
 
-export function Summary({ data, filtered, onPickCompany, onSetFilter, activeSectors = [], onClearSectors, onOwnSelect }) {
+// Where .r-duo stacks the sector list over the treemap (index.html, max-width 900px).
+// There the treemap no longer has to match the list's height beside it, and at 580px
+// under a full list the section ran to nearly two phone screens.
+const STACKED_QUERY = '(max-width: 900px)';
+const subscribeStacked = (cb) => {
+  const mq = window.matchMedia(STACKED_QUERY);
+  mq.addEventListener('change', cb);
+  return () => mq.removeEventListener('change', cb);
+};
+const useStacked = () => React.useSyncExternalStore(subscribeStacked, () => window.matchMedia(STACKED_QUERY).matches);
+
+export function Summary({ data, filtered, sectorBase, onPickCompany, onSetFilter, activeSectors = [], onClearSectors, onOwnSelect }) {
+  const stacked = useStacked();
   const { totalNok, totalUsd, avgOwn, countries, sectorCount } = React.useMemo(() => {
     let totalNok = 0, totalUsd = 0, ownSum = 0;
     const countrySet = new Set();
@@ -48,16 +60,19 @@ export function Summary({ data, filtered, onPickCompany, onSetFilter, activeSect
     };
   }, [filtered]);
 
+  // The hero's top holdings are the fund's, whatever the filters below are set to:
+  // the hero is the overview, and a sector pick used to turn it into that sector's top 8.
   const top10 = React.useMemo(
-    () => [...filtered].sort((a, b) => b.mvNok - a.mvNok).slice(0, 8),
-    [filtered]
+    () => [...data].sort((a, b) => b.mvNok - a.mvNok).slice(0, 8),
+    [data]
   );
 
-  // Sector breakdown (share of total USD value)
+  // Sector breakdown (share of total USD value), over every filter but the sector
+  // pick (sectorBase, app.jsx), so all sectors stay on screen and the pick is marked.
   const sectors = React.useMemo(() => {
     const bySector = new Map();
     let tot = 0;
-    for (const c of filtered) {
+    for (const c of sectorBase) {
       const k = sectorOf(c, 'n/a');
       bySector.set(k, (bySector.get(k) || 0) + c.mvUsd);
       tot += c.mvUsd || 0;
@@ -69,7 +84,15 @@ export function Summary({ data, filtered, onPickCompany, onSetFilter, activeSect
         color: SECTOR_COLORS[label] || 'var(--soft)',
       }))
       .sort((a, b) => b.value - a.value);
-  }, [filtered]);
+  }, [sectorBase]);
+
+  // A sector row or tile picks that sector; picking the one already picked clears it,
+  // now that the others stay on screen to switch to.
+  const pickSector = (label) => {
+    if (!onSetFilter || label === 'n/a') return;
+    if (activeSectors.includes(label)) onClearSectors();
+    else onSetFilter({ sector: label });
+  };
 
   const owns = React.useMemo(() => filtered.map(c => c.ownership).filter(v => v > 0), [filtered]);
   const ownStats = React.useMemo(() => ({
@@ -119,7 +142,7 @@ export function Summary({ data, filtered, onPickCompany, onSetFilter, activeSect
               <h2 style={{ fontSize: 'var(--text-lg)', lineHeight: 1.2, margin: 0 }}>Top holdings</h2>
               <p className="eyebrow" style={{ margin: '2px 0 0' }}>Market value in NOK</p>
             </div>
-            <span className="eyebrow">Top 8 of {filtered.length.toLocaleString()}</span>
+            <span className="eyebrow">Top 8 of {data.length.toLocaleString()}</span>
           </div>
           <ol className="r-acct">
             {top10.map((c, i) => (
@@ -169,14 +192,14 @@ export function Summary({ data, filtered, onPickCompany, onSetFilter, activeSect
             <span className="eyebrow">{sectors.length} sectors</span>
           )}
         </div>
-        <div className="r-duo">
-          <ul className="r-rows">
+        <div className="r-duo r-sector-duo">
+          <ul className={activeSectors.length ? 'r-rows has-pick' : 'r-rows'}>
             {sectors.map((it, i) => (
               <li key={it.label}>
                 <button type="button" className={`r-row-btn${hot === it.label ? ' is-hot' : ''}`} aria-pressed={activeSectors.includes(it.label)}
                   onMouseEnter={() => setHot(it.label)} onMouseLeave={() => setHot(null)}
                   onFocus={() => setHot(it.label)} onBlur={() => setHot(null)}
-                  onClick={() => onSetFilter && it.label !== 'n/a' && onSetFilter({ sector: it.label })}>
+                  onClick={() => pickSector(it.label)}>
                   <span className="r-row-name">{it.label}</span>
                   <span className="mono" style={{ fontSize: 'var(--text-sm)' }}>{it.pct.toFixed(1)}%</span>
                   <span className="r-row-bar" aria-hidden="true">
@@ -186,9 +209,10 @@ export function Summary({ data, filtered, onPickCompany, onSetFilter, activeSect
               </li>
             ))}
           </ul>
-          <div className="glass" style={{ padding: 'var(--space-md)' }}>
-            <Treemap items={sectors} height={580} highlight={hot} onHover={setHot}
-              onClick={(it) => onSetFilter && it.label !== 'n/a' && onSetFilter({ sector: it.label })}
+          <div className="glass r-sector-map">
+            <Treemap items={sectors} height={stacked ? 260 : 580} highlight={hot} onHover={setHot}
+              selected={activeSectors}
+              onClick={(it) => pickSector(it.label)}
             />
           </div>
         </div>

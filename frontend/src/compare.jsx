@@ -27,12 +27,8 @@ export function CompareDock({ companies, onRemove, onClear, onExpand, onOpenComp
       width: 'min(1140px, 96vw)',
       animation: 'rise .25s cubic-bezier(.22,.61,.36,1)',
     }}>
-      <div style={{
-        background: 'color-mix(in srgb, var(--surface) 92%, transparent)',
-        backdropFilter: 'blur(20px) saturate(140%)',
-        border: '1px solid var(--line)',
-        borderRadius: 'var(--r-lg)',
-        boxShadow: 'var(--shadow-overlay)',
+      <div className="glass-float" style={{
+        boxShadow: 'var(--glass-hi), var(--shadow-overlay)',
         overflow: 'hidden',
       }}>
         <div style={{
@@ -60,7 +56,7 @@ export function CompareDock({ companies, onRemove, onClear, onExpand, onOpenComp
               style={{
                 minWidth: 180,
                 padding: '12px 14px',
-                background: 'var(--bg)',
+                background: 'transparent',
                 border: '1px solid var(--line)',
                 borderRadius: 'var(--r-md)',
                 cursor: 'pointer',
@@ -68,7 +64,7 @@ export function CompareDock({ companies, onRemove, onClear, onExpand, onOpenComp
                 transition: 'background-color var(--dur-micro) var(--ease-out)'
               }}
               onMouseEnter={e => e.currentTarget.style.background = 'var(--row-hover)'}
-              onMouseLeave={e => e.currentTarget.style.background = 'var(--bg)'}
+              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
             >
               <button onClick={(e) => { e.stopPropagation(); onRemove(c.id); }}
                 aria-label={`Remove ${c.name} from comparison`}
@@ -148,12 +144,10 @@ export function CompareModal({ companies, onClose, allData }) {
         background: 'var(--scrim)', backdropFilter: 'var(--scrim-blur)',
         animation:'fadeIn .15s ease'
       }}/>
-      <div role="dialog" aria-modal="true" aria-label="Side-by-side comparison" style={{
+      <div role="dialog" aria-modal="true" aria-label="Side-by-side comparison" className="glass-float" style={{
         position: 'fixed', inset: 'clamp(8px, 3vw, 32px)',
         zIndex: 91,
-        background: 'var(--bg)',
-        border: '1px solid var(--line)',
-        borderRadius: 'var(--r-lg)',
+        boxShadow: 'var(--glass-hi), var(--shadow-overlay)',
         overflow: 'hidden',
         display:'flex', flexDirection:'column',
         animation: 'rise .25s cubic-bezier(.22,.61,.36,1)'

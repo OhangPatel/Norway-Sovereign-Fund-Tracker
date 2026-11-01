@@ -116,13 +116,13 @@ export function ChatWidget() {
   // ── Open panel ───────────────────────────────────────────────────────────
   return (
     <div
-      className="card"
+      className="glass-float"
       style={{
         position: 'fixed', right: 24, bottom: 24, zIndex: 1000,
         width: 'min(380px, calc(100vw - 48px))',
         height: 'min(620px, calc(100vh - 48px))',
         display: 'flex', flexDirection: 'column', overflow: 'hidden',
-        boxShadow: 'var(--shadow-menu)', animation: 'rise var(--dur-short) var(--ease-out)',
+        animation: 'rise var(--dur-short) var(--ease-out)',
       }}
     >
       {/* Header */}

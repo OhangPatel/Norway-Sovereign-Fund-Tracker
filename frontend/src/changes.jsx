@@ -2,7 +2,7 @@ import React from 'react';
 import { createPortal } from 'react-dom';
 import { fmt, Chip, Tag, Icon, MicroBar, btn, CompanyLogo } from './format.jsx';
 import { Detail } from './detail.jsx';
-import { OptionList, SheetSection, useIsPhone } from './filters.jsx';
+import { OptionList, RadioList, SheetHead, SheetSection, useAnchoredMenu, useIsPhone } from './filters.jsx';
 import { TallyCell, CountUp, SECTOR_COLORS } from './summary.jsx';
 import { useSeen } from './motion.js';
 import { formatPeriod, periodLabel } from './snapshot.js';
@@ -377,11 +377,11 @@ export function ChangesPage({ manifest, period, loadRows, pinned, togglePin, las
                     <SearchField value={query} onChange={(q) => patch({ query: q })}/>
                     {isPhone && (
                       <button type="button" onClick={() => setSheetOpen(true)} aria-expanded={sheetOpen}
-                        style={btn({ variant: 'ghost', shape: 'pill', active: sheetOpen || activeCount > 0 })}>
+                        style={btn({ variant: sheetOpen ? 'solid' : 'ghost', shape: 'pill', active: activeCount > 0 })}>
                         <Icon name="filter" size={13}/>
                         Filters
                         {activeCount > 0 && <span className="mono" style={countBadge}>{activeCount}</span>}
-                        <Icon name={sheetOpen ? 'chev-up' : 'chev-down'} size={12} color="var(--soft)"/>
+                        <Icon name={sheetOpen ? 'chev-up' : 'chev-down'} size={12} color={sheetOpen ? 'currentColor' : 'var(--soft)'}/>
                       </button>
                     )}
                     <button type="button" onClick={exportCsv} disabled={!visible.length}
@@ -490,19 +490,20 @@ export function ChangesPage({ manifest, period, loadRows, pinned, togglePin, las
           <div className="r-sheet-back" onClick={() => setSheetOpen(false)}/>
           <div className="r-sheet" role="dialog" aria-label="Filters">
             <div className="r-sheet-grip" aria-hidden="true"/>
+            <SheetHead title="Filters" active={activeCount}/>
             <div className="r-sheet-body">
               <SheetBlock label="Level">
-                <Segmented label="Level" options={LEVELS} value={level} onChange={setLevel} full/>
+                <RadioList label="Level" options={LEVELS} value={level} onChange={setLevel}/>
               </SheetBlock>
               <SheetBlock label="Change">
-                <Segmented label="Change" options={SIDES} value={side} onChange={setSide} full/>
+                <RadioList label="Change" options={SIDES} value={side} onChange={setSide}/>
               </SheetBlock>
-              <SheetSection label="Sector" icon="wave" count={sectors.length}>
+              <SheetSection label="Sector" count={sectors.length}>
                 <OptionList options={bySector.map(s => s.label)} selected={sectors}
                   onToggle={(l) => toggleIn('sectors', l)} onClear={() => patch({ sectors: [] })}
                   counter={optionCount(bySector)}/>
               </SheetSection>
-              <SheetSection label="Country" icon="globe" count={countries.length}>
+              <SheetSection label="Country" count={countries.length}>
                 <OptionList options={byCountry.map(c => c.label)} selected={countries}
                   onToggle={(l) => toggleIn('countries', l)} onClear={() => patch({ countries: [] })}
                   counter={optionCount(byCountry)}/>
@@ -512,7 +513,7 @@ export function ChangesPage({ manifest, period, loadRows, pinned, togglePin, las
               )}
             </div>
             <button className="r-sheet-done" onClick={() => setSheetOpen(false)}>
-              Done · {visible.length.toLocaleString()} {visible.length === 1 ? 'company' : 'companies'}
+              Show {visible.length.toLocaleString()} {visible.length === 1 ? 'company' : 'companies'}
             </button>
           </div>
         </>,
@@ -639,13 +640,12 @@ function ClearBtn({ onClick, children }) {
 // ── Controls ─────────────────────────────────────────────────────────────────
 
 // A row of peers where exactly one is on. The pressed segment takes the ghost/active
-// treatment the ledger's own triggers use; the group border does the rest. `full`
-// is the sheet variant: the row fills its width and the segments share it, at a
-// height that is a thumb target rather than a pointer one.
-function Segmented({ label, options, value, onChange, full = false }) {
+// treatment the ledger's own triggers use; the group border does the rest. The phone
+// sheet uses RadioList (filters.jsx) instead.
+function Segmented({ label, options, value, onChange }) {
   return (
     <div role="group" aria-label={label} style={{
-      display: full ? 'flex' : 'inline-flex', width: full ? '100%' : undefined,
+      display: 'inline-flex',
       gap: 2, padding: 3,
       border: '1px solid var(--line)', borderRadius: 'var(--r-pill)',
     }}>
@@ -655,7 +655,7 @@ function Segmented({ label, options, value, onChange, full = false }) {
           <button key={o.key} type="button" aria-pressed={on} onClick={() => onChange(o.key)}
             style={{
               ...btn({ variant: 'ghost', shape: 'pill', active: on }),
-              height: full ? 40 : 32, padding: '0 12px', flex: full ? 1 : undefined,
+              height: 32, padding: '0 12px',
               borderColor: on ? 'var(--ink)' : 'transparent',
               color: on ? 'var(--ink)' : 'var(--sub)',
             }}>
@@ -667,14 +667,18 @@ function Segmented({ label, options, value, onChange, full = false }) {
   );
 }
 
-// Trigger plus a checkbox list, hung off the button like the Columns menu. The outside-
-// click check covers both, or clicking the trigger to close would reopen it.
+// Trigger plus an option list, hung off the button like the Columns menu and, like
+// it, portalled out of the glass card it sits in (useAnchoredMenu). The outside-click
+// check covers both, or clicking the trigger to close would reopen it.
 function Dropdown({ label, icon, options, selected, onToggle, onClear, counter }) {
   const [open, setOpen] = React.useState(false);
-  const ref = React.useRef(null);
+  const { anchorRef, menuRef, setMenu } = useAnchoredMenu(open, 'left');
   React.useEffect(() => {
     if (!open) return;
-    const close = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    const close = (e) => {
+      if (anchorRef.current?.contains(e.target) || menuRef.current?.contains(e.target)) return;
+      setOpen(false);
+    };
     const key = (e) => { if (e.key === 'Escape') setOpen(false); };
     document.addEventListener('mousedown', close);
     window.addEventListener('keydown', key);
@@ -682,26 +686,25 @@ function Dropdown({ label, icon, options, selected, onToggle, onClear, counter }
       document.removeEventListener('mousedown', close);
       window.removeEventListener('keydown', key);
     };
-  }, [open]);
+  }, [open, anchorRef, menuRef]);
   return (
-    <div ref={ref} style={{ position: 'relative' }}>
+    <div ref={anchorRef} style={{ position: 'relative' }}>
       <button type="button" aria-expanded={open} onClick={() => setOpen(o => !o)}
-        style={btn({ variant: 'ghost', shape: 'pill', active: open || selected.length > 0 })}>
+        style={btn({ variant: open ? 'solid' : 'ghost', shape: 'pill', active: selected.length > 0 })}>
         <Icon name={icon} size={13}/>
         {label}
         {selected.length > 0 && <span className="mono" style={countBadge}>{selected.length}</span>}
-        <Icon name={open ? 'chev-up' : 'chev-down'} size={12} color="var(--soft)"/>
+        <Icon name={open ? 'chev-up' : 'chev-down'} size={12} color={open ? 'currentColor' : 'var(--soft)'}/>
       </button>
-      {open && (
-        <div style={{
-          position: 'absolute', top: 'calc(100% + 8px)', left: 0, zIndex: 40,
-          width: 260, maxHeight: 340, overflowY: 'auto', padding: 8,
-          background: 'var(--surface)', border: '1px solid var(--line)',
-          borderRadius: 'var(--r-lg)', boxShadow: 'var(--shadow-menu)',
+      {open && createPortal(
+        <div ref={setMenu} className="glass-float" style={{
+          position: 'fixed', zIndex: 'var(--z-dropdown)',
+          width: 260, overflowY: 'auto', padding: 8,
           animation: 'rise .12s ease-out',
         }}>
           <OptionList options={options} selected={selected} onToggle={onToggle} onClear={onClear} counter={counter}/>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
@@ -713,12 +716,12 @@ const countBadge = {
   fontSize: 'var(--text-xs)', fontWeight: 600,
 };
 
-// A block of the phone sheet that does not collapse: for a control that is a row of
-// peers rather than a list worth folding away. Same rule and rhythm as SheetSection.
+// A block of the phone sheet that does not collapse: for a short list of peers rather
+// than one worth folding away. Same rule and rhythm as SheetSection.
 function SheetBlock({ label, children }) {
   return (
-    <div className="r-sheet-sec" style={{ padding: '14px 2px' }}>
-      <div className="eyebrow" style={{ marginBottom: 10 }}>{label}</div>
+    <div className="r-sheet-sec">
+      <div className="r-sheet-label">{label}</div>
       {children}
     </div>
   );

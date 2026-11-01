@@ -314,11 +314,9 @@ export function PipelineControls(props) {
             </button>
 
             {open && (
-              <div style={{
+              <div className="glass-float" style={{
                 position: 'absolute', top: 'calc(100% + 10px)', right: 0, width: 344, zIndex: 60,
-                background: 'var(--surface)', border: '1px solid var(--line)',
-                borderRadius: 'var(--r-lg)', padding: 8,
-                boxShadow: 'var(--shadow-menu)',
+                padding: 8,
                 animation: 'rise .12s ease-out',
               }}>
                 <ToolRow
@@ -564,20 +562,24 @@ export function App() {
   // table only, while the histogram itself keeps showing the full distribution.
   const [ownSel, setOwnSel] = React.useState(null);
 
+  // Every filter as one check, so the sector chart can apply all of them but its own
+  // (sectorBase) without a second copy of the rules drifting from this one.
+  const passes = React.useCallback((c, skipSector = false) => {
+    const q = query.toLowerCase();
+    if (filters.countries.length && !filters.countries.includes(c.country)) return false;
+    if (!skipSector && filters.sectors.length && !filters.sectors.includes(sectorOf(c))) return false;
+    if (filters.recs.length && !filters.recs.includes(c.rec)) return false;
+    const o = c.ownership || 0;
+    if (o < filters.ownMin || o > filters.ownMax) return false;
+    if (filters.pinned && !pinned.has(c.id)) return false;
+    if (q && !((c.name || '').toLowerCase().includes(q) || (c.ticker || '').toLowerCase().includes(q))) return false;
+    return true;
+  }, [filters, pinned, query]);
+
   // Filter + sort (base set — drives the summary charts, excludes the histogram pick)
   const baseFiltered = React.useMemo(() => {
     if (!data) return [];
-    const q = query.toLowerCase();
-    let arr = data.filter(c => {
-      if (filters.countries.length && !filters.countries.includes(c.country)) return false;
-      if (filters.sectors.length && !filters.sectors.includes(sectorOf(c))) return false;
-      if (filters.recs.length && !filters.recs.includes(c.rec)) return false;
-      const o = c.ownership || 0;
-      if (o < filters.ownMin || o > filters.ownMax) return false;
-      if (filters.pinned && !pinned.has(c.id)) return false;
-      if (q && !((c.name || '').toLowerCase().includes(q) || (c.ticker || '').toLowerCase().includes(q))) return false;
-      return true;
-    });
+    let arr = data.filter(c => passes(c));
     // sort
     const k = sort.key, dir = sort.dir === 'desc' ? -1 : 1;
     arr.sort((a, b) => {
@@ -589,7 +591,12 @@ export function App() {
       return (va - vb) * dir;
     });
     return arr;
-  }, [data, filters, sort, pinned, query]);
+  }, [data, passes, sort]);
+
+  // The sector chart's set: every filter except the sector pick. Like the ownership
+  // histogram below, the chart keeps showing the whole distribution and marks the
+  // pick, rather than shrinking to the one sector at 100%.
+  const sectorBase = React.useMemo(() => (data ? data.filter(c => passes(c, true)) : []), [data, passes]);
 
   // Table set — base set narrowed to the selected ownership-histogram bin.
   const filtered = React.useMemo(() => {
@@ -723,6 +730,7 @@ export function App() {
         <Summary
           data={data}
           filtered={baseFiltered}
+          sectorBase={sectorBase}
           onPickCompany={setSelected}
           onSetFilter={({ sector }) => setFilters(f => ({ ...f, sectors: [sector] }))}
           activeSectors={filters.sectors}

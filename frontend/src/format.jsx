@@ -75,6 +75,9 @@ export function btn({ variant = 'ghost', shape = 'pill', active = false } = {}) 
     // icon button and a select line up when they share a row, whatever is inside them.
     height: 'var(--control-h)',
     padding: '0 14px',
+    // A <button> is border-box by default and an <a> is not; at width 100% the
+    // link variant otherwise overflows by its padding.
+    boxSizing: 'border-box',
     background: fill.bg, color: fill.fg,
     border: `1px solid ${fill.bd}`,
     borderRadius: shape === 'pill' ? 'var(--r-pill)' : 'var(--r-md)',
@@ -316,6 +319,7 @@ export function Icon({ name, size = 16, color = 'currentColor', strokeWidth = 1.
     case 'compare': return <svg aria-hidden="true" {...props}><rect x="3" y="4" width="8" height="16" rx="1"/><rect x="13" y="4" width="8" height="16" rx="1"/></svg>;
     case 'chev-down': return <svg aria-hidden="true" {...props}><path d="m6 9 6 6 6-6"/></svg>;
     case 'chev-up':   return <svg aria-hidden="true" {...props}><path d="m6 15 6-6 6 6"/></svg>;
+    case 'chev-left': return <svg aria-hidden="true" {...props}><path d="m15 6-6 6 6 6"/></svg>;
     case 'check':   return <svg aria-hidden="true" {...props}><path d="m5 13 4 4L19 7"/></svg>;
     case 'globe':   return <svg aria-hidden="true" {...props}><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>;
     case 'wave':    return <svg aria-hidden="true" {...props}><path d="M3 12c2-4 4-4 6 0s4 4 6 0 4-4 6 0"/></svg>;
