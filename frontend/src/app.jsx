@@ -702,14 +702,17 @@ export function App() {
           lastFetched={lastFetched}
         />
       ) : (
+      // Full width, so the ledger's closing photograph can run edge to edge; the
+      // rest sits in the page container (.r-page, index.html).
       <main style={{
-        maxWidth: 'var(--page-max)', margin: '0 auto',
         // The bottom pad used to be 120px, holding the page clear of the chat
-        // launcher. The footer band sits under here now and carries that job;
-        // what is left is the gap before the ink edge.
-        padding: '22px var(--gutter) 32px',
-        display: 'grid', gap: 'var(--gap)',
+        // launcher. The footer band sits under here now and carries that job.
+        padding: '22px 0 0',
+        // minmax(0, 1fr): no section's content width can widen the page; a wide
+        // ledger scrolls inside its own panel instead.
+        display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 'var(--gap)',
       }}>
+        <div className="r-page">
         <PeriodBar
           manifest={manifest}
           period={period}
@@ -726,10 +729,15 @@ export function App() {
           onClearSectors={() => setFilters(f => ({ ...f, sectors: [] }))}
           onOwnSelect={setOwnSel}
         />
+        </div>
 
-        <section id="ledger" className="r-sec" style={{ display:'grid', gap: 16, position: 'relative', scrollMarginTop: 'var(--space-3xl)' }}>
-          {/* The ledger's glass over the hour, framed by it. */}
-          <div className="r-plate is-frame" style={{ '--plate-pos': '50% 30%' }}>
+        {/* The ledger closes the page over a second photograph, the one the
+            What-changed page opens on: its sky behind the last rows, its land below. */}
+        <section id="ledger" className="r-band" style={{
+          '--band-img': 'url("/photos/austnesfjorden-lofoten-wide-1789.jpg")', '--band-pos': '50% 72%',
+          scrollMarginTop: 'var(--space-3xl)',
+        }}>
+          <div className="r-page" style={{ paddingTop: 'var(--space-3xl)', gap: 16 }}>
           <DataTable
             data={filtered}
             allData={data}
@@ -751,21 +759,22 @@ export function App() {
             onOpen={setSelected}
             maxOwnership={maxOwn}
           />
-          </div>
 
           {/* Footnote.
               Caveats live down here rather than beside the chart they describe.
               Inline, they read as part of the reading — three lines of hedging
               under the treemap looked like a result. The marker in the panel
               title ("Sector weight*") is what carries the reference. */}
-          <p style={{
-            fontSize: 'var(--text-xs)', color: 'var(--soft)', lineHeight: 1.5,
+          {/* It sits on the closing photograph, so it takes the type set on pictures. */}
+          <p className="on-photo" style={{
+            fontSize: 'var(--text-xs)', color: 'var(--hero-sub)', lineHeight: 1.5,
             padding: '4px 6px', margin: '0 0 2px', maxWidth: '75ch',
           }}>
             * Sector weight tile areas are approximate: the smallest sectors are
             enlarged so they stay clickable. Hover any tile for its true share;
             click one to filter.
           </p>
+          </div>
         </section>
       </main>
       )}
@@ -816,21 +825,36 @@ export function App() {
 // the real card will be — a skeleton block that does not match the card replacing it
 // is just a second layout.
 /**
- * The hour: Dusk's photograph of land at dusk behind the head. A stand-in from
- * Hallmark's library (Wikimedia Commons, credited in the footer) in a slot the
- * owner's own Norway photograph replaces. Served from public/photos, because the
- * production CSP allows same-origin images only. It sits under every section
- * (.r-hour, index.html) and is the page's largest paint, so it loads first.
+ * The hour: Dusk's photograph of land at the turn of the light behind the head. The
+ * dashboard opens on an overcast sunset over Husøy in Senja; the What-changed page on
+ * a cirrus front over Austnesfjorden in Lofoten. Both by Ximonic (Simo Räsänen),
+ * Wikimedia Commons, CC BY-SA, credited in the footer. Served from public/photos,
+ * because the production CSP allows same-origin images only. It sits under every
+ * section (.r-hour, index.html) and is the page's largest paint, so it loads first.
  */
+const HOURS = {
+  // Anchored right: the mountains on the left fall partly out of frame, which keeps
+  // the dark mass off the head and the sunset band in view. Edited: mist added.
+  page: { file: 'husoy-senja-mist', sizes: [960, 1280, 1561], w: 1561, h: 1008, pos: '100% 50%',
+    alt: 'Husøy village on its island in Senja, Norway, under an overcast sunset, mist on the fjord' },
+  // Edited: widened on both sides.
+  banner: { file: 'austnesfjorden-lofoten-wide', sizes: [960, 1280, 1789], w: 1789, h: 879, pos: '50% 60%',
+    alt: 'A cirrus cloud front over Austnesfjorden in Lofoten, Norway, in evening light' },
+};
+
 export function Hour({ banner = false }) {
+  const hour = HOURS[banner ? 'banner' : 'page'];
+  const src = (w) => `/photos/${hour.file}-${w}.jpg`;
+  const largest = hour.sizes[hour.sizes.length - 1];
   return (
     <div className={`r-hour${banner ? ' is-banner' : ''}`} data-slot="hour"
-      data-alt="A Norwegian landscape at dusk: a fjord or mountains in evening haze, pale sky on the left, 2400px wide or more">
+      data-alt="A Norwegian landscape at the turn of the light, open sky across the top, 2400px wide or more">
       <img
-        src="/photos/vallee-brouillard-1920.jpg"
-        srcSet="/photos/vallee-brouillard-960.jpg 960w, /photos/vallee-brouillard-1280.jpg 1280w, /photos/vallee-brouillard-1920.jpg 1920w"
-        sizes="100vw" width="4210" height="2750" fetchPriority="high"
-        alt="A sea of fog filling a valley below dark hills at sunset"/>
+        src={src(largest)}
+        srcSet={hour.sizes.map(w => `${src(w)} ${w}w`).join(', ')}
+        sizes="100vw" width={hour.w} height={hour.h} fetchPriority="high"
+        style={{ objectPosition: hour.pos }}
+        alt={hour.alt}/>
     </div>
   );
 }
@@ -866,7 +890,7 @@ export function LoadingState() {
       style={{
         maxWidth: 'var(--page-max)', margin: '0 auto',
         padding: '22px var(--gutter) 32px',
-        display: 'grid', gap: 'var(--gap)',
+        display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 'var(--gap)',
       }}>
       <Hour/>
       <span className="sr-only">Loading holdings…</span>

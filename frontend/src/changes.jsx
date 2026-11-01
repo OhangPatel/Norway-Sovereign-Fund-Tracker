@@ -286,7 +286,7 @@ export function ChangesPage({ manifest, period, loadRows, pinned, togglePin, las
       <main style={{
         maxWidth: 'var(--page-max)', margin: '0 auto',
         padding: '22px var(--gutter) 32px',
-        display: 'grid', gap: 'var(--gap)',
+        display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 'var(--gap)',
       }}>
         <PageHeader period={period} previous={previous} pills={pills}/>
 

@@ -2,8 +2,10 @@ import { useState, useRef, useEffect, useMemo } from 'react';
 
 // Hand-rolled SVG charts: histogram, treemap, price line
 
-// Histogram (distribution of ownership %)
-export function Histogram({ data, bins = 20, height = 140, accent = 'var(--accent)', xFmt = v => v.toFixed(1), onSelect }) {
+// Histogram of ownership %, night by night: one slim pill per band, lit at its top
+// (index.html, .r-night); a band with no companies is a short hatched stub. Each band
+// is a button that filters the ledger to its range; pressing it again clears it.
+export function Histogram({ data, bins = 20, height = 140, xFmt = v => v.toFixed(1), onSelect }) {
   const [selected, setSelected] = useState(null); // selected bin index, or null
   // Drop a stale selection (and notify) whenever the underlying data changes.
   useEffect(() => { setSelected(null); onSelect && onSelect(null); }, [data]);
@@ -11,6 +13,8 @@ export function Histogram({ data, bins = 20, height = 140, accent = 'var(--accen
   const min = Math.min(...data);
   const max = Math.max(...data);
   const range = Math.max(max - min, 0.0001);
+  const lo = (i) => min + (i / bins) * range;
+  const bandOf = (v) => Math.min(bins - 1, Math.max(0, Math.floor(((v - min) / range) * bins)));
 
   const toggle = (i) => {
     const next = selected === i ? null : i;
@@ -22,47 +26,27 @@ export function Histogram({ data, bins = 20, height = 140, accent = 'var(--accen
     });
   };
   const buckets = new Array(bins).fill(0);
-  for (const v of data) {
-    let b = Math.floor(((v - min) / range) * bins);
-    if (b >= bins) b = bins - 1;
-    if (b < 0) b = 0;
-    buckets[b] += 1;
-  }
+  for (const v of data) buckets[bandOf(v)] += 1;
   const peak = Math.max(...buckets);
-  const w = 1000;
-  const h = height;
-  const barW = w / bins;
   return (
-    <div style={{ width:'100%' }}>
-      <svg viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" width="100%" height={h}
-        role="group" aria-label="Histogram of ownership share per company; select a bar to filter the ledger"
-        style={{ display:'block', overflow:'visible' }}>
-        {/* grid */}
-        {[0.25, 0.5, 0.75].map(g => (
-          <line key={g} x1={0} x2={w} y1={h * (1-g)} y2={h * (1-g)} stroke="var(--line)" strokeWidth={1} vectorEffect="non-scaling-stroke"/>
-        ))}
+    <div className={`r-nights${selected != null ? ' has-sel' : ''}`} style={{ '--n': bins }}>
+      <div className="r-nights-bars" role="group" style={{ height }}
+        aria-label="Ownership share per company, in bands; select a band to filter the ledger">
         {buckets.map((c, i) => {
-          const bh = peak ? (c / peak) * (h - 8) : 0;
-          const dimmed = selected != null && selected !== i;
+          const label = `${xFmt(lo(i))} to ${xFmt(lo(i + 1))}: ${c.toLocaleString()} ${c === 1 ? 'company' : 'companies'}`;
           return (
-            <g key={i}>
-              <rect className="r-hist-bar" x={i*barW + barW * 0.18} y={h - bh} width={barW * 0.64} height={bh}
-                fill={accent} opacity={dimmed ? 0.25 : 1} rx={barW * 0.32}
-                style={{ cursor: 'pointer', '--i': i }}
-                onClick={() => toggle(i)}/>
-              {/* Full-height hit area so thin/empty bars stay clickable */}
-              <rect x={i*barW} y={0} width={barW} height={h} fill="transparent"
-                style={{ cursor: 'pointer' }}
-                onClick={() => toggle(i)}/>
-            </g>
+            <button key={i} type="button"
+              className={`r-night${c === 0 ? ' is-empty' : ''}${selected === i ? ' is-on' : ''}`}
+              style={{ '--h': peak ? c / peak : 0, '--i': i }}
+              aria-pressed={selected === i} aria-label={label} title={label}
+              onClick={() => toggle(i)}>
+              <span className="r-night-bar"/>
+            </button>
           );
         })}
-      </svg>
-      <div className="mono" style={{
-        display:'flex', justifyContent:'space-between',
-        fontSize: 'var(--text-xs)', color:'var(--soft)', marginTop: 4
-      }}>
-        <span>{xFmt(min)}</span><span>{xFmt((min+max)/2)}</span><span>{xFmt(max)}</span>
+      </div>
+      <div className="r-nights-axis" aria-hidden="true">
+        {buckets.map((_, i) => <span key={i}>{i === 0 ? xFmt(lo(0)) : lo(i).toFixed(1)}</span>)}
       </div>
     </div>
   );

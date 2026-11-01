@@ -105,10 +105,16 @@ export function Footer({ positions, period, pricesAsOf }) {
             is not affiliated with or endorsed by NBIM, Norges Bank, or the Norwegian
             government. Nothing here is investment advice.
           </p>
-          {/* CC BY asks for the credit wherever the picture shows. */}
+          {/* CC BY-SA asks for the credit, the licence and a note of any change,
+              wherever the pictures show; the edited versions carry the same licences. */}
           <p style={legal} data-credits>
-            Photograph: <a href="https://commons.wikimedia.org/wiki/File:Vallee-brouillard.jpg"
-              target="_blank" rel="noopener noreferrer" style={{ color: 'inherit' }}>Thomas Bresson</a> (CC BY 3.0, Wikimedia Commons).
+            Photographs by Ximonic (Simo Räsänen), Wikimedia Commons, edited (mist added, extended):{' '}
+            <a href="https://commons.wikimedia.org/wiki/File:Hus%C3%B8y_during_overcast_sunset_in_Senja,_Troms_og_Finnmark,_Norway,_2022_August.jpg"
+              target="_blank" rel="noopener noreferrer" style={{ color: 'inherit' }}>Husøy, Senja</a> (<a href="https://creativecommons.org/licenses/by-sa/4.0/"
+              target="_blank" rel="noopener noreferrer" style={{ color: 'inherit' }}>CC BY-SA 4.0</a>) and{' '}
+            <a href="https://commons.wikimedia.org/wiki/File:Cirrus_front_over_Austnesfjorden,_Austv%C3%A5g%C3%B8ya,_Lofoten,_Norway,_2015_April.jpg"
+              target="_blank" rel="noopener noreferrer" style={{ color: 'inherit' }}>Austnesfjorden, Lofoten</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/"
+              target="_blank" rel="noopener noreferrer" style={{ color: 'inherit' }}>CC BY-SA 3.0</a>).
           </p>
         </div>
 

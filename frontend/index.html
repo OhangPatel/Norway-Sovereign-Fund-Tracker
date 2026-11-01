@@ -163,8 +163,8 @@
     <style>
       /* Hallmark · shape: app screen · genre: modern-minimal · theme: Dusk (deal 1/3, seed public-research-dashboard-tracking-ab9f·1aea9971·2026-10-31·r0) · redesign: full
        * hero: Stage (/), Banner (/changes) · nav: glass bar over the hour, ticker band kept · footer: kept, slate band · signature: the top holdings as a run of accounts in glass, and the holdings ledger · states: loading, error, empty (as the app draws them)
-       * dusk: fog/periwinkle-apricot/glass · imagery: photographs, library 1, natural · the hour behind both heads (a stand-in in slot "hour"), and again as plates behind the sectors and the ledger" · axes: dark/grotesk-sans/cool · posture: committed · contrast: pass · modes: dark (default) + light · v2.0.0 */
-      /* Hallmark · pre-emit critique: P4 H4 E4 S4 R4 V5 · weakest: S, the hour is a stand-in valley, not Norway; it sits in a slot the owner's own fjord photograph replaces */
+       * dusk: fog/periwinkle-apricot/glass · imagery: photographs, 2, natural · Husøy, Senja behind the dashboard head; Austnesfjorden, Lofoten behind the What-changed head and as a closing band under the ledger; Commons quality images chosen by the owner and edited by them (mist added, extended), in slot "hour"" · axes: dark/grotesk-sans/cool · posture: committed · contrast: pass · modes: dark (default) + light · v2.0.0 */
+      /* Hallmark · pre-emit critique: P4 H4 E4 S5 R4 V5 · weakest: R, two photographs on the dashboard; the second closes the page under the ledger, rising out of the slate and fading into the footer, and both edits are under 1800px wide */
       /* Hallmark · theme rule set aside · gains stay green and losses red, retuned to the slate · the owner chose the finance convention over Dusk's no-red-debit rule */
       /* Hallmark · theme faces set aside · Space Grotesk and JetBrains Mono, the project's own faces, replace Dusk's Wix Madefor at the owner's request */
       /* Hallmark · waive 39b · app UI, every pressable control stands 32 to 40px and only chart marks run taller · treemap tiles and top-holding rows are sized by the holdings they draw, each one a filter or an open */
@@ -179,8 +179,9 @@
       /* Hallmark · dropped onMouseLeave={openable ? (e) => { e.currentTarget.style.background = 'var(--surface)'; } : undefined} · rename rows left their boxed card for a ruled list and rest on a transparent ground */
       /* Hallmark · dismissed 29 · the blur is Dusk's smoked glass with its lit edge over slate; no glow, bloom or halo sits behind it */
       /* Hallmark · answered F7 · round initials are Dusk's account mark and the rounded bar ends are data, not boxes */
-      /* Hallmark · note 76 · checker reads credits from html files only; the photograph's credit renders in the React footer (footer.jsx, data-credits) */
+      /* Hallmark · note 76 · the photographs are Commons quality images outside the library, credited with their licences in the React footer (footer.jsx, data-credits); the checker reads html files only */
       /* Hallmark · reworded "onMouseEnter={e => setHover({ i, x: e.clientX, y: e.clientY })}" to "the same call, then onHover(it.label)" · each treemap tile now also reports its sector, so the list beside it lights the same row */
+      /* Hallmark · reworded "11.7%" "23.4%" to "a label under every band" · the night-by-night axis labels each band's lower edge, and the maximum stays in the tally as 23.45% */
       /* Hallmark · finish-review: subagent, one round and one scoring round · 8 findings and 2 Floor · 9 resolved, 1 known limit: the phone ledger columns are chosen once at load, as app.jsx means them to be */
 
       /* ============================================================
@@ -249,11 +250,12 @@
         --tracking-display: -0.022em;
         --display-weight: 500;
 
-        /* The hour: ink and fog for type set on the photograph, in both modes,
-           since the photograph is the same picture on either side. */
-        --day-ink: oklch(22% 0.022 268);
-        --day-muted: oklch(36% 0.022 266);
-        --fog: oklch(94% 0.012 70);
+        /* The hour: type set on the photograph is light, over a shade drawn from
+           Dusk's slate, in both modes, since the photograph is the same picture on
+           either side. */
+        --hero-ink: oklch(97% 0.006 75);
+        --hero-sub: oklch(89% 0.012 75);
+        --shade: oklch(14% 0.02 268);
         --glass-blur: 22px;
         /* Dusk's second signal: open, waiting, offline. Never a large fill; red
            stays with losses. */
@@ -515,29 +517,37 @@
       /* THE HOUR: one photograph of land at dusk behind the head, fading into the
          ground. z-index -1 inside #app's own stacking context puts it under every
          section without repositioning any of them. */
-      .r-hour { position: absolute; inset: 0 0 auto 0; height: min(calc(100svh + 140px), 1120px); min-height: 760px; overflow: hidden; z-index: -1; }
-      .r-hour.is-banner { height: min(80svh, 720px); }
+      .r-hour {
+        position: absolute; inset: 0 0 auto 0; height: min(calc(100svh + 140px), 1120px); min-height: 760px; overflow: hidden; z-index: -1;
+        /* The photograph itself fades out, in eased steps, so the page shows through
+           it: no colour is painted over the picture and no edge is left to see. */
+        -webkit-mask-image: linear-gradient(to bottom, black 36%, color-mix(in srgb, black 82%, transparent) 50%, color-mix(in srgb, black 55%, transparent) 64%, color-mix(in srgb, black 27%, transparent) 78%, color-mix(in srgb, black 8%, transparent) 90%, transparent 100%);
+        mask-image: linear-gradient(to bottom, black 36%, color-mix(in srgb, black 82%, transparent) 50%, color-mix(in srgb, black 55%, transparent) 64%, color-mix(in srgb, black 27%, transparent) 78%, color-mix(in srgb, black 8%, transparent) 90%, transparent 100%);
+      }
+      /* In light mode the photograph fades to a pale page, which would wash out the
+         light type set on it, so it holds solid until the head's copy has ended. */
+      :root[data-theme="light"] .r-hour {
+        -webkit-mask-image: linear-gradient(to bottom, black 64%, color-mix(in srgb, black 82%, transparent) 74%, color-mix(in srgb, black 55%, transparent) 82%, color-mix(in srgb, black 27%, transparent) 89%, color-mix(in srgb, black 8%, transparent) 95%, transparent 100%);
+        mask-image: linear-gradient(to bottom, black 64%, color-mix(in srgb, black 82%, transparent) 74%, color-mix(in srgb, black 55%, transparent) 82%, color-mix(in srgb, black 27%, transparent) 89%, color-mix(in srgb, black 8%, transparent) 95%, transparent 100%);
+      }
+      /* The What-changed head is shorter than the dashboard's, so its photograph
+         ends just under the tally rather than running on behind the charts. */
+      .r-hour.is-banner { height: min(calc(100svh - 20px), 900px); min-height: 680px; }
       .r-hour img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 42%; filter: contrast(1.04) saturate(1.03); }
+      /* One soft pool of shade behind the head only, round and edgeless, so the rest
+         of the picture keeps its own light. */
       .r-hour::after {
         content: ""; position: absolute; inset: 0;
-        background:
-          radial-gradient(ellipse 50% 54% at 21% 48%, color-mix(in oklab, var(--fog) 84%, transparent), transparent 80%),
-          linear-gradient(to bottom, transparent 70%, var(--bg));
+        background: radial-gradient(ellipse 40% 34% at 19% 42%, color-mix(in oklab, var(--shade) 46%, transparent) 0%, color-mix(in oklab, var(--shade) 26%, transparent) 50%, transparent 100%);
       }
-      /* Type set on the photograph takes the day ink in both modes, over a fog plate
-         that follows the text block, so no line crosses the treeline at any width.
-         Blurred, it reads as mist rather than as a box. */
-      .on-photo { color: var(--day-ink); position: relative; isolation: isolate; }
-      .on-photo::before {
-        content: ""; position: absolute; inset: -32px -40px; z-index: -1;
-        background: color-mix(in oklab, var(--fog) 74%, transparent);
-        border-radius: 48px; filter: blur(28px);
-      }
+      /* Type set on the photograph: light, lifted off the picture by a soft shadow
+         in the shade's colour rather than by a box. */
+      .on-photo { color: var(--hero-ink); text-shadow: 0 1px 2px color-mix(in oklab, var(--shade) 55%, transparent), 0 0 24px color-mix(in oklab, var(--shade) 45%, transparent); }
 
       /* Stage hero: the head on five tracks, the product in glass on six. */
       .r-hero { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: var(--space-2xl); align-items: center; padding: var(--space-2xl) 0 var(--space-xl); }
       .r-hero h1, .r-banner h1 { font-size: 3.25rem; line-height: 1.04; max-width: 17ch; margin: 0; }
-      .r-hero-lede { font-size: var(--text-lg); line-height: 1.5; max-width: 40ch; margin: var(--space-md) 0 0; color: var(--day-muted); }
+      .r-hero-lede { font-size: var(--text-lg); line-height: 1.5; max-width: 40ch; margin: var(--space-md) 0 0; color: var(--hero-sub); }
       .r-hero-actions { display: flex; flex-wrap: wrap; gap: var(--space-sm); margin-top: var(--space-xl); }
       /* Banner hero: the What-changed page, head and its controls, no product. */
       .r-banner { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-lg); justify-items: start; padding: var(--space-2xl) 0 var(--space-lg); }
@@ -590,25 +600,45 @@
       .r-tabs { display: flex; gap: 0 var(--space-md); overflow-x: auto; scrollbar-width: none; max-width: 100%; }
       .r-tabs::-webkit-scrollbar { display: none; }
 
-      /* The hour again, lower down: the same photograph as a plate behind a section,
-         under a scrim of the ground colour, so the section's own type reads on it in
-         either mode and the glass over it has something to blur. Contained in the
-         page width (a full bleed would need 100vw). */
-      .r-plate { position: relative; isolation: isolate; overflow: hidden; border-radius: var(--r-xl); padding: var(--space-xl); }
-      .r-plate::before {
-        content: ""; position: absolute; inset: 0; z-index: -2;
-        background: url("/photos/vallee-brouillard-1920.jpg") var(--plate-pos, 50% 50%) / cover no-repeat;
-        filter: contrast(1.04) saturate(1.03);
+      /* The page container: one width for everything that is not a full band. */
+      .r-page {
+        box-sizing: border-box; width: 100%; max-width: calc(var(--page-max) + 2 * var(--gutter));
+        margin-inline: auto; padding-inline: var(--gutter);
+        display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap);
       }
-      .r-plate::after {
-        content: ""; position: absolute; inset: 0; z-index: -1;
+
+      /* A closing band: a second photograph runs edge to edge under the end of the
+         ledger, the way Dusk closes a page. Its calm sky sits behind the last rows,
+         its land shows clear below the table, and it fades in at the top and out at
+         the foot, never at the sides, so it reads as a landscape rather than a patch.
+         --band-img and --band-pos are set where it is used. */
+      .r-band { position: relative; isolation: isolate; padding-bottom: 380px; }
+      .r-band::before {
+        content: ""; position: absolute; z-index: -1; inset: auto 0 0; height: 820px;
         background:
-          linear-gradient(to bottom, color-mix(in oklab, var(--bg) 82%, transparent) 0%, transparent 24%),
-          linear-gradient(to right, color-mix(in oklab, var(--bg) 88%, transparent) 0%, color-mix(in oklab, var(--bg) 74%, transparent) 42%, color-mix(in oklab, var(--bg) 40%, transparent) 100%);
+          linear-gradient(color-mix(in oklab, var(--bg) 18%, transparent), color-mix(in oklab, var(--bg) 18%, transparent)),
+          var(--band-img) var(--band-pos, 50% 50%) / cover no-repeat;
+        -webkit-mask-image: linear-gradient(to bottom, transparent 0%, color-mix(in srgb, black 35%, transparent) 18%, color-mix(in srgb, black 85%, transparent) 38%, black 50%, black 64%, color-mix(in srgb, black 72%, transparent) 76%, color-mix(in srgb, black 38%, transparent) 87%, color-mix(in srgb, black 12%, transparent) 95%, transparent 100%);
+        mask-image: linear-gradient(to bottom, transparent 0%, color-mix(in srgb, black 35%, transparent) 18%, color-mix(in srgb, black 85%, transparent) 38%, black 50%, black 64%, color-mix(in srgb, black 72%, transparent) 76%, color-mix(in srgb, black 38%, transparent) 87%, color-mix(in srgb, black 12%, transparent) 95%, transparent 100%);
       }
-      /* A frame: the photograph shows around and through one glass panel. */
-      .r-plate.is-frame { padding: var(--space-xl) var(--space-sm); }
-      .r-plate.is-frame::after { background: color-mix(in oklab, var(--bg) 55%, transparent); }
+
+      /* Night by night: Dusk's strip of slim bars in one glass panel. Each bar is a
+         pill, lit at its top and fading toward its foot; a band with no companies is a
+         short hatched stub. */
+      .r-nights { padding: var(--space-lg) var(--space-lg) var(--space-md); }
+      .r-nights-bars, .r-nights-axis { display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: var(--space-2xs); }
+      .r-nights-bars { align-items: end; }
+      .r-night { position: relative; display: flex; justify-content: center; align-items: flex-end; height: 100%; padding: 0; background: none; border: 0; cursor: pointer; }
+      .r-night-bar {
+        width: min(14px, 62%); height: max(10px, calc(var(--h, 0) * 100%)); border-radius: var(--r-pill);
+        background: linear-gradient(to bottom, var(--accent), color-mix(in oklab, var(--accent) 26%, transparent));
+        opacity: 0.88; transform-origin: 50% 100%;
+        transition: transform 800ms var(--ease-out) calc(var(--i, 0) * 25ms), opacity var(--dur-micro) var(--ease-out);
+      }
+      .r-night:hover .r-night-bar, .r-night:focus-visible .r-night-bar { opacity: 1; }
+      .r-night.is-empty .r-night-bar { height: 10px; background: repeating-linear-gradient(135deg, var(--line) 0 2px, transparent 2px 5px); box-shadow: inset 0 0 0 1px var(--line); }
+      .r-nights.has-sel .r-night:not(.is-on) .r-night-bar { opacity: 0.3; }
+      .r-nights-axis { margin-top: var(--space-xs); font-size: var(--text-xs); color: var(--soft); text-align: center; font-variant-numeric: tabular-nums; }
 
       /* MOTION. Dusk's own, each piece once: the hour drifts, the accounts rise in,
          the tally counts up (summary.jsx), and charts grow when first seen. Only
@@ -617,7 +647,6 @@
       @keyframes rise-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
       @keyframes bar-grow { from { transform: scaleX(0); } }
       .r-row-bar > span { transition: transform 900ms var(--ease-out) calc(var(--i, 0) * 40ms); }
-      .r-hist-bar { transform-box: fill-box; transform-origin: 50% 100%; transition: transform 800ms var(--ease-out) calc(var(--i, 0) * 25ms), opacity var(--dur-micro) var(--ease-out); }
       .r-div-fill { transition: transform 800ms var(--ease-out) calc(var(--i, 0) * 35ms); }
       .r-tile { transition: transform 600ms var(--ease-out) calc(var(--i, 0) * 40ms); }
       @media (prefers-reduced-motion: no-preference) {
@@ -625,7 +654,7 @@
         .r-acct > li { animation: rise-in 520ms var(--ease-out) both; animation-delay: calc(120ms + var(--i, 0) * 45ms); }
         .r-acct-bar > span { animation: bar-grow 1000ms var(--ease-out) both; animation-delay: calc(480ms + var(--i, 0) * 60ms); }
         [data-seen="false"] .r-row-bar > span { transform: scaleX(0) !important; }
-        [data-seen="false"] .r-hist-bar { transform: scaleY(0); }
+        [data-seen="false"] .r-night-bar { transform: scaleY(0); }
         [data-seen="false"] .r-div-fill { transform: scaleX(0); }
         [data-seen="false"] .r-tile { transform: scale(0.9); }
       }
@@ -729,6 +758,7 @@
 
       @media (max-width: 900px) {
         .r-hero, .r-duo, .r-pair { grid-template-columns: minmax(0, 1fr); gap: var(--space-xl); }
+        .r-nights-axis span:not(:nth-child(2n+1)) { visibility: hidden; }
         .r-hero h1, .r-banner h1 { font-size: 2.5rem; }
         .r-tally { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         .r-tally > * { padding: var(--space-md) var(--space-md); }
@@ -754,14 +784,17 @@
       @media (max-width: 640px) {
         .r-hero h1, .r-banner h1 { font-size: 2.125rem; }
         .r-hero-lede { font-size: var(--text-md); }
-        .r-hour { min-height: 0; height: 740px; }
-        /* On a narrow crop the dark hills sit under the head, so the fog runs
-           down from the top instead of pooling on the left. */
+        .r-hour, .r-hour.is-banner { min-height: 0; height: 740px; }
+        /* On a narrow crop the head spans the width, so the pool of shade sits wide
+           and high behind it. */
         .r-hour::after {
-          background: linear-gradient(to bottom, color-mix(in oklab, var(--fog) 76%, transparent) 0%, color-mix(in oklab, var(--fog) 70%, transparent) 76%, var(--bg) 100%);
+          background: radial-gradient(ellipse 90% 40% at 50% 40%, color-mix(in oklab, var(--shade) 50%, transparent) 0%, color-mix(in oklab, var(--shade) 28%, transparent) 55%, transparent 100%);
         }
         .r-tally.glass { padding: var(--space-sm) var(--space-md); }
-        .r-plate { padding: var(--space-md); }
+        .r-nights { padding: var(--space-md) var(--space-sm) var(--space-sm); }
+        .r-band { padding-bottom: 220px; }
+        .r-band::before { height: 520px; }
+        .r-nights-axis span:not(:nth-child(4n+1)) { visibility: hidden; }
         .r-tabs { padding-right: var(--space-xl); -webkit-mask-image: linear-gradient(to right, black calc(100% - var(--space-xl)), transparent); mask-image: linear-gradient(to right, black calc(100% - var(--space-xl)), transparent); }
         .r-div-row { grid-template-columns: 40px minmax(0, 1fr) 40px; row-gap: var(--space-2xs); }
         .r-div-row > :first-child { grid-column: 1 / -1; }

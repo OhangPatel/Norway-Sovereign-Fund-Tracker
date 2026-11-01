@@ -157,7 +157,6 @@ export function Summary({ data, filtered, onPickCompany, onSetFilter, activeSect
 
       {/* Sectors: a ruled list beside one pane. Every row and every tile filters the ledger. */}
       <section className="r-sec" aria-labelledby="sector-head" ref={sectorRef} data-seen={sectorSeen}>
-        <div className="r-plate" style={{ '--plate-pos': '82% 64%' }}>
         <div className="r-sec-head">
           <div>
             {/* The asterisk points at the page footnote in app.jsx. */}
@@ -193,10 +192,10 @@ export function Summary({ data, filtered, onPickCompany, onSetFilter, activeSect
             />
           </div>
         </div>
-        </div>
       </section>
 
-      {/* Ownership: slim bars, then the ruled tally of four figures under them. */}
+      {/* Ownership, night by night: slim bars in one glass panel, then the ruled
+          tally of four figures under them. */}
       <section className="r-sec" aria-labelledby="own-head" ref={ownRef} data-seen={ownSeen}>
         <div className="r-sec-head">
           <div>
@@ -205,13 +204,15 @@ export function Summary({ data, filtered, onPickCompany, onSetFilter, activeSect
           </div>
           <span className="eyebrow">{owns.length.toLocaleString()} companies</span>
         </div>
-        <Histogram data={owns} bins={28} height={160} accent="var(--accent)"
-          xFmt={v => v.toFixed(1) + '%'} onSelect={onOwnSelect}/>
+        <div className="glass">
+          <Histogram data={owns} bins={28} height={220}
+            xFmt={v => v.toFixed(1) + '%'} onSelect={onOwnSelect}/>
+        </div>
         <dl className="r-tally" style={{ margin: 'var(--space-lg) 0 0' }}>
-          <TallyCell label="Median" value={fmt.pct(ownStats.median, 2)}/>
-          <TallyCell label="Top decile" value={fmt.pct(ownStats.topDecile, 2)}/>
+          <TallyCell label="Median" value={<Cents text={fmt.pct(ownStats.median, 2)}/>}/>
+          <TallyCell label="Top decile" value={<Cents text={fmt.pct(ownStats.topDecile, 2)}/>}/>
           <TallyCell label="Above 5%" value={ownStats.above5.toLocaleString()}/>
-          <TallyCell label="Max" value={fmt.pct(ownStats.max, 2)}/>
+          <TallyCell label="Max" value={<Cents text={fmt.pct(ownStats.max, 2)}/>}/>
         </dl>
       </section>
     </>
@@ -267,6 +268,12 @@ export function CountUp({ text }) {
     ? n.toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec })
     : n.toFixed(dec);
   return <><span aria-hidden="true">{pre}{shown}{post}</span><span className="sr-only">{str}</span></>;
+}
+
+// A figure whose decimals sit in the muted ink, the way Dusk sets money ("180.00").
+function Cents({ text }) {
+  const [whole, frac] = String(text).split('.');
+  return <span>{whole}{frac !== undefined && <span style={{ color: 'var(--soft)' }}>.{frac}</span>}</span>;
 }
 
 // One cell of the ruled tally: a label, the figure, one line under it. A cell that
