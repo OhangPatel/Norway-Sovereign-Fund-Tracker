@@ -11,6 +11,7 @@ import { PeriodBar } from './period.jsx';
 import { ChangesPage, hasPreviousPeriod } from './changes.jsx';
 import { useRoute, navigate, changesHash } from './router.js';
 import { Footer } from './footer.jsx';
+import { ClassicSwitch } from './classic-switch.jsx';
 import { MARKET_FIELDS, assertSplit } from './origin.js';
 import { snapshotDate, formatSnapshot, periodLabel } from './snapshot.js';
 import { sectorOf } from './sectors.js';
@@ -802,6 +803,7 @@ export function App() {
         />
       )}
 
+      <ClassicSwitch />
       <ChatWidget />
     </>
   );
