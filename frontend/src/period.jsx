@@ -27,7 +27,7 @@ export function PeriodPicker({ manifest, period, onChange }) {
 
   return (
     <div>
-      <div className="eyebrow" style={{ fontSize: 10, color: 'var(--soft)', marginBottom: 10 }}>
+      <div className="eyebrow" style={{ fontSize: 'var(--text-xs)', color: 'var(--soft)', marginBottom: 10 }}>
         Annual holdings are as of 31 Dec · half-year as of 30 Jun
       </div>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
@@ -37,7 +37,7 @@ export function PeriodPicker({ manifest, period, onChange }) {
             <button
               key={p.period}
               onClick={() => onChange(p.period)}
-              // btn() resolves the selected fill to --treemap-cell-fg on --accent.
+              // btn() resolves the selected fill to --accent-ink on --accent.
               // It has to: in dark mode --accent-text IS --accent (#D8F34A), so a
               // selected pill drawn that way put lime text on a lime ground and the
               // active year vanished.
@@ -60,7 +60,7 @@ export function PeriodPicker({ manifest, period, onChange }) {
           disabled={!!selectedIsHalf}
           onChange={e => setShowHalf(e.target.checked)}
         />
-        Show half-year holdings (H1 — as of 30.06.)
+        Show half-year holdings (H1, as of 30.06.)
       </label>
     </div>
   );
@@ -81,7 +81,7 @@ export function PeriodBar({ manifest, period, loading, marketAsOf }) {
   return (
     <section style={{ display: 'grid', gap: 10 }}>
       {loading && (
-        <span className="mono" style={{ fontSize: 11, color: 'var(--soft)' }}>
+        <span className="mono" style={{ fontSize: 'var(--text-xs)', color: 'var(--soft)' }}>
           Loading {periodLabel(period)}…
         </span>
       )}

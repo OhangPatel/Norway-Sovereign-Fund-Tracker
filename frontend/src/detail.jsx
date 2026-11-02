@@ -1,15 +1,35 @@
 import React from 'react';
-import { fmt, Chip, Tag, RangeBar, Icon, iconBtnStyle } from './format.jsx';
+import { fmt, Chip, Tag, RangeBar, Icon, iconBtnStyle, btn, CompanyLogo } from './format.jsx';
 import { PriceChart } from './charts.jsx';
 import { REC_TONE } from './table.jsx';
 import { PIPELINE_API } from './app.jsx';
 import { formatPeriod, periodLabel } from './snapshot.js';
 import { sectorOf } from './sectors.js';
 
-// Slide-over detail drawer for a single company
+// Detail for a single company: a drawer from the right on a wide screen, a bottom
+// sheet on a narrow or upright one.
 
-// Suffix on the headline delta, naming the window it measures.
-const DELTA_LABEL = { '1d': '24h', '1y': '1Y', '5y': '5Y', 'max': 'all time' };
+// After the headline delta, naming the window it measures.
+const DELTA_LABEL = { '1d': 'over 24h', '1y': 'over 1 year', '5y': 'over 5 years', 'max': 'all time' };
+
+// Where the detail is a bottom sheet. The same query is the .r-detail block in
+// index.html; JS needs it as well because the two slide in from different edges and
+// only the sheet is dragged.
+const SHEET_QUERY = '(max-width: 640px), (orientation: portrait) and (max-width: 1024px)';
+const subscribeSheet = (cb) => {
+  const mq = window.matchMedia(SHEET_QUERY);
+  mq.addEventListener('change', cb);
+  return () => mq.removeEventListener('change', cb);
+};
+const useSheetMode = () => React.useSyncExternalStore(subscribeSheet, () => window.matchMedia(SHEET_QUERY).matches);
+
+// In slow, out quick. The drag writes SLIDE_IN back by hand, so it must stay the exact
+// string React sets. LEAVE_MS matches --dur-short.
+const SLIDE_IN = 'transform var(--dur-long) var(--ease-out)';
+const SLIDE_OUT = 'transform var(--dur-short) var(--ease-out)';
+const LEAVE_MS = 220;
+// How far a finger moves before it counts as a drag, and which way.
+const SWIPE_SLOP = 6;
 
 /**
  * Move in the headline price over the selected chart range, as an absolute amount
@@ -45,21 +65,28 @@ function fmtClock(iso) {
 // "2026-08-06 13:35:28" -> "2026-08-06 13:35". lastFetched arrives already formatted
 // ("Aug 6 2026"), so anything that is not the raw stamp passes straight through.
 function fmtStamp(s) {
-  return (typeof s === 'string' && /^\d{4}-\d{2}-\d{2} /.test(s)) ? s.slice(0, 16) : (s || '—');
+  return (typeof s === 'string' && /^\d{4}-\d{2}-\d{2} /.test(s)) ? s.slice(0, 16) : (s || 'n/a');
 }
 
 const MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-// "2026-08-06 13:35:28" -> "Aug 6, 2026 · 1:35 PM". Built by hand rather than with
-// Date — same reason as snapshot.js: the stamp carries no timezone, and a Date would
-// silently apply the reader's local one. Falls back to fmtStamp's raw slice for
-// anything (e.g. a pre-formatted lastFetched string) that doesn't match the pattern.
-function fmtSnapshotStamp(s) {
+// "2026-08-06 13:35:28" -> { date: "Aug 6, 2026", time: "1:35 PM" }. Built by hand
+// rather than with Date — same reason as snapshot.js: the stamp carries no timezone,
+// and a Date would silently apply the reader's local one. Falls back to fmtStamp's raw
+// slice, as the date with no time, for anything (e.g. a pre-formatted lastFetched
+// string) that doesn't match the pattern.
+function snapshotParts(s) {
   const m = typeof s === 'string' && s.match(/^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2})/);
-  if (!m) return fmtStamp(s);
+  if (!m) return { date: fmtStamp(s), time: null };
   const [, y, mo, d, h, mi] = m;
   const hour = +h % 12 || 12;
-  return `${MONTHS_SHORT[+mo - 1]} ${+d}, ${y} · ${hour}:${mi} ${+h < 12 ? 'AM' : 'PM'}`;
+  return { date: `${MONTHS_SHORT[+mo - 1]} ${+d}, ${y}`, time: `${hour}:${mi} ${+h < 12 ? 'AM' : 'PM'}` };
+}
+
+// "Aug 6, 2026, 1:35 PM", the whole stamp as one phrase.
+function fmtSnapshotStamp(s) {
+  const { date, time } = snapshotParts(s);
+  return time ? `${date}, ${time}` : date;
 }
 
 // Grouped, signed percent. fmt.signedPct is toFixed only, which is fine for a 24h
@@ -67,10 +94,10 @@ function fmtSnapshotStamp(s) {
 const groupedPct = (n) =>
   (n >= 0 ? '+' : '-') + Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%';
 
-// Headline delta: "▲ +12.40 (+6.14%)". The window it measures is named in the
-// eyebrow above the price, not repeated here.
+// Headline delta: "▲ +12.40 (+6.14%)". The window it measures is named beside it
+// (DELTA_LABEL), not repeated here.
 function RangeDelta({ delta }) {
-  if (!delta) return <span className="mono" style={{ fontSize: 11, color: 'var(--soft)' }}>—</span>;
+  if (!delta) return <span className="mono" style={{ fontSize: 'var(--text-xs)', color: 'var(--soft)' }}>n/a</span>;
   const pos = delta.pct >= 0;
   return (
     <span className="mono" style={{
@@ -78,7 +105,7 @@ function RangeDelta({ delta }) {
       fontSize: 12, fontWeight: 500,
       display: 'inline-flex', alignItems: 'baseline', gap: 4, flexWrap: 'wrap',
     }}>
-      <span style={{ fontSize: 9 }}>{pos ? '▲' : '▼'}</span>
+      <span aria-hidden="true" style={{ fontSize: 9 }}>{pos ? '▲' : '▼'}</span>
       <span>{(pos ? '+' : '-') + fmt.price(Math.abs(delta.abs))} ({groupedPct(delta.pct)})</span>
     </span>
   );
@@ -91,13 +118,77 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
   // apart and the labels are the only thing telling them apart.
   const historical = !isLatestPeriod && !!period;
   const [entered, setEntered] = React.useState(false);
+  const sheet = useSheetMode();
+  const asideRef = React.useRef(null);
+  const headRef = React.useRef(null);
+
+  // Every exit (back, close, Escape, the scrim, a swipe) slides out first and unmounts
+  // after, instead of vanishing mid-frame.
+  const [leaving, setLeaving] = React.useState(false);
+  const leaveTimer = React.useRef(null);
+  React.useEffect(() => () => clearTimeout(leaveTimer.current), []);
+  const close = React.useCallback(() => {
+    setLeaving(true);
+    clearTimeout(leaveTimer.current);
+    leaveTimer.current = setTimeout(onClose, LEAVE_MS);
+  }, [onClose]);
+  // The swipe listeners read it through a ref, so a parent re-render mid-drag (a new
+  // onClose) does not tear them down and drop the drag.
+  const closeRef = React.useRef(close);
+  React.useEffect(() => { closeRef.current = close; }, [close]);
+
   React.useEffect(() => {
-    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
+    const onKey = (e) => { if (e.key === 'Escape') close(); };
     window.addEventListener('keydown', onKey);
     // Trigger transition on next frame
     requestAnimationFrame(() => requestAnimationFrame(() => setEntered(true)));
     return () => window.removeEventListener('keydown', onKey);
-  }, [onClose]);
+  }, [close]);
+
+  // Swipe down to dismiss, as an iOS sheet does. From the header a drag always moves
+  // the sheet; from the body only once it is scrolled to the top, so pulling down
+  // mid-page still scrolls. Native listeners because React's touchmove is passive and
+  // cannot stop the page from scrolling under the drag.
+  React.useEffect(() => {
+    const el = asideRef.current;
+    if (!sheet || !el) return;
+    let startY = 0, startT = 0, dy = 0, armed = false, dragging = false;
+    const start = (e) => {
+      armed = e.touches.length === 1 && (el.scrollTop <= 0 || headRef.current.contains(e.target));
+      startY = e.touches[0].clientY; startT = e.timeStamp; dy = 0; dragging = false;
+    };
+    const move = (e) => {
+      if (!armed) return;
+      dy = e.touches[0].clientY - startY;
+      if (!dragging) {
+        if (dy < -SWIPE_SLOP) { armed = false; return; }
+        if (dy < SWIPE_SLOP) return;
+        dragging = true;
+        el.style.transition = 'none';
+      }
+      e.preventDefault();
+      el.style.transform = `translateY(${Math.max(0, dy)}px)`;
+    };
+    const end = (e) => {
+      if (!dragging) return;
+      dragging = armed = false;
+      el.style.transition = SLIDE_IN;
+      const speed = dy / Math.max(1, e.timeStamp - startT);
+      // A quarter of the way down, or a flick: gone. Anything less springs back.
+      if (dy > el.offsetHeight * 0.25 || (dy > 60 && speed > 0.5)) closeRef.current();
+      else el.style.transform = 'none';
+    };
+    el.addEventListener('touchstart', start, { passive: true });
+    el.addEventListener('touchmove', move, { passive: false });
+    el.addEventListener('touchend', end);
+    el.addEventListener('touchcancel', end);
+    return () => {
+      el.removeEventListener('touchstart', start);
+      el.removeEventListener('touchmove', move);
+      el.removeEventListener('touchend', end);
+      el.removeEventListener('touchcancel', end);
+    };
+  }, [sheet]);
 
   // Live price history fetched on demand from the backend (yfinance, not stored).
   // `loading` is derived from the request key so the effect never sets state synchronously.
@@ -219,182 +310,127 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
     .slice(0, 5);
 
   const isPinned = pinned.has(company.id);
+  const shown = entered && !leaving;
+  const asOf = headline.live ? { date: fmtClock(headline.at), time: 'Live' } : snapshotParts(headline.at);
 
   return (
     <>
-      <div onClick={onClose} style={{
+      <div onClick={close} style={{
         position:'fixed', inset:0, zIndex: 80,
         background: 'var(--scrim)',
         backdropFilter: 'var(--scrim-blur)',
-        opacity: entered ? 1 : 0,
-        transition: 'opacity .18s ease',
+        opacity: shown ? 1 : 0,
+        transition: 'opacity var(--dur-short) var(--ease-out)',
       }}/>
-      <aside role="dialog" aria-modal="true" aria-label={`${company.name} — position detail`} style={{
-        position:'fixed', top: 0, right: 0, bottom: 0,
-        width: 'min(640px, 96vw)',
-        background: 'var(--bg)',
-        borderLeft: '1px solid var(--line)',
-        zIndex: 81,
-        overflowY: 'auto',
-        boxShadow: 'var(--shadow-overlay)',
-        transform: entered ? 'translateX(0)' : 'translateX(100%)',
-        transition: 'transform .3s cubic-bezier(.22,.61,.36,1)',
+      <aside ref={asideRef} className="r-detail glass-float" role="dialog" aria-modal="true" aria-label={`${company.name}, position detail`} style={{
+        transform: shown ? 'none' : (sheet ? 'translateY(100%)' : 'translateX(100%)'),
+        transition: leaving ? SLIDE_OUT : SLIDE_IN,
       }}>
-        {/* Sticky header strip */}
-        <div style={{
-          display:'flex', alignItems:'center', justifyContent:'space-between',
-          padding: '12px 20px',
-          borderBottom: '1px solid var(--line)',
-          // srgb, not oklch — in a polar space this mix loses --bg's olive hue and
-          // paints the strip pink. See the note on Row's `bg` in table.jsx.
-          background: 'color-mix(in srgb, var(--bg) 90%, transparent)',
-          backdropFilter: 'blur(10px)',
-          position: 'sticky', top: 0, zIndex: 5,
-        }}>
-          <div className="eyebrow" style={{ display:'flex', alignItems:'center', gap: 7 }}>
-            <span style={{
-              width: 6, height: 6, borderRadius: 'var(--r-pill)', flexShrink: 0,
-              background: headline.live ? 'var(--bull-text)' : 'var(--soft)',
-            }}/>
-            Position detail
-          </div>
-          <div style={{ display:'flex', gap: 6 }}>
-            <IconBtn onClick={() => togglePin(company.id)} active={isPinned} title={isPinned ? 'Unpin' : 'Pin'}>
-              <Icon name={isPinned ? 'pinned' : 'pin'} size={14}/>
-            </IconBtn>
-            <IconBtn onClick={onClose} title="Close (Esc)">
-              <Icon name="x" size={14}/>
-            </IconBtn>
+        {/* Sticky header. On the sheet it carries the grab handle and a back arrow, and
+            dragging anywhere on it pulls the sheet down. */}
+        <div ref={headRef} className="r-detail-head">
+          <div className="r-detail-grip" aria-hidden="true"/>
+          <div className="r-detail-bar">
+            <button type="button" className="r-detail-back" onClick={close}>
+              <Icon name="chev-left" size={18}/>
+              Back
+            </button>
+            <span className="r-detail-title">Position detail</span>
+            <div className="r-detail-actions">
+              <IconBtn onClick={() => togglePin(company.id)} active={isPinned} title={isPinned ? 'Unpin' : 'Pin'}>
+                <Icon name={isPinned ? 'pinned' : 'pin'} size={14}/>
+              </IconBtn>
+              <span className="r-detail-x">
+                <IconBtn onClick={close} title="Close (Esc)">
+                  <Icon name="x" size={14}/>
+                </IconBtn>
+              </span>
+            </div>
           </div>
         </div>
 
         {/* Type here runs a step below the dashboard's: the drawer is a dense read,
             and every point of headline size costs a metric off the first screen. */}
-        <div style={{ padding: 'clamp(16px, 3.2vw, 22px) clamp(14px, 3.2vw, 26px) 40px' }}>
+        <div className="r-detail-body">
           {/* Title block. The ticker repeats — once in the meta line, once as its own
               chip — because the two do different jobs: the line reads as a sentence,
               the chip is what a returning eye lands on first. */}
           <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap: 16 }}>
-            <div style={{ minWidth: 0 }}>
-              <div className="eyebrow" style={{ fontSize: 11 }}>
-                {company.ticker} · {company.country} · {sectorOf(company, '—')}
-              </div>
+            <CompanyLogo ticker={company.ticker} name={company.name} size={44}/>
+            <div style={{ minWidth: 0, flex: 1 }}>
               <h2 className="display" style={{
-                fontSize: 30, lineHeight: 1.06, margin: '6px 0 0',
-                letterSpacing: '-0.015em',
+                fontSize: 'var(--text-2xl)', lineHeight: 1.08, margin: 0,
               }}>{company.name}</h2>
+              <p className="eyebrow" style={{ margin: '6px 0 0' }}>
+                {company.country}, {sectorOf(company, 'n/a')}
+              </p>
               {company.reason && (
-                <div className="eyebrow" style={{ fontSize: 10, marginTop: 7 }}>
-                  Inclusion basis · <span style={{ color:'var(--sub)' }}>{company.reason}</span>
-                </div>
+                <p className="eyebrow" style={{ fontSize: 'var(--text-xs)', margin: '4px 0 0' }}>
+                  Inclusion basis: <span style={{ color:'var(--sub)' }}>{company.reason}</span>
+                </p>
               )}
             </div>
             <Tag size="lg" tone="accent">{company.ticker}</Tag>
           </div>
 
-          {/* Price + chart card. Price and its window sit at the top, the chart itself
-              gets a bordered field to read as an instrument rather than bare lines
-              on the page, and the range tabs live at the BOTTOM — under the chart
-              they control, not above it, so the eye reads price → chart → range. */}
-          <div style={{
-            marginTop: 22, border: '1px solid var(--line)', borderRadius: 'var(--r-lg)',
-            background: 'var(--surface)', overflow: 'hidden',
-          }}>
-            <div style={{ padding: '16px 18px 0', display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap: 12, flexWrap:'wrap' }}>
-              <div style={{ display:'flex', alignItems:'baseline', gap: 10, flexWrap:'wrap' }}>
-                <span className="display" style={{ fontSize: 32, lineHeight: 1, letterSpacing:'-0.02em' }}>
-                  {fmt.price(headline.price)}
-                </span>
-                <RangeDelta delta={delta}/>
-              </div>
-              <div className="eyebrow" style={{ fontSize: 9 }}>Last price · {DELTA_LABEL[range]}</div>
+          {/* Price panel, an inset on the drawer's glass. Price and its window at the
+              top, the chart under it, and the range tabs at the BOTTOM — under the
+              chart they control, so the eye reads price, chart, range. */}
+          <section className="r-inset r-dprice">
+            <div className="r-dlabel">Last price</div>
+            <div style={{ display:'flex', alignItems:'baseline', gap: 10, flexWrap:'wrap', marginTop: 4 }}>
+              <span className="display" style={{ fontSize: 'var(--text-3xl)', lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>
+                {fmt.price(headline.price)}
+              </span>
+              <RangeDelta delta={delta}/>
+              <span className="r-dlabel">{DELTA_LABEL[range]}</span>
             </div>
 
             {/* Faint grid behind the line — a bare chart on a blank field read as
                 unfinished; this reads as an instrument. */}
-            <div style={{
-              margin: '14px 18px 0', height: 130, display:'grid', placeItems:'center',
-              backgroundImage:
-                'repeating-linear-gradient(to bottom, var(--line) 0 1px, transparent 1px 33%),' +
-                'repeating-linear-gradient(to right, var(--line) 0 1px, transparent 1px 20%)',
-              backgroundSize: '100% 100%', opacity: 1,
-            }}>
+            <div className="r-dchart">
               {loading ? (
-                <span className="mono" style={{ fontSize: 11, color:'var(--soft)' }}>Loading price history…</span>
+                <span style={{ fontSize: 'var(--text-xs)', color:'var(--soft)' }}>Loading price history…</span>
               ) : (history.error || !chart.points || chart.points.length < 2) ? (
-                <span className="mono" style={{ fontSize: 11, color:'var(--soft)' }}>{history.error || 'No price history'}</span>
+                <span style={{ fontSize: 'var(--text-xs)', color:'var(--soft)' }}>{history.error || 'No price history'}</span>
               ) : (
                 <PriceChart points={chart.points} dates={chart.dates} valueFmt={fmt.price} height={130} color="auto"/>
               )}
             </div>
 
-            <div style={{
-              marginTop: 14, padding: '0 18px', minHeight: 40, borderTop: '1px solid var(--line)',
-              display:'flex', alignItems:'center', justifyContent:'space-between', gap: 12, flexWrap:'wrap',
-            }}>
-              {/* Tabs rather than pills: the accent bar rides the card's own divider,
-                  so the selected range reads as the tab the chart above hangs from.
-                  The negative margin pulls the first label back to the 18px gutter —
-                  its tint bleeds left of it, which is what keeps the row aligned. */}
-              <div style={{ display:'flex', marginLeft: -12 }}>
-                {['1d', '1y', '5y', 'max'].map(r => {
-                  const on = range === r;
-                  return (
-                    <button key={r} onClick={() => setRange(r)}
-                      className="mono"
-                      style={{
-                        position: 'relative',
-                        fontSize: 10.5, padding: '11px 12px', border: 'none', borderRadius: 0,
-                        cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '0.1em',
-                        fontWeight: on ? 600 : 500,
-                        color: on ? 'var(--accent-text)' : 'var(--soft)',
-                        // srgb, not oklch — see the note on Row's `bg` in table.jsx.
-                        background: on ? 'var(--accent-tint)' : 'transparent',
-                        transition: 'color .12s, background .12s',
-                      }}
-                      onMouseEnter={e => { if (!on) e.currentTarget.style.color = 'var(--ink)'; }}
-                      onMouseLeave={e => { if (!on) e.currentTarget.style.color = 'var(--soft)'; }}
-                    >
-                      {r}
-                      {on && <span style={{
-                        position:'absolute', left: 0, right: 0, top: -1, height: 2,
-                        background: 'var(--accent)',
-                      }}/>}
-                    </button>
-                  );
-                })}
+            <div className="r-dprice-foot">
+              {/* Dusk's tabs: a row of words, the chosen one marked by a dot. */}
+              <div className="r-range">
+                {['1d', '1y', '5y', 'max'].map(r => (
+                  <button key={r} type="button" className="r-range-btn" onClick={() => setRange(r)} aria-pressed={range === r}>
+                    {r === 'max' ? 'Max' : r.toUpperCase()}
+                  </button>
+                ))}
               </div>
               {/* Which clock the price above is on, plus a manual refresh. Never
                   omitted: an unlabelled price that is sometimes live and sometimes
                   days old is the whole problem. */}
-              <div className="mono" style={{ display:'flex', alignItems:'center', gap: 6, fontSize: 10, color: 'var(--soft)' }}>
-                <span style={{
-                  width: 6, height: 6, borderRadius: 'var(--r-pill)', flexShrink: 0,
-                  background: headline.live ? 'var(--bull-text)' : 'var(--soft)',
-                }}/>
+              <p className="r-dstatus" role="status">
                 <span>
-                  {headline.live ? `Live · ${fmtClock(headline.at)}` : fmtSnapshotStamp(headline.at)}
-                  {!headline.live && quoteError && ` · ${quoteError}`}
+                  {headline.live ? `Live at ${fmtClock(headline.at)}` : `Snapshot of ${fmtSnapshotStamp(headline.at)}`}
+                  {!headline.live && quoteError && `. Live price unavailable: ${quoteError}`}
                 </span>
                 <RefreshQuoteBtn onClick={() => setRefreshTick(t => t + 1)} busy={quoteBusy}/>
-              </div>
+              </p>
             </div>
-          </div>
+          </section>
 
-          {/* As of / target / 52-week position — three numbers that used to run down
-              the page as separate caption lines, now scannable in one row. */}
-          <div className="r-metrics3" style={{ marginTop: 18, gap: 10 }}>
-            <MetricBox label="As of" value={headline.live ? fmtClock(headline.at) : fmtSnapshotStamp(headline.at)}/>
-            <MetricBox label="Target" value={company.targetPrice ? (
-              <>
-                {fmt.price(company.targetPrice)}{' '}
-                <span style={{
-                  fontSize: 12,
-                  color: company.targetPrice > headline.price ? 'var(--bull-text)' : 'var(--bear-text)',
-                }}>({((company.targetPrice / headline.price - 1) * 100).toFixed(1)}%)</span>
-              </>
-            ) : '—'}/>
-            <MetricBox label="52w position" value={pos52 != null ? `${pos52.toFixed(0)}%` : '—'}/>
+          {/* As of / target / 52-week position as a ruled tally: one row of figures
+              parted by hairlines, not a tile each. */}
+          <div className="r-dtally r-dsec">
+            <Metric label="As of" value={asOf.date} note={asOf.time}/>
+            <Metric label="Analyst target" value={company.targetPrice ? fmt.price(company.targetPrice) : 'n/a'}
+              note={company.targetPrice ? (
+                <span style={{ color: company.targetPrice > headline.price ? 'var(--bull-text)' : 'var(--bear-text)' }}>
+                  {((company.targetPrice / headline.price - 1) * 100).toFixed(1)}% from last
+                </span>
+              ) : null}/>
+            <Metric label="52-week position" value={pos52 != null ? `${pos52.toFixed(0)}%` : 'n/a'}/>
           </div>
 
           {/* 52w range */}
@@ -404,82 +440,68 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
 
           <ResearchLinks ticker={company.ticker} name={company.name}/>
 
-          {/* Fund holding card */}
-          <div style={{
-            marginTop: 22,
-            padding: 18,
-            border:'1px solid var(--accent-edge)',
-            background: 'var(--accent-wash)',
-            borderRadius: 'var(--r-lg)',
-          }}>
-            <SectionLabel text="Norway GPFG holding" accent divider
-              tag={historical ? `disclosed as of ${formatPeriod(period)}` : null}/>
-            <div className="r-metrics3">
+          {/* The fund's own figures in their own inset, so they read as the fund's
+              record rather than market data. Two ruled rows of three. */}
+          <section className="r-inset r-dhold r-dsec">
+            <SectionLabel text="Norway GPFG holding"
+              tag={historical ? `Disclosed as of ${formatPeriod(period)}` : null}/>
+            <div className="r-dtally">
               <Metric label="USD value" value={fmt.money(company.mvUsd, 'USD', 2)}/>
               <Metric label="NOK value" value={fmt.money(company.mvNok, 'NOK', 2)}/>
               <Metric label="Ownership" value={fmt.pct(company.ownership, 3)}
                 accent={company.ownership >= 5}/>
             </div>
-            <div className="r-metrics3" style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid var(--line)' }}>
+            <div className="r-dtally">
               <Metric label="Voting rights" value={fmt.pct(company.voting, 3)}/>
-              <Metric label="Mkt cap (USD)" value={fmt.money(company.marketCap, 'USD', 1)}
-                note={historical ? 'today' : null}/>
+              <Metric label="Market cap (USD)" value={fmt.money(company.marketCap, 'USD', 1)}
+                note={historical ? 'Today' : null}/>
               {/* The only figure on this screen built from BOTH sides: a market value
                   disclosed for the period over a market cap read today. On the latest
                   period that is one moment; on 2022 it divides a 2022 numerator by a
                   2026 denominator, so it says so rather than presenting a clean number. */}
-              <Metric label="% of mkt cap"
-                value={company.marketCap ? fmt.pct((company.mvUsd / company.marketCap) * 100, 3) : '—'}
-                note={historical ? `${periodLabel(period)} holding ÷ today's cap` : null}/>
+              <Metric label="% of market cap"
+                value={company.marketCap ? fmt.pct((company.mvUsd / company.marketCap) * 100, 3) : 'n/a'}
+                note={historical ? `${periodLabel(period)} holding over today's cap` : null}/>
             </div>
-          </div>
+          </section>
 
-          {/* Financial metrics */}
-          <div style={{ marginTop: 22 }}>
+          {/* Financial metrics, a ruled list in two columns. */}
+          <div className="r-dsec">
             <SectionLabel text="Financials"
-              tag={historical ? 'current market data, not the period’s' : null}/>
-            <div className="r-kv2" style={{
-              background:'var(--line)', borderRadius: 'var(--r-lg)', overflow:'hidden',
-              border:'1px solid var(--line)'
-            }}>
+              tag={historical ? 'Current market data, not the period’s' : null}/>
+            <div className="r-dkv">
               {/* "P/E (trailing)", matching the compare modal — the same figure was
-                  named two ways across two screens, and the longer name is also what
-                  pinned this label to 8.5px to survive a half-width phone cell. */}
-              <KvCell label="P/E (trailing)" value={company.pe?.toFixed(2) ?? '—'}/>
-              <KvCell label="Forward P/E" value={company.fwdPe?.toFixed(2) ?? '—'}/>
-              <KvCell label="Price / Book" value={company.pb?.toFixed(2) ?? '—'}/>
-              <KvCell label="Dividend yield" value={company.divYield ? company.divYield.toFixed(2) + '%' : '—'}/>
-              <KvCell label="Beta (5y)" value={company.beta?.toFixed(2) ?? '—'}/>
+                  named two ways across two screens. */}
+              <KvCell label="P/E (trailing)" value={company.pe?.toFixed(2) ?? 'n/a'}/>
+              <KvCell label="Forward P/E" value={company.fwdPe?.toFixed(2) ?? 'n/a'}/>
+              <KvCell label="Price / Book" value={company.pb?.toFixed(2) ?? 'n/a'}/>
+              <KvCell label="Dividend yield" value={company.divYield ? company.divYield.toFixed(2) + '%' : 'n/a'}/>
+              <KvCell label="Beta (5y)" value={company.beta?.toFixed(2) ?? 'n/a'}/>
               <KvCell label="Analyst rec" value={<Chip tone={REC_TONE[company.rec] || 'neutral'}>{fmt.rec(company.rec)}</Chip>}/>
             </div>
           </div>
 
-          {/* Peers */}
+          {/* Peers, as the home page's run of accounts: logo, name, value. */}
           {peerSet.length > 0 && (
-            <div style={{ marginTop: 22 }}>
-              <div className="eyebrow" style={{ fontSize: 10, marginBottom: 10 }}>Top peers in {sectorOf(company, 'this sector')}</div>
-              <div style={{ display: 'grid', gap: 1, background: 'var(--line)', borderRadius: 'var(--r-lg)', overflow:'hidden', border: '1px solid var(--line)' }}>
-                {peerSet.map(p => (
-                  <div key={p.ticker} onClick={() => onPickCompany(p)}
-                    style={{
-                      display:'grid', gridTemplateColumns: '1fr auto auto auto', gap: 12, alignItems:'center',
-                      padding: '9px 12px',
-                      background: 'var(--surface)',
-                      cursor:'pointer', transition:'background .12s'
-                    }}
-                    onMouseEnter={e => e.currentTarget.style.background = 'var(--row-hover)'}
-                    onMouseLeave={e => e.currentTarget.style.background = 'var(--surface)'}
-                  >
-                    <div style={{ minWidth: 0 }}>
-                      <div style={{ fontSize: 12, color:'var(--ink)', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{p.name}</div>
-                      <div className="mono" style={{ fontSize: 10, color:'var(--soft)' }}>{p.ticker} · {p.country}</div>
-                    </div>
-                    <span className="mono" style={{ fontSize: 12, color:'var(--sub)' }}>{fmt.money(p.mvUsd, 'USD', 1)}</span>
-                    <span className="mono" style={{ fontSize: 12, color:'var(--soft)' }}>{fmt.pct(p.ownership, 2)}</span>
-                    <Icon name="arrow-right" size={13} color="var(--soft)"/>
-                  </div>
+            <div className="r-dsec">
+              <SectionLabel text={`Top peers in ${sectorOf(company, 'this sector')}`}/>
+              <ol className="r-acct r-dpeers">
+                {peerSet.map((p, i) => (
+                  <li key={p.ticker} style={{ '--i': i }}>
+                    <button type="button" className="r-acct-row" onClick={() => onPickCompany(p)}>
+                      <CompanyLogo ticker={p.ticker} name={p.name} size={32}/>
+                      <span style={{ minWidth: 0 }}>
+                        <span className="r-acct-name" style={{ display: 'block', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.name}</span>
+                        <span className="mono" style={{ display: 'block', fontSize: 'var(--text-xs)', color: 'var(--soft)' }}>{p.ticker}, {p.country}</span>
+                      </span>
+                      <span style={{ textAlign: 'right' }}>
+                        <span className="mono" style={{ display: 'block', fontSize: 'var(--text-sm)' }}>{fmt.money(p.mvUsd, 'USD', 1)}</span>
+                        <span className="mono" style={{ display: 'block', fontSize: 'var(--text-xs)', color: 'var(--soft)' }}>{fmt.pct(p.ownership, 2)} owned</span>
+                      </span>
+                    </button>
+                  </li>
                 ))}
-              </div>
+              </ol>
             </div>
           )}
         </div>
@@ -509,8 +531,8 @@ function ResearchLinks({ ticker, name }) {
   const sym = encodeURIComponent(ticker);
   const q = encodeURIComponent(`${name} ${ticker} stock`);
   return (
-    <div style={{ marginTop: 18 }}>
-      <div className="eyebrow" style={{ fontSize: 9, marginBottom: 8 }}>Research</div>
+    <div className="r-dsec">
+      <SectionLabel text="Research"/>
       <div className="r-research3">
         <ExtLink href={`https://www.perplexity.ai/finance/${sym}`} brand="perplexity"
           title={`Open ${ticker} on Perplexity Finance`}>Perplexity</ExtLink>
@@ -561,24 +583,15 @@ function BrandMark({ brand }) {
 // icon or hunt for the shortest button.
 function ExtLink({ href, children, brand, title }) {
   const reset = (el) => {
-    el.style.background = 'var(--surface)';
-    el.style.color = 'var(--sub)';
+    el.style.background = 'transparent';
     el.style.borderColor = 'var(--line)';
   };
   return (
-    <a href={href} target="_blank" rel="noopener noreferrer" className="mono" title={title}
-      style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7,
-        fontSize: 12, lineHeight: 1, color: 'var(--sub)', textDecoration: 'none',
-        background: 'var(--surface)',
-        border: '1px solid var(--line)',
-        padding: '0 10px', height: 'var(--control-h-lg)', borderRadius: 'var(--r-md)',
-        transition: 'background .12s, color .12s, border-color .12s',
-      }}
+    <a href={href} target="_blank" rel="noopener noreferrer" title={title}
+      style={{ ...btn({ variant: 'ghost', shape: 'pill' }), width: '100%', height: 'var(--control-h-lg)' }}
       onMouseEnter={e => {
         e.currentTarget.style.background = 'var(--row-hover)';
-        e.currentTarget.style.color = 'var(--ink)';
-        e.currentTarget.style.borderColor = 'var(--accent)';
+        e.currentTarget.style.borderColor = 'var(--ink)';
       }}
       onMouseLeave={e => reset(e.currentTarget)}
       onBlur={e => reset(e.currentTarget)}
@@ -589,81 +602,36 @@ function ExtLink({ href, children, brand, title }) {
   );
 }
 
-/**
- * Boxed reading, for the three figures that sit in the open page under the chart
- * card. Metric below is the bare stacked pair, which reads fine inside a card that
- * already has its own border — out on the page these three floated. Same framing as
- * the chart above them, so price and its context read as one instrument.
- *
- * Mono, not `display`: a clock, a price and a percent are all figures to be compared
- * across the three cells, and the value wraps rather than truncates because "As of"
- * on a snapshot is a full date plus a time.
- */
-function MetricBox({ label, value }) {
-  return (
-    <div style={{
-      border: '1px solid var(--line)', borderRadius: 'var(--r-md)',
-      background: 'var(--surface)', padding: '11px 14px',
-    }}>
-      <div className="eyebrow" style={{ fontSize: 9 }}>{label}</div>
-      <div className="mono" style={{
-        fontSize: 15, fontWeight: 600, marginTop: 5, lineHeight: 1.3,
-        color: 'var(--ink)',
-      }}>{value}</div>
-    </div>
-  );
-}
-
+// One cell of a ruled tally (.r-dtally): label, figure, and an optional line under it
+// for the figure's time or provenance.
 export function Metric({ label, value, accent, note }) {
   return (
     <div>
-      <div className="eyebrow" style={{ fontSize: 9 }}>{label}</div>
-      <div className="display" style={{
-        fontSize: 18, marginTop: 3, letterSpacing: '-0.01em',
-        color: accent ? 'var(--accent-text)' : 'var(--ink)'
-      }}>{value}</div>
-      {note && (
-        <div className="mono" style={{ fontSize: 10, color: 'var(--sub)', marginTop: 3, lineHeight: 1.35 }}>{note}</div>
-      )}
+      <div className="r-dlabel">{label}</div>
+      <div className="r-dtally-fig" style={accent ? { color: 'var(--accent-text)' } : undefined}>{value}</div>
+      {note && <div className="r-dtally-note">{note}</div>}
     </div>
   );
 }
 
 /**
- * Section heading with an optional provenance tag. The tag is what stops a reader
- * assuming every number under one heading belongs to the same date.
- *
- * `accent` + `divider` are for a heading that sits inside its own card (the GPFG
- * holding block): the accent colour and the rule under it separate the card's title
- * from its numbers the way a plain heading in the open page doesn't need to.
+ * Section heading with an optional provenance line under it. The line is what stops a
+ * reader assuming every number under one heading belongs to the same date.
  */
-export function SectionLabel({ text, tag, accent, divider }) {
+export function SectionLabel({ text, tag }) {
   return (
-    <div style={{
-      display: 'flex', alignItems: 'baseline', gap: 8, flexWrap: 'wrap',
-      marginBottom: divider ? 14 : 9,
-      paddingBottom: divider ? 12 : 0,
-      borderBottom: divider ? '1px solid var(--line)' : 'none',
-    }}>
-      <span className="eyebrow" style={{ fontSize: 10, color: accent ? 'var(--accent-text)' : undefined }}>{text}</span>
-      {tag && (
-        <span className="mono" style={{ fontSize: 10, color: 'var(--sub)', fontWeight: 400 }}>
-          · {tag}
-        </span>
-      )}
+    <div className="r-dsec-head">
+      <h3>{text}</h3>
+      {tag && <p>{tag}</p>}
     </div>
   );
 }
 
-// Label and value share one row instead of stacking — half the height of the old
-// two-line cell, so six figures cost one screenful instead of two.
+// One row of the financials list: label left, figure right, a hairline under it.
 export function KvCell({ label, value }) {
   return (
-    <div style={{
-      background:'var(--surface)', padding: '12px 14px',
-      display:'flex', alignItems:'center', justifyContent:'space-between', gap: 10,
-    }}>
-      <span className="eyebrow" style={{ fontSize: 10 }}>{label}</span>
+    <div className="r-dkv-row">
+      <span>{label}</span>
       <span className="mono" style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink)', textAlign:'right', flexShrink: 0 }}>{value}</span>
     </div>
   );

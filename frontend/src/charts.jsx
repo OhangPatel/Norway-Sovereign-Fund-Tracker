@@ -1,65 +1,11 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
 
-// Hand-rolled SVG charts — bar, histogram, horizontal bar, donut
+// Hand-rolled SVG charts: histogram, treemap, price line
 
-// Horizontal bar list (top holdings)
-export function TopBarList({ items, max, valueFmt, height = 280, onClick, accent = 'var(--accent)' }) {
-  const n = items.length;
-  const rowH = Math.max(18, (height - 8) / n);
-  return (
-    <div style={{ width: '100%' }}>
-      {items.map((it, i) => {
-        const pct = max ? (it.value / max) * 100 : 0;
-        // A real <button> when the row does something. As a div with onClick it was
-        // mouse-only — not in the tab order, no focus ring, and announced as nothing —
-        // and this list is one of the two ways into a company from the dashboard.
-        const Tag = onClick ? 'button' : 'div';
-        return (
-          <Tag key={it.key || i}
-            type={onClick ? 'button' : undefined}
-            onClick={() => onClick && onClick(it)}
-            style={{
-              display: 'grid',
-              gridTemplateColumns: '20px 1fr auto',
-              alignItems: 'center',
-              gap: 10,
-              width: '100%',
-              padding: '6px 0',
-              background: 'transparent',
-              border: 'none',
-              borderBottom: i < n - 1 ? '1px solid var(--line)' : 'none',
-              font: 'inherit', color: 'inherit', textAlign: 'left',
-              cursor: onClick ? 'pointer' : 'default',
-            }}
-            onMouseEnter={e => e.currentTarget.style.background = 'var(--row-hover)'}
-            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-          >
-            <span className="mono" style={{ fontSize: 10.5, color: 'var(--soft)' }}>{String(i + 1).padStart(2,'0')}</span>
-            <div style={{ minWidth: 0 }}>
-              <div style={{
-                display:'flex', justifyContent:'space-between', alignItems:'baseline',
-                fontSize: 12, marginBottom: 4, gap: 8
-              }}>
-                <span style={{ overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', color: 'var(--ink)' }}>{it.label}</span>
-                <span className="mono" style={{ fontSize: 11, color:'var(--soft)' }}>{it.sub}</span>
-              </div>
-              <div style={{ position: 'relative', height: 4, background:'var(--track)', borderRadius:'var(--r-pill)' }}>
-                <div style={{
-                  position:'absolute', left:0, top:0, bottom:0, width: pct + '%',
-                  background: accent, borderRadius: 'var(--r-pill)'
-                }}/>
-              </div>
-            </div>
-            <span className="mono" style={{ fontSize: 12, color:'var(--ink)', whiteSpace:'nowrap' }}>{valueFmt(it.value)}</span>
-          </Tag>
-        );
-      })}
-    </div>
-  );
-}
-
-// Histogram (distribution of ownership %)
-export function Histogram({ data, bins = 20, height = 140, accent = 'var(--accent)', xFmt = v => v.toFixed(1), onSelect }) {
+// Histogram of ownership %, night by night: one slim pill per band, lit at its top
+// (index.html, .r-night); a band with no companies is a short hatched stub. Each band
+// is a button that filters the ledger to its range; pressing it again clears it.
+export function Histogram({ data, bins = 20, height = 140, xFmt = v => v.toFixed(1), onSelect }) {
   const [selected, setSelected] = useState(null); // selected bin index, or null
   // Drop a stale selection (and notify) whenever the underlying data changes.
   useEffect(() => { setSelected(null); onSelect && onSelect(null); }, [data]);
@@ -67,6 +13,8 @@ export function Histogram({ data, bins = 20, height = 140, accent = 'var(--accen
   const min = Math.min(...data);
   const max = Math.max(...data);
   const range = Math.max(max - min, 0.0001);
+  const lo = (i) => min + (i / bins) * range;
+  const bandOf = (v) => Math.min(bins - 1, Math.max(0, Math.floor(((v - min) / range) * bins)));
 
   const toggle = (i) => {
     const next = selected === i ? null : i;
@@ -78,46 +26,27 @@ export function Histogram({ data, bins = 20, height = 140, accent = 'var(--accen
     });
   };
   const buckets = new Array(bins).fill(0);
-  for (const v of data) {
-    let b = Math.floor(((v - min) / range) * bins);
-    if (b >= bins) b = bins - 1;
-    if (b < 0) b = 0;
-    buckets[b] += 1;
-  }
+  for (const v of data) buckets[bandOf(v)] += 1;
   const peak = Math.max(...buckets);
-  const w = 1000;
-  const h = height;
-  const barW = w / bins;
   return (
-    <div style={{ width:'100%' }}>
-      <svg viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" width="100%" height={h}
-        style={{ display:'block', overflow:'visible' }}>
-        {/* grid */}
-        {[0.25, 0.5, 0.75].map(g => (
-          <line key={g} x1={0} x2={w} y1={h * (1-g)} y2={h * (1-g)} stroke="var(--line)" strokeDasharray="2 4"/>
-        ))}
+    <div className={`r-nights${selected != null ? ' has-sel' : ''}`} style={{ '--n': bins }}>
+      <div className="r-nights-bars" role="group" style={{ height }}
+        aria-label="Ownership share per company, in bands; select a band to filter the ledger">
         {buckets.map((c, i) => {
-          const bh = peak ? (c / peak) * (h - 8) : 0;
-          const dimmed = selected != null && selected !== i;
+          const label = `${xFmt(lo(i))} to ${xFmt(lo(i + 1))}: ${c.toLocaleString()} ${c === 1 ? 'company' : 'companies'}`;
           return (
-            <g key={i}>
-              <rect x={i*barW + 1} y={h - bh} width={barW - 2} height={bh}
-                fill={accent} opacity={dimmed ? 0.2 : 0.85} rx={1}
-                style={{ cursor: 'pointer', transition: 'opacity .15s' }}
-                onClick={() => toggle(i)}/>
-              {/* Full-height hit area so thin/empty bars stay clickable */}
-              <rect x={i*barW} y={0} width={barW} height={h} fill="transparent"
-                style={{ cursor: 'pointer' }}
-                onClick={() => toggle(i)}/>
-            </g>
+            <button key={i} type="button"
+              className={`r-night${c === 0 ? ' is-empty' : ''}${selected === i ? ' is-on' : ''}`}
+              style={{ '--h': peak ? c / peak : 0, '--i': i }}
+              aria-pressed={selected === i} aria-label={label} title={label}
+              onClick={() => toggle(i)}>
+              <span className="r-night-bar"/>
+            </button>
           );
         })}
-      </svg>
-      <div className="mono" style={{
-        display:'flex', justifyContent:'space-between',
-        fontSize: 10.5, color:'var(--soft)', marginTop: 4
-      }}>
-        <span>{xFmt(min)}</span><span>{xFmt((min+max)/2)}</span><span>{xFmt(max)}</span>
+      </div>
+      <div className="r-nights-axis" aria-hidden="true">
+        {buckets.map((_, i) => <span key={i}>{i === 0 ? xFmt(lo(0)) : lo(i).toFixed(1)}</span>)}
       </div>
     </div>
   );
@@ -171,7 +100,10 @@ function computeSquarified(values, W, H) {
   return result;
 }
 
-export function Treemap({ items, height = 300, gap = 5, radius = 4, minShare = 0.011, onClick }) {
+// `highlight` lights the tile with that label from outside (a list beside it), and
+// `onHover` reports the tile under the pointer back, so the two stay in step.
+// `selected` labels stay at full strength and every other tile dims (.r-tile.is-dim).
+export function Treemap({ items, height = 300, gap = 5, radius = 4, minShare = 0.011, onClick, highlight = null, onHover, selected = [] }) {
   const ref = useRef(null);
   const [width, setWidth] = useState(0);
   useEffect(() => {
@@ -210,19 +142,23 @@ export function Treemap({ items, height = 300, gap = 5, radius = 4, minShare = 0
         const cw = r.w - gx, ch = r.h - gy;
         const showName = cw > 44 && ch > 22;
         const showPct = cw > 44 && ch > 40;
-        // Same reason as TopBarList: clicking a tile filters the whole table, so it is a
-        // control and has to be one. aria-label carries the share, which is otherwise
+        // Clicking a tile filters the whole table, so it is a control and has to be one. aria-label carries the share, which is otherwise
         // only in the hover tooltip and on the cells too small to print a label.
         const Tag = onClick ? 'button' : 'div';
         return (
           <Tag key={it.label}
             type={onClick ? 'button' : undefined}
-            aria-label={onClick ? `${it.label} — ${it.pct.toFixed(1)}% of value. Filter to this sector.` : undefined}
+            aria-label={onClick ? `${it.label}: ${it.pct.toFixed(1)}% of value. Filter to this sector.` : undefined}
             onClick={() => onClick && onClick(it)}
-            onMouseEnter={e => setHover({ i, x: e.clientX, y: e.clientY })}
+            aria-pressed={onClick ? selected.includes(it.label) : undefined}
+            className={selected.length && !selected.includes(it.label) ? 'r-tile is-dim' : 'r-tile'}
+            onMouseEnter={e => { setHover({ i, x: e.clientX, y: e.clientY }); onHover && onHover(it.label); }}
             onMouseMove={e => setHover({ i, x: e.clientX, y: e.clientY })}
-            onMouseLeave={() => setHover(null)}
+            onMouseLeave={() => { setHover(null); onHover && onHover(null); }}
+            onFocus={() => onHover && onHover(it.label)}
+            onBlur={() => onHover && onHover(null)}
             style={{
+              '--i': i,
               position: 'absolute',
               border: 'none', font: 'inherit', textAlign: 'left', display: 'block',
               left: r.x + gx / 2, top: r.y + gy / 2,
@@ -230,16 +166,17 @@ export function Treemap({ items, height = 300, gap = 5, radius = 4, minShare = 0
               background: it.color, borderRadius: Math.min(radius, cw / 2, ch / 2),
               padding: showName ? '7px 9px' : 0, overflow: 'hidden',
               color: 'var(--treemap-cell-fg)', boxSizing: 'border-box',
-              cursor: onClick ? 'pointer' : 'default', transition: 'filter .15s',
-              filter: hover && hover.i === i ? 'brightness(1.08)' : 'none',
-              outline: hover && hover.i === i ? '1.5px solid var(--ink)' : 'none',
-              outlineOffset: -1.5,
+              cursor: onClick ? 'pointer' : 'default',
+              // Hover draws an inset ring; at rest no outline is set inline, so the
+              // stylesheet's :focus-visible ring shows for keyboard users.
+              outline: (hover && hover.i === i) || highlight === it.label ? '2px solid var(--ink)' : undefined,
+              outlineOffset: (hover && hover.i === i) || highlight === it.label ? -2 : undefined,
             }}>
             {showName && (
-              <div style={{ fontSize: 12, fontWeight: 600, lineHeight: 1.15, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{it.label}</div>
+              <div style={{ fontSize: 'var(--text-xs)', fontWeight: 600, lineHeight: 1.15, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{it.label}</div>
             )}
             {showPct && (
-              <div className="mono" style={{ fontSize: 10.5, opacity: 0.82, marginTop: 1 }}>{it.pct.toFixed(1)}%</div>
+              <div className="mono" style={{ fontSize: 'var(--text-xs)', marginTop: 1 }}>{it.pct.toFixed(1)}%</div>
             )}
           </Tag>
         );
@@ -252,7 +189,7 @@ export function Treemap({ items, height = 300, gap = 5, radius = 4, minShare = 0
         return (
         <div style={{
           position: 'fixed',
-          left: flip ? hover.x - 14 : hover.x + 14, top: hover.y + 14, zIndex: 50,
+          left: flip ? hover.x - 14 : hover.x + 14, top: hover.y + 14, zIndex: 'var(--z-tooltip)',
           transform: flip ? 'translateX(-100%)' : 'none',
           pointerEvents: 'none', whiteSpace: 'nowrap',
           background: 'var(--surface)', border: '1px solid var(--line)',
@@ -262,7 +199,7 @@ export function Treemap({ items, height = 300, gap = 5, radius = 4, minShare = 0
             <span style={{ width: 9, height: 9, borderRadius: 2, background: hovered.color, flexShrink: 0 }}/>
             <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--ink)' }}>{hovered.label}</span>
           </div>
-          <div className="mono" style={{ fontSize: 11, color: 'var(--soft)', marginTop: 3 }}>{hovered.pct.toFixed(2)}% of value</div>
+          <div className="mono" style={{ fontSize: 'var(--text-xs)', color: 'var(--soft)', marginTop: 3 }}>{hovered.pct.toFixed(2)}% of value</div>
         </div>
         );
       })()}
@@ -323,13 +260,14 @@ export function PriceChart({ points, dates, height = 84, color = 'auto', valueFm
     body = (
       <>
         <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} style={{ display: 'block' }}
+          role="img" aria-label="Price history line chart"
           onMouseMove={onMove} onMouseLeave={() => setHover(null)}>
           <path d={`${d} L ${width} ${height} L 0 ${height} Z`} fill={stroke} opacity={0.12}/>
           <path d={d} fill="none" stroke={stroke} strokeWidth={1.25} strokeLinejoin="round" strokeLinecap="round"/>
           {hover != null && (
             <g>
-              <line x1={hx} y1={0} x2={hx} y2={height} stroke="var(--soft)" strokeWidth={0.75} strokeDasharray="3 3"/>
-              <circle cx={hx} cy={hy} r={3} fill={stroke} stroke="var(--bg)" strokeWidth={1.5}/>
+              <line x1={hx} y1={0} x2={hx} y2={height} stroke="var(--soft)" strokeWidth={1}/>
+              <circle cx={hx} cy={hy} r={3} fill={stroke} stroke="var(--surface)" strokeWidth={1.5}/>
             </g>
           )}
         </svg>
@@ -343,7 +281,7 @@ export function PriceChart({ points, dates, height = 84, color = 'auto', valueFm
             borderRadius: 'var(--r-sm)', padding: '4px 8px', whiteSpace: 'nowrap',
             boxShadow: 'var(--shadow-pop)',
           }}>
-            <div style={{ fontSize: 10, color: 'var(--soft)' }}>{dates ? fmtDay(dates[hover]) : ''}</div>
+            <div style={{ fontSize: 'var(--text-xs)', color: 'var(--soft)' }}>{dates ? fmtDay(dates[hover]) : ''}</div>
             <div style={{ fontSize: 12, color: 'var(--ink)', marginTop: 1 }}>{valueFmt(points[hover])}</div>
           </div>
         )}
@@ -358,4 +296,4 @@ export function PriceChart({ points, dates, height = 84, color = 'auto', valueFm
   );
 }
 
-Object.assign(window, { TopBarList, Histogram, Treemap, PriceChart });
+Object.assign(window, { Histogram, Treemap, PriceChart });

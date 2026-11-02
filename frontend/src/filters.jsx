@@ -8,20 +8,63 @@ import { sectorOf } from './sectors.js';
 // The three ledger triggers are ghost pills. Geometry comes from btn() in
 // format.jsx so they match every other control in the app; this wrapper only
 // carries the one thing that is local to them, which is what "active" means here.
-const pillStyle = (active) => btn({ variant: 'ghost', shape: 'pill', active });
+// A trigger whose menu is open is solid, as the style guide and Data tools have it.
+const pillStyle = (active, open = false) => btn({ variant: open ? 'solid' : 'ghost', shape: 'pill', active });
 
 const countBadge = {
   padding: '1px 6px', borderRadius: 'var(--r-pill)',
-  background: 'var(--accent)', color: 'var(--treemap-cell-fg)',
-  fontSize: 10, fontWeight: 600,
+  background: 'var(--accent)', color: 'var(--accent-ink)',
+  fontSize: 'var(--text-xs)', fontWeight: 600,
 };
 
+// Glass comes from .glass-float (index.html); this is only what is local to a popover.
 const popoverStyle = {
-  background: 'var(--surface)', border: '1px solid var(--line)',
-  borderRadius: 'var(--r-lg)', zIndex: 30,
-  boxShadow: 'var(--shadow-menu)',
+  position: 'fixed', zIndex: 'var(--z-dropdown)',
   animation: 'rise .12s ease-out',
 };
+
+// A menu whose trigger sits inside a glass card renders into <body> and is pinned
+// under the trigger from here. Left inside the card it was glass nested in glass, and
+// a backdrop-filter inside another only sees what is inside the outer element: the
+// rows under the menu showed through it sharp instead of frosted. The card is also
+// .enter, whose transform would capture position:fixed.
+//
+// Placed imperatively from the menu's ref, so it is in place before its first paint:
+// its right edge on the trigger's right edge (or left on left, or both edges with
+// 'stretch', for a list as wide as the field it drops from), kept on screen, and
+// never taller than the room below the trigger. Re-placed on scroll and resize, and
+// every frame as well: the sticky top bar condenses as the page scrolls, which moves
+// the trigger with no scroll event of its own.
+export function useAnchoredMenu(open, align = 'right') {
+  const anchorRef = React.useRef(null);
+  const menuRef = React.useRef(null);
+  const place = React.useCallback(() => {
+    const a = anchorRef.current, m = menuRef.current;
+    if (!a || !m) return;
+    const r = a.getBoundingClientRect();
+    if (align === 'stretch') m.style.width = `${r.width}px`;
+    const w = align === 'stretch' ? r.width : m.offsetWidth;
+    const x = align === 'right' ? r.right - w : r.left;
+    m.style.top = `${r.bottom + 8}px`;
+    m.style.left = `${Math.max(8, Math.min(x, window.innerWidth - w - 8))}px`;
+    m.style.maxHeight = `${Math.min(560, window.innerHeight * 0.7, window.innerHeight - r.bottom - 24)}px`;
+  }, [align]);
+  const setMenu = React.useCallback((el) => { menuRef.current = el; if (el) place(); }, [place]);
+  React.useEffect(() => {
+    if (!open) return;
+    let id;
+    const tick = () => { place(); id = requestAnimationFrame(tick); };
+    id = requestAnimationFrame(tick);
+    window.addEventListener('scroll', place, true);
+    window.addEventListener('resize', place);
+    return () => {
+      cancelAnimationFrame(id);
+      window.removeEventListener('scroll', place, true);
+      window.removeEventListener('resize', place);
+    };
+  }, [open, place]);
+  return { anchorRef, menuRef, setMenu };
+}
 
 // Which presentation the filter panel takes. A media query in JS rather than CSS
 // because the two mount at different points in the tree, not just different boxes.
@@ -67,22 +110,17 @@ function useFilters(data, filters, setFilters) {
   return { allCountries, allSectors, allRecs, maxOwn, toggleSet, reset, dirty };
 }
 
-// Trigger plus its panel, anchored together the way the nav menu is: the panel
-// hangs off the button on a large screen, and re-seats as a bottom sheet on a
-// phone. Sections expand inline rather than into popovers — on the sheet a popover
-// would open downward, off the screen.
+// Trigger plus its panel: the panel hangs off the button on a large screen, and
+// re-seats as a bottom sheet on a phone. Sections expand inline rather than into
+// popovers — on the sheet a popover would open downward, off the screen.
 //
-// The dropdown is absolute inside the ledger card, which clips to overflow:hidden.
-// That is safe because .r-tscroll fixes the table viewport at 640px, so the card is
-// always taller than the panel's max-height however few rows are showing.
-//
-// The sheet cannot live there. The card is .enter, whose cardIn keyframes hold a
-// transform, and a transformed ancestor becomes the containing block for
-// position:fixed — the sheet would anchor to the card instead of the viewport. So
-// the phone branch portals to document.body, clear of the transform.
+// Both portal to document.body, clear of the ledger card (see useAnchoredMenu): the
+// sheet because the card's transform would capture its position:fixed, the panel for
+// that and so its glass frosts the page rather than nesting in the card's.
 export function FilterPanel({ data, filters, setFilters, count, open, setOpen, activeCount }) {
   const { allCountries, allSectors, allRecs, maxOwn, toggleSet, reset, dirty } = useFilters(data, filters, setFilters);
   const isPhone = useIsPhone();
+  const { anchorRef, setMenu } = useAnchoredMenu(open && !isPhone);
 
   // Escape closes it — the backdrop must not be the only exit.
   React.useEffect(() => {
@@ -97,10 +135,13 @@ export function FilterPanel({ data, filters, setFilters, count, open, setOpen, a
       {/* Full-screen catcher for outside clicks. Transparent on a large screen —
           a dropdown should not dim the page — and the dimming scrim on a phone. */}
       <div className="r-sheet-back" onClick={() => setOpen(false)}/>
-      <div className="r-sheet" role="dialog" aria-label="Filters">
+      <div className="r-sheet" role="dialog" aria-label="Filters"
+        ref={isPhone ? undefined : setMenu}
+        style={isPhone ? undefined : { position: 'fixed', right: 'auto', marginTop: 0, zIndex: 'var(--z-dropdown)' }}>
             <div className="r-sheet-grip" aria-hidden="true"/>
+            <SheetHead title="Filters" active={activeCount}/>
             <div className="r-sheet-body">
-              <SheetSection label="Country" icon="globe" count={filters.countries.length}>
+              <SheetSection label="Country" count={filters.countries.length}>
                 <OptionList
                   options={allCountries} selected={filters.countries}
                   onToggle={(v) => toggleSet('countries', v)}
@@ -108,7 +149,7 @@ export function FilterPanel({ data, filters, setFilters, count, open, setOpen, a
                   counter={(opt) => data.filter(d => d.country === opt).length}
                 />
               </SheetSection>
-              <SheetSection label="Sector" icon="wave" count={filters.sectors.length}>
+              <SheetSection label="Sector" count={filters.sectors.length}>
                 <OptionList
                   options={allSectors} selected={filters.sectors}
                   onToggle={(v) => toggleSet('sectors', v)}
@@ -116,7 +157,7 @@ export function FilterPanel({ data, filters, setFilters, count, open, setOpen, a
                   counter={(opt) => data.filter(d => sectorOf(d) === opt).length}
                 />
               </SheetSection>
-              <SheetSection label="Analyst rec" icon="sparkle" count={filters.recs.length}>
+              <SheetSection label="Analyst rec" count={filters.recs.length}>
                 <OptionList
                   options={allRecs} selected={filters.recs}
                   onToggle={(v) => toggleSet('recs', v)}
@@ -125,8 +166,9 @@ export function FilterPanel({ data, filters, setFilters, count, open, setOpen, a
                   counter={(opt) => data.filter(d => d.rec === opt).length}
                 />
               </SheetSection>
-              <SheetSection label="Ownership %" icon="filter"
-                count={(filters.ownMin > 0 || filters.ownMax < maxOwn) ? 1 : 0}>
+              <SheetSection label="Ownership %"
+                count={(filters.ownMin > 0 || filters.ownMax < maxOwn) ? 1 : 0}
+                hint={(filters.ownMin > 0 || filters.ownMax < maxOwn) ? `${filters.ownMin.toFixed(1)} to ${filters.ownMax.toFixed(1)}%` : null}>
                 <RangeBody
                   min={0} max={maxOwn} step={0.1}
                   valueMin={filters.ownMin} valueMax={filters.ownMax}
@@ -136,11 +178,10 @@ export function FilterPanel({ data, filters, setFilters, count, open, setOpen, a
               </SheetSection>
 
               <div className="r-sheet-sec">
-                <button className="r-sheet-sec-head"
+                <button className="r-sheet-sec-head" role="switch" aria-checked={filters.pinned}
                   onClick={() => setFilters(f => ({ ...f, pinned: !f.pinned }))}>
-                  <Icon name={filters.pinned ? 'pinned' : 'pin'} size={14}/>
                   <span style={{ flex: 1, textAlign: 'left' }}>Pinned only</span>
-                  <Check on={filters.pinned}/>
+                  <span className="r-switch" aria-hidden="true"/>
                 </button>
               </div>
 
@@ -149,22 +190,22 @@ export function FilterPanel({ data, filters, setFilters, count, open, setOpen, a
               )}
             </div>
             <button className="r-sheet-done" onClick={() => setOpen(false)}>
-              Done · {count.toLocaleString()} companies
+              Show {count.toLocaleString()} {count === 1 ? 'company' : 'companies'}
             </button>
       </div>
     </>
   );
 
   return (
-    <div style={{ position: 'relative' }}>
+    <div ref={anchorRef} style={{ position: 'relative' }}>
       <button className="r-filter-trigger" onClick={() => setOpen(!open)} aria-expanded={open}
-        style={pillStyle(open || activeCount > 0)}>
+        style={pillStyle(activeCount > 0, open)}>
         <Icon name="filter" size={13}/>
         Filters
         {activeCount > 0 && <span className="mono" style={countBadge}>{activeCount}</span>}
-        <Icon name={open ? 'chev-up' : 'chev-down'} size={12} color="var(--soft)"/>
+        <Icon name={open ? 'chev-up' : 'chev-down'} size={12} color={open ? 'currentColor' : 'var(--soft)'}/>
       </button>
-      {open && (isPhone ? createPortal(panel, document.body) : panel)}
+      {open && createPortal(panel, document.body)}
     </div>
   );
 }
@@ -174,68 +215,82 @@ export function FilterPanel({ data, filters, setFilters, count, open, setOpen, a
 // the pill styling and popover chrome — exporting components beats exporting styles.
 
 // Trigger + popover. The outside-click check has to cover BOTH, or clicking the
-// trigger to close closes and immediately reopens.
+// trigger to close closes and immediately reopens; the popover is portalled, so it
+// is checked on its own ref.
 export function ColumnsMenu({ columns, setColumns, open, setOpen }) {
-  const ref = React.useRef(null);
+  const { anchorRef, menuRef, setMenu } = useAnchoredMenu(open);
 
   React.useEffect(() => {
-    const close = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    const close = (e) => {
+      if (anchorRef.current?.contains(e.target) || menuRef.current?.contains(e.target)) return;
+      setOpen(false);
+    };
     if (open) document.addEventListener('mousedown', close);
     return () => document.removeEventListener('mousedown', close);
-  }, [open, setOpen]);
+  }, [open, setOpen, anchorRef, menuRef]);
 
   return (
-    <div ref={ref} style={{ position:'relative' }}>
-      <button onClick={() => setOpen(o => !o)} style={pillStyle(open)}>
+    <div ref={anchorRef} style={{ position:'relative' }}>
+      <button onClick={() => setOpen(o => !o)} aria-expanded={open} style={pillStyle(false, open)}>
         <Icon name="columns" size={13}/>
         <span>Columns</span>
-        <Icon name="chev-down" size={12} color="var(--soft)"/>
+        <Icon name={open ? 'chev-up' : 'chev-down'} size={12} color={open ? 'currentColor' : 'var(--soft)'}/>
       </button>
-      {open && <ColumnsPopover columns={columns} setColumns={setColumns}/>}
+      {open && createPortal(<ColumnsPopover menuRef={setMenu} columns={columns} setColumns={setColumns}/>, document.body)}
     </div>
   );
 }
 
-// The checkbox rows themselves, with no chrome of their own — the sheet's sections
+// One row of an option list: the label, its count, and a check when chosen. Dusk's
+// list rather than a column of checkboxes: the check is the only mark, and only on
+// the rows that are on. Styled in index.html (.r-opt) so the sheet can size it for a
+// thumb.
+export function OptionRow({ on, label, count, onClick, role = 'checkbox' }) {
+  return (
+    <button type="button" className="r-opt" role={role} aria-checked={on} onClick={onClick}>
+      <span className="r-opt-label">{label}</span>
+      {/* Always rendered, empty when there is no count, so the check keeps its column. */}
+      <span className="r-opt-count">{count}</span>
+      <span className="r-opt-check" aria-hidden="true">{on && <Icon name="check" size={14} strokeWidth={2.25}/>}</span>
+    </button>
+  );
+}
+
+// The option rows themselves, with no chrome of their own — the sheet's sections
 // render them inline, and the what-changed page's filter dropdowns reuse them.
 export function OptionList({ options, selected, onToggle, onClear, format = (v) => v, counter }) {
   return (
     <>
-      {options.map(opt => {
-        const sel = selected.includes(opt);
-        return (
-          <button key={opt} onClick={() => onToggle(opt)}
-            style={{
-              display:'grid', gridTemplateColumns:'16px 1fr auto', alignItems:'center', gap: 10,
-              width:'100%', padding:'8px 10px',
-              background: sel ? 'var(--row-hover)' : 'transparent',
-              border:'none', borderRadius: 'var(--r-sm)',
-              textAlign:'left', cursor:'pointer',
-              color:'var(--ink)', fontFamily:'var(--font-display)', fontSize: 13,
-            }}
-            onMouseEnter={e => { if (!sel) e.currentTarget.style.background = 'var(--row-hover)'; }}
-            onMouseLeave={e => { if (!sel) e.currentTarget.style.background = 'transparent'; }}
-          >
-            <Check on={sel}/>
-            <span>{format(opt)}</span>
-            {counter && <span className="mono" style={{ fontSize: 10.5, color:'var(--soft)' }}>{counter(opt)}</span>}
-          </button>
-        );
-      })}
+      {options.map(opt => (
+        <OptionRow key={opt} on={selected.includes(opt)} label={format(opt)}
+          count={counter ? counter(opt) : null} onClick={() => onToggle(opt)}/>
+      ))}
       {selected.length > 0 && (
-        <button onClick={onClear}
-          style={{
-            width:'100%', padding:'8px 10px', marginTop: 4,
-            background:'transparent', border:'none',
-            borderTop: '1px solid var(--line)',
-            color:'var(--soft)', fontFamily:'var(--font-mono)', fontSize: 10.5,
-            cursor:'pointer', textAlign:'left',
-            letterSpacing:'0.08em', textTransform: 'uppercase',
-          }}>
-          Clear selection
-        </button>
+        <button type="button" className="r-opt-clear" onClick={onClear}>Clear selection</button>
       )}
     </>
+  );
+}
+
+// Single choice, the same rows: for a control that picks one of a few (Level,
+// Change). Dusk's tabs are a ruled list with a mark, never boxed segments.
+export function RadioList({ label, options, value, onChange }) {
+  return (
+    <div role="radiogroup" aria-label={label}>
+      {options.map(o => (
+        <OptionRow key={o.key} role="radio" on={o.key === value} label={o.label} onClick={() => onChange(o.key)}/>
+      ))}
+    </div>
+  );
+}
+
+// The sheet's title, shown only where the panel is a sheet (index.html).
+export function SheetHead({ title, active }) {
+  return (
+    <div className="r-sheet-head">
+      <h2>{title}</h2>
+      {active > 0 && <span>{active} active</span>}
+    </div>
   );
 }
 
@@ -262,9 +317,9 @@ function RangeBody({ min, max, step, valueMin, valueMax, onChange, formatValue }
           className="range-input"
         />
       </div>
-      <div className="mono" style={{
+      <div style={{
         display:'flex', justifyContent:'space-between',
-        fontSize: 11, color:'var(--sub)', marginTop: 8
+        fontSize: 'var(--text-xs)', color:'var(--sub)', marginTop: 8, fontVariantNumeric: 'tabular-nums',
       }}>
         <span>{formatValue(valueMin)}</span>
         <span>{formatValue(valueMax)}</span>
@@ -287,16 +342,18 @@ function RangeBody({ min, max, step, valueMin, valueMax, onChange, formatValue }
   );
 }
 
-// One collapsible row of the phone sheet.
-export function SheetSection({ label, icon, count, children }) {
+// One collapsible row of the sheet. It says what is chosen ("All", "2 selected", or
+// the caller's own hint) so the sheet reads without opening every section.
+export function SheetSection({ label, count, hint, children }) {
   const [open, setOpen] = React.useState(false);
   return (
     <div className="r-sheet-sec">
       <button className="r-sheet-sec-head" onClick={() => setOpen(o => !o)} aria-expanded={open}>
-        <Icon name={icon} size={14}/>
         <span style={{ flex: 1, textAlign: 'left' }}>{label}</span>
-        {count > 0 && <span className="mono" style={countBadge}>{count}</span>}
-        <Icon name={open ? 'chev-up' : 'chev-down'} size={12} color="var(--soft)"/>
+        <span className={count > 0 ? 'r-sheet-hint is-on' : 'r-sheet-hint'}>
+          {hint || (count > 0 ? `${count} selected` : 'All')}
+        </span>
+        <Icon name={open ? 'chev-up' : 'chev-down'} size={14} color="var(--soft)"/>
       </button>
       {open && <div className="r-sheet-sec-body">{children}</div>}
     </div>
@@ -313,19 +370,15 @@ export function CompareButton({ compareOn, setCompareOn, compareCount }) {
   );
 }
 
-// The ledger card clips to its rounded corners with overflow:hidden, so this panel
-// has to open on whichever side keeps it inside the card: the trigger sits at the
-// card's right edge on desktop and near its left edge once the header wraps on a
-// phone. index.html owns that flip (.r-colpop) — hence no left/right here.
-// Opening downward is always safe: the table below is 640px of the same card.
-export function ColumnsPopover({ columns, setColumns }) {
+// Placed by useAnchoredMenu through menuRef, which keeps it on screen whichever side
+// of the header the trigger lands on.
+export function ColumnsPopover({ columns, setColumns, menuRef }) {
   return (
-    <div className="r-colpop" style={{
+    <div ref={menuRef} className="glass-float" style={{
       ...popoverStyle,
-      position:'absolute', top: 'calc(100% + 8px)',
-      width: 240, padding: 8, zIndex: 40,
+      width: 240, padding: 8, overflowY: 'auto',
     }}>
-      <div className="eyebrow" style={{ padding: '6px 10px', fontSize: 10 }}>Visible columns</div>
+      <div className="eyebrow" style={{ padding: '6px 10px', fontSize: 'var(--text-xs)' }}>Visible columns</div>
       {Object.entries(columns).map(([key, col]) => (
         <button key={key} onClick={() => setColumns(c => ({ ...c, [key]: { ...c[key], visible: !c[key].visible } }))}
           style={{
@@ -334,7 +387,7 @@ export function ColumnsPopover({ columns, setColumns }) {
             background: 'transparent', border:'none', borderRadius: 'var(--r-sm)',
             textAlign:'left', cursor:'pointer',
             color: col.visible ? 'var(--ink)' : 'var(--soft)',
-            fontFamily:'var(--font-display)', fontSize: 13,
+            fontFamily:'var(--font-body)', fontSize: 13,
           }}>
           <Check on={col.visible}/>
           {col.label}
@@ -353,7 +406,7 @@ function Check({ on }) {
       background: on ? 'var(--accent)' : 'transparent',
       display:'grid', placeItems:'center',
     }}>
-      {on && <Icon name="check" size={10} color="var(--treemap-cell-fg)" strokeWidth={2.5}/>}
+      {on && <Icon name="check" size={10} color="var(--accent-ink)" strokeWidth={2.5}/>}
     </span>
   );
 }

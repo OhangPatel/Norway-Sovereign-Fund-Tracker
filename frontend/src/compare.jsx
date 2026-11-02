@@ -27,12 +27,8 @@ export function CompareDock({ companies, onRemove, onClear, onExpand, onOpenComp
       width: 'min(1140px, 96vw)',
       animation: 'rise .25s cubic-bezier(.22,.61,.36,1)',
     }}>
-      <div style={{
-        background: 'color-mix(in srgb, var(--surface) 92%, transparent)',
-        backdropFilter: 'blur(20px) saturate(140%)',
-        border: '1px solid var(--line)',
-        borderRadius: 'var(--r-lg)',
-        boxShadow: 'var(--shadow-overlay)',
+      <div className="glass-float" style={{
+        boxShadow: 'var(--glass-hi), var(--shadow-overlay)',
         overflow: 'hidden',
       }}>
         <div style={{
@@ -60,15 +56,15 @@ export function CompareDock({ companies, onRemove, onClear, onExpand, onOpenComp
               style={{
                 minWidth: 180,
                 padding: '12px 14px',
-                background: 'var(--bg)',
+                background: 'transparent',
                 border: '1px solid var(--line)',
                 borderRadius: 'var(--r-md)',
                 cursor: 'pointer',
                 position: 'relative',
-                transition: 'background .12s'
+                transition: 'background-color var(--dur-micro) var(--ease-out)'
               }}
               onMouseEnter={e => e.currentTarget.style.background = 'var(--row-hover)'}
-              onMouseLeave={e => e.currentTarget.style.background = 'var(--bg)'}
+              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
             >
               <button onClick={(e) => { e.stopPropagation(); onRemove(c.id); }}
                 aria-label={`Remove ${c.name} from comparison`}
@@ -85,7 +81,7 @@ export function CompareDock({ companies, onRemove, onClear, onExpand, onOpenComp
               >
                 <Icon name="x" size={11}/>
               </button>
-              <div className="mono" style={{ fontSize: 10.5, color:'var(--soft)' }}>{c.ticker}</div>
+              <div className="mono" style={{ fontSize: 'var(--text-xs)', color:'var(--soft)' }}>{c.ticker}</div>
               <div style={{
                 fontSize: 13, color: 'var(--ink)', marginTop: 2, marginBottom: 8,
                 whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis',
@@ -93,8 +89,8 @@ export function CompareDock({ companies, onRemove, onClear, onExpand, onOpenComp
               }}>{c.name}</div>
               <div className="mono" style={{ fontSize: 14, color:'var(--ink)' }}>{fmt.money(c.mvUsd, 'USD', 1)}</div>
               <div style={{ marginTop: 4, display:'flex', justifyContent:'space-between', alignItems:'baseline' }}>
-                <span className="mono" style={{ fontSize: 10.5, color:'var(--soft)' }}>own</span>
-                <span className="mono" style={{ fontSize: 11, color: c.ownership >= 5 ? 'var(--accent-text)' : 'var(--sub)' }}>{fmt.pct(c.ownership, 2)}</span>
+                <span style={{ fontSize: 'var(--text-xs)', color:'var(--soft)' }}>own</span>
+                <span className="mono" style={{ fontSize: 'var(--text-xs)', color: c.ownership >= 5 ? 'var(--accent-text)' : 'var(--sub)' }}>{fmt.pct(c.ownership, 2)}</span>
               </div>
             </div>
           ))}
@@ -107,7 +103,7 @@ export function CompareDock({ companies, onRemove, onClear, onExpand, onOpenComp
 // "Open comparison" and "Clear" name an action on the thing in front of you, so
 // they take the sentence-case treatment rather than the mono label one.
 export function btnStyle(primary) {
-  return btn({ variant: primary ? 'primary' : 'ghost', shape: 'block', tone: 'text' });
+  return btn({ variant: primary ? 'primary' : 'ghost', shape: 'block' });
 }
 
 // Modal: side-by-side comparison
@@ -122,7 +118,7 @@ export function CompareModal({ companies, onClose, allData }) {
 
   const rows = [
     { label: 'Country',         val: c => c.country },
-    { label: 'Sector',          val: c => sectorOf(c, '—') },
+    { label: 'Sector',          val: c => sectorOf(c, 'n/a') },
     { label: 'Current price',   val: c => fmt.price(c.price), mono: true },
     { label: '24h change',      val: c => <Delta value={c.change} fmt="pct"/>, html: true },
     { label: '52-week low',     val: c => fmt.price(c.low52), mono: true },
@@ -132,11 +128,11 @@ export function CompareModal({ companies, onClose, allData }) {
     { label: 'Fund value (NOK)', val: c => fmt.money(c.mvNok, 'NOK', 2), mono: true },
     { label: 'Ownership %',     val: c => fmt.pct(c.ownership, 3), mono: true, hi: c => c.ownership >= 5 },
     { label: 'Voting rights %', val: c => fmt.pct(c.voting, 3), mono: true },
-    { label: 'P/E (trailing)',  val: c => c.pe?.toFixed(2) ?? '—', mono: true, divider: true },
-    { label: 'Forward P/E',     val: c => c.fwdPe?.toFixed(2) ?? '—', mono: true },
-    { label: 'Price / Book',    val: c => c.pb?.toFixed(2) ?? '—', mono: true },
-    { label: 'Dividend yield',  val: c => c.divYield ? c.divYield.toFixed(2) + '%' : '—', mono: true },
-    { label: 'Beta (5y)',       val: c => c.beta?.toFixed(2) ?? '—', mono: true },
+    { label: 'P/E (trailing)',  val: c => c.pe?.toFixed(2) ?? 'n/a', mono: true, divider: true },
+    { label: 'Forward P/E',     val: c => c.fwdPe?.toFixed(2) ?? 'n/a', mono: true },
+    { label: 'Price / Book',    val: c => c.pb?.toFixed(2) ?? 'n/a', mono: true },
+    { label: 'Dividend yield',  val: c => c.divYield ? c.divYield.toFixed(2) + '%' : 'n/a', mono: true },
+    { label: 'Beta (5y)',       val: c => c.beta?.toFixed(2) ?? 'n/a', mono: true },
     { label: 'Market cap',      val: c => fmt.money(c.marketCap, 'USD', 1), mono: true },
     { label: 'Analyst rec',     val: c => <Chip tone={REC_TONE[c.rec] || 'neutral'}>{fmt.rec(c.rec)}</Chip>, html: true },
   ];
@@ -148,12 +144,10 @@ export function CompareModal({ companies, onClose, allData }) {
         background: 'var(--scrim)', backdropFilter: 'var(--scrim-blur)',
         animation:'fadeIn .15s ease'
       }}/>
-      <div role="dialog" aria-modal="true" aria-label="Side-by-side comparison" style={{
+      <div role="dialog" aria-modal="true" aria-label="Side-by-side comparison" className="glass-float" style={{
         position: 'fixed', inset: 'clamp(8px, 3vw, 32px)',
         zIndex: 91,
-        background: 'var(--bg)',
-        border: '1px solid var(--line)',
-        borderRadius: 'var(--r-lg)',
+        boxShadow: 'var(--glass-hi), var(--shadow-overlay)',
         overflow: 'hidden',
         display:'flex', flexDirection:'column',
         animation: 'rise .25s cubic-bezier(.22,.61,.36,1)'
@@ -161,10 +155,9 @@ export function CompareModal({ companies, onClose, allData }) {
         <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap: 12,
           padding: 'clamp(14px, 3vw, 20px) clamp(16px, 3vw, 28px)', borderBottom: '1px solid var(--line)' }}>
           <div>
-            <div className="eyebrow">Side-by-side</div>
-            <div className="display" style={{ fontSize: 26, marginTop: 2, letterSpacing:'-0.01em' }}>
-              Comparing <span className="display-italic" style={{ color:'var(--accent-text)' }}>{companies.length}</span> positions
-            </div>
+            <h2 className="display" style={{ fontSize: 'var(--text-2xl)', margin: 0 }}>
+              Comparing {companies.length} positions side by side
+            </h2>
           </div>
           <IconBtn onClick={onClose} title="Close"><Icon name="x" size={14}/></IconBtn>
         </div>
@@ -183,7 +176,7 @@ export function CompareModal({ companies, onClose, allData }) {
               <div key={c.id} style={{ padding: '0 14px', borderLeft: '1px solid var(--line)' }}>
                 <Tag>{c.ticker}</Tag>
                 <div className="display" style={{
-                  fontSize: 20, lineHeight: 1.1, marginTop: 8, letterSpacing:'-0.01em',
+                  fontSize: 20, lineHeight: 1.1, marginTop: 8,
                 }}>{c.name}</div>
               </div>
             ))}
@@ -197,7 +190,7 @@ export function CompareModal({ companies, onClose, allData }) {
                 padding: '12px 0',
                 borderTop: row.divider ? '1px solid var(--line)' : '1px solid var(--line)',
               }}>
-                <div className="mono r-cmp-label" style={{ fontSize: 10.5, color:'var(--soft)', letterSpacing:'0.06em', textTransform:'uppercase', paddingRight: 10 }}>
+                <div className="r-cmp-label" style={{ fontSize: 'var(--text-xs)', color:'var(--soft)', paddingRight: 10 }}>
                   {row.label}
                 </div>
                 {companies.map(c => {

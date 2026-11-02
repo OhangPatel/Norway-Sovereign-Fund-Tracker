@@ -64,14 +64,14 @@ export function ChatWidget() {
       .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
       .then(function (res) {
         if (!res.ok) {
-          setMessages(function (m) { return m.concat([{ role: 'model', text: '⚠️ ' + (res.d.error || 'Something went wrong.') }]); });
+          setMessages(function (m) { return m.concat([{ role: 'model', error: true, text: res.d.error || 'Something went wrong.' }]); });
           return;
         }
         if (typeof res.d.requests_remaining_today === 'number') setRemaining(res.d.requests_remaining_today);
         setMessages(function (m) { return m.concat([{ role: 'model', text: res.d.reply }]); });
       })
       .catch(function () {
-        setMessages(function (m) { return m.concat([{ role: 'model', text: '⚠️ Cannot reach the assistant right now. Please try again later.' }]); });
+        setMessages(function (m) { return m.concat([{ role: 'model', error: true, text: 'Cannot reach the assistant right now. Please try again later.' }]); });
       })
       .finally(function () { setBusy(false); });
   }
@@ -97,18 +97,18 @@ export function ChatWidget() {
         style={{
           position: 'fixed', right: 24, bottom: 24, zIndex: 1000,
           width: 54, height: 54, borderRadius: 'var(--r-pill)',
-          // --treemap-cell-fg is the app's "dark ink that reads on a lime fill" token,
+          // --accent-ink is the app's "ink that reads on an accent fill" token,
           // the same one the icon inside uses; --feature-ink is the feature CARD's text
           // colour and is near-white on the light theme, and it carried a hardcoded
-          // #08080A fallback the style guide forbids in components. The border was a
-          // --line grey hairline drawn on lime, which only ever read as a smudge.
-          background: 'var(--accent)', color: 'var(--treemap-cell-fg)',
+          // near-black fallback that belonged in the tokens. The border was a --line
+          // grey hairline drawn on the accent, which only ever read as a smudge.
+          background: 'var(--accent)', color: 'var(--accent-ink)',
           border: 'none', cursor: 'pointer',
           display: 'grid', placeItems: 'center',
           boxShadow: 'var(--shadow-pop)',
         }}
       >
-        <Icon name="sparkle" size={22} color="var(--treemap-cell-fg)" />
+        <Icon name="sparkle" size={22} color="var(--accent-ink)" />
       </button>
     );
   }
@@ -116,13 +116,13 @@ export function ChatWidget() {
   // ── Open panel ───────────────────────────────────────────────────────────
   return (
     <div
-      className="card"
+      className="glass-float"
       style={{
         position: 'fixed', right: 24, bottom: 24, zIndex: 1000,
         width: 'min(380px, calc(100vw - 48px))',
         height: 'min(620px, calc(100vh - 48px))',
         display: 'flex', flexDirection: 'column', overflow: 'hidden',
-        boxShadow: 'var(--shadow-menu)', animation: 'rise .2s ease-out',
+        animation: 'rise var(--dur-short) var(--ease-out)',
       }}
     >
       {/* Header */}
@@ -131,11 +131,11 @@ export function ChatWidget() {
         padding: '13px 14px', borderBottom: '1px solid var(--line)',
       }}>
         <span style={{ width: 30, height: 30, borderRadius: 'var(--r-sm)', display: 'grid', placeItems: 'center', background: 'var(--accent)' }}>
-          <Icon name="sparkle" size={16} color="var(--treemap-cell-fg)" />
+          <Icon name="sparkle" size={16} color="var(--accent-ink)" />
         </span>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div className="mono" style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--ink)' }}>Assistant</div>
-          <div className="mono" style={{ fontSize: 10, color: 'var(--soft)' }}>{statusText}</div>
+          <div style={{ fontSize: 'var(--text-sm)', fontWeight: 600, color: 'var(--ink)' }}>Assistant</div>
+          <div style={{ fontSize: 'var(--text-xs)', color: 'var(--soft)' }}>{statusText}</div>
         </div>
         <IconButton title="Close" onClick={function () { setOpen(false); }}>
           <Icon name="x" size={16} />
@@ -144,7 +144,7 @@ export function ChatWidget() {
 
       {/* Unavailable / offline notice */}
       {(offline || available === false) && (
-        <div className="mono" style={{ padding: '10px 14px', borderBottom: '1px solid var(--line)', background: 'var(--row-hover)', fontSize: 10.5, color: 'var(--soft)', lineHeight: 1.5 }}>
+        <div role="status" style={{ padding: '10px 14px', borderBottom: '1px solid var(--line)', background: 'var(--row-hover)', fontSize: 'var(--text-xs)', color: 'var(--soft)', lineHeight: 1.5 }}>
           {offline
             ? 'Cannot reach the assistant service right now. Please try again later.'
             : "The assistant is temporarily unavailable. Please try again later."}
@@ -162,8 +162,8 @@ export function ChatWidget() {
                 borderBottomRightRadius: isUser ? 4 : 13,
                 borderBottomLeftRadius: isUser ? 13 : 4,
                 background: isUser ? 'var(--accent)' : 'var(--row-hover)',
-                color: isUser ? 'var(--treemap-cell-fg)' : 'var(--ink)',
-                border: isUser ? 'none' : '1px solid var(--line)',
+                color: isUser ? 'var(--accent-ink)' : m.error ? 'var(--bear-text)' : 'var(--ink)',
+                border: isUser ? 'none' : `1px solid ${m.error ? 'color-mix(in srgb, var(--bear) 45%, transparent)' : 'var(--line)'}`,
                 fontSize: 13, lineHeight: 1.5, whiteSpace: 'pre-wrap', wordBreak: 'break-word',
               }}>{m.text}</div>
             </div>
@@ -171,7 +171,7 @@ export function ChatWidget() {
         })}
         {busy && (
           <div style={{ alignSelf: 'flex-start' }}>
-            <div className="mono" style={{ padding: '9px 12px', borderRadius: 'var(--r-md)', background: 'var(--row-hover)', border: '1px solid var(--line)', color: 'var(--soft)', fontSize: 12 }}>thinking…</div>
+            <div role="status" style={{ padding: '9px 12px', borderRadius: 'var(--r-md)', background: 'var(--row-hover)', border: '1px solid var(--line)', color: 'var(--soft)', fontSize: 'var(--text-xs)' }}>thinking…</div>
           </div>
         )}
       </div>
@@ -187,23 +187,23 @@ export function ChatWidget() {
           disabled={busy || !available}
           style={{
             flex: 1, resize: 'none', maxHeight: 96, padding: '9px 11px', borderRadius: 'var(--r-md)',
-            border: '1px solid var(--line)', background: 'var(--surface)', color: 'var(--ink)',
-            fontFamily: 'var(--font-display)', fontSize: 13, lineHeight: 1.4,
+            border: '1px solid var(--field-line)', background: 'var(--surface)', color: 'var(--ink)',
+            fontFamily: 'var(--font-body)', fontSize: 13, lineHeight: 1.4,
           }}
         />
         <button onClick={send} disabled={busy || !input.trim() || !available} title="Send" style={{
           ...primaryBtn, width: 40, height: 40, padding: 0, display: 'grid', placeItems: 'center',
-          opacity: busy || !input.trim() || !available ? 0.5 : 1, cursor: busy || !input.trim() || !available ? 'not-allowed' : 'pointer',
+          opacity: busy || !input.trim() || !available ? 0.55 : 1, cursor: busy || !input.trim() || !available ? 'not-allowed' : 'pointer',
         }}>
-          <Icon name="arrow-up" size={17} color="var(--treemap-cell-fg)" />
+          <Icon name="arrow-up" size={17} color="var(--accent-ink)" />
         </button>
       </div>
 
       {/* The assistant is also told to append a disclaimer to any answer that ranks or
           allocates, but a model can drop an instruction. This line cannot, so it is the
           one that actually guarantees the notice is on screen. */}
-      <div className="mono" style={{
-        padding: '0 12px 10px', fontSize: 10, lineHeight: 1.4, color: 'var(--soft)', textAlign: 'center',
+      <div style={{
+        padding: '0 12px 10px', fontSize: 'var(--text-xs)', lineHeight: 1.4, color: 'var(--soft)', textAlign: 'center',
       }}>
         Not financial advice · figures are a historical snapshot of NBIM&apos;s disclosed holdings
         {/* The assistant reads data.json, which is always the newest period. Someone
@@ -216,8 +216,8 @@ export function ChatWidget() {
 }
 
 var primaryBtn = {
-  background: 'var(--accent)', color: 'var(--treemap-cell-fg)', border: 'none', borderRadius: 'var(--r-md)',
-  padding: '8px 14px', fontFamily: 'var(--font-mono)', fontSize: 12, fontWeight: 600,
+  background: 'var(--accent)', color: 'var(--accent-ink)', border: 'none', borderRadius: 'var(--r-md)',
+  padding: '8px 14px', fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 600,
   cursor: 'pointer', flexShrink: 0,
 };
 

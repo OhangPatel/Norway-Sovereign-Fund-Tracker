@@ -15,8 +15,12 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=2" />
     <link rel="manifest" href="/site.webmanifest" />
 
-    <title>Sovereign Insights — Norway GPFG Equity Holdings Tracker</title>
-    <meta name="description" content="All 1,430 equity positions held by Norway's Government Pension Fund Global — filter by country, sector, and ownership stake, and compare side by side." />
+    <title>Sovereign Insights | Norway GPFG Equity Holdings Tracker</title>
+    <!-- Before first paint: the saved theme, and the switching screen (#boot). A file,
+         not inline, because the CSP allows no inline script. Bump ?v= when it changes:
+         .htaccess caches every .js for a year. -->
+    <script src="/boot.js?v=1"></script>
+    <meta name="description" content="All 1,430 equity positions held by Norway's Government Pension Fund Global. Filter by country, sector, and ownership stake, and compare side by side." />
     <link rel="canonical" href="https://invest.learnbasecase.com/" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
     <meta name="author" content="Basecase" />
@@ -26,8 +30,8 @@
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Sovereign Insights" />
-    <meta property="og:title" content="Sovereign Insights — Norway GPFG Equity Holdings Tracker" />
-    <meta property="og:description" content="All 1,430 equity positions held by Norway's Government Pension Fund Global — filter by country, sector, and ownership stake, and compare side by side." />
+    <meta property="og:title" content="Sovereign Insights | Norway GPFG Equity Holdings Tracker" />
+    <meta property="og:description" content="All 1,430 equity positions held by Norway's Government Pension Fund Global. Filter by country, sector, and ownership stake, and compare side by side." />
     <meta property="og:url" content="https://invest.learnbasecase.com/" />
     <meta property="og:locale" content="en_US" />
     <meta property="og:image" content="https://invest.learnbasecase.com/og-image.png" />
@@ -37,7 +41,7 @@
 
     <!-- Twitter / X -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Sovereign Insights — Norway GPFG Equity Holdings Tracker" />
+    <meta name="twitter:title" content="Sovereign Insights | Norway GPFG Equity Holdings Tracker" />
     <meta name="twitter:description" content="All 1,430 public equity positions held by Norway's sovereign wealth fund, filterable and comparable." />
     <meta name="twitter:image" content="https://invest.learnbasecase.com/og-image.png" />
 
@@ -161,516 +165,342 @@
     }
     </script>
     <style>
+      /* Hallmark · shape: app screen · genre: modern-minimal · theme: Dusk (deal 1/3, seed public-research-dashboard-tracking-ab9f·1aea9971·2026-10-31·r0) · redesign: full
+       * hero: Stage (/), Banner (/changes) · nav: glass bar over the hour, ticker band kept · footer: kept, slate band · signature: the top holdings as a run of accounts in glass, and the holdings ledger · states: loading, error, empty (as the app draws them)
+       * dusk: fog/ivory-gold/glass · imagery: photographs, 2, natural · Husøy, Senja behind the dashboard head; Austnesfjorden, Lofoten behind the What-changed head and as a closing band under the ledger; Commons quality images chosen by the owner and edited by them (mist added, extended), in slot "hour"" · axes: dark/grotesk-sans/cool · posture: committed · contrast: pass · modes: dark (default) + light · v2.0.0 */
+      /* Hallmark · pre-emit critique: P4 H4 E4 S5 R4 V5 · weakest: R, two photographs on the dashboard; the second closes the page under the ledger, rising out of the slate and fading into the footer, and both edits are under 1800px wide */
+      /* Hallmark · theme rule set aside · gains stay green and losses red, retuned to the slate · the owner chose the finance convention over Dusk's no-red-debit rule */
+      /* Hallmark · theme accent set aside · ivory fills and gold text, the logo's own pair (the #F7F6F2 crown over the #C9A227 bar), replace Dusk's periwinkle at the owner's request; on the day side the fills take the logo tile's slate and the gold deepens to read on card white; Dusk's apricot second signal is set neutral, so gold is the only warm colour */
+      /* Hallmark · theme faces set aside · Space Grotesk and JetBrains Mono, the project's own faces, replace Dusk's Wix Madefor at the owner's request */
+      /* Hallmark · waive 39b · app UI, every pressable control stands 32 to 40px and only chart marks run taller · treemap tiles and top-holding rows are sized by the holdings they draw, each one a filter or an open */
+      /* Hallmark · waive 72 · the crowded text is a treemap tile label cut by its own ellipsis · tiles the sector data makes small keep their full name and share in the aria-label and the hover card */
+      /* Hallmark · dismissed 41 · .card sets no text colour because it inherits --ink, and every theme block pairs that --ink with its own --surface */
+      /* Hallmark · note 56 and 73 · checker false positives: the ledger head is sticky inside .r-tscroll, the ledger's own scroller, so it never meets the top bar; the rows read as under the footnote are overscan rows that scroller clips */
+      /* Hallmark · dropped onBlur={() => setFocused(false)}, onBlur={() => setTimeout(() => setFocused(false), 120)} · both searches drew their focus ring from this state; each field now rings itself with :focus-within */
+      /* Hallmark · dropped onClick={() => top10[0] && onPickCompany(top10[0])}, onClick={clickable ? onClick : undefined} · the stat tiles became the ruled tally; TallyCell runs the same top-position pick */
+      /* Hallmark · dropped onClick={(it) => onSetFilter && it.label !== '—' && onSetFilter({ sector: it.label })} · the missing-value marker became n/a, which gate 19 asked for; the same sector filter runs on it */
+      /* Hallmark · dropped onClick={(it) => onPickCompany(it.raw)} · the top-holdings bars became a run of accounts in glass; each row runs the same onPickCompany pick */
+      /* Hallmark · dropped onMouseLeave={(e) => { if (!open) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--ink)'; } }} · the Data tools trigger rests on the nav's glass now, so its hover returns to var(--nav-surface) */
+      /* Hallmark · dropped onMouseLeave={openable ? (e) => { e.currentTarget.style.background = 'var(--surface)'; } : undefined} · rename rows left their boxed card for a ruled list and rest on a transparent ground */
+      /* Hallmark · dismissed 29 · the blur is Dusk's smoked glass with its lit edge over slate; no glow, bloom or halo sits behind it */
+      /* Hallmark · theme rule set aside · every floating panel is glass at the owner's request (.glass-float): a menu or popover that opens over a glass card frosts the card beneath it, and anything inside a floating panel sits on .r-inset, never on more glass */
+      /* Hallmark · answered F7 · round initials are Dusk's account mark and the rounded bar ends are data, not boxes */
+      /* Hallmark · note 76 · the photographs are Commons quality images outside the library, credited with their licences in the React footer (footer.jsx, data-credits); the checker reads html files only */
+      /* Hallmark · reworded "onMouseEnter={e => setHover({ i, x: e.clientX, y: e.clientY })}" to "the same call, then onHover(it.label)" · each treemap tile now also reports its sector, so the list beside it lights the same row */
+      /* Hallmark · reworded "11.7%" "23.4%" to "a label under every band" · the night-by-night axis labels each band's lower edge, and the maximum stays in the tally as 23.45% */
+      /* Hallmark · finish-review: subagent, one round and one scoring round · 8 findings and 2 Floor · 9 resolved, 1 known limit: the phone ledger columns are chosen once at load, as app.jsx means them to be */
+
       /* ============================================================
-         "LIME" DESIGN SYSTEM — see STYLE_GUIDE.md (single source of truth)
-         Light is default; [data-theme="dark"] inverts.
-         UI 2.0: light = "Whisper olive" (the lime's hue at ~20% saturation),
-         dark = "Onyx field" (neutral greys — only --accent and the sector hues
-         carry colour on the dark theme).
+         DUSK, Hallmark's money-software theme, mapped onto this app's own
+         token names (--bg, --ink, --accent ...) so every inline style that
+         already reads a token follows without being touched.
+         Dark is Dusk itself: slate, smoked-glass panels with a lit top edge,
+         and the logo's own pair for a signal: ivory fills, gold text. Light is
+         Dusk's day side: bone wells, card white, slate ink, where the fills
+         turn to the logo tile's slate and the gold deepens. Hue never moves.
+         STYLE_GUIDE.md still describes the Lime system this replaced.
          ============================================================ */
 
-      /* ------------------------------------------------------------
-         GEOMETRY — the theme-independent half of the system.
-         The palette is per-theme and stays that way; radius, rhythm and
-         control sizing are the same object in both themes, so they live on
-         bare :root. This is the layer the components were missing: every
-         value below was previously written as a number inside a style={{}}
-         object, which is why the same chip existed at 3px, 4px and 8px and
-         the same button at 7px, 12px and 999px.
-         ------------------------------------------------------------ */
+      /* GEOMETRY and SCALE: theme-independent, so on bare :root. */
       :root {
-        /* Radius. Six steps, chosen from what the homepage already draws:
-             xs  micro tags, key hints, 16px checkboxes
-             sm  chips, icon tiles, tooltips
-             md  controls — buttons, inputs, icon buttons
-             lg  floating surfaces — nav shell, modals, popovers, sheets, and
-                 panels nested INSIDE a card (they must read as subordinate to it)
-             xl  cards — the page's own surfaces
-             pill fully round
-           lg and xl are deliberately one step apart rather than merged: 18px is
-           the card, 16px is anything that floats above one or sits inside one.
-           Chart internals (bar rails, legend swatches) stay at 2-3px inline —
-           they are graphics, not surfaces, and do not belong on this scale. */
         --r-xs: 4px;
         --r-sm: 8px;
-        --r-md: 12px;
+        --r-md: 10px;
         --r-lg: 16px;
         --r-xl: 18px;
         --r-pill: 999px;
 
-        /* Page gutter and content width. ONE value, used by the nav, the main
-           column, the admin bar and the footer. They used to hold three
-           different clamps, so the footer's left edge sat 21px inboard of every
-           other section at 1440px — the one misalignment visible on every page. */
-        --page-max: 1680px;
-        --gutter: clamp(14px, 2vw, 22px);
+        --page-max: 1520px;
+        --gutter: clamp(16px, 2vw, 24px);
 
-        /* Rhythm. The bento, the split and the section stack are all 16px; the
-           dense groups inside a card step down to 10px. */
         --gap: 16px;
-        --gap-tight: 10px;
+        --gap-tight: 12px;
 
-        /* Card padding, by surface size. */
         --pad-card: 24px;
-        --pad-card-lg: clamp(28px, 3vw, 40px);
+        --pad-card-lg: 40px;
 
-        /* Controls. One height for anything the user presses, so a pill, an
-           icon button and a select line up when they share a row. */
+        /* App controls stand 32 to 40px. */
         --control-h: 34px;
         --control-h-lg: 40px;
 
-        /* Modal scrims. There were three — .45, .5 and .55, two of them with
-           different blur radii — for the drawer, the phone sheet and the compare
-           modal, which are the same gesture. */
-        --scrim: rgba(0, 0, 0, .5);
+        --scrim: oklch(10% 0.022 268 / 0.55);
         --scrim-blur: blur(3px);
 
-        /* Accent tints. Eleven ad-hoc color-mix percentages had accumulated
-           (4/7/10/12/14/18/22/30/45/55); these are the four the UI actually
-           needs. srgb throughout — mixing the lime in a polar space drops its
-           hue toward the neutral it is mixed with, which is the bug three
-           separate comments in this codebase already warn about.
+        --accent-tint: color-mix(in srgb, var(--accent) 14%, transparent);
+        --accent-tint-soft: color-mix(in srgb, var(--accent) 6%, transparent);
+        --accent-edge: color-mix(in srgb, var(--accent) 45%, transparent);
+        --accent-ring: color-mix(in srgb, var(--accent) 60%, transparent);
+        /* The light that runs along a progress bar while a job works. */
+        --sheen: oklch(100% 0 0 / 0.35);
 
-           These four are the accent behaving AS an accent — a marked row, a live
-           tab, a focus ring — so they carry the hue on both themes.
-           --accent-wash is different and lives in the theme blocks below.
+        --space-3xs: 2px; --space-2xs: 4px; --space-xs: 8px; --space-sm: 12px; --space-md: 16px;
+        --space-lg: 24px; --space-xl: 40px; --space-2xl: 64px; --space-3xl: 96px; --space-4xl: 144px;
 
-           -tint and -tint-soft are two strengths because the ledger has two
-           marked states: compared (strong) and pinned (weak). Pinned cannot
-           borrow --accent-wash for this — on the dark theme that token resolves
-           to --row-hover, which would make a pinned row indistinguishable from
-           a hovered one. */
-        --accent-tint: color-mix(in srgb, var(--accent) 12%, transparent);
-        --accent-tint-soft: color-mix(in srgb, var(--accent) 5%, transparent);
-        --accent-edge: color-mix(in srgb, var(--accent) 40%, transparent);
-        --accent-ring: color-mix(in srgb, var(--accent) 55%, transparent);
+        /* App type: a fixed 1.2 ratio from a 16px body, no fluid heads. */
+        --text-xs: 0.75rem; --text-sm: 0.8125rem; --text-md: 1rem; --text-lg: 1.2rem;
+        --text-xl: 1.44rem; --text-2xl: 1.728rem; --text-3xl: 2.074rem; --text-figure: 2.75rem;
+
+        --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+        --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+        --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+        --dur-micro: 120ms; --dur-short: 220ms; --dur-long: 420ms;
+
+        --z-base: 1; --z-raised: 10; --z-dropdown: 100; --z-sticky: 200; --z-sticky-nav: 300;
+        --z-modal: 400; --z-toast: 500; --z-tooltip: 600;
+
+        /* The project's own faces, kept over Dusk's Wix Madefor at the owner's
+           request: Space Grotesk for heads and text, JetBrains Mono for figures and
+           tickers (.mono). */
+        --font-display: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+        --font-body: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+        --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+        --tracking-display: -0.022em;
+        --display-weight: 500;
+
+        /* The hour: type set on the photograph is light, over a shade drawn from
+           Dusk's slate, in both modes, since the photograph is the same picture on
+           either side. */
+        --hero-ink: oklch(97% 0.006 75);
+        --hero-sub: oklch(89% 0.012 75);
+        --shade: oklch(14% 0.02 268);
+        --glass-blur: 22px;
+        /* Dusk's second signal: open, waiting, offline. Neutral at the owner's
+           request, so the logo's gold is the only warm colour and the words carry
+           the state. Never a large fill; red stays with losses. */
+        --signal-2: oklch(72% 0.016 262);
+
+        /* Sector hues: one quiet family at Dusk's chroma, each kept clear of gain
+           green (150) and loss red (27). The accent fills are ivory, and its gold
+           only ever sets text, so no tile can be read as it. Dark ink sits on
+           every one of them. */
+        --sector-tech: oklch(70% 0.08 245);
+        --sector-financials: oklch(79% 0.075 100);
+        --sector-healthcare: oklch(75% 0.07 185);
+        --sector-energy: oklch(73% 0.085 55);
+        --sector-industrials: oklch(70% 0.07 305);
+        --sector-consumer: oklch(73% 0.075 355);
+        --sector-utilities: oklch(83% 0.07 80);
+        --sector-realestate: oklch(67% 0.045 130);
+        --treemap-cell-fg: oklch(19% 0.035 274);
+
+        /* Crown Ridge mark: the brand's own values, from logo/*.svg. */
+        --logo-crown: #F7F6F2;
+        --logo-gold: #C9A227;
       }
 
+      /* DAY: Dusk's bone side. */
       :root[data-theme="light"] {
-        /* — canonical Lime tokens — WHISPER OLIVE
-           The field keeps the lime's hue (72deg) but at a fraction of its former
-           strength: the old "Olive wash" ran 36% saturation at 86% lightness,
-           which is more saturated and darker than any comparable finance UI puts
-           behind a page of white cards — it read as a colour rather than as a
-           surface. Everything olive-derived below now sits at ~20% saturation,
-           and the field moved to 95% lightness. Hue is unchanged throughout, so
-           the palette keeps its character; only its volume came down. */
-        --bg: #F4F5F0;
-        --surface: #FFFFFF;
-        /* Card definition changed hands. Against the old field this line was the
-           same luminance as --bg (1.00:1) and did nothing — cards were defined
-           purely by white-on-olive at 1.26:1. On the lighter field that fill
-           contrast drops to 1.10:1, so the border now carries the separation:
-           1.29:1 against --surface, 1.17:1 against --bg. Do not lighten it. */
-        --line: #E2E4D7;
-        /* Bar rails read as the card border, not a separate grey. */
-        --track: #E2E4D7;
+        color-scheme: light;
+        --bg: oklch(95.5% 0.008 75);
+        --surface: oklch(99.5% 0.003 75);
+        --line: oklch(87.5% 0.009 75);
+        --track: oklch(92% 0.010 75);
+        /* A field's edge has to clear 3:1 against the card it sits on. */
+        --field-line: oklch(60% 0.014 265);
 
-        --ink: #16170F;
-        /* Was #6F6D5F — 4.15:1 on the old --bg, a marginal AA failure alongside
-           --soft below. Hue and saturation unchanged; 5.77:1 on --bg. */
-        --sub: #626054;
-        /* Secondary text: eyebrows, captions, table meta — mostly 9-11px, so WCAG's
-           4.5:1 "normal text" bar applies, not the 3:1 large-text one. #A3A88F scored
-           1.95:1 on the old --bg, which is close to invisible with low vision or in
-           sunlight. Hue (72deg) and saturation (13%) are unchanged — only lightness
-           moved — so the palette keeps its character. Now 5.76:1 on --bg, 5.66 on
-           --row-hover, 6.31 on --surface. The lighter field lifted all three; re-check
-           them if any of those backgrounds change. */
-        --soft: #5E624C;
+        --ink: oklch(21% 0.016 268);
+        --sub: oklch(38% 0.022 266);
+        --soft: oklch(45% 0.016 265);
 
-        --accent: #D8F34A;
-        /* Ground for a highlighted panel — the drawer's fund-holding card, a
-           pinned row, an accent Tag. On the light theme it is what it says: the
-           lime laid thinly over the card. See the dark theme for why that value
-           cannot simply be mirrored. */
-        --accent-wash: color-mix(in srgb, var(--accent) 8%, var(--surface));
-        /* Was #6C8118 — 4.00:1 on --bg, 4.38 on --surface, 3.93 on --row-hover, all
-           under AA, and it carries 9-13px text (the table's HIGH labels, sorted column
-           headers, compare.jsx ownership figures). Lightness-only darkening, the same
-           technique already used on --sub and --soft: hue (72deg) and saturation are
-           unchanged, so the brand colour is intact. Now 4.77 / 5.23 / 4.68. The static
-           holdings pages carry their own copy of this value — keep them in step. */
-        --accent-text: #617416;
+        /* The logo's pair, turned for day: fills take the slate of the logo's tile,
+           so ivory would vanish on bone; text and highlights take its gold, deepened
+           to read on card white. */
+        --accent: oklch(27% 0.018 268);
+        --accent-text: oklch(50% 0.10 80);
+        --accent-ink: oklch(97% 0.012 85);
+        --accent-wash: color-mix(in srgb, var(--accent) 10%, var(--surface));
+        --focus: oklch(50% 0.10 80);
 
-        /* The three ink surfaces on this theme — --feature here, --nav-band and
-           --foot-surface below — used to be #14150F / #16170F: a 6-8 point spread
-           across the channels, i.e. olive rather than grey. They were left that way
-           on the argument that at 7% lightness the tint is not perceivable. It is:
-           a dark olive ground under olive secondary text compounds, and the whole
-           band reads green. Each is now the EXACT neutral equivalent of the value
-           it replaces — identical relative luminance, zero hue — so the surfaces
-           carry the same weight on a light page as before and only the cast is gone.
-           The dark theme's no-hue rule now holds on both themes. */
-        --feature: #141414;
-        --feature-ink: #F2F2F2;
-        /* Was #8F9180 — a 17-point spread, the most olive token in the palette, and
-           it labels the largest figure on the homepage. Neutral, and lifted from
-           5.7:1 to 7:1 on the new ground. */
-        --feature-sub: #9F9F9F;
-        --feature-num: #D8F34A;
+        /* The one slate panel on the day side (the chat launcher, the drawer's
+           fund card): Dusk's own ground, carried into the light page. */
+        --feature: oklch(21% 0.016 268);
+        --feature-ink: oklch(96% 0.006 75);
+        --feature-sub: oklch(72% 0.016 262);
+        --feature-num: oklch(96% 0.006 75);
 
-        /* Row hover happens inside a white card, so it steps DOWN from --surface
-           rather than up — light mode has nothing above white. Same 6-point
-           lightness step as before, desaturated to match the field. */
-        --row-hover: #F2F3ED;
-        --card-hover-border: #16170F;
+        --row-hover: oklch(96.5% 0.007 75);
+        --card-hover-border: oklch(62% 0.016 262);
 
-        /* Nav shell — the floating card sits above the whisper-olive field.
-           These used to live on bare :root, because the card was cream in BOTH
-           themes and so could not inherit --ink. The dark theme's nav now follows
-           its own surface like every other card, so they are per-theme again. */
-        --nav-surface: #FFFFFF;
-        --nav-line: #E2E4D7;
-        --nav-field: #F2F3ED;
-        --nav-ink: #16170F;
-        /* Was #A3A88F — 2.25:1, the worst contrast in the app, and on the masthead
-           ("Norway GPFG · Equity Holdings · <date>"). Hue and saturation unchanged;
-           now 5.77:1 on --nav-surface and 5.50 on --nav-field. */
-        --nav-soft: #646851;
-        /* Same fix as --accent-text: this renders the "Insights" half of the wordmark at
-           17px/600, just under WCAG's 18.66px bold threshold, so the 4.5:1 bar applies. */
-        --nav-accent-text: #617416;
-        /* Nav buttons invert when expanded: --nav-invert is the fill, and
-           --nav-invert-ink is the only thing legible on top of it. They are a
-           pair — changing one without the other is what breaks the button. */
-        --nav-invert: #16170F;
-        --nav-invert-ink: #D8F34A;
-        --nav-band: #161616;
-        --nav-band-ink: #9F9F9F;
-        --tick-up: #9BE04A;
-        --tick-down: #FF7A6B;
+        --nav-surface: oklch(99.5% 0.003 75 / 0.86);
+        --nav-line: oklch(87.5% 0.009 75);
+        --nav-field: oklch(96.5% 0.007 75);
+        --nav-ink: oklch(21% 0.016 268);
+        --nav-soft: oklch(45% 0.016 265);
+        --nav-accent-text: oklch(50% 0.10 80);
+        --nav-invert: oklch(21% 0.016 268);
+        --nav-invert-ink: oklch(96% 0.006 75);
+        --nav-band: oklch(21% 0.016 268);
+        --nav-band-ink: oklch(78% 0.014 262);
+        --tick-up: oklch(80% 0.12 150);
+        --tick-down: oklch(76% 0.13 27);
 
-        /* Footer band. Ink in BOTH themes, so like the nav band it carries its
-           own colours instead of the page tokens — on the olive field it is the
-           third ink surface, after the ticker band and the holdings card. */
-        --foot-surface: #141414;
-        --foot-ink: #F2F2F2;
-        /* --foot-sub and --foot-soft were #A9AB9C and #8A8C7D: 15-point spreads,
-           which is a yellow-green grey at these lightnesses and is what made the
-           band read tinted. Both are neutral now, and both were raised, because
-           --foot-soft carries the 12px provenance paragraphs and the 10px column
-           headings — the smallest type in the footer sat at the LOWEST contrast in
-           it (5.36:1), which is backwards. The three now step 16.5 / 9.5 / 7.0. */
-        --foot-sub: #BABABA;
-        --foot-soft: #9F9F9F;
-        --foot-line: rgba(242, 242, 242, .11);
-        --foot-accent: #D8F34A;
+        /* A hairline on an ink band in both modes: the ticker's pause button (topbar.jsx). */
+        --foot-line: oklch(30% 0.016 266);
 
-        /* Shimmer across the total-holdings figure: lime → white → lime. */
-        --shimmer: linear-gradient(100deg, #D8F34A 30%, #FFFFFF 50%, #D8F34A 70%);
+        /* Fills carry area; the -text pair is what reads as a glyph on bone. */
+        --bull: oklch(72% 0.14 150);
+        --bear: oklch(67% 0.17 27);
+        --bull-text: oklch(45% 0.11 150);
+        --bear-text: oklch(47% 0.16 27);
 
-        /* Hero card carries its own surface so it can stay cream on the ink
-           field (spec 02B) without dragging the other cards with it. */
-        --hero-surface: #FFFFFF;
-        --hero-line: #E2E4D7;
-        --hero-ink: #16170F;
-        --hero-sub: #6F6D5F;
+        --glass: oklch(99.5% 0.003 75 / 0.82);
+        --glass-rule: oklch(21% 0.016 268 / 0.09);
+        --glass-hi: inset 0 1px 0 oklch(100% 0 0 / 0.7), inset 0 0 0 1px oklch(21% 0.016 268 / 0.06);
+        --shadow-card: 0 1px 2px oklch(21% 0.016 268 / 0.06), 0 28px 56px -32px oklch(21% 0.016 268 / 0.32);
+        --signal-2-text: oklch(38% 0.022 266);
+        --shadow-pop: 0 8px 20px -10px oklch(21% 0.016 268 / 0.22);
+        --shadow-menu: 0 24px 48px -24px oklch(21% 0.016 268 / 0.30);
+        --shadow-overlay: 0 32px 64px -24px oklch(21% 0.016 268 / 0.38);
 
-        --sector-tech: #60A5FA;
-        --sector-financials: #D6E134;
-        --sector-healthcare: #2DD4BF;
-        --sector-energy: #FB923C;
-        --sector-industrials: #A78BFA;
-        --sector-consumer: #F472B6;
-        --sector-utilities: #FBBF24;
-        --sector-realestate: #4ADE80;
-
-        /* --bull / --bear are FILLS: chart areas, chip grounds, the 52-week range
-           gradient, micro-bars. They are not legible as text on a light field —
-           #4ADE80 scores 1.59:1 on --bg and #F87171 scores 2.52:1, the two worst
-           contrasts in the app, and they carried the 24h change column, every delta
-           in the drawer, and the added/removed counts.
-           So the pair splits the way --accent / --accent-text already does: same hue
-           and saturation, lightness dropped until it clears AA on all three light
-           grounds (--bg 5.00 / 4.91, --surface 5.48 / 5.62, --row-hover 4.91 / 5.04).
-           Use the -text tokens for anything read as a glyph — text, arrows, status
-           dots, a 1px chart stroke; use the plain tokens for anything with area. */
-        --bull: #4ADE80;
-        --bear: #F87171;
-        --bull-text: #16793A;
-        --bear-text: #C62828;
-
-        --treemap-cell-fg: #16170F;
-
-        /* Elevation. Nine hand-written rgba shadows used to sit inline across the
-           components — 0 24px 48px -24px .45 beside 0 24px 48px -20px .45 beside
-           0 28px 56px -28px .5, differences no eye can see but which meant nothing
-           lined up. Three tiers, by how far the thing floats off the page:
-             pop     — tooltips and the chat launcher, attached to what they explain
-             menu    — dropdowns, popovers, the filter sheet, the chat panel
-             overlay — the detail drawer, the compare dock, the compare modal
-           plus one for the card hover lift. They are per-theme because a shadow tuned
-           for a white page disappears on #000, where the ground is already darker
-           than the shadow. */
-        --shadow-pop: 0 8px 20px -8px rgba(22, 23, 15, .28);
-        --shadow-menu: 0 24px 48px -24px rgba(22, 23, 15, .45);
-        --shadow-overlay: 0 30px 60px -20px rgba(22, 23, 15, .55);
-        --shadow-lift: 0 18px 34px -22px rgba(22, 23, 15, .55);
-
-        --font-display: 'Space Grotesk', sans-serif;
-        --font-mono: 'JetBrains Mono', monospace;
-
-        /* Crown Ridge logo — its own palette, kept separate from --accent on
-           purpose. The mark is the brand; lime stays the UI accent. On a light
-           ground the tile is solid dark and needs no edge. */
         --logo-tile: #16181B;
         --logo-stroke: transparent;
-        --logo-crown: #F7F6F2;
-        --logo-gold: #C9A227;
       }
 
-      :root[data-theme="dark"] {
-        /* — canonical Lime tokens — ONYX FIELD
-           Neutral by construction: every surface and text token below is a pure
-           or near-pure grey, so nothing in the dark UI carries hue except
-           --accent and the --sector-* chart colours. The previous "Ink field"
-           derived these from the lime's own hue (~67deg), which tinted every
-           surface olive and kept --ink from ever reading as white. The greys are
-           Apple's system scale — the same ground the Stocks app puts under this
-           kind of dense numeric page. */
-        --bg: #000000;
-        --surface: #1C1C1E;
-        --line: #2C2C2E;
-        --track: #2C2C2E;
+      /* NIGHT: Dusk as dealt, and the default: it applies whenever the page is not
+         explicitly light, so first paint is already slate. Elevation is lightness,
+         never a darker card. */
+      :root:not([data-theme="light"]) {
+        color-scheme: dark;
+        --bg: oklch(17.5% 0.014 268);
+        --surface: oklch(21% 0.016 268);
+        --line: oklch(30% 0.016 266);
+        --track: oklch(26% 0.017 268);
+        --field-line: oklch(56% 0.016 262);
 
-        --ink: #FFFFFF;
-        --sub: #98989D;
-        /* Tertiary text: eyebrows, captions, table meta — mostly 9-11px, so WCAG's
-           4.5:1 "normal text" bar applies, not the 3:1 large-text one. Worst case
-           is --row-hover at 4.75:1; 5.22 on --surface, 6.44 on --bg. Re-check all
-           three if any of those backgrounds change. */
-        --soft: #8E8E93;
+        --ink: oklch(96% 0.006 75);
+        --sub: oklch(85% 0.010 262);
+        --soft: oklch(72% 0.016 262);
 
-        --accent: #D8F34A;
-        --accent-text: #D8F34A;
-        /* NOT the light theme's lime mix. 8% of the lime over #1C1C1E lands on
-           #2B2D22 — a 12-point spread across the channels, which is a visibly
-           olive card sitting in a page of true greys. That is the "Ink field"
-           mistake this theme was rebuilt to undo, and a whole panel ground is
-           the worst place to make it: the no-hue rule exists so the accent means
-           something when it does appear. The dark theme raises a panel the way
-           it raises everything else — one step up the surface scale — and lets
-           the accent border and the lime label carry the emphasis. */
-        --accent-wash: var(--row-hover);
+        /* The logo's pair: the crown's ivory for every fill (buttons, bars, marks),
+           the bar's gold for text and highlights only, so it shows where it lands. */
+        --accent: oklch(93% 0.022 85);
+        --accent-text: oklch(85% 0.11 85);
+        --accent-ink: oklch(20% 0.016 268);
+        --accent-wash: color-mix(in srgb, var(--accent) 9%, var(--surface));
+        --focus: oklch(85% 0.11 85);
 
-        /* Total-holdings card flips to a solid lime fill with ink numerals. */
-        --feature: #D8F34A;
-        --feature-ink: #000000;
-        --feature-sub: #5A6B12;
-        --feature-num: #000000;
+        --feature: oklch(25% 0.017 268);
+        --feature-ink: oklch(96% 0.006 75);
+        --feature-sub: oklch(72% 0.016 262);
+        --feature-num: oklch(96% 0.006 75);
 
-        --row-hover: #242426;
-        --card-hover-border: #D8F34A;
+        --row-hover: oklch(24% 0.017 268);
+        --card-hover-border: oklch(44% 0.02 268);
 
-        /* Nav shell — follows the theme. It used to stay cream on the dark side so
-           nav + ticker band read as one object, but on the onyx field that made it
-           the only warm surface left in the UI. It is now an ordinary card:
-           --surface fill, --line border, --row-hover for the search field. */
-        --nav-surface: #1C1C1E;
-        --nav-line: #2C2C2E;
-        --nav-field: #242426;
-        --nav-ink: #FFFFFF;
-        --nav-soft: #8E8E93;
-        --nav-accent-text: #D8F34A;
-        /* The inversion flips with the card: on a dark nav the active button fills
-           with lime and takes near-black text, rather than the light theme's
-           near-black fill with lime text. */
-        --nav-invert: #D8F34A;
-        --nav-invert-ink: #000000;
-        --nav-band: #D8F34A;
-        --nav-band-ink: #2C3505;
-        --tick-up: #15490A;
-        --tick-down: #8E1104;
+        --nav-surface: oklch(21% 0.016 268 / 0.78);
+        --nav-line: oklch(30% 0.016 266);
+        --nav-field: oklch(25% 0.017 268);
+        --nav-ink: oklch(96% 0.006 75);
+        --nav-soft: oklch(72% 0.016 262);
+        --nav-accent-text: oklch(85% 0.11 85);
+        --nav-invert: oklch(93% 0.022 85);
+        --nav-invert-ink: oklch(20% 0.016 268);
+        --nav-band: oklch(14% 0.016 268);
+        --nav-band-ink: oklch(74% 0.016 262);
+        --tick-up: oklch(80% 0.12 150);
+        --tick-down: oklch(76% 0.13 27);
 
-        /* Footer band. On the ink field this sat a shade UNDER the page; nothing
-           sits under #000, so it now sits a shade above and reads as a band the
-           same way. It shares --surface's value on purpose: the footer is the
-           page's last card, not a fourth elevation. */
-        --foot-surface: #1C1C1E;
-        --foot-ink: #FFFFFF;
-        /* Raised to the same 9.5 / 7.0 steps as the light theme. These were the
-           app-wide --sub / --soft greys at 6.6 and 5.2 on this ground, which is
-           fine for a label beside its value but thin for two paragraphs of 12px
-           prose. The footer has its own tokens precisely so it can be tuned
-           independently; --sub and --soft elsewhere are untouched. */
-        --foot-sub: #C1C1C1;
-        --foot-soft: #A6A6A6;
-        --foot-line: rgba(255, 255, 255, .11);
-        --foot-accent: #D8F34A;
+        --foot-line: oklch(28% 0.016 266);
 
-        /* Shimmer across the total-holdings figure: ink → white → ink. */
-        --shimmer: linear-gradient(100deg, #000000 30%, #FFFFFF 50%, #000000 70%);
+        --bull: oklch(76% 0.13 150);
+        --bear: oklch(72% 0.15 27);
+        --bull-text: oklch(78% 0.13 150);
+        --bear-text: oklch(74% 0.14 27);
 
-        /* Hero card, likewise. It carried its own surface so it could stay cream on
-           the ink field (spec 02B); on the onyx field it is just a card. */
-        --hero-surface: #1C1C1E;
-        --hero-line: #2C2C2E;
-        --hero-ink: #FFFFFF;
-        --hero-sub: #98989D;
+        --glass: oklch(22% 0.018 268 / 0.62);
+        --glass-rule: oklch(100% 0 0 / 0.08);
+        --glass-hi: inset 0 1px 0 oklch(100% 0 0 / 0.10), inset 0 0 0 1px oklch(100% 0 0 / 0.06);
+        --shadow-card: 0 40px 80px -32px oklch(8% 0.02 268 / 0.7);
+        --signal-2-text: oklch(85% 0.010 262);
+        --shadow-pop: 0 8px 20px -8px oklch(8% 0.02 268 / 0.6);
+        --shadow-menu: inset 0 1px 0 oklch(100% 0 0 / 0.06), 0 24px 48px -24px oklch(8% 0.02 268 / 0.7);
+        --shadow-overlay: inset 0 1px 0 oklch(100% 0 0 / 0.06), 0 40px 80px -32px oklch(8% 0.02 268 / 0.7);
 
-        --sector-tech: #60A5FA;
-        --sector-financials: #D6E134;
-        --sector-healthcare: #2DD4BF;
-        --sector-energy: #FB923C;
-        --sector-industrials: #A78BFA;
-        --sector-consumer: #F472B6;
-        --sector-utilities: #FBBF24;
-        --sector-realestate: #4ADE80;
-
-        /* On the onyx field the fills are already legible as text (9.76:1 and 6.15:1 on
-           --surface), so the -text tokens are the same value here — exactly as
-           --accent-text equals --accent on this theme. */
-        --bull: #4ADE80;
-        --bear: #F87171;
-        --bull-text: #4ADE80;
-        --bear-text: #F87171;
-
-        --treemap-cell-fg: #000000;
-
-        /* Same three tiers, opened up: on the onyx field a shadow has to be nearly
-           opaque black to register at all against a #000 page. */
-        --shadow-pop: 0 8px 20px -8px rgba(0, 0, 0, .55);
-        --shadow-menu: 0 24px 48px -24px rgba(0, 0, 0, .75);
-        --shadow-overlay: 0 30px 60px -20px rgba(0, 0, 0, .85);
-        --shadow-lift: 0 18px 34px -22px rgba(0, 0, 0, .8);
-
-        --font-display: 'Space Grotesk', sans-serif;
-        --font-mono: 'JetBrains Mono', monospace;
-
-        /* The tile is a shade off the onyx ground rather than flush with it, and
-           takes a hairline edge so it still reads as a tile — this is
-           logo/crown-ridge-dark.svg. Kept cool-neutral on purpose: the mark has
-           its own palette and does not follow --accent. */
         --logo-tile: #0F1113;
         --logo-stroke: #2B2F33;
-        --logo-crown: #F7F6F2;
-        --logo-gold: #C9A227;
       }
 
-      * { box-sizing: border-box; }
-      html, body { margin: 0; padding: 0; }
+      html, body { margin: 0; padding: 0; overflow-x: clip; }
       body {
         background: var(--bg);
         color: var(--ink);
-        font-family: var(--font-display);
+        font-family: var(--font-body);
+        font-synthesis: none;
         line-height: 1.5;
-        transition: background .25s, color .25s;
+        -webkit-font-smoothing: antialiased;
+        transition: background-color var(--dur-short) var(--ease-in-out), color var(--dur-short) var(--ease-in-out);
       }
-      #app { position: relative; z-index: 1; }
+      #app { position: relative; z-index: var(--z-base); }
+      ::selection { background: color-mix(in oklab, var(--accent) 30%, transparent); color: var(--ink); }
 
-      .display { font-family: var(--font-display); font-size: 32px; font-weight: 600; letter-spacing: -0.02em; }
-      .display-italic { font-style: italic; }
-      .eyebrow { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--soft); font-weight: 500; }
-      .mono { font-family: var(--font-mono); }
-      .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-xl); }
-
-      @keyframes pulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.5; }
+      h1, h2, h3, .display {
+        font-family: var(--font-display); font-weight: var(--display-weight);
+        letter-spacing: var(--tracking-display); overflow-wrap: break-word; min-width: 0;
+        text-wrap: balance;
       }
+      .display { font-size: var(--text-2xl); line-height: 1.1; }
+      /* Labels, captions and meta: the body face a step smaller, sentence case. */
+      .eyebrow { font-family: var(--font-body); font-size: var(--text-sm); font-weight: 400; color: var(--soft); }
+      .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+      /* A panel: smoked glass on slate, a card on bone. Border or edge light, never a drop shadow too. */
+      .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-xl); box-shadow: var(--glass-hi); }
+
       @keyframes rise {
         from { opacity: 0; transform: translateY(4px); }
         to { opacity: 1; transform: translateY(0); }
       }
-      @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-      }
+      @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+      @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+      @keyframes pipeShimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(400%); } }
+      @keyframes spin { to { transform: rotate(360deg); } }
+      @keyframes sheet-up { from { transform: translateY(100%); } to { transform: none; } }
+      @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
 
       svg { display: block; }
 
-      /* ============================================================
-         ANIMATION SET (spec §06) — seven motions, nothing else.
-         Reduced-motion overrides live in the media query further down.
-         ============================================================ */
+      /* Every control: a press and a disabled state, on top of hover and focus. */
+      button:active:not(:disabled) { transform: translateY(1px); }
+      button:disabled, [aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; }
 
-      /* 1 · Ticker marquee — content is duplicated once, so −50% loops seamlessly. */
+      /* Ticker band: one loop, paused by hover, focus or its own control. */
       @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-      .tick-track { display: flex; width: max-content; animation: marquee 22s linear infinite; }
-      .tick-band:hover .tick-track { animation-play-state: paused; }
+      .tick-track { display: flex; width: max-content; animation: marquee 40s linear infinite; }
+      .tick-band:hover .tick-track,
+      .tick-band:focus-within .tick-track,
+      .tick-band.is-paused .tick-track { animation-play-state: paused; }
 
-      /* 2 · Total-holdings shimmer — gradient clipped to the numerals. */
-      @keyframes sweep { 0% { background-position: -140% 0; } 60%, 100% { background-position: 240% 0; } }
-      .shimmer {
-        background-image: var(--shimmer);
-        background-size: 220% 100%;
-        -webkit-background-clip: text;
-        background-clip: text;
-        -webkit-text-fill-color: transparent;
-        color: transparent;
-        animation: sweep 5s 1s infinite;
-      }
+      /* Nav condense: --nav-h is set from topbar.jsx (68 to 56). The height steps
+         rather than animates; only opacity and transform ever move. */
+      .nav-shell { height: var(--nav-h); position: relative; z-index: var(--z-base); }
+      .tick-band { transition: opacity var(--dur-short) var(--ease-out); }
 
-      /* 4 · Nav condense on scroll — --nav-h is set from topbar.jsx (68 → 56).
-         Below 900px the bar wraps to two rows, so it sizes to its content. */
-      .nav-shell {
-        height: var(--nav-h);
-        transition: height .32s cubic-bezier(.2,.7,.3,1), border-radius .32s cubic-bezier(.2,.7,.3,1);
-        /* The marquee leaves .tick-track a permanent stacking context, and the
-           band is a later sibling — without this the scrolling tickers paint
-           over the search dropdown that hangs down from the bar. */
-        position: relative;
-        z-index: 1;
-      }
-      .tick-band { transition: height .32s cubic-bezier(.2,.7,.3,1), opacity .2s linear; }
+      /* A control that is a whole card: hover steps its edge, nothing lifts. */
+      .lift { transition: border-color var(--dur-micro) var(--ease-out), background-color var(--dur-micro) var(--ease-out); }
+      .lift:hover { border-color: var(--card-hover-border); background-color: var(--row-hover); }
 
-      /* 5 · Card entry — once on mount, staggered 60ms per card via --i. */
-      @keyframes cardIn {
-        from { opacity: 0; transform: translateY(14px); }
-        to   { opacity: 1; transform: none; }
-      }
-      .enter {
-        animation: cardIn 600ms cubic-bezier(.2,.7,.3,1) both;
-        animation-delay: calc(var(--i, 0) * 60ms);
-      }
-
-      /* 6 · Card hover — lift, a soft shadow, and the border shift the style guide
-         has specified all along. --card-hover-border was defined in both themes and
-         read by nothing, so a card's hover said "something moved" without saying what
-         is now live; the border is what makes it read as one object waking up. The
-         shadow is a token because the old inline rgba(22,23,15,.55) was mixed for a
-         white page and vanished on the onyx field. */
-      .lift { transition: transform .25s cubic-bezier(.2,.7,.3,1), box-shadow .25s ease, border-color .25s ease; }
-      .lift:hover { transform: translateY(-4px); box-shadow: var(--shadow-lift); border-color: var(--card-hover-border); }
-      /* Keyboard parity: a card that reacts to a mouse has to react to focus too. */
-      .lift:focus-visible { transform: translateY(-4px); box-shadow: var(--shadow-lift); }
-      /* The chart panels lift and shadow but keep their resting border: the edge
-         highlight read as a selection outline drawn around the whole box. */
-      .lift.keep-edge:hover, .lift.keep-edge:focus-visible { border-color: var(--line); }
-
-      @keyframes pipeShimmer {
-        0%   { transform: translateX(-100%); }
-        100% { transform: translateX(400%);  }
-      }
-      @keyframes spin { to { transform: rotate(360deg); } }
-
-      /* Visually hidden but exposed to screen readers. */
       .sr-only {
         position: absolute; width: 1px; height: 1px;
         padding: 0; margin: -1px; overflow: hidden;
         clip: rect(0 0 0 0); white-space: nowrap; border: 0;
       }
 
-      /* Skip link — first tab stop, becomes visible on focus. */
       .skip-link {
-        position: absolute; left: 8px; top: -60px; z-index: 200;
-        padding: 10px 16px; border-radius: var(--r-md);
-        background: var(--accent); color: var(--treemap-cell-fg);
-        font-family: var(--font-mono); font-size: 13px; text-decoration: none;
-        transition: top .15s ease;
+        position: absolute; left: var(--space-xs); top: var(--space-xs); z-index: var(--z-toast);
+        padding: var(--space-xs) var(--space-md); border-radius: var(--r-md);
+        background: var(--accent); color: var(--accent-ink);
+        font-size: var(--text-sm); font-weight: 500; text-decoration: none;
+        transform: translateY(-200%);
       }
-      .skip-link:focus { top: 8px; }
+      .skip-link:focus { transform: none; }
 
-      /* Always show a focus ring for keyboard users. */
-      :focus-visible { outline: 2px solid var(--accent-text); outline-offset: 2px; }
-      /* Sortable column headers are sticky at the very top of a clipping scroll
-         container, so an outward ring loses its top edge. Draw it inset. */
+      /* Focus rings appear at once and never transition. */
+      :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+      input:focus-visible, textarea:focus-visible { outline-offset: -2px; }
+      /* A field whose input sits inside a styled wrapper rings the whole field. */
+      .r-field:focus-within { outline: 2px solid var(--focus); outline-offset: 2px; }
+      .r-field input:focus-visible, .r-field textarea:focus-visible { outline: none; }
       .r-thead [role="columnheader"]:focus-visible { outline-offset: -2px; }
 
-      /* WCAG 2.2 — respect the OS "reduce motion" setting.
-         Marquee, shimmer and card entry stop outright; hover and the nav
-         condense drop to 0ms (spec §06). */
       @media (prefers-reduced-motion: reduce) {
         *, *::before, *::after {
           animation-duration: .001ms !important;
@@ -678,14 +508,7 @@
           transition-duration: .001ms !important;
           scroll-behavior: auto !important;
         }
-        /* The shimmer clips its colour to a moving gradient, so with the
-           animation stopped the numerals need a solid fill to stay legible. */
-        .shimmer {
-          background-image: none;
-          -webkit-text-fill-color: currentColor;
-          color: var(--feature-num);
-        }
-        .lift:hover, .lift:focus-visible { transform: none; box-shadow: none; }
+        button:active:not(:disabled) { transform: none; }
       }
 
       /* ============================================================
@@ -693,302 +516,571 @@
          Components style themselves with inline style={{}} objects,
          which cannot express media queries. So every grid whose COLUMN
          COUNT changes with viewport lives here as a class instead.
-         Breakpoints: 900px (tablet) · 640px (phone).
-         Anything that does not change with viewport stays inline.
+         Breakpoints: 900px (tablet), 640px (phone).
          ============================================================ */
 
-      /* Hero bento — summary.jsx. Hero row is hero card + total holdings
-         (spec §05 "1fr 380px", held as 2:1 so it scales with the page),
-         then a 3-up stat row underneath. */
-      .r-bento { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: minmax(118px, auto); gap: var(--gap); }
-      .r-bento-lead { grid-column: span 2; }
-      .r-bento-feature { grid-column: span 1; }
+      /* THE HOUR: one photograph of land at dusk behind the head, fading into the
+         ground. z-index -1 inside #app's own stacking context puts it under every
+         section without repositioning any of them. */
+      .r-hour {
+        position: absolute; inset: 0 0 auto 0; height: min(calc(100svh + 140px), 1120px); min-height: 760px; overflow: hidden; z-index: -1;
+        /* The photograph itself fades out, in eased steps, so the page shows through
+           it: no colour is painted over the picture and no edge is left to see. */
+        -webkit-mask-image: linear-gradient(to bottom, black 36%, color-mix(in srgb, black 82%, transparent) 50%, color-mix(in srgb, black 55%, transparent) 64%, color-mix(in srgb, black 27%, transparent) 78%, color-mix(in srgb, black 8%, transparent) 90%, transparent 100%);
+        mask-image: linear-gradient(to bottom, black 36%, color-mix(in srgb, black 82%, transparent) 50%, color-mix(in srgb, black 55%, transparent) 64%, color-mix(in srgb, black 27%, transparent) 78%, color-mix(in srgb, black 8%, transparent) 90%, transparent 100%);
+      }
+      /* In light mode the photograph fades to a pale page, which would wash out the
+         light type set on it, so it holds solid until the head's copy has ended. */
+      :root[data-theme="light"] .r-hour {
+        -webkit-mask-image: linear-gradient(to bottom, black 64%, color-mix(in srgb, black 82%, transparent) 74%, color-mix(in srgb, black 55%, transparent) 82%, color-mix(in srgb, black 27%, transparent) 89%, color-mix(in srgb, black 8%, transparent) 95%, transparent 100%);
+        mask-image: linear-gradient(to bottom, black 64%, color-mix(in srgb, black 82%, transparent) 74%, color-mix(in srgb, black 55%, transparent) 82%, color-mix(in srgb, black 27%, transparent) 89%, color-mix(in srgb, black 8%, transparent) 95%, transparent 100%);
+      }
+      /* The What-changed head is shorter than the dashboard's, so its photograph
+         ends just under the tally rather than running on behind the charts. */
+      .r-hour.is-banner { height: min(calc(100svh - 20px), 900px); min-height: 680px; }
+      .r-hour img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 42%; filter: contrast(1.04) saturate(1.03); }
+      /* One soft pool of shade behind the head only, round and edgeless, so the rest
+         of the picture keeps its own light. */
+      .r-hour::after {
+        content: ""; position: absolute; inset: 0;
+        background: radial-gradient(ellipse 40% 34% at 19% 42%, color-mix(in oklab, var(--shade) 46%, transparent) 0%, color-mix(in oklab, var(--shade) 26%, transparent) 50%, transparent 100%);
+      }
+      /* Type set on the photograph: light, lifted off the picture by a soft shadow
+         in the shade's colour rather than by a box. */
+      .on-photo { color: var(--hero-ink); text-shadow: 0 1px 2px color-mix(in oklab, var(--shade) 55%, transparent), 0 0 24px color-mix(in oklab, var(--shade) 45%, transparent); }
 
-      /* Two-pane split — top holdings beside the sector treemap */
-      .r-split { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: var(--gap); }
+      /* Stage hero: the head on five tracks, the product in glass on six. */
+      .r-hero { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: var(--space-2xl); align-items: center; padding: var(--space-2xl) 0 var(--space-xl); }
+      .r-hero h1, .r-banner h1 { font-size: 3.25rem; line-height: 1.04; max-width: 17ch; margin: 0; }
+      .r-hero-lede { font-size: var(--text-lg); line-height: 1.5; max-width: 40ch; margin: var(--space-md) 0 0; color: var(--hero-sub); }
+      .r-hero-actions { display: flex; flex-wrap: wrap; gap: var(--space-sm); margin-top: var(--space-xl); }
+      /* Banner hero: the What-changed page, head and its controls, no product. */
+      .r-banner { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-lg); justify-items: start; padding: var(--space-2xl) 0 var(--space-lg); }
 
-      /* Metric groups — summary.jsx + detail.jsx */
-      .r-metrics3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gap); }
-      .r-kv2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; }
-      /* Research links — detail.jsx. Equal-width buttons instead of left-aligned
-         flex-wrap, so three destinations read as one row of equal weight. */
-      .r-research3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
-      /* What-changed page — changes.jsx. Same rule as every grid here: the column
-         COUNT lives in CSS because the components style themselves inline. */
-      .r-chg-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 24px; }
-      .r-chg-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--gap); }
-      .r-chg-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+      /* Smoked glass with a lit top edge on slate; a frosted card on bone. Never
+         nested, never without its edge. */
+      .glass {
+        background: var(--glass); color: var(--ink); box-sizing: border-box;
+        -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.35);
+        backdrop-filter: blur(var(--glass-blur)) saturate(1.35);
+        border-radius: var(--r-xl); box-shadow: var(--glass-hi), var(--shadow-card);
+      }
+      /* The same glass for everything that floats: menus, popovers, the filter panel
+         and sheet, the detail drawer, the compare dock and modal, the chat panel. The
+         floating radius and shadow, and rules inside it drawn in the glass's own
+         hairline. A panel inside one sits on .r-inset, never on more glass. */
+      .glass-float {
+        background: var(--glass); color: var(--ink); box-sizing: border-box; border: 0;
+        -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.35);
+        backdrop-filter: blur(var(--glass-blur)) saturate(1.35);
+        border-radius: var(--r-lg); box-shadow: var(--glass-hi), var(--shadow-menu);
+        --line: var(--glass-rule);
+      }
+      /* Dusk's inner part: a 4% wash of the ink and a hairline, on glass. */
+      .r-inset { background: color-mix(in oklab, var(--ink) 4%, transparent); box-shadow: inset 0 0 0 1px var(--glass-rule); border-radius: var(--r-lg); }
+
+      /* A run of accounts: a logo, the name, the balance at the right. */
+      .r-acct { list-style: none; margin: 0; padding: 0; }
+      .r-acct > li + li { border-top: 1px solid var(--glass-rule); }
+      .r-acct-row { display: grid; grid-template-columns: 32px minmax(0, 1fr) auto; align-items: center; gap: var(--space-sm); width: 100%; padding: var(--space-sm) 0; background: none; border: 0; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+      /* Each row's value against the largest holding: a slim bar on a faint track,
+         always shown. It grows in once, just after its row rises (motion set below),
+         and brightens while the row is pointed at or focused. */
+      .r-acct-bar { display: block; height: 3px; margin-top: var(--space-2xs); border-radius: var(--r-pill); overflow: hidden; background: color-mix(in oklab, var(--ink) 8%, transparent); }
+      .r-acct-bar > span { display: block; height: 100%; border-radius: inherit; background: var(--accent); opacity: 0.7; transform: scaleX(var(--w, 0)); transform-origin: left; transition: opacity var(--dur-micro) var(--ease-out); }
+      .r-acct-row:hover .r-acct-bar > span, .r-acct-row:focus-visible .r-acct-bar > span { opacity: 1; }
+
+      /* Open sections on the ground: a ruled head, then the content. No card. */
+      .r-sec { padding-top: var(--space-3xl); }
+      .r-sec-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: var(--space-sm) var(--space-lg); padding-bottom: var(--space-md); margin-bottom: var(--space-lg); border-bottom: 1px solid var(--line); }
+      .r-sec-head h2 { font-size: var(--text-2xl); line-height: 1.1; margin: 0; }
+      .r-sec-head p { margin: var(--space-2xs) 0 0; font-size: var(--text-sm); color: var(--soft); }
+      /* A list beside one pane, and a pair of equal columns. */
+      .r-duo { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--space-2xl); align-items: start; }
+      .r-sector-map { padding: var(--space-md); }
+      .r-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2xl); align-items: start; }
+
+      /* A ruled list of rows that each filter something. */
+      .r-rows { list-style: none; margin: 0; padding: 0; }
+      .r-rows > li { border-bottom: 1px solid var(--line); }
+      .r-row-btn { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: var(--space-xs) var(--space-md); width: 100%; padding: var(--space-sm) 0; background: none; border: 0; font: inherit; color: var(--sub); text-align: left; cursor: pointer; transition: color var(--dur-micro) var(--ease-out); }
+      .r-row-btn:hover, .r-row-btn[aria-pressed="true"] { color: var(--ink); }
+      .r-row-btn[aria-pressed="true"] .r-row-name { color: var(--accent-text); font-weight: 600; }
+      .r-row-btn.is-hot { color: var(--ink); }
+      .r-rows.has-pick .r-row-btn { transition: color var(--dur-micro) var(--ease-out), opacity var(--dur-short) var(--ease-out); }
+      .r-rows.has-pick .r-row-btn:not([aria-pressed="true"]) { opacity: 0.4; }
+      .r-rows.has-pick .r-row-btn:not([aria-pressed="true"]):hover, .r-rows.has-pick .r-row-btn.is-hot { opacity: 0.8; }
+      .r-row-btn.is-hot .r-row-bar { background: color-mix(in oklab, var(--ink) 16%, transparent); }
+      .r-row-bar { grid-column: 1 / -1; height: 3px; border-radius: var(--r-pill); background: var(--track); overflow: hidden; }
+      .r-row-bar > span { display: block; height: 100%; background: var(--accent); transform-origin: left; }
+
+      /* Opened against closed: one row per sector or market. */
+      .r-div-row { display: grid; grid-template-columns: minmax(0, 1fr) 40px minmax(0, 1.6fr) 40px; align-items: center; gap: var(--space-xs); }
+
+      /* A tab row scrolls sideways rather than wrapping. */
+      .r-tabs { display: flex; gap: 0 var(--space-md); overflow-x: auto; scrollbar-width: none; max-width: 100%; }
+      .r-tabs::-webkit-scrollbar { display: none; }
+
+      /* The page container: one width for everything that is not a full band. */
+      .r-page {
+        box-sizing: border-box; width: 100%; max-width: calc(var(--page-max) + 2 * var(--gutter));
+        margin-inline: auto; padding-inline: var(--gutter);
+        display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap);
+      }
+
+      /* A closing band: a second photograph runs edge to edge under the end of the
+         ledger, the way Dusk closes a page. Its calm sky sits behind the last rows,
+         its land shows clear below the table, and it fades in at the top and out at
+         the foot, never at the sides, so it reads as a landscape rather than a patch.
+         --band-img and --band-pos are set where it is used. */
+      .r-band { position: relative; isolation: isolate; padding-bottom: 380px; }
+      .r-band::before {
+        content: ""; position: absolute; z-index: -1; inset: auto 0 0; height: 820px;
+        background:
+          linear-gradient(color-mix(in oklab, var(--bg) 18%, transparent), color-mix(in oklab, var(--bg) 18%, transparent)),
+          var(--band-img) var(--band-pos, 50% 50%) / cover no-repeat;
+        -webkit-mask-image: linear-gradient(to bottom, transparent 0%, color-mix(in srgb, black 35%, transparent) 18%, color-mix(in srgb, black 85%, transparent) 38%, black 50%, black 64%, color-mix(in srgb, black 72%, transparent) 76%, color-mix(in srgb, black 38%, transparent) 87%, color-mix(in srgb, black 12%, transparent) 95%, transparent 100%);
+        mask-image: linear-gradient(to bottom, transparent 0%, color-mix(in srgb, black 35%, transparent) 18%, color-mix(in srgb, black 85%, transparent) 38%, black 50%, black 64%, color-mix(in srgb, black 72%, transparent) 76%, color-mix(in srgb, black 38%, transparent) 87%, color-mix(in srgb, black 12%, transparent) 95%, transparent 100%);
+      }
+
+      /* Night by night: Dusk's strip of slim bars in one glass panel. Each bar is a
+         pill, lit at its top and fading toward its foot; a band with no companies is a
+         short hatched stub. */
+      .r-nights { padding: var(--space-lg) var(--space-lg) var(--space-md); }
+      .r-nights-bars, .r-nights-axis { display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: var(--space-2xs); }
+      .r-nights-bars { align-items: end; }
+      .r-night { position: relative; display: flex; justify-content: center; align-items: flex-end; height: 100%; padding: 0; background: none; border: 0; cursor: pointer; }
+      .r-night-bar {
+        width: min(14px, 62%); height: max(10px, calc(var(--h, 0) * 100%)); border-radius: var(--r-pill);
+        background: linear-gradient(to bottom, var(--accent), color-mix(in oklab, var(--accent) 26%, transparent));
+        opacity: 0.88; transform-origin: 50% 100%;
+        transition: transform 800ms var(--ease-out) calc(var(--i, 0) * 25ms), opacity var(--dur-micro) var(--ease-out);
+      }
+      .r-night:hover .r-night-bar, .r-night:focus-visible .r-night-bar { opacity: 1; }
+      .r-night.is-empty .r-night-bar { height: 10px; background: repeating-linear-gradient(135deg, var(--line) 0 2px, transparent 2px 5px); box-shadow: inset 0 0 0 1px var(--line); }
+      .r-nights.has-sel .r-night:not(.is-on) .r-night-bar { opacity: 0.3; }
+      .r-nights-axis { margin-top: var(--space-xs); font-size: var(--text-xs); color: var(--soft); text-align: center; font-variant-numeric: tabular-nums; }
+
+      /* MOTION. Dusk's own, each piece once: the hour drifts, the accounts rise in,
+         the tally counts up (summary.jsx), and charts grow when first seen. Only
+         transform and opacity move; with reduced motion nothing does. */
+      @keyframes hour-drift { from { transform: scale(1.06) translateX(1.5%); } to { transform: scale(1.06) translateX(-1.5%); } }
+      @keyframes rise-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+      @keyframes bar-grow { from { transform: scaleX(0); } }
+      .r-row-bar > span { transition: transform 900ms var(--ease-out) calc(var(--i, 0) * 40ms); }
+      .r-div-fill { transition: transform 800ms var(--ease-out) calc(var(--i, 0) * 35ms); }
+      .r-tile { transition: transform 600ms var(--ease-out) calc(var(--i, 0) * 40ms), opacity var(--dur-short) var(--ease-out); }
+      /* A sector is picked: the others stay, dimmed, so the pick stands out. */
+      .r-tile.is-dim { opacity: 0.3; }
+      .r-tile.is-dim:hover { opacity: 0.7; }
+      @media (prefers-reduced-motion: no-preference) {
+        .r-hour img { animation: hour-drift 48s var(--ease-in-out) both; }
+        .r-acct > li { animation: rise-in 520ms var(--ease-out) both; animation-delay: calc(120ms + var(--i, 0) * 45ms); }
+        .r-acct-bar > span { animation: bar-grow 1000ms var(--ease-out) both; animation-delay: calc(480ms + var(--i, 0) * 60ms); }
+        [data-seen="false"] .r-row-bar > span { transform: scaleX(0) !important; }
+        [data-seen="false"] .r-night-bar { transform: scaleY(0); }
+        [data-seen="false"] .r-div-fill { transform: scaleX(0); }
+        [data-seen="false"] .r-tile { transform: scale(0.9); }
+      }
+
+      /* The ruled tally: figures in a row, parted by hairlines, no tile per figure.
+         The first cell keeps no leading pad and the last no trailing one. */
+      .r-tally { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+      .r-tally > * { padding: var(--space-md) var(--space-lg); border-left: 1px solid var(--line); min-width: 0; }
+      .r-tally > :first-child { padding-left: 0; border-left: 0; }
+      .r-tally > :last-child { padding-right: 0; }
+      .r-tally-fig { font-family: var(--font-display); font-weight: 500; font-size: var(--text-2xl); letter-spacing: var(--tracking-display); line-height: 1.1; font-variant-numeric: tabular-nums; margin-top: var(--space-2xs); overflow-wrap: break-word; }
+      .r-tally-fig.is-lead { font-size: var(--text-figure); }
+      .r-tally-sub { font-size: var(--text-sm); color: var(--soft); margin-top: var(--space-2xs); font-variant-numeric: tabular-nums; }
+      .r-tally.glass { border: 0; padding: var(--space-md) var(--space-xl); }
+      .r-tally.glass > * { border-color: var(--glass-rule); }
+
+      /* Position detail: detail.jsx. A drawer from the right on a wide screen; the
+         media block below turns it into a bottom sheet (SHEET_QUERY in detail.jsx). */
+      .r-detail { position: fixed; top: 0; right: 0; bottom: 0; z-index: 81; width: min(640px, 96vw); overflow-y: auto; overscroll-behavior: contain; border-radius: 0; box-shadow: var(--glass-hi), var(--shadow-overlay); }
+      /* Frosts what scrolls under it, inside the drawer's own glass. */
+      .r-detail-head { position: sticky; top: 0; z-index: 5; background: color-mix(in oklab, var(--glass) 50%, transparent); -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.35); backdrop-filter: blur(var(--glass-blur)) saturate(1.35); border-bottom: 1px solid var(--line); }
+      .r-detail-bar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-sm); padding: var(--space-sm) var(--space-lg); }
+      .r-detail-title { font-size: var(--text-sm); color: var(--soft); }
+      .r-detail-actions { display: flex; gap: var(--space-xs); }
+      .r-detail-x { display: contents; }
+      .r-detail-grip, .r-detail-back { display: none; }
+      .r-detail-back { align-items: center; gap: var(--space-3xs); height: var(--control-h); padding: 0 var(--space-xs) 0 0; background: none; border: 0; color: var(--accent-text); font-family: var(--font-body); font-size: var(--text-sm); font-weight: 500; cursor: pointer; transition: color var(--dur-micro) var(--ease-out); }
+      .r-detail-back:hover { color: var(--ink); }
+      .r-detail-body { padding: var(--space-lg) var(--space-lg) var(--space-2xl); }
+      .r-dsec { margin-top: var(--space-lg); }
+      .r-dsec-head { margin-bottom: var(--space-sm); }
+      .r-dsec-head h3 { font-size: var(--text-lg); line-height: 1.2; margin: 0; }
+      .r-dsec-head p { margin: var(--space-3xs) 0 0; font-size: var(--text-xs); color: var(--soft); }
+      .r-dlabel { font-size: var(--text-xs); color: var(--soft); }
+      /* The price panel, an inset on the drawer's glass. */
+      .r-dprice { margin-top: var(--space-lg); padding: var(--space-md) var(--space-md) 0; }
+      .r-dchart { margin-top: var(--space-sm); height: 130px; display: grid; place-items: center; background-image: repeating-linear-gradient(to bottom, var(--glass-rule) 0 1px, transparent 1px 33%), repeating-linear-gradient(to right, var(--glass-rule) 0 1px, transparent 1px 20%); }
+      .r-dprice-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0 var(--space-sm); margin-top: var(--space-sm); border-top: 1px solid var(--glass-rule); }
+      .r-range { display: flex; margin-left: calc(-1 * var(--space-xs)); }
+      .r-range-btn { display: inline-flex; align-items: center; gap: 6px; min-height: var(--control-h-lg); padding: 0 var(--space-xs); background: none; border: 0; color: var(--soft); font-family: var(--font-body); font-size: var(--text-xs); font-weight: 500; cursor: pointer; transition: color var(--dur-micro) var(--ease-out); }
+      .r-range-btn:hover { color: var(--ink); }
+      .r-range-btn[aria-pressed="true"] { color: var(--ink); font-weight: 600; }
+      .r-range-btn[aria-pressed="true"]::before { content: ""; width: 6px; height: 6px; border-radius: var(--r-pill); background: var(--accent); }
+      .r-dstatus { display: flex; align-items: center; gap: var(--space-xs); margin: 0; padding: var(--space-xs) 0; font-size: var(--text-xs); color: var(--soft); }
+      /* A ruled tally of three, the drawer's size of .r-tally. */
+      .r-dtally { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+      .r-dtally > * { padding: var(--space-sm) var(--space-md); border-left: 1px solid var(--line); min-width: 0; }
+      .r-dtally > :first-child { padding-left: 0; border-left: 0; }
+      .r-dtally > :last-child { padding-right: 0; }
+      .r-dtally-fig { margin-top: var(--space-2xs); font-family: var(--font-display); font-weight: 500; font-size: var(--text-lg); letter-spacing: var(--tracking-display); line-height: 1.2; font-variant-numeric: tabular-nums; overflow-wrap: break-word; }
+      .r-dtally-note { margin-top: var(--space-3xs); font-size: var(--text-xs); color: var(--soft); line-height: 1.35; }
+      .r-dhold { padding: var(--space-md); }
+      .r-dhold .r-dtally { border: 0; }
+      .r-dhold .r-dtally > * { border-color: var(--glass-rule); }
+      .r-dhold .r-dtally + .r-dtally { border-top: 1px solid var(--glass-rule); }
+      .r-dkv { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--space-lg); border-top: 1px solid var(--line); }
+      .r-dkv-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-xs); min-height: 44px; border-bottom: 1px solid var(--line); }
+      .r-dkv-row > :first-child { font-size: var(--text-sm); color: var(--soft); }
+      .r-dpeers > li + li { border-top-color: var(--line); }
+      .r-dpeers .r-acct-row:hover .r-acct-name { color: var(--accent-text); }
+      .r-research3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-xs); }
+
+      /* The sheet: full width up to 720px, a 24px peek of the page above it, the
+         floating radius on its top corners, and the lit top edge. */
+      @media (max-width: 640px), (orientation: portrait) and (max-width: 1024px) {
+        .r-detail { top: calc(env(safe-area-inset-top) + var(--space-lg)); left: 0; right: 0; width: auto; max-width: 720px; margin-inline: auto; border-radius: var(--r-lg) var(--r-lg) 0 0; }
+        .r-detail-grip { display: block; width: 40px; height: 5px; margin: var(--space-xs) auto 0; border-radius: var(--r-pill); background: color-mix(in oklab, var(--ink) 24%, transparent); }
+        .r-detail-bar { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); padding: var(--space-2xs) var(--space-md) var(--space-xs); }
+        .r-detail-back { display: inline-flex; justify-self: start; }
+        .r-detail-title { color: var(--ink); font-weight: 500; }
+        .r-detail-actions { justify-self: end; }
+        .r-detail-x { display: none; }
+        .r-detail-body { padding: var(--space-md) var(--space-md) calc(var(--space-2xl) + env(safe-area-inset-bottom)); }
+      }
+      /* What-changed page: changes.jsx */
+      .r-chg-tools { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-xs); }
       .r-chg-search { width: min(260px, 100%); }
-      /* Change ledger rows: rank · company · country · sector · side · value · arrow.
+      /* Change ledger rows: rank, company, country, sector, side, value, arrow.
          A grid rather than a table so the cells can be hidden per breakpoint below. */
       .r-chg-row { display: grid; grid-template-columns: 44px minmax(0, 2.4fr) minmax(0, 1fr) minmax(0, 1.2fr) 112px 168px 34px; align-items: center; }
-      /* Second line of the company cell: hidden while country and sector have columns
-         of their own, revealed piece by piece as those columns go. */
-      .r-chg-sub { display: none; font-size: 10.5px; color: var(--soft); margin-top: 2px; }
+      /* Same viewport as the ledger's .r-tscroll, but a max: a filtered list of five rows should not sit in 640px of empty card. */
+      .r-chg-scroll { max-height: 640px; overflow: auto; position: relative; }
+      .r-chg-sub { display: none; font-size: var(--text-xs); color: var(--soft); margin-top: var(--space-3xs); }
 
-      /* Filter strip, top bar, detail price block */
-      /* Ledger header: title on the left, its three triggers on the right. They are
-         compact enough to share the title's row, so they cost no vertical space of
-         their own; on a phone they wrap underneath. */
-      .r-ledger-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 14px; }
-      .r-ledger-tools { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
-      /* Columns panel, anchored to stay inside the ledger card's overflow:hidden.
-         Trigger is at the card's right edge here; see the phone override below. */
-      .r-colpop { right: 0; }
+      /* Ledger header: title on the left, its three triggers on the right. */
+      .r-ledger-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: var(--space-sm); }
+      .r-ledger-tools { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-xs); }
 
-      /* The filter panel, hung off its trigger the way .r-nav-menu is hung off the
-         hamburger. Invisible full-screen catcher underneath it for outside clicks;
-         the panel itself is absolute, so it tracks the button as the page scrolls. */
-      .r-sheet-back {
-        position: fixed; inset: 0; z-index: 30;
-        background: transparent;
-      }
+      /* The filter panel, hung off its trigger. */
+      .r-sheet-back { position: fixed; inset: 0; z-index: 30; background: transparent; }
       .r-sheet {
-        position: absolute; top: 100%; right: 0; margin-top: 8px; z-index: 40;
+        position: absolute; top: 100%; right: 0; margin-top: var(--space-xs); z-index: 40;
         width: 300px; max-height: min(70vh, 560px);
         display: flex; flex-direction: column;
-        background: var(--surface); border: 1px solid var(--line);
-        border-radius: var(--r-lg); padding: 6px 16px 16px;
-        box-shadow: var(--shadow-menu);
-        animation: rise .12s ease-out;
+        /* .glass-float's glass, written out because the panel is a class of its own. */
+        background: var(--glass); border: 0; --line: var(--glass-rule);
+        -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.35);
+        backdrop-filter: blur(var(--glass-blur)) saturate(1.35);
+        border-radius: var(--r-lg); padding: var(--space-2xs) var(--space-md) var(--space-md);
+        box-shadow: var(--glass-hi), var(--shadow-menu);
+        animation: rise var(--dur-micro) var(--ease-out);
       }
-      /* A grab handle means "drag me from the edge" — true of the sheet, not this. */
-      .r-sheet-grip {
-        display: none;
-        width: 38px; height: 4px; border-radius: 999px;
-        background: var(--line); margin: 2px auto 14px;
-      }
-      /* Sections expand inline, so this is the only scroller in the panel. */
+      .r-sheet-grip { display: none; width: 40px; height: 4px; border-radius: var(--r-pill); background: var(--line); margin: var(--space-3xs) auto var(--space-sm); }
       .r-sheet-body { overflow-y: auto; flex: 1; min-height: 0; }
       .r-sheet-sec { border-bottom: 1px solid var(--line); }
       .r-sheet-sec-head {
-        display: flex; align-items: center; gap: 10px;
-        width: 100%; padding: 15px 2px;
+        display: flex; align-items: center; gap: var(--space-xs);
+        width: 100%; padding: var(--space-md) var(--space-3xs);
         background: none; border: none; cursor: pointer; color: var(--ink);
-        font-family: var(--font-mono); font-size: 11.5px; font-weight: 500;
-        letter-spacing: .04em; text-transform: uppercase;
+        font-family: var(--font-body); font-size: var(--text-sm); font-weight: 500;
       }
-      .r-sheet-sec-body { padding: 0 0 10px; }
-      /* The sheet's two actions, matching btn() in format.jsx: same height, radius,
-         font and tracking, differing only in weight — ghost for reset, primary for
-         done. They were 11px/.06em on a DASHED border beside 12px/600/.04em on a
-         solid fill, and the dashed edge was the only one in the product. */
+      .r-sheet-sec-body { padding: 0 0 var(--space-xs); }
+      .r-sheet-head { display: none; }
+      .r-sheet-hint { font-size: var(--text-sm); font-weight: 400; color: var(--soft); white-space: nowrap; }
+      .r-sheet-hint.is-on { color: var(--accent-text); }
+      .r-sheet-label { padding: var(--space-md) var(--space-3xs) var(--space-2xs); font-size: var(--text-xs); color: var(--soft); }
+      /* Option rows (OptionRow, filters.jsx): label, count, and a check on the chosen
+         ones only. Shared by the phone sheet and the desktop filter menus. */
+      .r-opt { display: grid; grid-template-columns: minmax(0, 1fr) auto 18px; align-items: center; gap: var(--space-sm); width: 100%; min-height: 36px; padding: var(--space-2xs) var(--space-xs); background: transparent; border: 0; border-radius: var(--r-sm); color: var(--sub); font-family: var(--font-body); font-size: var(--text-sm); text-align: left; cursor: pointer; transition: background-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out); }
+      .r-opt:hover { background: var(--row-hover); color: var(--ink); }
+      .r-opt[aria-checked="true"] { color: var(--ink); font-weight: 600; }
+      .r-opt-count { font-size: var(--text-xs); font-weight: 400; color: var(--soft); font-variant-numeric: tabular-nums; }
+      .r-opt-check { display: grid; place-items: center; color: var(--accent-text); }
+      .r-opt-clear { width: 100%; margin-top: var(--space-2xs); padding: var(--space-xs); background: transparent; border: 0; border-top: 1px solid var(--line); color: var(--soft); font-family: var(--font-body); font-size: var(--text-xs); text-align: left; cursor: pointer; transition: color var(--dur-micro) var(--ease-out); }
+      .r-opt-clear:hover { color: var(--ink); }
+      /* A switch, on a role="switch" button: Dusk's switches take the accent when on. */
+      .r-switch { position: relative; flex-shrink: 0; width: 38px; height: 22px; border-radius: var(--r-pill); background: var(--track); transition: background-color var(--dur-micro) var(--ease-out); }
+      .r-switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; border-radius: var(--r-pill); background: var(--ink); transition: transform var(--dur-short) var(--ease-out); }
+      [aria-checked="true"] > .r-switch { background: var(--accent); }
+      [aria-checked="true"] > .r-switch::after { transform: translateX(16px); background: var(--accent-ink); }
       .r-sheet-reset, .r-sheet-done {
-        width: 100%; margin-top: 14px;
-        height: var(--control-h-lg); padding: 0 14px;
-        border-radius: var(--r-md); cursor: pointer;
-        font-family: var(--font-mono); font-size: 11px;
-        letter-spacing: .06em; text-transform: uppercase;
-        transition: background .14s ease, border-color .14s ease, color .14s ease;
+        width: 100%; margin-top: var(--space-sm);
+        height: var(--control-h-lg); padding: 0 var(--space-md);
+        border-radius: var(--r-pill); cursor: pointer;
+        font-family: var(--font-body); font-size: var(--text-sm);
+        transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out);
       }
-      .r-sheet-reset {
-        background: transparent; border: 1px solid var(--line);
-        color: var(--ink); font-weight: 500;
-      }
-      .r-sheet-reset:hover { background: var(--row-hover); border-color: var(--ink); }
-      .r-sheet-done {
-        background: var(--accent); color: var(--treemap-cell-fg);
-        border: 1px solid var(--accent); font-weight: 600;
-      }
-      @keyframes sheet-up { from { transform: translateY(100%); } to { transform: none; } }
-      @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+      .r-sheet-reset { background: transparent; border: 1px solid var(--line); color: var(--ink); font-weight: 500; }
+      .r-sheet-reset:hover { background: var(--row-hover); border-color: var(--card-hover-border); }
+      .r-sheet-done { background: var(--accent); color: var(--accent-ink); border: 1px solid var(--accent); font-weight: 600; }
       .r-topbar { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: var(--gap); }
-      /* Nav actions cluster — the menu button at every width, and on phones a search
-         toggle beside it. The toggle is hidden here because the search field itself
-         is in the bar until the phone layout; !important because NavIconBtn sets
-         display inline (same debt as the table cells below). */
-      .r-nav-actions { display: flex; align-items: center; gap: 8px; }
+      .r-nav-actions { display: flex; align-items: center; gap: var(--space-xs); }
       .r-nav-search-toggle { display: none !important; }
-      /* Menu panel hugs the button it opened from. Left-anchored full-bleed only on
-         phones, where the bar is narrow enough that a fixed 260px would look arbitrary. */
       .r-nav-menu { right: 0; width: 260px; }
 
       /* Data table. Column templates are computed in JS because the visible
          columns are user-configurable, then handed to CSS as custom properties
          so the BREAKPOINT still lives here rather than in a JS media listener.
-         --cols = fixed px (desktop) · --cols-m = minmax()/fr (phone). */
+         --cols = fixed px (desktop), --cols-m = minmax()/fr (phone). */
       .r-trow { display: grid; grid-template-columns: var(--cols); }
       .r-twrap { min-width: var(--tmin); position: relative; }
       .r-tscroll { height: 640px; overflow: auto; position: relative; }
 
-      /* Compare modal — label column stays put while companies scroll. */
+      /* Compare modal: label column stays put while companies scroll. */
       .r-cmp-row { display: grid; grid-template-columns: 180px repeat(var(--cmp-n), minmax(180px, 1fr)); }
-      .r-cmp-label { position: sticky; left: 0; z-index: 2; background: var(--bg); }
+      .r-cmp-label { position: sticky; left: 0; z-index: 2; background: color-mix(in oklab, var(--glass) 70%, transparent); -webkit-backdrop-filter: blur(var(--glass-blur)); backdrop-filter: blur(var(--glass-blur)); }
 
-      /* Footer — statement, then three link columns.
-         There were decorative vertical hairlines down the column edges here, and
-         they are gone. They were the only free-floating vertical rules in the
-         product: everywhere else grouping is carried by a card's border, a
-         horizontal divider, or a mono eyebrow label, so a magazine-style column
-         grid in this one place read as borrowed from another site. The eyebrow
-         headings already say where each column starts, which is exactly how every
-         other block on the page is introduced. */
-      .r-foot-cols {
-        display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        column-gap: clamp(24px, 3vw, 48px);
-        row-gap: 40px;
-        padding: clamp(56px, 7vw, 104px) 0 clamp(48px, 6vw, 88px);
+      /* Footer (footer.jsx): the hero's composition closing the page. On the dashboard
+         it rises onto the ledger's closing photograph (.on-band); on What changed it
+         sits on the slate. Page tokens in both themes. */
+      .r-foot { position: relative; z-index: 1; padding-top: var(--space-2xl); color: var(--sub); }
+      .r-foot.on-band { margin-top: -320px; padding-top: 0; }
+      .r-foot a, .r-foot button { font-family: var(--font-body); }
+      .r-foot-wrap { max-width: var(--page-max); margin: 0 auto; padding: 0 var(--gutter); }
+      .r-foot-stage { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: var(--space-2xl); align-items: end; }
+      .r-foot-head { margin: 0; max-width: 18ch; font-family: var(--font-display); font-weight: 500; font-size: var(--text-3xl); line-height: 1.08; letter-spacing: var(--tracking-display); overflow-wrap: break-word; }
+      .r-foot:not(.on-band) .r-foot-head { color: var(--ink); }
+      /* Light theme: the band's water is pale under the head, so it takes the day ink
+         over a soft fog rather than light type. */
+      :root[data-theme="light"] .r-foot.on-band .on-photo { color: var(--ink); text-shadow: 0 0 28px color-mix(in oklab, var(--bg) 85%, transparent), 0 0 2px color-mix(in oklab, var(--bg) 60%, transparent); }
+      .r-foot-actions { display: flex; flex-wrap: wrap; gap: var(--space-xs); margin-top: var(--space-lg); }
+      /* Pills in the colour of the type they sit with: light on the photograph, ink on slate. */
+      .r-foot-pill { display: inline-flex; align-items: center; height: var(--control-h); padding: 0 14px; border-radius: var(--r-pill); border: 1px solid color-mix(in oklab, currentColor 40%, transparent); background: color-mix(in oklab, var(--bg) 25%, transparent); color: inherit; font-size: var(--text-sm); font-weight: 500; text-decoration: none; text-shadow: none; cursor: pointer; transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out); }
+      .r-foot-pill:hover { background: color-mix(in oklab, var(--bg) 55%, transparent); border-color: currentColor; }
+      .r-foot-record { padding: var(--space-lg) var(--space-xl) var(--space-md); }
+      .r-foot-title { margin: 0 0 var(--space-xs); font-size: var(--text-lg); line-height: 1.2; color: var(--ink); }
+      .r-foot-rows { list-style: none; margin: 0; padding: 0; }
+      .r-foot-rows > li { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-md); padding: var(--space-sm) 0; border-top: 1px solid var(--glass-rule); font-size: var(--text-sm); color: var(--soft); }
+      .r-foot-val { color: var(--ink); font-weight: 500; font-variant-numeric: tabular-nums; text-align: right; }
+      .r-foot-link { color: var(--accent-text); font-weight: 500; text-decoration: none; }
+      .r-foot-link:hover { text-decoration: underline; }
+      .r-foot-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-sm) var(--space-lg); margin-top: var(--space-2xl); padding-top: var(--space-md); border-top: 1px solid var(--line); }
+      .r-foot-inline { display: flex; flex-wrap: wrap; gap: var(--space-2xs) var(--space-lg); }
+      .r-foot-inline-link { display: inline-flex; align-items: center; min-height: 32px; color: var(--sub); font-size: var(--text-sm); text-decoration: none; transition: color var(--dur-micro) var(--ease-out); }
+      .r-foot-inline-link:hover { color: var(--ink); }
+      .r-foot-meta { display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--space-lg); font-size: var(--text-xs); color: var(--soft); }
+      .r-foot-legal { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-lg); padding: var(--space-xl) 0 var(--space-lg); }
+      .r-foot-legal p { margin: 0; font-size: var(--text-xs); line-height: 1.6; color: var(--soft); }
+      .r-foot-legal a { color: inherit; }
+      .r-foot-legal a:hover { color: var(--ink); }
+      /* The closing wordmark. 12.4cqi fills the column: the name runs 8.03 units of
+         its size wide in this face and tracking. The photograph sits low in it, so
+         each letter holds the sky, the lit peaks and the water. The bottom pad is
+         the chat launcher's parking space, so the name is never under it. */
+      .r-foot-word { container-type: inline-size; padding: var(--space-md) 0 96px; border-top: 1px solid var(--line); user-select: none; }
+      .r-foot-word-text { display: block; white-space: nowrap; font-family: var(--font-display); font-weight: 700; font-size: 12.4cqi; line-height: 0.82; letter-spacing: -0.05em; color: var(--ink);
+        background: url("/photos/austnesfjorden-lofoten-wide-1789.jpg") 50% 72% / cover no-repeat; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+      /* On the bone page the sky in the letters is nearly the page's own colour; deepened
+         a step, the name holds its weight in both themes. */
+      :root[data-theme="light"] .r-foot-word-text { filter: brightness(0.78) saturate(1.15); }
+
+      /* The switching screen (#boot; public/boot.js runs it). The crown breathing, a
+         line that changes every 1.1s, and a bar that runs most of the way, then the
+         rest when the app is ready (.boot-done). Fades out on .boot-out. */
+      #boot { display: none; }
+      .is-booting #boot {
+        position: fixed; inset: 0; z-index: 10000; display: grid; place-items: center; padding: var(--gutter);
+        background: radial-gradient(ellipse 60% 45% at 50% 42%, color-mix(in oklab, var(--accent) 8%, transparent), transparent 70%), var(--bg);
+        color: var(--ink); opacity: 1;
+        transition: opacity 420ms var(--ease-out);
       }
-      .r-foot-bar {
-        display: flex; justify-content: space-between; align-items: flex-end; gap: 28px;
-        border-top: 1px solid var(--foot-line);
-        /* The bottom pad is the chat launcher's parking space (54px + a 24px
-           inset): without it the launcher covers the sign-in link. */
-        padding: clamp(30px, 3.5vw, 46px) 0 clamp(76px, 7vw, 96px);
+      /* Arriving, it is there from the first frame, so the half-loaded page never shows
+         through; leaving, it fades in over the page being left. */
+      .is-leaving #boot { animation: fade var(--dur-short) var(--ease-out) backwards; }
+      .boot-out #boot { opacity: 0; }
+      .boot-card { display: grid; justify-items: center; gap: var(--space-sm); text-align: center; }
+      .boot-mark { width: 56px; height: 56px; margin-bottom: var(--space-xs); animation: boot-breathe 2.4s var(--ease-in-out) infinite; }
+      .bm-tile { fill: var(--logo-tile); stroke: var(--logo-stroke); }
+      .bm-crown { fill: var(--logo-crown); }
+      .bm-gold { fill: var(--logo-gold); }
+      .boot-label { margin: 0; font-size: var(--text-sm); color: var(--soft); }
+      .boot-label-out, .is-leaving .boot-label-in { display: none; }
+      .is-leaving .boot-label-out { display: block; }
+      .boot-words { display: grid; margin: 0; font-family: var(--font-display); font-weight: 500; font-size: var(--text-2xl); line-height: 1.2; letter-spacing: var(--tracking-display); }
+      .boot-words > span { grid-area: 1 / 1; opacity: 0; animation: boot-word 4.4s var(--ease-out) infinite both; animation-delay: calc(var(--n) * 1.1s); }
+      .boot-bar { width: min(240px, 60vw); height: 3px; margin-top: var(--space-sm); border-radius: var(--r-pill); background: var(--track); overflow: hidden; }
+      .boot-bar > span { display: block; height: 100%; border-radius: inherit; background: var(--accent); transform: scaleX(0); transform-origin: left; animation: boot-bar 2.6s var(--ease-out) forwards; }
+      .boot-done .boot-bar > span { animation: boot-bar-end 360ms var(--ease-out) forwards; }
+      @keyframes boot-breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+      @keyframes boot-word {
+        0% { opacity: 0; transform: translateY(12px); }
+        6%, 21% { opacity: 1; transform: none; }
+        25%, 100% { opacity: 0; transform: translateY(-12px); }
       }
-      .r-foot-lockup { display: flex; align-items: center; gap: clamp(12px, 1.4vw, 20px); min-width: 0; }
-      /* BrandMark takes a px size prop; scaling it with the wordmark has to
-         happen here, where the viewport is legible. */
-      .r-foot-lockup svg { width: clamp(34px, 4.4vw, 56px); height: auto; }
-      .r-foot-meta { font-size: 10.5px; line-height: 1.7; text-align: right; flex-shrink: 0; color: var(--foot-sub); }
-      .r-flink { transition: color .15s ease; }
-      .r-flink:hover { color: var(--foot-ink); }
+      @keyframes boot-bar { from { transform: scaleX(0); } to { transform: scaleX(0.86); } }
+      @keyframes boot-bar-end { from { transform: scaleX(0.86); } to { transform: scaleX(1); } }
+      @media (prefers-reduced-motion: reduce) {
+        .boot-mark, .boot-words > span { animation: none; }
+        .boot-words > span:first-child { opacity: 1; }
+        .boot-bar > span, .boot-done .boot-bar > span { animation: none; transform: scaleX(0.6); }
+        .boot-done .boot-bar > span { transform: scaleX(1); }
+      }
 
       @media (max-width: 900px) {
-        .r-bento { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-        .r-bento-lead { grid-column: span 2; }
-        .r-bento-feature { grid-column: span 2; }
-        .r-split { grid-template-columns: minmax(0, 1fr); }
-        .r-chg-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .r-hero, .r-duo, .r-pair { grid-template-columns: minmax(0, 1fr); gap: var(--space-xl); }
+        /* Sector weight, stacked: tighter rows and a 260px treemap (summary.jsx),
+           so the list and the map together take about one phone screen, not two. */
+        .r-sector-duo { gap: var(--space-md); }
+        .r-sector-duo .r-row-btn { padding: 6px 0; row-gap: 4px; }
+        .r-sector-map { padding: var(--space-sm); }
+        .r-nights-axis span:not(:nth-child(2n+1)) { visibility: hidden; }
+        .r-hero h1, .r-banner h1 { font-size: 2.5rem; }
+        .r-tally { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .r-tally > * { padding: var(--space-md) var(--space-md); }
+        .r-tally > :nth-child(odd) { padding-left: 0; border-left: 0; }
+        .r-tally > :nth-child(n+3) { border-top: 1px solid var(--line); }
         /* Sector drops first: it is the widest text column, and the company cell
            can carry it as a second line once the column is gone. */
         .r-chg-row { grid-template-columns: 44px minmax(0, 2fr) minmax(0, 1fr) 112px 150px 34px; }
         .r-chg-sector { display: none !important; }
         .r-chg-sub { display: block; }
         .r-chg-sub-country { display: none; }
-        /* Brand and actions share row 1; search gets its own full-width row.
-           The brand column is 1fr rather than auto so it can shrink below its
-           content instead of pushing the whole bar past the viewport. */
-        .r-topbar { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "brand actions" "search search"; row-gap: 12px; }
+        /* Brand and actions share row 1; search gets its own full-width row. */
+        .r-topbar { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "brand actions" "search search"; row-gap: var(--space-sm); }
         .r-brand { grid-area: brand; min-width: 0; }
         .r-brand > div { min-width: 0; overflow: hidden; }
         .r-search { grid-area: search; min-width: 0; }
         .r-nav-actions { grid-area: actions; }
-        /* Two rows will not fit the condensed height, so the shell sizes to
-           its content and supplies the vertical padding itself. */
-        .nav-shell { height: auto !important; padding: 12px 0; }
-        /* Three link columns still fit; the statement takes its own row rather
-           than being squeezed into a quarter. */
-        .r-foot-cols { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-        .r-foot-cols > *:first-child { grid-column: 1 / -1; }
+        .nav-shell { height: auto !important; padding: var(--space-sm) 0; }
+        .r-foot-stage { grid-template-columns: minmax(0, 1fr); gap: var(--space-xl); }
+        .r-foot.on-band { margin-top: -150px; }
+        .r-foot-legal { grid-template-columns: minmax(0, 1fr); gap: var(--space-sm); }
       }
 
       @media (max-width: 640px) {
-        /* The four stat cards pair off instead of taking a row each. One per row
-           cost ~560px of scrolling to read four short numbers; two-up halves that.
-           Only the hero headline keeps the full width — it is a paragraph, not a
-           figure. grid-auto-rows drops from 118px because the cards no longer need
-           to hold a 38px numeral. */
-        .r-bento { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gap-tight); grid-auto-rows: minmax(86px, auto); }
-        .r-bento-lead { grid-column: span 2; }
-        .r-bento-feature { grid-column: span 1; padding: 16px !important; }
-        /* Type scaled to a ~165px-wide card. These are inline styles, so overriding
-           needs !important — same debt as the table cells below. Values wrap rather
-           than ellipsise: "NVIDIA Corp" truncated to "NVIDIA C…" reads as broken. */
-        .r-bento-feature .display { font-size: 26px !important; }
-        .r-bento > .card { padding: 16px 14px !important; }
-        .r-bento > .card .display { font-size: 22px !important; white-space: normal !important; }
-        .r-metrics3 { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gap-tight); }
-        /* Financials stays two-up rather than collapsing: six one-line figures in a
-           single column was ~350px of scrolling, and the widest label
-           ("P/E RATIO (TRAILING)", ~126px) still clears a half-width cell. */
-        .r-kv2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-        /* Change ledger on a phone: company · side · value. Country and sector are
+        .r-hero h1, .r-banner h1 { font-size: 2.125rem; }
+        .r-hero-lede { font-size: var(--text-md); }
+        .r-hour, .r-hour.is-banner { min-height: 0; height: 740px; }
+        /* On a narrow crop the head spans the width, so the pool of shade sits wide
+           and high behind it. */
+        .r-hour::after {
+          background: radial-gradient(ellipse 90% 40% at 50% 40%, color-mix(in oklab, var(--shade) 50%, transparent) 0%, color-mix(in oklab, var(--shade) 28%, transparent) 55%, transparent 100%);
+        }
+        .r-tally.glass { padding: var(--space-sm) var(--space-md); }
+        .r-nights { padding: var(--space-md) var(--space-sm) var(--space-sm); }
+        .r-band { padding-bottom: 220px; }
+        .r-band::before { height: 520px; }
+        .r-nights-axis span:not(:nth-child(4n+1)) { visibility: hidden; }
+        .r-tabs { padding-right: var(--space-xl); -webkit-mask-image: linear-gradient(to right, black calc(100% - var(--space-xl)), transparent); mask-image: linear-gradient(to right, black calc(100% - var(--space-xl)), transparent); }
+        .r-div-row { grid-template-columns: 40px minmax(0, 1fr) 40px; row-gap: var(--space-2xs); }
+        .r-div-row > :first-child { grid-column: 1 / -1; }
+        .r-tally-fig { font-size: var(--text-xl); }
+        .r-tally-fig.is-lead { font-size: var(--text-2xl); }
+        /* Change ledger on a phone: company, side, value. Country and sector are
            on the second line of the company cell, so nothing is lost, only stacked. */
         .r-chg-row { grid-template-columns: minmax(0, 1fr) 92px 96px; }
-        /* The search takes its own row; the Filters and Export triggers share the next. */
-        .r-chg-search { width: 100%; }
+        /* auto: the ledger-tools grid stretches it. 100% plus its padding overflowed. */
+        .r-chg-search { width: auto; }
         .r-chg-rank, .r-chg-country, .r-chg-sector, .r-chg-arrow { display: none !important; }
         .r-chg-sub-country { display: inline; }
-        .r-chg-row > * { padding-left: 10px !important; padding-right: 10px !important; }
-        /* Same step the holdings ledger's header takes: "VALUE · USD" at 10.5px does
-           not fit a 96px column. !important because HeadCell sets the size inline. */
-        .r-chg-thead > * { font-size: 9px !important; letter-spacing: .03em !important; }
+        .r-chg-row > * { padding-left: var(--space-xs) !important; padding-right: var(--space-xs) !important; }
+        .r-chg-thead > * { font-size: var(--text-xs) !important; }
 
-        /* Ownership distribution — 370px of phone for one histogram. The header was
-           91px of it: "Ownership distribution" and "1,422 cos" each wrapped to two
-           lines fighting over 343px. Dropping the eyebrow and the count leaves the
-           title alone on one line at full size, and the count is already on the
-           hero card. The only svg in here is the histogram. */
-        .r-owncard { padding: 16px !important; }
-        .r-owncard > div:first-child .eyebrow { display: none; }
-        .r-owncard svg { height: 92px !important; }
-        /* Three triggers in 305px of room: 318px at desktop padding, so they wrap to
-           a second row. !important because pillStyle() sets padding inline. */
-        .r-ledger-tools { gap: 6px; }
-        .r-ledger-tools button { padding: 7px 9px !important; }
-        /* "HOLDINGS LEDGER" over a title that already reads "All positions"
-           is a label for something the next line names. Desktop keeps it. */
-        .r-ledger-eyebrow { display: none; }
-        /* "· 1,430 of 1,430 rows" wraps the title onto two lines to repeat what
-           the Filters sheet already reports on its Done button. Desktop keeps it. */
+        /* Three triggers need ~340px and a phone row has ~290-300, so the row wrapped and
+           left one stranded. A two-up grid instead: the first control (Filters on the
+           ledger, the search field on What changed) takes its own row, the other two
+           share the next. Direct children only, so the search field's clear button and
+           the Columns popover's rows are left alone. */
+        .r-ledger-tools { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-xs); width: 100%; }
+        .r-ledger-tools > :first-child { grid-column: 1 / -1; }
+        .r-ledger-tools > button, .r-ledger-tools > div > button { width: 100%; }
         .r-ledger-count { display: none; }
 
-        /* The header wraps here, putting the trigger near the card's LEFT edge —
-           right-anchoring would hang 105px of the panel off the clipped side. */
-        .r-colpop { right: auto; left: 0; }
-
-        /* Same panel, re-seated as a bottom sheet: fixed to the bottom edge rather
-           than hung off the button, full width, thumb-reachable, with the grab
-           handle that implies it. The catcher becomes a dimming scrim. */
-        .r-sheet-back { background: var(--scrim); backdrop-filter: var(--scrim-blur); z-index: 200; animation: fade .16s ease-out; }
+        /* Same panel, re-seated as a bottom sheet. */
+        .r-sheet-back { background: var(--scrim); backdrop-filter: var(--scrim-blur); z-index: var(--z-sticky); animation: fade var(--dur-micro) var(--ease-out); }
         .r-sheet {
-          position: fixed; inset: auto 0 0 0; z-index: 201;
-          width: 100%; max-height: 85vh; margin-top: 0;
-          border: none; border-radius: var(--r-xl) var(--r-xl) 0 0;
-          padding: 10px 18px calc(18px + env(safe-area-inset-bottom));
-          animation: sheet-up .2s cubic-bezier(.2,.8,.2,1);
+          position: fixed; inset: auto 0 0 0; z-index: calc(var(--z-sticky) + 1);
+          /* auto, not 100%: left and right are pinned, and 100% plus the padding below
+             (content-box) made the sheet 32px wider than the screen, clipping its
+             chevrons, checkboxes and the Done button. */
+          width: auto; max-height: 85vh; margin-top: 0;
+          border: none; border-radius: var(--r-lg) var(--r-lg) 0 0;
+          padding: var(--space-sm) var(--space-md) calc(var(--space-md) + env(safe-area-inset-bottom));
+          animation: sheet-up var(--dur-short) var(--ease-out);
         }
         .r-sheet-grip { display: block; }
-        /* Three research buttons at 190px each read fine; at phone width they'd
-           squeeze "Yahoo Finance" onto two lines, so this stacks them instead. */
+        /* The sheet as a titled, ruled list at thumb size: rows 44px and up, body
+           text at 16px, hairlines in the glass's own rule colour. */
+        .r-sheet-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-sm); padding: var(--space-2xs) var(--space-3xs) var(--space-sm); border-bottom: 1px solid var(--glass-rule); }
+        .r-sheet-head h2 { margin: 0; font-size: var(--text-xl); line-height: 1.15; }
+        .r-sheet-head span { font-size: var(--text-sm); color: var(--accent-text); }
+        .r-sheet-sec { border-color: var(--glass-rule); }
+        .r-sheet-sec-head { min-height: 52px; padding-top: 0; padding-bottom: 0; font-size: var(--text-md); }
+        .r-sheet .r-opt { min-height: 44px; padding-left: var(--space-3xs); padding-right: var(--space-3xs); border-radius: 0; font-size: var(--text-md); }
+        .r-sheet .r-opt + .r-opt { border-top: 1px solid var(--glass-rule); }
+        .r-sheet .r-opt-clear { border-top-color: var(--glass-rule); }
+        /* The detail's tallies keep three across, a step smaller; its financials go to
+           one column, where a label and its figure never have to share 150px. */
+        .r-dtally > * { padding-left: var(--space-xs); padding-right: var(--space-xs); }
+        .r-dtally-fig { font-size: var(--text-md); }
+        .r-dhold { padding: var(--space-md) var(--space-sm); }
+        .r-dkv { grid-template-columns: minmax(0, 1fr); }
         .r-research3 { grid-template-columns: minmax(0, 1fr); }
 
         /* Table fits the viewport instead of scrolling sideways. */
         .r-trow { grid-template-columns: var(--cols-m, var(--cols)); }
         .r-twrap { min-width: 0; }
         .r-tscroll { height: 68vh; }
-        /* These cells are styled inline, so overriding them needs !important.
-           Remove once the inline styles move into classes (see audit Q5). */
-        .r-trow > * { padding-left: 9px !important; padding-right: 9px !important; }
-        .r-thead > * { font-size: 9px !important; letter-spacing: .03em !important; }
+        .r-chg-scroll { max-height: 68vh; }
+        /* These cells are styled inline, so overriding them needs !important. */
+        .r-trow > * { padding-left: var(--space-xs) !important; padding-right: var(--space-xs) !important; }
+        .r-thead > * { font-size: var(--text-xs) !important; }
 
         .r-cmp-row { grid-template-columns: 108px repeat(var(--cmp-n), minmax(136px, 1fr)); }
 
-        /* Nav collapses to ONE line: brand, then a search toggle and the menu button.
-           Two rows plus the ticker band was costing 161px — a fifth of a phone
-           screen — and scrolling barely helped, because the two-row grid forces
-           .nav-shell to height:auto and the condensed 56px height never applied.
-           The menu already holds Period / What changed / Theme at every width; what
-           is phone-specific is that the search FIELD gives up its place in the bar
-           and reappears as a second row only while its toggle is on. */
-        .r-topbar { grid-template-areas: "brand actions"; gap: 10px; }
-        .r-nav-search-toggle { display: inline-flex !important; }
+        /* Nav collapses to one line: brand, then a search toggle and the menu button. */
+        .r-topbar { grid-template-areas: "brand actions"; gap: var(--space-xs); }
+        /* grid, the display iconBtnStyle gives it: as a flex box its place-items only
+           centred the icon vertically, leaving it 4.5px left of centre. */
+        .r-nav-search-toggle { display: grid !important; }
         .r-search { display: none; }
         .r-topbar.search-open { grid-template-areas: "brand actions" "search search"; }
         .r-topbar.search-open .r-search { display: block; }
         .r-nav-menu { left: 0; width: auto; }
-        /* The eyebrow is the brand block's second line — dropping it is what makes
-           the bar single-line. Its only content is the period label, which the
-           page's own header repeats. */
         .r-brand .eyebrow { display: none !important; }
-        .nav-shell { padding: 10px 0 !important; }
+        .nav-shell { padding: var(--space-xs) 0 !important; }
 
-        /* Three link columns in 340px leaves "Browse by sector" wrapping to
-           three lines; two columns keep every label on one. */
-        .r-foot-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 34px; column-gap: 24px; }
-        /* The lockup owns the width at this size, so the meta stacks under it
-           and reads from the same left edge as everything else. */
-        .r-foot-bar { flex-direction: column; align-items: flex-start; gap: 24px; }
-        .r-foot-meta { text-align: left; }
+        .r-foot-head { font-size: var(--text-2xl); }
+        .r-foot-record { padding: var(--space-md); }
 
-        /* Utility: drop non-essential chrome on the smallest screens. */
         .r-hide-sm { display: none !important; }
+      }
+
+      @media (max-width: 400px) {
+        .r-tally { grid-template-columns: minmax(0, 1fr); }
+        .r-tally > * { padding: var(--space-sm) 0; border-left: 0; }
+        .r-tally > :nth-child(n+2) { border-top: 1px solid var(--line); }
       }
     </style>
   </head>
   <body>
+    <!-- The switching screen: public/boot.js shows it (html.is-booting) on the way in
+         from the classic design and on the way out to it. Hidden otherwise, and
+         always without JavaScript. -->
+    <div id="boot" role="status">
+      <div class="boot-card">
+        <svg class="boot-mark" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+          <rect class="bm-tile" x="0.5" y="0.5" width="47" height="47" rx="5"/>
+          <path class="bm-crown" d="M9 32V16l7.5 8L24 14l7.5 10L39 16v16z"/>
+          <rect class="bm-gold" x="9" y="35" width="30" height="4"/>
+        </svg>
+        <p class="boot-label boot-label-in">Switching to the new design</p>
+        <p class="boot-label boot-label-out">Opening the classic design</p>
+        <p class="boot-words" aria-hidden="true">
+          <span style="--n: 0">Raising the mountains</span>
+          <span style="--n: 1">Polishing the glass</span>
+          <span style="--n: 2">Counting every krone</span>
+          <span style="--n: 3">Lighting the fjord</span>
+        </p>
+        <div class="boot-bar" aria-hidden="true"><span></span></div>
+      </div>
+    </div>
     <a class="skip-link" href="#app">Skip to dashboard</a>
     <div id="app"></div>
 
@@ -999,10 +1091,10 @@
     -->
     <noscript>
       <main style="max-width: 760px; margin: 0 auto; padding: 48px 24px;">
-        <h1>Sovereign Insights — Norway GPFG Equity Holdings</h1>
+        <h1>Sovereign Insights: Norway GPFG Equity Holdings</h1>
         <p>
           Sovereign Insights is an interactive dashboard tracking the public equity
-          holdings of Norway's Government Pension Fund Global (GPFG), the world's
+          holdings of Norway’s Government Pension Fund Global (GPFG), the world’s
           largest sovereign wealth fund, managed by Norges Bank Investment
           Management (NBIM).
         </p>
@@ -1019,7 +1111,7 @@
           <li>Six markets: Canada, Germany, India, Singapore, the United Kingdom, and the United States.</li>
           <li>Eleven sectors, from Technology and Financial Services to Utilities and Real Estate.</li>
           <li>
-            Per holding: market value in USD and NOK, the fund's ownership and voting
+            Per holding: market value in USD and NOK, the fund’s ownership and voting
             percentage, share price and 52-week range, P/E and forward P/E,
             price-to-book, dividend yield, beta, market capitalisation, and the
             aggregated analyst recommendation.
@@ -1027,7 +1119,7 @@
         </ul>
         <h2>Source and disclaimer</h2>
         <p>
-          Holdings come from NBIM's published GPFG equity disclosure, joined with
+          Holdings come from NBIM’s published GPFG equity disclosure, joined with
           market data from Yahoo Finance. Sovereign Insights is an independent
           research tool published by
           <a href="https://learnbasecase.com">Basecase</a>; it is not affiliated with

@@ -1,5 +1,8 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
 import { fmt, Icon, BrandMark, iconBtnStyle } from './format.jsx';
+import { useAnchoredMenu } from './filters.jsx';
+import { classicOffered, goClassic } from './classic.js';
 import { PeriodPicker } from './period.jsx';
 import { periodLabel } from './snapshot.js';
 import { sectorOf } from './sectors.js';
@@ -26,7 +29,13 @@ export function TopBar({
   // anchoring one panel to another that can close under it is how menus lose their
   // alignment. Reset whenever the menu closes, so it always reopens on the root list.
   const [periodOpen, setPeriodOpen] = React.useState(false);
-  const wrapRef = React.useRef(null);
+  // The ticker loops for as long as the page is open, so it carries its own pause.
+  const [tickPaused, setTickPaused] = React.useState(false);
+  // The search results drop from the field but render into <body> (useAnchoredMenu):
+  // inside the bar they were glass nested in the bar's own glass, which only blurs
+  // what is inside the bar, so the page under the list showed through sharp.
+  const resultsOpen = focused && !!query;
+  const { anchorRef: wrapRef, setMenu: setResults } = useAnchoredMenu(resultsOpen, 'stretch');
   const navRef = React.useRef(null);
 
   const matches = React.useMemo(() => {
@@ -128,10 +137,10 @@ export function TopBar({
     // instead, the nav card ran the full 1680px while the cards below it were
     // inset by the gutter, so above ~1724px the nav was 22px wider on each side
     // than everything it sat on top of.
-    // Leaving navRef unpadded is what keeps the dropdowns right: it is the
-    // containing block for the search results, the nav menu and the columns
-    // popover, and an absolutely positioned `right: 0` resolves against its
-    // padding edge — pad it and every panel hangs a gutter's width off the card.
+    // Leaving navRef unpadded is what keeps the nav menu right: it is the menu's
+    // containing block, and an absolutely positioned `right: 0` resolves against its
+    // padding edge — pad it and the panel hangs a gutter's width off the card. (The
+    // search results render into <body>; see resultsOpen.)
     <header style={{
       position: 'sticky', top: 0, zIndex: 50,
       maxWidth: 'var(--page-max)', margin: '0 auto',
@@ -141,7 +150,11 @@ export function TopBar({
         {/* Nav shell — top corners only; the band below carries the bottom. */}
         <div className="nav-shell" style={{
           '--nav-h': condensed ? '56px' : '68px',
+          // Glass: the bar rides over the photograph, then over the slate below it.
           background: 'var(--nav-surface)',
+          backdropFilter: 'blur(var(--glass-blur)) saturate(1.35)',
+          WebkitBackdropFilter: 'blur(var(--glass-blur)) saturate(1.35)',
+          boxShadow: 'var(--glass-hi)',
           border: '1px solid var(--nav-line)',
           borderBottom: condensed ? '1px solid var(--nav-line)' : 'none',
           borderRadius: condensed ? 'var(--r-lg)' : 'var(--r-lg) var(--r-lg) 0 0',
@@ -160,7 +173,7 @@ export function TopBar({
               type="button"
               className="r-brand"
               onClick={() => navigate(DASHBOARD_HASH)}
-              aria-label="Sovereign Insights — go to the dashboard"
+              aria-label="Sovereign Insights, go to the dashboard"
               style={{
                 display:'flex', alignItems:'center', gap: 12,
                 background:'none', border:'none', padding: 0,
@@ -169,11 +182,11 @@ export function TopBar({
             >
               <BrandMark size={28}/>
               <div>
-                <div className="display" style={{ fontSize: 17, lineHeight: 1, letterSpacing: '-0.02em', fontWeight: 600, color: 'var(--nav-ink)', whiteSpace: 'nowrap' }}>
+                <div className="display" style={{ fontSize: 17, lineHeight: 1, fontWeight: 600, color: 'var(--nav-ink)', whiteSpace: 'nowrap' }}>
                   Sovereign <span style={{ color: 'var(--nav-accent-text)' }}>Insights</span>
                 </div>
                 <div className="eyebrow" style={{
-                  marginTop: 4, fontSize: 10, whiteSpace: 'nowrap', color: 'var(--nav-soft)',
+                  marginTop: 4, fontSize: 'var(--text-xs)', whiteSpace: 'nowrap', color: 'var(--nav-soft)',
                 }}>
                   {lastFetched}
                 </div>
@@ -186,14 +199,12 @@ export function TopBar({
 
             {/* Search */}
             <div ref={wrapRef} className="r-search" style={{ position: 'relative', width: '100%', justifySelf:'stretch' }}>
-              <div style={{
+              <div className="r-field" style={{
                 display:'flex', alignItems:'center', gap: 10,
                 padding: '0 14px',
                 background: 'var(--nav-field)',
-                border: `1px solid ${focused ? 'var(--nav-ink)' : 'var(--nav-line)'}`,
-                borderRadius: 'var(--r-md)', height: 'var(--control-h-lg)',
-                boxShadow: focused ? '0 0 0 3px var(--accent-ring)' : 'none',
-                transition: 'border-color .15s ease, box-shadow .15s ease',
+                border: '1px solid var(--field-line)',
+                borderRadius: 'var(--r-pill)', height: 'var(--control-h-lg)',
               }}>
                 <Icon name="search" size={15} color="var(--nav-soft)"/>
                 <input
@@ -202,23 +213,23 @@ export function TopBar({
                   onFocus={() => setFocused(true)}
                   onBlur={() => setTimeout(() => setFocused(false), 120)}
                   onKeyDown={handleKey}
-                  placeholder="Search companies — by name, ticker, or country"
+                  placeholder="Search companies by name, ticker or country"
                   style={{
-                    flex: 1, minWidth: 0,
+                    flex: 1, minWidth: 0, height: '100%',
                     border: 'none', outline: 'none', background: 'transparent',
-                    color: 'var(--nav-ink)', fontFamily: 'var(--font-display)', fontSize: 13,
+                    color: 'var(--nav-ink)', fontFamily: 'var(--font-body)', fontSize: 'var(--text-sm)',
                   }}
                 />
               </div>
 
-              {focused && query && matches.length > 0 && (
-                <div style={{
-                  position: 'absolute', top: 'calc(100% + 8px)', left: 0, right: 0,
-                  background: 'var(--surface)', border: '1px solid var(--line)',
-                  borderRadius: 'var(--r-lg)', overflow: 'hidden',
-                  boxShadow: 'var(--shadow-menu)',
-                  animation: 'rise .12s ease-out'
+              {resultsOpen && createPortal(
+                <div ref={setResults} className="glass-float" style={{
+                  position: 'fixed', zIndex: 'var(--z-dropdown)',
+                  overflow: 'hidden auto',
+                  animation: 'rise .12s ease-out',
+                  ...(matches.length ? null : { padding: '16px', color: 'var(--soft)', fontSize: 12 }),
                 }}>
+                  {matches.length === 0 && <>No companies matched &ldquo;{query}&rdquo;. Try a ticker, country, or partial name.</>}
                   {matches.map((m, i) => (
                     <div key={m.id}
                       onMouseDown={() => { onPick(m); setQuery(''); }}
@@ -232,23 +243,14 @@ export function TopBar({
                       }}>
                       <div>
                         <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--ink)' }}>{m.name}</div>
-                        <div className="mono" style={{ fontSize: 10.5, color: 'var(--soft)' }}>{m.country} · {sectorOf(m, '—')}</div>
+                        <div style={{ fontSize: 'var(--text-xs)', color: 'var(--soft)' }}>{m.country} · {sectorOf(m, 'n/a')}</div>
                       </div>
-                      <span className="mono" style={{ fontSize: 11, color: 'var(--sub)' }}>{m.ticker}</span>
-                      <span className="mono" style={{ fontSize: 11, color: 'var(--soft)' }}>{fmt.money(m.mvUsd, 'USD', 1)}</span>
+                      <span className="mono" style={{ fontSize: 'var(--text-xs)', color: 'var(--sub)' }}>{m.ticker}</span>
+                      <span className="mono" style={{ fontSize: 'var(--text-xs)', color: 'var(--soft)' }}>{fmt.money(m.mvUsd, 'USD', 1)}</span>
                     </div>
                   ))}
-                </div>
-              )}
-              {focused && query && matches.length === 0 && (
-                <div style={{
-                  position: 'absolute', top: 'calc(100% + 8px)', left: 0, right: 0,
-                  background: 'var(--surface)', border: '1px solid var(--line)',
-                  borderRadius: 'var(--r-lg)', padding: '16px',
-                  color: 'var(--soft)', fontSize: 12,
-                }}>
-                  No companies matched &ldquo;{query}&rdquo;. Try a ticker, country, or partial name.
-                </div>
+                </div>,
+                document.body
               )}
             </div>
 
@@ -283,15 +285,13 @@ export function TopBar({
             horizontal anchoring live in CSS (index.html) so the panel can hug the
             button on wide screens and go full-bleed on a phone. */}
         {menuOpen && (
-          <div className="r-nav-menu" role="menu" style={{
+          <div className="r-nav-menu glass-float" role="menu" style={{
             position: 'absolute', top: '100%', marginTop: 8,
             zIndex: 60,
-            background: 'var(--surface)', border: '1px solid var(--line)',
-            borderRadius: 'var(--r-lg)', overflow: 'hidden auto',
+            overflow: 'hidden auto',
             // A menu taller than the viewport cannot be scrolled to; the picker's
             // year pills are what can push it there on a short screen.
             maxHeight: 'min(70vh, 560px)',
-            boxShadow: 'var(--shadow-menu)',
             animation: 'rise .12s ease-out',
           }}>
             {manifest && (
@@ -328,6 +328,11 @@ export function TopBar({
                 onClick={() => { setMenuOpen(false); onOpenChanges(); }}
               >What changed in {periodLabel(period)}</MenuRow>
             )}
+            {classicOffered() && (
+              <MenuRow icon="export" hint="Until 1 Dec"
+                onClick={() => { setMenuOpen(false); goClassic(); }}
+              >Classic design</MenuRow>
+            )}
             <MenuRow
               icon={theme === 'dark' ? 'sun' : 'moon'}
               hint={theme === 'dark' ? 'Dark' : 'Light'}
@@ -338,13 +343,27 @@ export function TopBar({
         )}
 
         {/* Ticker band — one continuous marquee line; carries the bottom corners. */}
-        <div className="tick-band" style={{
+        <div className={`tick-band${tickPaused ? ' is-paused' : ''}`} style={{
+          position: 'relative',
           height: condensed ? 0 : 27,
           opacity: condensed ? 0 : 1,
           background: 'var(--nav-band)',
           borderRadius: '0 0 var(--r-lg) var(--r-lg)',
           overflow: 'hidden',
         }}>
+          {!condensed && (
+            <button type="button" onClick={() => setTickPaused(p => !p)}
+              aria-label={tickPaused ? 'Play the ticker' : 'Pause the ticker'}
+              aria-pressed={tickPaused}
+              style={{
+                position: 'absolute', right: 0, top: 0, bottom: 0, zIndex: 1,
+                width: 34, display: 'grid', placeItems: 'center',
+                background: 'var(--nav-band)', color: 'var(--nav-band-ink)',
+                border: 'none', borderLeft: '1px solid var(--foot-line)', cursor: 'pointer',
+              }}>
+              <Icon name={tickPaused ? 'play' : 'pause'} size={12}/>
+            </button>
+          )}
           <div className="tick-track">
             {[0, 1].map(copy => (
               <div key={copy} aria-hidden={copy === 1 ? 'true' : undefined}
@@ -419,16 +438,13 @@ function MenuRow({ children, icon, onClick, active, hint, last, expanded }) {
         border: 'none',
         borderBottom: last ? 'none' : '1px solid var(--line)',
         color: 'var(--ink)', cursor: 'pointer', textAlign: 'left',
-        fontFamily: 'var(--font-display)', fontSize: 14, fontWeight: 500,
+        fontFamily: 'var(--font-body)', fontSize: 14, fontWeight: 500,
       }}
     >
       <Icon name={icon} size={16} color="var(--sub)"/>
       <span style={{ flex: 1 }}>{children}</span>
       {hint && (
-        <span className="mono" style={{
-          fontSize: 10.5, color: 'var(--soft)',
-          letterSpacing: '0.06em', textTransform: 'uppercase',
-        }}>{hint}</span>
+        <span style={{ fontSize: 'var(--text-xs)', color: 'var(--soft)' }}>{hint}</span>
       )}
       {expanded !== undefined && (
         <Icon name={expanded ? 'chev-up' : 'chev-down'} size={14} color="var(--soft)"/>

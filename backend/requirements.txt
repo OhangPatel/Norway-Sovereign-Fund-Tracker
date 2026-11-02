@@ -1,5 +1,7 @@
 # pipeline/: fetch_yahoo_metrics.py, merge_and_enrich.py, resolve_tickers.py
 yfinance==1.3.0
+# pipeline/fetch_logos.py re-encodes logos as WebP.
+Pillow
 pandas
 fastapi
 uvicorn[standard]

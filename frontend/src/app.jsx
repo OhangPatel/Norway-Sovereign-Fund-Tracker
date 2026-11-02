@@ -61,8 +61,8 @@ export function ToolRow(props) {
       style={{
         display: 'flex', alignItems: 'center', gap: 13, width: '100%', textAlign: 'left',
         padding: '11px 12px', background: 'transparent', border: 'none', borderRadius: 'var(--r-md)',
-        cursor: disabled ? 'not-allowed' : 'pointer', opacity: disabled ? 0.5 : 1,
-        transition: 'background .12s ease',
+        cursor: disabled ? 'not-allowed' : 'pointer', opacity: disabled ? 0.55 : 1,
+        transition: 'background-color var(--dur-micro) var(--ease-out)',
       }}
       onMouseEnter={(e) => { if (!disabled) e.currentTarget.style.background = 'var(--row-hover)'; }}
       onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
@@ -73,8 +73,8 @@ export function ToolRow(props) {
         background: 'var(--row-hover)', border: '1px solid var(--line)', color: 'var(--ink)',
       }}>{props.icon}</span>
       <span style={{ flex: 1, minWidth: 0 }}>
-        <span className="mono" style={{ display: 'block', fontSize: 12, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--ink)' }}>{props.title}</span>
-        <span className="mono" style={{ display: 'block', fontSize: 10.5, color: 'var(--soft)', marginTop: 3 }}>{props.caption}</span>
+        <span style={{ display: 'block', fontSize: 'var(--text-sm)', fontWeight: 600, color: 'var(--ink)' }}>{props.title}</span>
+        <span style={{ display: 'block', fontSize: 'var(--text-xs)', color: 'var(--soft)', marginTop: 3 }}>{props.caption}</span>
       </span>
       {props.chip || null}
     </button>
@@ -222,7 +222,7 @@ export function PipelineControls(props) {
   var pct       = status.progress;
   var isError   = !!status.error;
   var showBar   = isRunning || isError;
-  var barColor  = isError ? 'var(--bear-text)' : 'var(--accent)';
+  var barColor  = isError ? 'var(--signal-2-text)' : 'var(--accent)';
   var displayElapsed = elapsed;
 
   var estLeft = null;
@@ -239,10 +239,10 @@ export function PipelineControls(props) {
     // -text, not the fill: stateColor draws a 1.5px border and tints the headline
     // beside it, and #F87171 is 2.52:1 on the light field — under the 3:1 WCAG asks
     // of a border you are meant to read as a state.
-    stateColor = 'var(--bear-text)';
+    stateColor = 'var(--signal-2-text)';
     headline = 'Source offline';
   } else if (isError) {
-    stateColor = 'var(--bear-text)';
+    stateColor = 'var(--signal-2-text)';
     headline = 'Update failed';
   } else if (isRunning) {
     stateColor = 'var(--accent)';
@@ -253,83 +253,82 @@ export function PipelineControls(props) {
     headline = 'Updated ' + fmtAt(status.completed_at);
   } else {
     stateColor = 'var(--accent)';
-    headline = 'Current as of ' + (props.lastFetched || '—');
+    headline = 'Current as of ' + (props.lastFetched || 'n/a');
   }
 
-  // Pill chip styling for the menu rows: lime (ok) · red (limit reached) · grey (soon).
+  // Pill chip styling for the menu rows: gold (ok), neutral with a firmer edge (limit reached), dim grey (soon).
   function chip(kind) {
     var warn = kind === 'warn', soon = kind === 'soon';
     return {
-      fontFamily: 'var(--font-mono)', fontSize: 10, flexShrink: 0,
+      fontFamily: 'var(--font-body)', fontSize: 'var(--text-xs)', fontWeight: 500, flexShrink: 0,
       padding: '2px 9px', borderRadius: 'var(--r-pill)',
-      letterSpacing: '0.08em', textTransform: 'uppercase',
-      border: '1px solid ' + (warn ? 'color-mix(in srgb, var(--bear) 45%, transparent)'
+      border: '1px solid ' + (warn ? 'color-mix(in srgb, var(--signal-2) 60%, transparent)'
         : soon ? 'var(--line)'
         : 'color-mix(in srgb, var(--accent) 45%, transparent)'),
-      color: warn ? 'var(--bear-text)' : soon ? 'var(--soft)' : 'var(--accent-text)',
+      color: warn ? 'var(--signal-2-text)' : soon ? 'var(--soft)' : 'var(--accent-text)',
     };
   }
   var spinner = <span style={{ display: 'inline-flex', animation: 'spin 1s linear infinite', color: 'var(--accent-text)' }}><Icon name="refresh" size={17}/></span>;
 
   return (
-    <div style={{ borderBottom: '1px solid var(--line)', background: 'transparent' }}>
+    // No rule under it: the strip sits on the photograph, and a hairline across a
+    // landscape reads as a crease in the picture.
+    <div style={{ background: 'transparent' }}>
       <div style={{
         maxWidth: 'var(--page-max)', margin: '0 auto',
-        padding: '16px var(--gutter)',
+        padding: '16px var(--gutter) 0',
         display: 'flex', flexDirection: 'column', gap: 12,
       }}>
 
         {/* Status card + Data Tools menu */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
 
-          {/* Left — live data status card */}
-          <div style={{
+          {/* Left: live data status, a live role="status" chip on one line */}
+          <div role="status" style={{
+            display: 'inline-flex', alignItems: 'baseline', gap: 'var(--space-xs)',
             border: '1px solid ' + stateColor,
-            borderRadius: 'var(--r-xl)', padding: '11px 22px',
-            transition: 'border-color .2s ease',
+            // Opaque, so its words hold their contrast over any part of the sky.
+            background: 'var(--surface)',
+            borderRadius: 'var(--r-pill)', padding: '6px 16px',
+            transition: 'border-color var(--dur-short) var(--ease-out)',
           }}>
-            <div className="eyebrow" style={{ fontSize: 10 }}>Live Data</div>
-            <div className="display" style={{
-              fontSize: 19, fontWeight: 600, letterSpacing: '-0.01em',
-              marginTop: 4, whiteSpace: 'nowrap',
-            }}>
+            <span className="eyebrow" style={{ fontSize: 'var(--text-xs)', color: 'var(--sub)' }}>Live data</span>
+            <span style={{ fontSize: 'var(--text-sm)', fontWeight: 500, whiteSpace: 'nowrap', color: (!online || isError) ? stateColor : undefined }}>
               {headline}
-            </div>
+            </span>
           </div>
 
           {/* Right — Data Tools dropdown */}
           <div ref={menuRef} style={{ marginLeft: 'auto', position: 'relative' }}>
             <button
               onClick={() => setOpen(o => !o)}
-              style={btn({ variant: open ? 'solid' : 'ghost', shape: 'pill' })}
+              style={{ ...btn({ variant: open ? 'solid' : 'ghost', shape: 'pill' }), ...(open ? {} : { background: 'var(--nav-surface)', backdropFilter: 'blur(var(--glass-blur))' }) }}
               onMouseEnter={(e) => { if (!open) { e.currentTarget.style.background = 'var(--ink)'; e.currentTarget.style.color = 'var(--bg)'; } }}
-              onMouseLeave={(e) => { if (!open) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--ink)'; } }}
+              onMouseLeave={(e) => { if (!open) { e.currentTarget.style.background = 'var(--nav-surface)'; e.currentTarget.style.color = 'var(--ink)'; } }}
             >
               <Icon name="sliders" size={15}/>
-              <span>Data Tools</span>
-              <span style={{ display: 'inline-flex', transition: 'transform .18s ease', transform: open ? 'rotate(180deg)' : 'none' }}>
+              <span>Data tools</span>
+              <span style={{ display: 'inline-flex', transition: 'transform var(--dur-short) var(--ease-in-out)', transform: open ? 'rotate(180deg)' : 'none' }}>
                 <Icon name="chev-down" size={14}/>
               </span>
             </button>
 
             {open && (
-              <div style={{
+              <div className="glass-float" style={{
                 position: 'absolute', top: 'calc(100% + 10px)', right: 0, width: 344, zIndex: 60,
-                background: 'var(--surface)', border: '1px solid var(--line)',
-                borderRadius: 'var(--r-lg)', padding: 8,
-                boxShadow: 'var(--shadow-menu)',
+                padding: 8,
                 animation: 'rise .12s ease-out',
               }}>
                 <ToolRow
                   icon={isRunning && status.job_type === 'fetch_clean' ? spinner : <Icon name="download" size={17}/>}
-                  title="Refresh Holdings"
+                  title="Refresh holdings"
                   caption="Newest fund positions"
                   disabled={isRunning || !online}
                   onClick={() => trigger('fetch-clean')}
                 />
                 <ToolRow
                   icon={isRunning && status.job_type === 'metrics_merge' ? spinner : <Icon name="refresh" size={17}/>}
-                  title="Update Prices"
+                  title="Update prices"
                   caption="Live prices · resets midnight"
                   disabled={isRunning || !rl.can_run || !online}
                   onClick={() => trigger('metrics-merge')}
@@ -337,7 +336,7 @@ export function PipelineControls(props) {
                 />
                 <ToolRow
                   icon={<Icon name="sparkle" size={17}/>}
-                  title="AI Report"
+                  title="AI report"
                   caption="Auto portfolio analysis"
                   disabled={true}
                   chip={<span style={chip('soon')}>soon</span>}
@@ -352,27 +351,27 @@ export function PipelineControls(props) {
           <div style={{ animation: 'rise .2s ease-out' }}>
             <div style={{
               display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-              marginBottom: 4, fontSize: 11,
+              marginBottom: 4, fontSize: 'var(--text-xs)',
             }}>
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7, color: isError ? 'var(--bear-text)' : 'var(--sub)' }}>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7, color: isError ? 'var(--signal-2-text)' : 'var(--sub)' }}>
                 {!isError && <span style={{ display: 'inline-flex', animation: 'spin 1s linear infinite', color: 'var(--accent-text)' }}><Icon name="refresh" size={12}/></span>}
                 {isError ? status.error : (status.step || status.message)}
               </span>
-              <span className="mono" style={{ fontSize: 10.5, color: 'var(--soft)', fontWeight: 600 }}>
+              <span className="mono" style={{ fontSize: 'var(--text-xs)', color: 'var(--soft)', fontWeight: 600 }}>
                 {pct}%
               </span>
             </div>
             <div style={{ height: 4, borderRadius: 'var(--r-pill)', background: 'var(--track)', overflow: 'hidden', position: 'relative' }}>
               <div style={{
-                position: 'absolute', left: 0, top: 0, bottom: 0,
-                width: pct + '%', background: barColor,
-                borderRadius: 'var(--r-pill)', transition: 'width .7s ease',
+                position: 'absolute', left: 0, top: 0, bottom: 0, width: '100%',
+                transform: `scaleX(${pct / 100})`, transformOrigin: 'left', background: barColor,
+                transition: 'transform var(--dur-long) var(--ease-out)',
               }}/>
               {isRunning && !isError && (
                 <div style={{
                   position: 'absolute', top: 0, bottom: 0,
                   left: (pct * 0.5) + '%', width: '20%',
-                  background: 'linear-gradient(90deg, transparent, rgba(255,255,255,.35), transparent)',
+                  background: 'linear-gradient(90deg, transparent, var(--sheen), transparent)',
                   animation: 'pipeShimmer 1.6s ease-in-out infinite',
                 }}/>
               )}
@@ -392,7 +391,7 @@ export function App() {
   const [data, setData] = React.useState(null);
   const [err, setErr] = React.useState(null);
   const [dataKey, setDataKey] = React.useState(0);
-  const [theme, setTheme] = React.useState(() => localStorage.getItem('sov-theme') || 'light');
+  const [theme, setTheme] = React.useState(() => localStorage.getItem('sov-theme') || 'dark');
   const [query, setQuery] = React.useState('');
   const [filters, setFilters] = React.useState({
     countries: [], sectors: [], recs: [],
@@ -526,6 +525,16 @@ export function App() {
     return () => { cancelled = true; };
   }, [period, loadRows, manifest, dataKey]);
 
+  // The switching screen (public/boot.js) holds until the page has its data and the
+  // hour's photograph, so it lifts on the finished page rather than a half-drawn one.
+  // An error lifts it too: the screen must never sit over the error state.
+  React.useEffect(() => {
+    if ((!data && !err) || !window.__bootDone) return;
+    const img = document.querySelector('.r-hour img');
+    const ready = img && !img.complete ? img.decode().catch(() => {}) : Promise.resolve();
+    ready.then(() => window.__bootDone());
+  }, [data, err]);
+
   // Theme effect
   React.useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -563,20 +572,24 @@ export function App() {
   // table only, while the histogram itself keeps showing the full distribution.
   const [ownSel, setOwnSel] = React.useState(null);
 
+  // Every filter as one check, so the sector chart can apply all of them but its own
+  // (sectorBase) without a second copy of the rules drifting from this one.
+  const passes = React.useCallback((c, skipSector = false) => {
+    const q = query.toLowerCase();
+    if (filters.countries.length && !filters.countries.includes(c.country)) return false;
+    if (!skipSector && filters.sectors.length && !filters.sectors.includes(sectorOf(c))) return false;
+    if (filters.recs.length && !filters.recs.includes(c.rec)) return false;
+    const o = c.ownership || 0;
+    if (o < filters.ownMin || o > filters.ownMax) return false;
+    if (filters.pinned && !pinned.has(c.id)) return false;
+    if (q && !((c.name || '').toLowerCase().includes(q) || (c.ticker || '').toLowerCase().includes(q))) return false;
+    return true;
+  }, [filters, pinned, query]);
+
   // Filter + sort (base set — drives the summary charts, excludes the histogram pick)
   const baseFiltered = React.useMemo(() => {
     if (!data) return [];
-    const q = query.toLowerCase();
-    let arr = data.filter(c => {
-      if (filters.countries.length && !filters.countries.includes(c.country)) return false;
-      if (filters.sectors.length && !filters.sectors.includes(sectorOf(c))) return false;
-      if (filters.recs.length && !filters.recs.includes(c.rec)) return false;
-      const o = c.ownership || 0;
-      if (o < filters.ownMin || o > filters.ownMax) return false;
-      if (filters.pinned && !pinned.has(c.id)) return false;
-      if (q && !((c.name || '').toLowerCase().includes(q) || (c.ticker || '').toLowerCase().includes(q))) return false;
-      return true;
-    });
+    let arr = data.filter(c => passes(c));
     // sort
     const k = sort.key, dir = sort.dir === 'desc' ? -1 : 1;
     arr.sort((a, b) => {
@@ -588,7 +601,12 @@ export function App() {
       return (va - vb) * dir;
     });
     return arr;
-  }, [data, filters, sort, pinned, query]);
+  }, [data, passes, sort]);
+
+  // The sector chart's set: every filter except the sector pick. Like the ownership
+  // histogram below, the chart keeps showing the whole distribution and marks the
+  // pick, rather than shrinking to the one sector at 100%.
+  const sectorBase = React.useMemo(() => (data ? data.filter(c => passes(c, true)) : []), [data, passes]);
 
   // Table set — base set narrowed to the selected ownership-histogram bin.
   const filtered = React.useMemo(() => {
@@ -669,6 +687,7 @@ export function App() {
 
   return (
     <>
+      <Hour banner={onChangesPage}/>
       <TopBar
         data={data}
         query={query} setQuery={setQuery}
@@ -700,14 +719,17 @@ export function App() {
           lastFetched={lastFetched}
         />
       ) : (
+      // Full width, so the ledger's closing photograph can run edge to edge; the
+      // rest sits in the page container (.r-page, index.html).
       <main style={{
-        maxWidth: 'var(--page-max)', margin: '0 auto',
         // The bottom pad used to be 120px, holding the page clear of the chat
-        // launcher. The footer band sits under here now and carries that job;
-        // what is left is the gap before the ink edge.
-        padding: '22px var(--gutter) 32px',
-        display: 'grid', gap: 'var(--gap)',
+        // launcher. The footer band sits under here now and carries that job.
+        padding: '22px 0 0',
+        // minmax(0, 1fr): no section's content width can widen the page; a wide
+        // ledger scrolls inside its own panel instead.
+        display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 'var(--gap)',
       }}>
+        <div className="r-page">
         <PeriodBar
           manifest={manifest}
           period={period}
@@ -718,14 +740,22 @@ export function App() {
         <Summary
           data={data}
           filtered={baseFiltered}
+          sectorBase={sectorBase}
           onPickCompany={setSelected}
           onSetFilter={({ sector }) => setFilters(f => ({ ...f, sectors: [sector] }))}
           activeSectors={filters.sectors}
           onClearSectors={() => setFilters(f => ({ ...f, sectors: [] }))}
           onOwnSelect={setOwnSel}
         />
+        </div>
 
-        <section style={{ display:'grid', gap: 16, position: 'relative' }}>
+        {/* The ledger closes the page over a second photograph, the one the
+            What-changed page opens on: its sky behind the last rows, its land below. */}
+        <section id="ledger" className="r-band" style={{
+          '--band-img': 'url("/photos/austnesfjorden-lofoten-wide-1789.jpg")', '--band-pos': '50% 72%',
+          scrollMarginTop: 'var(--space-3xl)',
+        }}>
+          <div className="r-page" style={{ paddingTop: 'var(--space-3xl)', gap: 16 }}>
           <DataTable
             data={filtered}
             allData={data}
@@ -753,13 +783,15 @@ export function App() {
               Inline, they read as part of the reading — three lines of hedging
               under the treemap looked like a result. The marker in the panel
               title ("Sector weight*") is what carries the reference. */}
-          <div className="mono" style={{
-            fontSize: 10, color: 'var(--soft)', lineHeight: 1.5,
-            padding: '4px 6px', marginBottom: 2,
+          {/* It sits on the closing photograph, so it takes the type set on pictures. */}
+          <p className="on-photo" style={{
+            fontSize: 'var(--text-xs)', color: 'var(--hero-sub)', lineHeight: 1.5,
+            padding: '4px 6px', margin: '0 0 2px', maxWidth: '75ch',
           }}>
-            * Sector weight tile areas are approximate — the smallest sectors are
+            * Sector weight tile areas are approximate: the smallest sectors are
             enlarged so they stay clickable. Hover any tile for its true share;
             click one to filter.
+          </p>
           </div>
         </section>
       </main>
@@ -769,6 +801,8 @@ export function App() {
         positions={data.length}
         period={navPeriod}
         pricesAsOf={lastFetched}
+        hasChanges={!!manifest && manifest.periods.length > 1}
+        onPhoto={!onChangesPage}
       />
 
       {selected && (
@@ -810,7 +844,42 @@ export function App() {
 // One pulsing placeholder. Radius 18 and a --line border, so it is the same object
 // the real card will be — a skeleton block that does not match the card replacing it
 // is just a second layout.
-function Skel({ height, className = '', delay = 0 }) {
+/**
+ * The hour: Dusk's photograph of land at the turn of the light behind the head. The
+ * dashboard opens on an overcast sunset over Husøy in Senja; the What-changed page on
+ * a cirrus front over Austnesfjorden in Lofoten. Both by Ximonic (Simo Räsänen),
+ * Wikimedia Commons, CC BY-SA, credited in the footer. Served from public/photos,
+ * because the production CSP allows same-origin images only. It sits under every
+ * section (.r-hour, index.html) and is the page's largest paint, so it loads first.
+ */
+const HOURS = {
+  // Anchored right: the mountains on the left fall partly out of frame, which keeps
+  // the dark mass off the head and the sunset band in view. Edited: mist added.
+  page: { file: 'husoy-senja-mist', sizes: [960, 1280, 1561], w: 1561, h: 1008, pos: '100% 50%',
+    alt: 'Husøy village on its island in Senja, Norway, under an overcast sunset, mist on the fjord' },
+  // Edited: widened on both sides.
+  banner: { file: 'austnesfjorden-lofoten-wide', sizes: [960, 1280, 1789], w: 1789, h: 879, pos: '50% 60%',
+    alt: 'A cirrus cloud front over Austnesfjorden in Lofoten, Norway, in evening light' },
+};
+
+export function Hour({ banner = false }) {
+  const hour = HOURS[banner ? 'banner' : 'page'];
+  const src = (w) => `/photos/${hour.file}-${w}.jpg`;
+  const largest = hour.sizes[hour.sizes.length - 1];
+  return (
+    <div className={`r-hour${banner ? ' is-banner' : ''}`} data-slot="hour"
+      data-alt="A Norwegian landscape at the turn of the light, open sky across the top, 2400px wide or more">
+      <img
+        src={src(largest)}
+        srcSet={hour.sizes.map(w => `${src(w)} ${w}w`).join(', ')}
+        sizes="100vw" width={hour.w} height={hour.h} fetchPriority="high"
+        style={{ objectPosition: hour.pos }}
+        alt={hour.alt}/>
+    </div>
+  );
+}
+
+function Skel({ height, className = '', delay = 0, style = {} }) {
   return (
     <div className={className} style={{
       height,
@@ -819,6 +888,7 @@ function Skel({ height, className = '', delay = 0 }) {
       borderRadius: 'var(--r-xl)',
       animation: 'pulse 1.6s ease-in-out infinite',
       animationDelay: `${delay}s`,
+      ...style,
     }}/>
   );
 }
@@ -829,8 +899,8 @@ function Skel({ height, className = '', delay = 0 }) {
  * and laid out four equal cards, none of which is what arrives — so the whole page
  * jumped sideways and reflowed the moment the fetch resolved.
  *
- * Same gutter as <main>, same .r-bento / .r-split grids, so it collapses 3→2→1 with
- * the viewport exactly as the real thing does and there is one shape on screen from
+ * Same gutter as <main>, same .r-hero grid and photograph, so it collapses with the
+ * viewport exactly as the real thing does and there is one shape on screen from
  * first paint to last.
  */
 export function LoadingState() {
@@ -840,21 +910,19 @@ export function LoadingState() {
       style={{
         maxWidth: 'var(--page-max)', margin: '0 auto',
         padding: '22px var(--gutter) 32px',
-        display: 'grid', gap: 'var(--gap)',
+        display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 'var(--gap)',
       }}>
+      <Hour/>
       <span className="sr-only">Loading holdings…</span>
-      <div className="r-bento" aria-hidden="true">
-        <Skel className="r-bento-lead" height={340} delay={0}/>
-        <Skel className="r-bento-feature" height={340} delay={0.06}/>
-        <Skel height={118} delay={0.12}/>
-        <Skel height={118} delay={0.18}/>
-        <Skel height={118} delay={0.24}/>
+      <div className="r-hero" aria-hidden="true">
+        <Skel height={220} delay={0} style={{ border: 'none', background: 'var(--glass)' }}/>
+        <Skel height={480} delay={0.06} className="glass" style={{ border: 'none' }}/>
       </div>
-      <div className="r-split" aria-hidden="true">
-        <Skel height={392} delay={0.3}/>
-        <Skel height={392} delay={0.36}/>
+      <Skel height={104} delay={0.12} className="glass" style={{ border: 'none' }}/>
+      <div className="r-duo r-sec" aria-hidden="true">
+        <Skel height={520} delay={0.3} style={{ border: 'none', background: 'var(--track)', opacity: 0.5 }}/>
+        <Skel height={520} delay={0.36} className="glass" style={{ border: 'none' }}/>
       </div>
-      <Skel height={256} delay={0.42}/>
     </div>
   );
 }
@@ -871,9 +939,8 @@ export function ErrorState({ message }) {
       padding: '22px var(--gutter) 32px',
     }}>
       <div className="card" role="alert" style={{ padding: 'clamp(24px, 4vw, 40px)', maxWidth: 640 }}>
-        <div className="eyebrow" style={{ color: 'var(--bear-text)' }}>Could not load</div>
         <h1 className="display" style={{
-          fontSize: 26, lineHeight: 1.15, letterSpacing: '-0.02em', margin: '8px 0 0',
+          fontSize: 'var(--text-2xl)', lineHeight: 1.15, margin: 0,
         }}>The holdings data did not load.</h1>
         <p style={{ fontSize: 14, lineHeight: 1.6, color: 'var(--sub)', margin: '10px 0 0' }}>
           This is usually a dropped connection or a deploy in progress. Reloading is
@@ -885,7 +952,7 @@ export function ErrorState({ message }) {
         <div className="mono" style={{
           marginTop: 16, padding: '10px 12px',
           background: 'var(--row-hover)', border: '1px solid var(--line)', borderRadius: 'var(--r-md)',
-          fontSize: 11, color: 'var(--soft)', overflowWrap: 'anywhere',
+          fontSize: 'var(--text-xs)', color: 'var(--soft)', overflowWrap: 'anywhere',
         }}>{message}</div>
         <button
           onClick={() => window.location.reload()}

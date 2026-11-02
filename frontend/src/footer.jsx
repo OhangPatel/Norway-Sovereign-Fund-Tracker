@@ -1,14 +1,18 @@
-import { BrandMark } from './format.jsx';
 import { AdminLogin } from './auth.jsx';
-import { formatPeriod, isPeriod } from './snapshot.js';
+import { formatPeriod, isPeriod, periodLabel } from './snapshot.js';
+import { changesHash } from './router.js';
+import { classicOffered, goClassic } from './classic.js';
 
-// Page footer — a full-bleed ink band closing the page, with the site's
-// oversized lockup anchoring the bottom.
+// Page footer: the hero's composition, closing the page. The statement sits on the
+// ledger's closing photograph with the snapshot's record beside it in glass, then the
+// remaining links, the provenance and disclaimer, and the site's name set as wide as
+// the column with the same photograph inside its letters.
 //
-// The band is dark in BOTH themes, so it needs its own colour set rather than
-// the page tokens: --foot-* in index.html, exactly as the nav band already does
-// for the same reason. On the olive page it lands as the third ink surface,
-// after the ticker band and the TOTAL HOLDINGS card.
+// On the dashboard it rises onto that photograph (onPhoto, .r-foot.on-band); on the
+// What-changed page, which has no closing photograph, it sits on the slate.
+//
+// It follows the page's own tokens in both themes: the old ink band carried a
+// --foot-* set because it stayed dark on the light theme, which this does not.
 //
 // The two dates here are not interchangeable. HOLDINGS are as of NBIM's
 // reporting period (31 Dec / 30 Jun); PRICES are as of the day we last fetched
@@ -20,7 +24,10 @@ import { formatPeriod, isPeriod } from './snapshot.js';
 // pages (scripts/build-static.mjs). A visitor who lands on either should read
 // the identical caveat.
 
-export function Footer({ positions, period, pricesAsOf }) {
+const NBIM = { label: 'NBIM disclosure', href: 'https://www.nbim.no/en/responsible-investment/holdings/', external: true };
+const YAHOO = { label: 'Yahoo Finance', href: 'https://finance.yahoo.com', external: true };
+
+export function Footer({ positions, period, pricesAsOf, hasChanges, onPhoto }) {
   const holdingsAsOf = isPeriod(period) ? formatPeriod(period, 'long') : null;
 
   const toTop = () => window.scrollTo({
@@ -30,142 +37,97 @@ export function Footer({ positions, period, pricesAsOf }) {
     behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
   });
 
+  const facts = [
+    { label: 'Positions', value: positions.toLocaleString() },
+    holdingsAsOf && { label: 'Holdings as of', value: holdingsAsOf },
+    { label: 'Prices as of', value: pricesAsOf },
+  ].filter(Boolean);
+
   return (
-    <footer style={{
-      background: 'var(--foot-surface)',
-      borderTop: '1px solid var(--foot-line)',
-      color: 'var(--foot-sub)',
-      // AdminLogin styles its link with --accent-text, which in the light theme is a
-      // dark olive tuned for a white card and far under 4.5:1 against this ink band.
-      // Re-pointing the token here fixes it for anything the footer adopts later,
-      // without auth.jsx needing to know where it is mounted.
-      '--accent-text': 'var(--foot-accent)',
-    }}>
-      <div style={{
-        maxWidth: 'var(--page-max)', margin: '0 auto', position: 'relative',
-        padding: '0 var(--gutter)',
-      }}>
-        <div className="r-foot-cols">
-          {/* Statement */}
-          <div>
-            <p className="display" style={{
-              margin: 0, maxWidth: 340,
-              fontSize: 'clamp(19px, 1.5vw, 23px)', lineHeight: 1.3,
-              letterSpacing: '-0.02em', fontWeight: 500,
-              color: 'var(--foot-ink)',
-            }}>
-              The world&rsquo;s largest sovereign wealth fund, tracked position by position.
-            </p>
-            <div className="mono" style={{
-              marginTop: 20, fontSize: 11, lineHeight: 1.9, color: 'var(--foot-soft)',
-            }}>
-              {positions.toLocaleString()} positions
-              {holdingsAsOf && <><br/>Holdings as of {holdingsAsOf}</>}
-              <br/>Prices as of {pricesAsOf}
+    <footer className={onPhoto ? 'r-foot on-band' : 'r-foot'}>
+      <div className="r-foot-wrap">
+        <div className="r-foot-stage">
+          <div className={onPhoto ? 'on-photo' : undefined}>
+            <p className="r-foot-head">The world&rsquo;s largest sovereign wealth fund, tracked position by position.</p>
+            <div className="r-foot-actions">
+              {hasChanges && isPeriod(period) && (
+                <FooterLink className="r-foot-pill" href={changesHash(period)}>What changed in {periodLabel(period)}</FooterLink>
+              )}
+              <FooterLink className="r-foot-pill" href="/holdings/">Browse by sector</FooterLink>
+              <FooterLink className="r-foot-pill" onClick={toTop}>Back to top</FooterLink>
             </div>
           </div>
 
-          <FooterCol title="Explore">
-            <FooterLink href="/holdings/">Browse by sector</FooterLink>
-            <FooterLink onClick={toTop}>Back to top</FooterLink>
-          </FooterCol>
-
-          <FooterCol title="Data">
-            <FooterLink href="https://www.nbim.no/en/responsible-investment/holdings/" external>
-              NBIM disclosure
-            </FooterLink>
-            <FooterLink href="https://finance.yahoo.com" external>Yahoo Finance</FooterLink>
-            <FooterLink href="/llms.txt">llms.txt</FooterLink>
-          </FooterCol>
-
-          <FooterCol title="About">
-            <FooterLink href="https://learnbasecase.com" external>Basecase</FooterLink>
-            <FooterLink href="/humans.txt">Colophon</FooterLink>
-          </FooterCol>
+          <div className="glass r-foot-record">
+            <h2 className="r-foot-title">This snapshot</h2>
+            <ul className="r-foot-rows">
+              {facts.map(f => (
+                <li key={f.label}><span>{f.label}</span><span className="r-foot-val">{f.value}</span></li>
+              ))}
+              <li><span>Holdings source</span><FooterLink className="r-foot-link" {...NBIM}>{NBIM.label}</FooterLink></li>
+              <li><span>Market data</span><FooterLink className="r-foot-link" {...YAHOO}>{YAHOO.label}</FooterLink></li>
+            </ul>
+          </div>
         </div>
 
-        {/* Provenance and disclaimer */}
-        <div style={{
-          position: 'relative',
-          borderTop: '1px solid var(--foot-line)',
-          padding: 'clamp(22px, 2.5vw, 30px) 0',
-          fontSize: 12, lineHeight: 1.7, color: 'var(--foot-soft)',
-          display: 'grid', gap: 10,
-        }}>
-          {/* The cap is on the text, not the container: the rule above spans the
-              band, but across 1680px these paragraphs would run to ~150
-              characters a line — past the point where the eye finds the next. */}
-          <p style={legal}>
+        <div className="r-foot-bar">
+          <nav aria-label="Footer" className="r-foot-inline">
+            <FooterLink className="r-foot-inline-link" href="/llms.txt">llms.txt</FooterLink>
+            <FooterLink className="r-foot-inline-link" href="https://learnbasecase.com" external>Basecase</FooterLink>
+            <FooterLink className="r-foot-inline-link" href="/humans.txt">Colophon</FooterLink>
+            {classicOffered() && (
+              <FooterLink className="r-foot-inline-link" onClick={goClassic}>Classic design</FooterLink>
+            )}
+          </nav>
+          <span className="r-foot-meta">
+            <span>© {new Date().getFullYear()} Basecase</span>
+            <AdminLogin/>
+          </span>
+        </div>
+
+        {/* Provenance and disclaimer. */}
+        <div className="r-foot-legal">
+          <p>
             Holdings sourced from NBIM&rsquo;s published GPFG equity disclosure, joined
             with market data from Yahoo Finance. USD values are estimated at acquisition
             FX. The dataset is a point-in-time snapshot, not a live feed.
           </p>
-          <p style={legal}>
+          <p>
             Sovereign Insights is an independent research tool published by Basecase. It
             is not affiliated with or endorsed by NBIM, Norges Bank, or the Norwegian
             government. Nothing here is investment advice.
           </p>
+          {/* CC BY-SA asks for the credit, the licence and a note of any change,
+              wherever the pictures show; the edited versions carry the same licences. */}
+          <p data-credits>
+            Photographs by Ximonic (Simo Räsänen), Wikimedia Commons, edited (mist added, extended):{' '}
+            <a href="https://commons.wikimedia.org/wiki/File:Hus%C3%B8y_during_overcast_sunset_in_Senja,_Troms_og_Finnmark,_Norway,_2022_August.jpg"
+              target="_blank" rel="noopener noreferrer">Husøy, Senja</a> (<a href="https://creativecommons.org/licenses/by-sa/4.0/"
+              target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a>) and{' '}
+            <a href="https://commons.wikimedia.org/wiki/File:Cirrus_front_over_Austnesfjorden,_Austv%C3%A5g%C3%B8ya,_Lofoten,_Norway,_2015_April.jpg"
+              target="_blank" rel="noopener noreferrer">Austnesfjorden, Lofoten</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/"
+              target="_blank" rel="noopener noreferrer">CC BY-SA 3.0</a>).
+          </p>
         </div>
 
-        {/* Lockup band — the oversized mark that closes the page. */}
-        <div className="r-foot-bar">
-          <div className="r-foot-lockup">
-            <BrandMark size={56}/>
-            <span className="display" style={{
-              // 7vw, not 4.6: the lockup is nowrap, and the shallower slope left
-              // it 5px off the viewport edge on a 320px screen.
-              fontSize: 'clamp(26px, 7vw, 58px)', lineHeight: 0.9,
-              letterSpacing: '-0.035em', fontWeight: 600,
-              color: 'var(--foot-ink)', whiteSpace: 'nowrap',
-            }}>
-              Sovereign <span style={{ color: 'var(--foot-accent)' }}>Insights</span>
-            </span>
-          </div>
-
-          <div className="mono r-foot-meta">
-            <AdminLogin/>
-            <span style={{ display: 'block', marginTop: 8, color: 'var(--foot-soft)' }}>
-              © {new Date().getFullYear()} Basecase
-            </span>
-          </div>
+        {/* The closing wordmark, sized in container units to fill the column at every
+            width, the closing photograph inside its letters. Decorative: the name is
+            in the top bar, so it is hidden from screen readers. */}
+        <div className="r-foot-word" aria-hidden="true">
+          <span className="r-foot-word-text">Sovereign Insights</span>
         </div>
       </div>
     </footer>
   );
 }
 
-var legal = { margin: 0, maxWidth: 900 };
-
-function FooterCol({ title, children }) {
-  return (
-    <div>
-      <div className="eyebrow" style={{ fontSize: 10, color: 'var(--foot-soft)' }}>{title}</div>
-      {/* gap 6 + 4px of link padding, not gap 14 against a bare 23px line box: same
-          37px pitch on screen, but each link is now a 31px target rather than one
-          under WCAG 2.2's 24px minimum. */}
-      <div style={{ display: 'grid', gap: 6, justifyItems: 'start', marginTop: 22 }}>
-        {children}
-      </div>
-    </div>
-  );
-}
-
 // One link. Renders as a button when it acts on the page rather than navigating,
 // so "Back to top" is reachable by keyboard as the control it actually is.
-function FooterLink({ href, children, external, onClick }) {
-  const style = {
-    padding: '4px 0', border: 'none', background: 'none', textAlign: 'left',
-    fontFamily: 'var(--font-display)', fontSize: 15, lineHeight: 1.5,
-    color: 'var(--foot-sub)', textDecoration: 'none', cursor: 'pointer',
-  };
-  if (!href) return <button className="r-flink" style={style} onClick={onClick}>{children}</button>;
+function FooterLink({ href, children, external, onClick, className }) {
+  if (!href) return <button type="button" className={className} onClick={onClick}>{children}</button>;
   return (
-    <a
-      className="r-flink"
-      href={href}
-      style={style}
-      {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-    >
+    <a className={className} href={href}
+      {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
       {children}
     </a>
   );

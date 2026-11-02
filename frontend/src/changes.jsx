@@ -1,9 +1,10 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
-import { fmt, Chip, Tag, Icon, MicroBar, btn } from './format.jsx';
+import { fmt, Chip, Tag, Icon, MicroBar, btn, CompanyLogo } from './format.jsx';
 import { Detail } from './detail.jsx';
-import { OptionList, SheetSection, useIsPhone } from './filters.jsx';
-import { Card, SECTOR_COLORS } from './summary.jsx';
+import { OptionList, RadioList, SheetHead, SheetSection, useAnchoredMenu, useIsPhone } from './filters.jsx';
+import { TallyCell, CountUp, SECTOR_COLORS } from './summary.jsx';
+import { useSeen } from './motion.js';
 import { formatPeriod, periodLabel } from './snapshot.js';
 import { sectorOf } from './sectors.js';
 import { navigate, changesHash } from './router.js';
@@ -34,10 +35,6 @@ const SIDES = [
 ];
 const SORT_LABEL = { mvUsd: 'value', name: 'company', country: 'country', sector: 'sector', side: 'change' };
 const EMPTY_FILTERS = { sectors: [], countries: [], query: '' };
-// Rows rendered before a "show more". Six hundred rows of seven cells is a lot of DOM for
-// a list most readers scan from the top.
-const PAGE = 100;
-
 // Same normalisation as match_key() in build_changes.py, for the one place a row is
 // matched on its name: a raw-level company, which carries no ticker.
 const norm = (s) => String(s || '').replace(/\s+/g, ' ').trim().toLowerCase();
@@ -145,11 +142,9 @@ export function ChangesPage({ manifest, period, loadRows, pinned, togglePin, las
     [key]: filters[key].includes(value) ? filters[key].filter(v => v !== value) : [...filters[key], value],
   });
   const [sort, setSort] = React.useState({ key: 'mvUsd', dir: 'desc' });
-  // "Show more" is keyed to the exact list it extended, so any change to the list falls
-  // back to the first page without an effect having to reset it.
-  const [more, setMore] = React.useState({ key: '', n: PAGE });
   const [selected, setSelected] = React.useState(null);
-  const [search, setSearch] = React.useState(false);
+  // The opened-against-closed bars grow from the centre line the first time they are seen.
+  const [chartsRef, chartsSeen] = useSeen();
 
   // On a phone the toolbar folds into the bottom sheet the holdings ledger uses: one
   // Filters trigger, sections that expand inline, Done with the row count. Portalled
@@ -166,7 +161,7 @@ export function ChangesPage({ manifest, period, loadRows, pinned, togglePin, las
 
   React.useEffect(() => {
     const before = document.title;
-    document.title = `What changed in ${periodLabel(period)} — Sovereign Insights`;
+    document.title = `What changed in ${periodLabel(period)} | Sovereign Insights`;
     return () => { document.title = before; };
   }, [period]);
 
@@ -177,12 +172,12 @@ export function ChangesPage({ manifest, period, loadRows, pinned, togglePin, las
   const all = React.useMemo(() => {
     if (!lv) return [];
     const tag = (rows, s) => rows.map(r => ({
-      ...r, side: s, sector: sectorOf(r, '—'), country: r.country || '—',
+      ...r, side: s, sector: sectorOf(r, 'n/a'), country: r.country || 'n/a',
     }));
     return [...tag(lv.addedTop, 'added'), ...tag(lv.removedTop, 'removed')];
   }, [lv]);
-  const bySector  = React.useMemo(() => fold(lv?.bySector,  k => sectorOf({ industry: k }, '—')), [lv]);
-  const byCountry = React.useMemo(() => fold(lv?.byCountry, k => k || '—'), [lv]);
+  const bySector  = React.useMemo(() => fold(lv?.bySector,  k => sectorOf({ industry: k }, 'n/a')), [lv]);
+  const byCountry = React.useMemo(() => fold(lv?.byCountry, k => k || 'n/a'), [lv]);
 
   const visible = React.useMemo(() => {
     const q = norm(query);
@@ -202,9 +197,6 @@ export function ChangesPage({ manifest, period, loadRows, pinned, togglePin, las
     return arr;
   }, [all, side, sectors, countries, query, sort]);
 
-  const listKey = [period, level, side, sectors.join('|'), countries.join('|'), query].join(' ');
-  const limit = more.key === listKey ? more.n : PAGE;
-  const shown = visible.slice(0, limit);
   const maxValue = Math.max(1, ...visible.map(r => r.mvUsd || 0));
   const addedShown = visible.filter(r => r.side === 'added').length;
   const removedShown = visible.length - addedShown;
@@ -255,7 +247,7 @@ export function ChangesPage({ manifest, period, loadRows, pinned, togglePin, las
   };
 
   const pills = (
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+    <div role="group" aria-label="Period" className="r-tabs">
       {/* Every period but the oldest has a step before it; half-years are always
           listed here, since each one IS a step. */}
       {manifest.periods.slice(0, -1).map(p => {
@@ -263,7 +255,15 @@ export function ChangesPage({ manifest, period, loadRows, pinned, togglePin, las
         return (
           <button key={p.period} type="button" aria-pressed={on}
             onClick={() => navigate(changesHash(p.period))}
-            style={btn({ variant: on ? 'primary' : 'ghost', shape: 'pill' })}>
+            style={{
+              height: 'var(--control-h-lg)', padding: '0 2px', flexShrink: 0,
+              background: 'transparent', border: 'none',
+              borderBottom: `2px solid ${on ? 'var(--accent)' : 'transparent'}`,
+              color: on ? 'var(--ink)' : 'var(--sub)', cursor: 'pointer',
+              fontFamily: 'var(--font-body)', fontSize: 'var(--text-sm)', fontWeight: on ? 600 : 500,
+              whiteSpace: 'nowrap',
+              transition: 'color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out)',
+            }}>
             {p.label}
           </button>
         );
@@ -276,103 +276,112 @@ export function ChangesPage({ manifest, period, loadRows, pinned, togglePin, las
       <main style={{
         maxWidth: 'var(--page-max)', margin: '0 auto',
         padding: '22px var(--gutter) 32px',
-        display: 'grid', gap: 'var(--gap)',
+        display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 'var(--gap)',
       }}>
         <PageHeader period={period} previous={previous} pills={pills}/>
 
         {!previous ? (
-          <Notice eyebrow="Nothing to compare against"
+          <Notice
             title={`${periodLabel(period)} is the earliest period on file.`}>
             Changes are measured against the disclosure before, and there is none. Pick a
             later period above.
           </Notice>
         ) : state.error ? (
-          <Notice eyebrow="Could not load" tone="neg" title="The changes for this period did not load.">
+          <Notice tone="neg" title="The changes for this period did not load.">
             {state.error}
           </Notice>
         ) : !d ? (
-          <div className="card" role="status" aria-live="polite" style={{ padding: 'var(--pad-card)', animation: 'pulse 1.6s ease-in-out infinite' }}>
-            <span className="mono" style={{ fontSize: 11, color: 'var(--soft)' }}>Loading {periodLabel(period)}…</span>
+          <div className="glass" role="status" aria-live="polite" style={{ padding: 'var(--pad-card)', animation: 'pulse 1.6s ease-in-out infinite' }}>
+            <span style={{ fontSize: 'var(--text-sm)', color: 'var(--soft)' }}>Loading {periodLabel(period)}…</span>
           </div>
         ) : (
           <>
-            {/* Stat row. The fund's own figures first; the tracked set is one cell. */}
-            <div className="r-chg-stats">
-              <StatCard i={1} label="Companies held" value={d.raw.heldNow.toLocaleString()}
-                sub={<>was {d.raw.heldBefore.toLocaleString()} · net <Signed n={d.raw.heldNow - d.raw.heldBefore}/></>}/>
-              <StatCard i={2} label="Positions opened" tone="pos" value={'+' + d.raw.added.toLocaleString()}
+            {/* The ruled tally. The fund's own figures first; the tracked set is one cell. */}
+            <dl className="r-tally glass" style={{ margin: 0 }}>
+              <TallyCell lead count label="Companies held" value={d.raw.heldNow.toLocaleString()}
+                sub={<>was {d.raw.heldBefore.toLocaleString()}, net <Signed n={d.raw.heldNow - d.raw.heldBefore}/></>}/>
+              <TallyCell label="Positions opened"
+                value={<span style={{ color: 'var(--bull-text)' }}><CountUp text={'+' + d.raw.added.toLocaleString()}/></span>}
                 sub="companies the fund did not hold before"/>
-              <StatCard i={3} label="Positions closed" tone="neg" value={'−' + d.raw.removed.toLocaleString()}
+              <TallyCell label="Positions closed"
+                value={<span style={{ color: 'var(--bear-text)' }}><CountUp text={'−' + d.raw.removed.toLocaleString()}/></span>}
                 sub="companies sold out of entirely"/>
-              <StatCard i={4} label="Tracked by this site" value={d.filtered.trackedNow.toLocaleString()}
+              <TallyCell count label="Tracked by this site" value={d.filtered.trackedNow.toLocaleString()}
                 sub={<>
-                  was {d.filtered.trackedBefore.toLocaleString()} ·{' '}
+                  was {d.filtered.trackedBefore.toLocaleString()}:{' '}
                   <span style={{ color: 'var(--bull-text)' }}>+{d.filtered.added.toLocaleString()}</span>
                   {' / '}
                   <span style={{ color: 'var(--bear-text)' }}>−{d.filtered.removed.toLocaleString()}</span>
                   {d.filtered.renamesSuppressed > 0 && (
-                    <> · {d.filtered.renamesSuppressed} rename{d.filtered.renamesSuppressed === 1 ? '' : 's'} collapsed</>
+                    <><br/>{d.filtered.renamesSuppressed} rename{d.filtered.renamesSuppressed === 1 ? '' : 's'} collapsed</>
                   )}
                 </>}/>
-            </div>
+            </dl>
 
             {/* Charts. Exact at either level — drawn from the tallies, not the listed
                 rows — and each bar is a filter on the ledger below. */}
-            <div className="r-split">
-              <Card i={5} title="By sector" eyebrow={`Opened vs closed · ${levelLabel}`}
-                rightSlot={sectors.length ? (
-                  <ClearBtn onClick={() => patch({ sectors: [] })}>← All sectors</ClearBtn>
-                ) : (
-                  <span className="eyebrow">{bySector.length} sectors</span>
-                )}>
+            <div className="r-pair r-sec" ref={chartsRef} data-seen={chartsSeen}>
+              <section aria-labelledby="by-sector-head">
+                <div className="r-sec-head">
+                  <div>
+                    <h2 id="by-sector-head">By sector</h2>
+                    <p>Opened vs closed in {levelLabel === 'Tracked set' ? 'the tracked set' : levelLabel}</p>
+                  </div>
+                  {sectors.length ? (
+                    <ClearBtn onClick={() => patch({ sectors: [] })}>Show all sectors</ClearBtn>
+                  ) : (
+                    <span className="eyebrow">{bySector.length} sectors</span>
+                  )}
+                </div>
                 <DivergingBars items={bySector} selected={sectors}
                   onToggle={(l) => toggleIn('sectors', l)}
                   colorOf={(l) => SECTOR_COLORS[l] || 'var(--soft)'}/>
-              </Card>
-              <Card i={6} title="By market" eyebrow={`Opened vs closed · ${levelLabel}`}
-                rightSlot={countries.length ? (
-                  <ClearBtn onClick={() => patch({ countries: [] })}>← All markets</ClearBtn>
-                ) : (
-                  <span className="eyebrow">{byCountry.length} markets</span>
-                )}>
+              </section>
+              <section aria-labelledby="by-market-head">
+                <div className="r-sec-head">
+                  <div>
+                    <h2 id="by-market-head">By market</h2>
+                    <p>Opened vs closed in {levelLabel === 'Tracked set' ? 'the tracked set' : levelLabel}</p>
+                  </div>
+                  {countries.length ? (
+                    <ClearBtn onClick={() => patch({ countries: [] })}>Show all markets</ClearBtn>
+                  ) : (
+                    <span className="eyebrow">{byCountry.length} markets</span>
+                  )}
+                </div>
                 <DivergingBars items={byCountry} selected={countries}
                   onToggle={(l) => toggleIn('countries', l)}
                   maxItems={10} otherLabel="markets"/>
-              </Card>
+              </section>
             </div>
 
             {/* The ledger. No overflow:hidden on the card itself — the filter popovers
                 hang off its header and would be clipped by it; the rows wrapper below
                 carries the bottom corners instead. */}
-            <section className="card enter" style={{ '--i': 7, padding: 0 }}>
+            <section className="glass" style={{ padding: 0, marginTop: 'var(--space-2xl)' }}>
               <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--line)' }}>
                 <div className="r-ledger-head">
                   <div style={{ minWidth: 0 }}>
-                    <div className="eyebrow r-ledger-eyebrow">Change ledger</div>
-                    <div className="display" style={{ fontSize: 22, marginTop: 2, letterSpacing: '-0.01em' }}>
-                      {visible.length.toLocaleString()} {visible.length === 1 ? 'company' : 'companies'}
-                      <span className="display-italic" style={{ color: 'var(--soft)' }}>
-                        {' · '}
-                        <span style={{ color: 'var(--bull-text)' }}>+{addedShown.toLocaleString()}</span>
-                        {' / '}
-                        <span style={{ color: 'var(--bear-text)' }}>−{removedShown.toLocaleString()}</span>
-                      </span>
-                    </div>
-                    <div className="mono" style={{ fontSize: 10.5, color: 'var(--soft)', marginTop: 6 }}>
-                      Sorted by <span style={{ color: 'var(--sub)' }}>{SORT_LABEL[sort.key]}</span> {sort.dir === 'desc' ? '↓' : '↑'}
-                      {cut && <> · the {d.topN} largest per side are listed; counts and charts cover all</>}
-                    </div>
+                    <h2 style={{ fontSize: 'var(--text-xl)', lineHeight: 1.15, margin: 0 }}>
+                      {visible.length.toLocaleString()} {visible.length === 1 ? 'company' : 'companies'} changed
+                    </h2>
+                    <p style={{ fontSize: 'var(--text-sm)', color: 'var(--soft)', margin: '2px 0 0' }}>
+                      <span style={{ color: 'var(--bull-text)' }}>+{addedShown.toLocaleString()}</span>
+                      {' / '}
+                      <span style={{ color: 'var(--bear-text)' }}>−{removedShown.toLocaleString()}</span>,
+                      sorted by <span style={{ color: 'var(--sub)' }}>{SORT_LABEL[sort.key]}</span> {sort.dir === 'desc' ? '↓' : '↑'}
+                      {cut && <>. The {d.topN} largest per side are listed; counts and charts cover all.</>}
+                    </p>
                   </div>
                   <div className="r-ledger-tools">
-                    <SearchField value={query} onChange={(q) => patch({ query: q })}
-                      focused={search} setFocused={setSearch}/>
+                    <SearchField value={query} onChange={(q) => patch({ query: q })}/>
                     {isPhone && (
                       <button type="button" onClick={() => setSheetOpen(true)} aria-expanded={sheetOpen}
-                        style={btn({ variant: 'ghost', shape: 'pill', active: sheetOpen || activeCount > 0 })}>
+                        style={btn({ variant: sheetOpen ? 'solid' : 'ghost', shape: 'pill', active: activeCount > 0 })}>
                         <Icon name="filter" size={13}/>
                         Filters
                         {activeCount > 0 && <span className="mono" style={countBadge}>{activeCount}</span>}
-                        <Icon name={sheetOpen ? 'chev-up' : 'chev-down'} size={12} color="var(--soft)"/>
+                        <Icon name={sheetOpen ? 'chev-up' : 'chev-down'} size={12} color={sheetOpen ? 'currentColor' : 'var(--soft)'}/>
                       </button>
                     )}
                     <button type="button" onClick={exportCsv} disabled={!visible.length}
@@ -407,64 +416,68 @@ export function ChangesPage({ manifest, period, loadRows, pinned, togglePin, las
               </div>
 
               <div style={{ overflow: 'hidden', borderRadius: '0 0 var(--r-xl) var(--r-xl)' }}>
-                <div className="r-chg-row r-chg-thead" style={{ borderBottom: '1px solid var(--line)' }}>
+                {/* Its own scroller, like the All positions ledger, so the page does not
+                    run on for hundreds of rows. Every row is rendered (585 at most, the
+                    tracked level for 2023), so there is no "show more"; logos are lazy,
+                    so only the rows scrolled into view fetch one. */}
+                <div className="r-chg-scroll">
+                <div className="r-chg-row r-chg-thead" style={{
+                  borderBottom: '1px solid var(--line)',
+                  position: 'sticky', top: 0, zIndex: 2, background: 'var(--surface)',
+                }}>
                   <HeadCell className="r-chg-rank" align="right">#</HeadCell>
                   <HeadCell sortKey="name" sort={sort} onSort={sortBy}>Company</HeadCell>
                   <HeadCell className="r-chg-country" sortKey="country" sort={sort} onSort={sortBy}>Country</HeadCell>
                   <HeadCell className="r-chg-sector" sortKey="sector" sort={sort} onSort={sortBy}>Sector</HeadCell>
                   <HeadCell sortKey="side" sort={sort} onSort={sortBy}>Change</HeadCell>
-                  <HeadCell sortKey="mvUsd" sort={sort} onSort={sortBy} align="right">Value · USD</HeadCell>
+                  <HeadCell sortKey="mvUsd" sort={sort} onSort={sortBy} align="right">USD value</HeadCell>
                   <HeadCell className="r-chg-arrow"/>
                 </div>
 
-                {shown.map((row, i) => (
+                {visible.map((row, i) => (
                   <ChangeRow key={`${row.side}:${row.ticker || row.name}`} row={row} rank={i + 1}
                     max={maxValue} openable={openable(row)} onOpen={open}/>
                 ))}
 
                 {visible.length === 0 && (
                   <div style={{ padding: '64px 24px', textAlign: 'center', color: 'var(--soft)' }}>
-                    <div className="display-italic" style={{ fontSize: 24, color: 'var(--sub)' }}>
+                    <h3 className="display" style={{ fontSize: 'var(--text-xl)', color: 'var(--sub)', margin: '0 auto' }}>
                       No companies match these filters.
-                    </div>
-                    <div style={{ marginTop: 8, fontSize: 13 }}>Try clearing a filter, or switch the level or side above.</div>
+                    </h3>
+                    <p style={{ marginTop: 8, fontSize: 'var(--text-sm)' }}>Try clearing a filter, or switch the level or side above.</p>
                   </div>
                 )}
+                </div>
 
-                {visible.length > limit && (
-                  <div style={{ padding: 14, borderBottom: '1px solid var(--line)' }}>
-                    <button type="button"
-                      onClick={() => setMore({ key: listKey, n: limit + PAGE })}
-                      style={{ ...btn({ variant: 'ghost', shape: 'block', tone: 'text' }), width: '100%' }}>
-                      Show {Math.min(PAGE, visible.length - limit)} more · {(visible.length - limit).toLocaleString()} remaining
-                    </button>
-                  </div>
-                )}
-
-                <div className="mono" style={{ padding: '12px 20px', fontSize: 10.5, color: 'var(--soft)', lineHeight: 1.6 }}>
-                  Rows with a ticker open in the detail drawer — a removed company shows what the
+                <p style={{ padding: '12px 20px', margin: 0, fontSize: 'var(--text-xs)', color: 'var(--soft)', lineHeight: 1.6, maxWidth: '75ch' }}>
+                  Rows with a ticker open in the detail drawer; a removed company shows what the
                   fund held at the previous disclosure. Companies outside the tracked set carry
                   no market data here, so they stay as listed.
-                </div>
+                </p>
               </div>
             </section>
 
             {d.filtered.renames.length > 0 && (
-              <Card i={8} title="Renames, not trades" eyebrow="Collapsed from the tracked set"
-                rightSlot={<span className="eyebrow">{d.filtered.renames.length}</span>}>
-                <div style={{
-                  display: 'grid', gap: 1, background: 'var(--line)',
-                  border: '1px solid var(--line)', borderRadius: 'var(--r-lg)', overflow: 'hidden',
-                }}>
+              <section className="r-sec" aria-labelledby="renames-head">
+                <div className="r-sec-head">
+                  <div>
+                    <h2 id="renames-head">Renames, not trades</h2>
+                    <p>Collapsed from the tracked set</p>
+                  </div>
+                  <span className="eyebrow">{d.filtered.renames.length}</span>
+                </div>
+                <ul className="r-rows">
                   {d.filtered.renames.map(r => {
                     const hit = index.cur?.byTicker.get(r.ticker) || null;
                     return (
-                      <RenameRow key={r.ticker} rename={r} openable={!!hit}
-                        onOpen={() => hit && setSelected({ company: hit, rows: holdings.cur, period })}/>
+                      <li key={r.ticker}>
+                        <RenameRow rename={r} openable={!!hit}
+                          onOpen={() => hit && setSelected({ company: hit, rows: holdings.cur, period })}/>
+                      </li>
                     );
                   })}
-                </div>
-              </Card>
+                </ul>
+              </section>
             )}
 
             <Notes topN={d.topN}/>
@@ -477,19 +490,20 @@ export function ChangesPage({ manifest, period, loadRows, pinned, togglePin, las
           <div className="r-sheet-back" onClick={() => setSheetOpen(false)}/>
           <div className="r-sheet" role="dialog" aria-label="Filters">
             <div className="r-sheet-grip" aria-hidden="true"/>
+            <SheetHead title="Filters" active={activeCount}/>
             <div className="r-sheet-body">
               <SheetBlock label="Level">
-                <Segmented label="Level" options={LEVELS} value={level} onChange={setLevel} full/>
+                <RadioList label="Level" options={LEVELS} value={level} onChange={setLevel}/>
               </SheetBlock>
               <SheetBlock label="Change">
-                <Segmented label="Change" options={SIDES} value={side} onChange={setSide} full/>
+                <RadioList label="Change" options={SIDES} value={side} onChange={setSide}/>
               </SheetBlock>
-              <SheetSection label="Sector" icon="wave" count={sectors.length}>
+              <SheetSection label="Sector" count={sectors.length}>
                 <OptionList options={bySector.map(s => s.label)} selected={sectors}
                   onToggle={(l) => toggleIn('sectors', l)} onClear={() => patch({ sectors: [] })}
                   counter={optionCount(bySector)}/>
               </SheetSection>
-              <SheetSection label="Country" icon="globe" count={countries.length}>
+              <SheetSection label="Country" count={countries.length}>
                 <OptionList options={byCountry.map(c => c.label)} selected={countries}
                   onToggle={(l) => toggleIn('countries', l)} onClear={() => patch({ countries: [] })}
                   counter={optionCount(byCountry)}/>
@@ -499,7 +513,7 @@ export function ChangesPage({ manifest, period, loadRows, pinned, togglePin, las
               )}
             </div>
             <button className="r-sheet-done" onClick={() => setSheetOpen(false)}>
-              Done · {visible.length.toLocaleString()} {visible.length === 1 ? 'company' : 'companies'}
+              Show {visible.length.toLocaleString()} {visible.length === 1 ? 'company' : 'companies'}
             </button>
           </div>
         </>,
@@ -526,48 +540,20 @@ export function ChangesPage({ manifest, period, loadRows, pinned, togglePin, las
 
 function PageHeader({ period, previous, pills }) {
   return (
-    <section className="r-chg-head enter" style={{ '--i': 0 }}>
-      <div style={{ minWidth: 0 }}>
-        <div className="eyebrow">
-          Portfolio changes{previous && <> · {formatPeriod(previous)} → {formatPeriod(period)}</>}
-        </div>
-        <h1 className="display" style={{
-          fontSize: 'clamp(28px, 3.4vw, 44px)', lineHeight: 1.02, letterSpacing: '-0.03em',
-          margin: '8px 0 0', textWrap: 'balance',
-        }}>
-          What changed in {periodLabel(period)}
-        </h1>
-        <p style={{ fontSize: 14, lineHeight: 1.6, color: 'var(--sub)', maxWidth: 620, margin: '10px 0 0' }}>
+    <section className="r-banner">
+      <div className="on-photo" style={{ minWidth: 0 }}>
+        <h1>What changed in {periodLabel(period)}</h1>
+        <p className="r-hero-lede">
           Every company that entered or left the fund&apos;s equity portfolio between the
-          two disclosures — for the whole fund, and for the set this site tracks.
+          {previous
+            ? <> disclosures of <time dateTime={previous}>{formatPeriod(previous)}</time> and <time dateTime={period}>{formatPeriod(period)}</time></>
+            : <> two disclosures</>}, for the whole fund and for the set this site tracks.
         </p>
       </div>
-      <div>
-        <div className="eyebrow" style={{ fontSize: 10, marginBottom: 8 }}>Period</div>
+      <div className="glass" style={{ minWidth: 0, maxWidth: '100%', padding: '0 var(--space-lg)', borderRadius: 'var(--r-pill)' }}>
         {pills}
       </div>
     </section>
-  );
-}
-
-// ── Stat row ─────────────────────────────────────────────────────────────────
-
-function StatCard({ i, label, value, tone, sub }) {
-  const color = tone === 'pos' ? 'var(--bull-text)' : tone === 'neg' ? 'var(--bear-text)' : 'var(--ink)';
-  return (
-    <div className="card enter" style={{
-      '--i': i, padding: 'var(--pad-card)', minHeight: 118,
-      display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: 10,
-    }}>
-      <div className="mono" style={{ fontSize: 10, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--soft)' }}>{label}</div>
-      <div>
-        <div className="display" style={{
-          fontSize: 'clamp(28px, 2.4vw, 38px)', fontWeight: 600, lineHeight: 1.05,
-          letterSpacing: '-0.03em', color,
-        }}>{value}</div>
-        <div className="mono" style={{ fontSize: 11, color: 'var(--soft)', marginTop: 6, lineHeight: 1.5 }}>{sub}</div>
-      </div>
-    </div>
   );
 }
 
@@ -591,56 +577,55 @@ function DivergingBars({ items, selected, onToggle, colorOf, maxItems = 12, othe
   const restAdded = rest.reduce((s, it) => s + it.added, 0);
   const restRemoved = rest.reduce((s, it) => s + it.removed, 0);
   if (!items.length) {
-    return <div className="mono" style={{ fontSize: 11, color: 'var(--soft)', padding: '24px 0' }}>Nothing moved.</div>;
+    return <div style={{ fontSize: 'var(--text-sm)', color: 'var(--soft)', padding: '24px 0' }}>Nothing moved.</div>;
   }
   return (
     <div style={{ display: 'grid', gap: 2 }}>
-      {shown.map(it => {
+      {shown.map((it, i) => {
         const on = selected.includes(it.label);
         const dim = selected.length > 0 && !on;
         return (
           <button key={it.label} type="button" aria-pressed={on}
             onClick={() => onToggle(it.label)}
             title={`${it.label}: ${it.added} opened, ${it.removed} closed. Click to filter the ledger.`}
+            className="r-div-row"
             style={{
-              display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 34px minmax(0, 1.6fr) 34px',
-              alignItems: 'center', gap: 8,
-              width: 'calc(100% + 16px)', margin: '0 -8px', padding: '5px 8px',
+              width: 'calc(100% + 16px)', margin: '0 -8px', padding: '7px 8px',
               background: on ? 'var(--row-hover)' : 'transparent',
               border: 'none', borderRadius: 'var(--r-sm)',
               font: 'inherit', color: 'inherit', textAlign: 'left', cursor: 'pointer',
-              opacity: dim ? 0.5 : 1, transition: 'background .12s, opacity .12s',
+              opacity: dim ? 0.5 : 1, transition: 'background-color var(--dur-micro) var(--ease-out), opacity var(--dur-micro) var(--ease-out)',
             }}
             onMouseEnter={e => { e.currentTarget.style.background = 'var(--row-hover)'; }}
             onMouseLeave={e => { e.currentTarget.style.background = on ? 'var(--row-hover)' : 'transparent'; }}>
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7, minWidth: 0, fontSize: 12, color: 'var(--ink)' }}>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7, minWidth: 0, fontSize: 'var(--text-sm)', color: 'var(--ink)' }}>
               {colorOf && <span style={{ width: 6, height: 6, borderRadius: 'var(--r-pill)', background: colorOf(it.label), flexShrink: 0 }}/>}
               <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{it.label}</span>
             </span>
-            <span className="mono" style={{ fontSize: 11, textAlign: 'right', color: it.removed ? 'var(--bear-text)' : 'var(--soft)' }}>
+            <span className="mono" style={{ fontSize: 'var(--text-xs)', textAlign: 'right', color: it.removed ? 'var(--bear-text)' : 'var(--soft)' }}>
               {it.removed ? `−${it.removed}` : '·'}
             </span>
             <span style={{ position: 'relative', height: 10, background: 'var(--track)', borderRadius: 'var(--r-pill)', overflow: 'hidden' }}>
-              <span style={{
-                position: 'absolute', top: 0, bottom: 0, right: '50%',
+              <span className="r-div-fill" style={{
+                position: 'absolute', top: 0, bottom: 0, right: '50%', '--i': i, transformOrigin: 'right',
                 width: `${(it.removed / peak) * 50}%`, background: 'var(--bear)',
               }}/>
-              <span style={{
-                position: 'absolute', top: 0, bottom: 0, left: '50%',
+              <span className="r-div-fill" style={{
+                position: 'absolute', top: 0, bottom: 0, left: '50%', '--i': i, transformOrigin: 'left',
                 width: `${(it.added / peak) * 50}%`, background: 'var(--bull)',
               }}/>
               <span style={{ position: 'absolute', top: 0, bottom: 0, left: 'calc(50% - 1px)', width: 2, background: 'var(--surface)' }}/>
             </span>
-            <span className="mono" style={{ fontSize: 11, color: it.added ? 'var(--bull-text)' : 'var(--soft)' }}>
+            <span className="mono" style={{ fontSize: 'var(--text-xs)', color: it.added ? 'var(--bull-text)' : 'var(--soft)' }}>
               {it.added ? `+${it.added}` : '·'}
             </span>
           </button>
         );
       })}
       {rest.length > 0 && (
-        <div className="mono" style={{ fontSize: 10.5, color: 'var(--soft)', padding: '8px 0 0', lineHeight: 1.5 }}>
-          {rest.length} other {otherLabel} · +{restAdded} / −{restRemoved} — pick them in the Country filter
-        </div>
+        <p style={{ fontSize: 'var(--text-xs)', color: 'var(--soft)', padding: '8px 0 0', margin: 0, lineHeight: 1.5 }}>
+          {rest.length} other {otherLabel} (+{restAdded} / −{restRemoved}): pick them in the Country filter
+        </p>
       )}
     </div>
   );
@@ -648,23 +633,19 @@ function DivergingBars({ items, selected, onToggle, colorOf, maxItems = 12, othe
 
 function ClearBtn({ onClick, children }) {
   return (
-    <button type="button" onClick={onClick} className="eyebrow" style={{
-      cursor: 'pointer', border: '1px solid var(--line)', borderRadius: 'var(--r-xs)',
-      background: 'var(--surface)', color: 'var(--ink)', padding: '3px 9px',
-    }}>{children}</button>
+    <button type="button" onClick={onClick} style={{ ...btn(), height: 32 }}>{children}</button>
   );
 }
 
 // ── Controls ─────────────────────────────────────────────────────────────────
 
 // A row of peers where exactly one is on. The pressed segment takes the ghost/active
-// treatment the ledger's own triggers use; the group border does the rest. `full`
-// is the sheet variant: the row fills its width and the segments share it, at a
-// height that is a thumb target rather than a pointer one.
-function Segmented({ label, options, value, onChange, full = false }) {
+// treatment the ledger's own triggers use; the group border does the rest. The phone
+// sheet uses RadioList (filters.jsx) instead.
+function Segmented({ label, options, value, onChange }) {
   return (
     <div role="group" aria-label={label} style={{
-      display: full ? 'flex' : 'inline-flex', width: full ? '100%' : undefined,
+      display: 'inline-flex',
       gap: 2, padding: 3,
       border: '1px solid var(--line)', borderRadius: 'var(--r-pill)',
     }}>
@@ -674,7 +655,7 @@ function Segmented({ label, options, value, onChange, full = false }) {
           <button key={o.key} type="button" aria-pressed={on} onClick={() => onChange(o.key)}
             style={{
               ...btn({ variant: 'ghost', shape: 'pill', active: on }),
-              height: full ? 34 : 26, padding: '0 12px', flex: full ? 1 : undefined,
+              height: 32, padding: '0 12px',
               borderColor: on ? 'var(--ink)' : 'transparent',
               color: on ? 'var(--ink)' : 'var(--sub)',
             }}>
@@ -686,14 +667,18 @@ function Segmented({ label, options, value, onChange, full = false }) {
   );
 }
 
-// Trigger plus a checkbox list, hung off the button like the Columns menu. The outside-
-// click check covers both, or clicking the trigger to close would reopen it.
+// Trigger plus an option list, hung off the button like the Columns menu and, like
+// it, portalled out of the glass card it sits in (useAnchoredMenu). The outside-click
+// check covers both, or clicking the trigger to close would reopen it.
 function Dropdown({ label, icon, options, selected, onToggle, onClear, counter }) {
   const [open, setOpen] = React.useState(false);
-  const ref = React.useRef(null);
+  const { anchorRef, menuRef, setMenu } = useAnchoredMenu(open, 'left');
   React.useEffect(() => {
     if (!open) return;
-    const close = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    const close = (e) => {
+      if (anchorRef.current?.contains(e.target) || menuRef.current?.contains(e.target)) return;
+      setOpen(false);
+    };
     const key = (e) => { if (e.key === 'Escape') setOpen(false); };
     document.addEventListener('mousedown', close);
     window.addEventListener('keydown', key);
@@ -701,26 +686,25 @@ function Dropdown({ label, icon, options, selected, onToggle, onClear, counter }
       document.removeEventListener('mousedown', close);
       window.removeEventListener('keydown', key);
     };
-  }, [open]);
+  }, [open, anchorRef, menuRef]);
   return (
-    <div ref={ref} style={{ position: 'relative' }}>
+    <div ref={anchorRef} style={{ position: 'relative' }}>
       <button type="button" aria-expanded={open} onClick={() => setOpen(o => !o)}
-        style={btn({ variant: 'ghost', shape: 'pill', active: open || selected.length > 0 })}>
+        style={btn({ variant: open ? 'solid' : 'ghost', shape: 'pill', active: selected.length > 0 })}>
         <Icon name={icon} size={13}/>
         {label}
         {selected.length > 0 && <span className="mono" style={countBadge}>{selected.length}</span>}
-        <Icon name={open ? 'chev-up' : 'chev-down'} size={12} color="var(--soft)"/>
+        <Icon name={open ? 'chev-up' : 'chev-down'} size={12} color={open ? 'currentColor' : 'var(--soft)'}/>
       </button>
-      {open && (
-        <div style={{
-          position: 'absolute', top: 'calc(100% + 8px)', left: 0, zIndex: 40,
-          width: 260, maxHeight: 340, overflowY: 'auto', padding: 8,
-          background: 'var(--surface)', border: '1px solid var(--line)',
-          borderRadius: 'var(--r-lg)', boxShadow: 'var(--shadow-menu)',
+      {open && createPortal(
+        <div ref={setMenu} className="glass-float" style={{
+          position: 'fixed', zIndex: 'var(--z-dropdown)',
+          width: 260, overflowY: 'auto', padding: 8,
           animation: 'rise .12s ease-out',
         }}>
           <OptionList options={options} selected={selected} onToggle={onToggle} onClear={onClear} counter={counter}/>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
@@ -729,38 +713,36 @@ function Dropdown({ label, icon, options, selected, onToggle, onClear, counter }
 const countBadge = {
   padding: '1px 6px', borderRadius: 'var(--r-pill)',
   background: 'var(--accent)', color: 'var(--treemap-cell-fg)',
-  fontSize: 10, fontWeight: 600,
+  fontSize: 'var(--text-xs)', fontWeight: 600,
 };
 
-// A block of the phone sheet that does not collapse: for a control that is a row of
-// peers rather than a list worth folding away. Same rule and rhythm as SheetSection.
+// A block of the phone sheet that does not collapse: for a short list of peers rather
+// than one worth folding away. Same rule and rhythm as SheetSection.
 function SheetBlock({ label, children }) {
   return (
-    <div className="r-sheet-sec" style={{ padding: '14px 2px' }}>
-      <div className="eyebrow" style={{ fontSize: 10, marginBottom: 10 }}>{label}</div>
+    <div className="r-sheet-sec">
+      <div className="r-sheet-label">{label}</div>
       {children}
     </div>
   );
 }
 
-function SearchField({ value, onChange, focused, setFocused }) {
+// The focus ring is the field's own (.r-field:focus-within), so it needs no state.
+function SearchField({ value, onChange }) {
   return (
-    <label className="r-chg-search" style={{
+    <label className="r-chg-search r-field" style={{
       display: 'flex', alignItems: 'center', gap: 8,
       height: 'var(--control-h)', padding: '0 12px',
       background: 'var(--row-hover)',
-      border: `1px solid ${focused ? 'var(--ink)' : 'var(--line)'}`,
-      borderRadius: 'var(--r-md)',
-      boxShadow: focused ? '0 0 0 3px var(--accent-ring)' : 'none',
-      transition: 'border-color .15s ease, box-shadow .15s ease',
+      border: '1px solid var(--field-line)',
+      borderRadius: 'var(--r-pill)',
     }}>
       <Icon name="search" size={14} color="var(--soft)"/>
       <input value={value} onChange={e => onChange(e.target.value)}
-        onFocus={() => setFocused(true)} onBlur={() => setFocused(false)}
         placeholder="Search this list" aria-label="Search the change ledger"
         style={{
-          flex: 1, minWidth: 0, border: 'none', outline: 'none', background: 'transparent',
-          color: 'var(--ink)', fontFamily: 'var(--font-display)', fontSize: 13,
+          flex: 1, minWidth: 0, height: '100%', border: 'none', outline: 'none', background: 'transparent',
+          color: 'var(--ink)', fontFamily: 'var(--font-body)', fontSize: 'var(--text-sm)',
         }}/>
       {value && (
         <button type="button" onClick={() => onChange('')} aria-label="Clear search"
@@ -775,8 +757,8 @@ function SearchField({ value, onChange, focused, setFocused }) {
 // ── Ledger ───────────────────────────────────────────────────────────────────
 
 const headText = {
-  fontFamily: 'var(--font-mono)', fontSize: 10.5, fontWeight: 500,
-  color: 'var(--soft)', textTransform: 'uppercase', letterSpacing: '0.08em',
+  fontFamily: 'var(--font-body)', fontSize: 'var(--text-xs)', fontWeight: 500,
+  color: 'var(--soft)',
   whiteSpace: 'nowrap',
 };
 
@@ -797,7 +779,7 @@ function HeadCell({ children, className = '', align = 'left', sortKey, sort, onS
       title={`Sort by ${children}`}
       style={{ ...base, gap: 4, background: 'none', border: 'none', cursor: 'pointer', textAlign: align }}>
       {children}
-      <span style={{ opacity: on ? 1 : 0.25, color: on ? 'var(--accent-text)' : 'var(--soft)', fontSize: 9 }}>
+      <span aria-hidden="true" style={{ opacity: on ? 1 : 0.35, color: on ? 'var(--accent-text)' : 'var(--soft)', fontSize: 10 }}>
         {on ? (sort.dir === 'desc' ? '▼' : '▲') : '⇅'}
       </span>
     </button>
@@ -824,7 +806,8 @@ function ChangeRow({ row, rank, max, openable, onOpen }) {
       <span className="mono r-chg-rank" style={{ ...cell, justifyContent: 'flex-end', fontSize: 11, color: 'var(--soft)' }}>
         {String(rank).padStart(3, '0')}
       </span>
-      <span style={{ ...cell, minWidth: 0 }}>
+      <span style={{ ...cell, minWidth: 0, gap: 10 }}>
+        <CompanyLogo ticker={row.ticker} name={row.name} size={26}/>
         <span style={{ minWidth: 0, padding: '8px 0' }}>
           <span style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
             <span style={{
@@ -849,7 +832,7 @@ function ChangeRow({ row, rank, max, openable, onOpen }) {
       </span>
       <span style={{ ...cell, flexDirection: 'column', alignItems: 'stretch', justifyContent: 'center', gap: 4 }}>
         <span className="mono" style={{ fontSize: 13, color: 'var(--ink)', textAlign: 'right' }}>
-          {row.mvUsd != null ? fmt.money(row.mvUsd, 'USD', 1) : '—'}
+          {row.mvUsd != null ? fmt.money(row.mvUsd, 'USD', 1) : 'n/a'}
         </span>
         <MicroBar value={row.mvUsd || 0} max={max} tone={added ? 'pos' : 'neg'}/>
       </span>
@@ -866,15 +849,16 @@ function RenameRow({ rename, openable, onOpen }) {
     <Root type={openable ? 'button' : undefined} onClick={openable ? onOpen : undefined}
       title={openable ? `Open ${rename.to}` : undefined}
       style={{
-        display: 'grid', gridTemplateColumns: 'auto minmax(0, 1fr) auto', gap: 12, alignItems: 'center',
-        width: '100%', padding: '10px 12px', background: 'var(--surface)',
+        display: 'grid', gridTemplateColumns: 'auto auto minmax(0, 1fr) auto', gap: 12, alignItems: 'center',
+        width: '100%', padding: 'var(--space-sm) 0', background: 'transparent',
         border: 'none', font: 'inherit', color: 'inherit', textAlign: 'left',
-        cursor: openable ? 'pointer' : 'default', transition: 'background .12s',
+        cursor: openable ? 'pointer' : 'default', transition: 'background-color var(--dur-micro) var(--ease-out)',
       }}
       onMouseEnter={openable ? (e) => { e.currentTarget.style.background = 'var(--row-hover)'; } : undefined}
-      onMouseLeave={openable ? (e) => { e.currentTarget.style.background = 'var(--surface)'; } : undefined}>
+      onMouseLeave={openable ? (e) => { e.currentTarget.style.background = 'transparent'; } : undefined}>
+      <CompanyLogo ticker={rename.ticker} name={rename.to} size={26}/>
       <Tag>{rename.ticker}</Tag>
-      <span style={{ fontSize: 12, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+      <span style={{ fontSize: 'var(--text-sm)', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
         <span style={{ color: 'var(--sub)' }}>{rename.from}</span>
         <span style={{ color: 'var(--soft)' }}> → </span>
         <span style={{ color: 'var(--ink)' }}>{rename.to}</span>
@@ -888,12 +872,14 @@ function RenameRow({ rename, openable, onOpen }) {
 
 function Notes({ topN }) {
   return (
-    <section className="card enter" style={{ '--i': 9, padding: 'var(--pad-card)' }}>
-      <div className="eyebrow" style={{ marginBottom: 14 }}>How to read these figures</div>
+    <section className="r-sec" aria-labelledby="notes-head">
+      <div className="r-sec-head">
+        <h2 id="notes-head">How to read these figures</h2>
+      </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 'clamp(16px, 2vw, 32px)' }}>
         <Note title="All NBIM holdings is the fund's own list.">
           Entering or leaving it means NBIM opened or closed a position. Companies are
-          matched by name — NBIM publishes no ISIN or ticker — so a company that renamed
+          matched by name (NBIM publishes no ISIN or ticker), so a company that renamed
           itself appears once as removed and once as added. The counts and charts cover
           every company; the ledger lists the {topN} largest per side at this level.
         </Note>
@@ -911,19 +897,18 @@ function Notes({ topN }) {
 function Note({ title, children }) {
   return (
     <div>
-      <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink)' }}>{title}</div>
-      <p style={{ fontSize: 12.5, lineHeight: 1.6, color: 'var(--sub)', margin: '6px 0 0' }}>{children}</p>
+      <h3 style={{ fontFamily: 'var(--font-body)', fontSize: 'var(--text-sm)', fontWeight: 600, letterSpacing: 0, color: 'var(--ink)', margin: 0 }}>{title}</h3>
+      <p style={{ fontSize: 'var(--text-sm)', lineHeight: 1.6, color: 'var(--sub)', margin: '6px 0 0', maxWidth: '58ch' }}>{children}</p>
     </div>
   );
 }
 
-function Notice({ eyebrow, title, tone, children }) {
+function Notice({ title, tone, children }) {
   return (
-    <section className="card enter" role={tone === 'neg' ? 'alert' : undefined}
-      style={{ '--i': 1, padding: 'clamp(24px, 4vw, 40px)', maxWidth: 640 }}>
-      <div className="eyebrow" style={{ color: tone === 'neg' ? 'var(--bear-text)' : undefined }}>{eyebrow}</div>
-      <h2 className="display" style={{ fontSize: 24, lineHeight: 1.15, letterSpacing: '-0.02em', margin: '8px 0 0' }}>{title}</h2>
-      <p style={{ fontSize: 14, lineHeight: 1.6, color: 'var(--sub)', margin: '10px 0 0', overflowWrap: 'anywhere' }}>{children}</p>
+    <section className="glass" role={tone === 'neg' ? 'alert' : undefined}
+      style={{ padding: 'var(--pad-card-lg)', maxWidth: 640 }}>
+      <h2 className="display" style={{ fontSize: 'var(--text-xl)', lineHeight: 1.15, margin: 0, color: tone === 'neg' ? 'var(--signal-2-text)' : undefined }}>{title}</h2>
+      <p style={{ fontSize: 'var(--text-sm)', lineHeight: 1.6, color: 'var(--sub)', margin: '10px 0 0', overflowWrap: 'anywhere' }}>{children}</p>
     </section>
   );
 }
