@@ -3,8 +3,8 @@
 //
 // One date retires it in two places: this hides the switch, and
 // .github/workflows/deploy-frontend.yml stops building /classic/ on the same day.
-// Change both together. After it passes, this file, the two switches (topbar.jsx,
-// footer.jsx), the workflow steps and the `classic` branch can all be deleted.
+// Change both together. After it passes, this file, the switch in topbar.jsx, the
+// workflow steps and the `classic` branch can all be deleted.
 export const CLASSIC_UNTIL = '2026-12-01';
 
 export const classicOffered = () => new Date().toISOString().slice(0, 10) < CLASSIC_UNTIL;

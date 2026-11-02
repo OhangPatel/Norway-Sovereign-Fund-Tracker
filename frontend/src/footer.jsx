@@ -1,7 +1,6 @@
 import { AdminLogin } from './auth.jsx';
 import { formatPeriod, isPeriod, periodLabel } from './snapshot.js';
 import { changesHash } from './router.js';
-import { classicOffered, goClassic } from './classic.js';
 
 // Page footer: the hero's composition, closing the page. The statement sits on the
 // ledger's closing photograph with the snapshot's record beside it in glass, then the
@@ -72,12 +71,7 @@ export function Footer({ positions, period, pricesAsOf, hasChanges, onPhoto }) {
 
         <div className="r-foot-bar">
           <nav aria-label="Footer" className="r-foot-inline">
-            <FooterLink className="r-foot-inline-link" href="/llms.txt">llms.txt</FooterLink>
             <FooterLink className="r-foot-inline-link" href="https://learnbasecase.com" external>Basecase</FooterLink>
-            <FooterLink className="r-foot-inline-link" href="/humans.txt">Colophon</FooterLink>
-            {classicOffered() && (
-              <FooterLink className="r-foot-inline-link" onClick={goClassic}>Classic design</FooterLink>
-            )}
           </nav>
           <span className="r-foot-meta">
             <span>© {new Date().getFullYear()} Basecase</span>
