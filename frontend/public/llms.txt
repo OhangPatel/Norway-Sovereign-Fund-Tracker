@@ -49,7 +49,7 @@ want to see how a sovereign wealth fund allocates capital, company by company.
   managed by Norges Bank Investment Management (NBIM) on behalf of the Norwegian
   Ministry of Finance.
 - Ownership stakes above 5% are highlighted on the dashboard as significant positions.
-- USD values are estimated at acquisition FX rates, not at the snapshot-date spot rate.
+- USD values are as published by NBIM, at a single exchange rate for each reporting period.
 - This site is an independent research tool. It is not affiliated with, endorsed by,
   or operated by NBIM, Norges Bank, or the Norwegian government.
 
