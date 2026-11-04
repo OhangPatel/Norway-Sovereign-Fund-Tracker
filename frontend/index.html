@@ -698,8 +698,8 @@
       /* Position detail: detail.jsx. A drawer from the right on a wide screen; the
          media block below turns it into a bottom sheet (SHEET_QUERY in detail.jsx). */
       .r-detail { position: fixed; top: 0; right: 0; bottom: 0; z-index: 81; width: min(640px, 96vw); overflow-y: auto; overscroll-behavior: contain; border-radius: 0; box-shadow: var(--glass-hi), var(--shadow-overlay); }
-      /* Frosts what scrolls under it, inside the drawer's own glass. */
-      .r-detail-head { position: sticky; top: 0; z-index: 5; background: color-mix(in oklab, var(--glass) 50%, transparent); -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.35); backdrop-filter: blur(var(--glass-blur)) saturate(1.35); border-bottom: 1px solid var(--line); }
+      /* Near-opaque so the content scrolling under it can't ghost through the title and buttons; the drawer's own glass is only 62% on dark, and a nested blur doesn't hide text reliably (Safari). */
+      .r-detail-head { position: sticky; top: 0; z-index: 5; background: color-mix(in oklab, var(--surface) 96%, transparent); -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.35); backdrop-filter: blur(var(--glass-blur)) saturate(1.35); border-bottom: 1px solid var(--line); }
       .r-detail-bar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-sm); padding: var(--space-sm) var(--space-lg); }
       .r-detail-title { font-size: var(--text-sm); color: var(--soft); }
       .r-detail-actions { display: flex; gap: var(--space-xs); }
