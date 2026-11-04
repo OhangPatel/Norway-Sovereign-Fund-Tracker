@@ -84,9 +84,10 @@ jobs:
       - name: Fetch prices from Yahoo
         # Collects the union of tickers across data/periods/*/holdings_with_tickers.csv,
         # which are committed, so this needs nothing that is not in the repo.
-        # The script paces itself (2s between batches, 30s backoff on HTTP 429) and skips
-        # batches it cannot fetch rather than aborting, so a partial failure still produces
-        # usable data. The guard below decides whether that partial result is good enough.
+        # The script paces itself (at least 8s a batch), waits out rate limits, gives anything
+        # else that failed a second pass, and stops rather than aborting if a block outlasts
+        # every wait, so a partial failure still produces usable data. The guard below decides
+        # whether that partial result is good enough.
         run: python backend/pipeline/fetch_yahoo_metrics.py
 
       - name: Merge and export
