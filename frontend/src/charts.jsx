@@ -103,6 +103,8 @@ function computeSquarified(values, W, H) {
 // `highlight` lights the tile with that label from outside (a list beside it), and
 // `onHover` reports the tile under the pointer back, so the two stay in step.
 // `selected` labels stay at full strength and every other tile dims (.r-tile.is-dim).
+// `height` is a number, or a function of the measured width: the layout is only as legible as
+// its aspect ratio, so a narrow phone needs a taller grid than a wide one.
 export function Treemap({ items, height = 300, gap = 5, radius = 4, minShare = 0.011, onClick, highlight = null, onHover, selected = [] }) {
   const ref = useRef(null);
   const [width, setWidth] = useState(0);
@@ -115,6 +117,7 @@ export function Treemap({ items, height = 300, gap = 5, radius = 4, minShare = 0
   }, []);
 
   const [hover, setHover] = useState(null); // { i, x, y }
+  const h = typeof height === 'function' ? Math.round(height(width)) : height;
 
   const data = useMemo(
     () => (items || []).filter(it => it.value > 0).sort((a, b) => b.value - a.value),
@@ -126,13 +129,13 @@ export function Treemap({ items, height = 300, gap = 5, radius = 4, minShare = 0
     const vals = data.map(d => d.value);
     const total = vals.reduce((a, b) => a + b, 0);
     const floor = total * minShare;
-    return computeSquarified(vals.map(v => Math.max(v, floor)), width, height);
-  }, [data, width, height, minShare]);
+    return computeSquarified(vals.map(v => Math.max(v, floor)), width, h);
+  }, [data, width, h, minShare]);
 
   const hovered = hover != null ? data[hover.i] : null;
 
   return (
-    <div ref={ref} style={{ position: 'relative', width: '100%', height }}>
+    <div ref={ref} style={{ position: 'relative', width: '100%', height: h }}>
       {data.map((it, i) => {
         const r = rects[i];
         if (!r || r.w <= 0 || r.h <= 0) return null;

@@ -27,9 +27,10 @@ export var SECTOR_COLORS = {
   '':                      'var(--soft)',
 };
 
-// Where .r-duo stacks the sector list over the treemap (index.html, max-width 900px).
-// There the treemap no longer has to match the list's height beside it, and at 580px
-// under a full list the section ran to nearly two phone screens.
+// Where .r-duo stacks into one column (index.html, max-width 900px). The sector list is
+// dropped there: stacked over the treemap it only repeated the same names and shares.
+// The treemap then carries them alone, sized by its width (1.8x on a phone) so the small
+// sectors keep room for a label.
 const STACKED_QUERY = '(max-width: 900px)';
 const subscribeStacked = (cb) => {
   const mq = window.matchMedia(STACKED_QUERY);
@@ -193,24 +194,26 @@ export function Summary({ data, filtered, sectorBase, onPickCompany, onSetFilter
           )}
         </div>
         <div className="r-duo r-sector-duo">
-          <ul className={activeSectors.length ? 'r-rows has-pick' : 'r-rows'}>
-            {sectors.map((it, i) => (
-              <li key={it.label}>
-                <button type="button" className={`r-row-btn${hot === it.label ? ' is-hot' : ''}`} aria-pressed={activeSectors.includes(it.label)}
-                  onMouseEnter={() => setHot(it.label)} onMouseLeave={() => setHot(null)}
-                  onFocus={() => setHot(it.label)} onBlur={() => setHot(null)}
-                  onClick={() => pickSector(it.label)}>
-                  <span className="r-row-name">{it.label}</span>
-                  <span className="mono" style={{ fontSize: 'var(--text-sm)' }}>{it.pct.toFixed(1)}%</span>
-                  <span className="r-row-bar" aria-hidden="true">
-                    <span style={{ '--i': i, transform: `scaleX(${sectors[0].pct ? it.pct / sectors[0].pct : 0})`, background: it.color }}/>
-                  </span>
-                </button>
-              </li>
-            ))}
-          </ul>
+          {!stacked && (
+            <ul className={activeSectors.length ? 'r-rows has-pick' : 'r-rows'}>
+              {sectors.map((it, i) => (
+                <li key={it.label}>
+                  <button type="button" className={`r-row-btn${hot === it.label ? ' is-hot' : ''}`} aria-pressed={activeSectors.includes(it.label)}
+                    onMouseEnter={() => setHot(it.label)} onMouseLeave={() => setHot(null)}
+                    onFocus={() => setHot(it.label)} onBlur={() => setHot(null)}
+                    onClick={() => pickSector(it.label)}>
+                    <span className="r-row-name">{it.label}</span>
+                    <span className="mono" style={{ fontSize: 'var(--text-sm)' }}>{it.pct.toFixed(1)}%</span>
+                    <span className="r-row-bar" aria-hidden="true">
+                      <span style={{ '--i': i, transform: `scaleX(${sectors[0].pct ? it.pct / sectors[0].pct : 0})`, background: it.color }}/>
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
           <div className="glass r-sector-map">
-            <Treemap items={sectors} height={stacked ? 260 : 580} highlight={hot} onHover={setHot}
+            <Treemap items={sectors} height={stacked ? (w => (w < 500 ? w * 1.8 : w)) : 580} highlight={hot} onHover={setHot}
               selected={activeSectors}
               onClick={(it) => pickSector(it.label)}
             />
