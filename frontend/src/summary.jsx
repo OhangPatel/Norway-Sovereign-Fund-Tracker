@@ -39,6 +39,17 @@ const subscribeStacked = (cb) => {
 };
 const useStacked = () => React.useSyncExternalStore(subscribeStacked, () => window.matchMedia(STACKED_QUERY).matches);
 
+// Ownership bands by panel width, widest first. None is narrower than 0.5, and each narrower
+// set only merges bands of the one above it, so an edge never moves between screens. They
+// widen as they climb because companies crowd under 3% and only a handful sit above 10%;
+// every band holds companies in all seven periods. A minWidth keeps that set's labels apart.
+const OWNERSHIP_TIERS = [
+  { minWidth: 900, edges: [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 6, 7, 8, 9, 10, 15] },
+  { minWidth: 560, edges: [0, 0.5, 1, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10] },
+  { minWidth: 290, edges: [0, 0.5, 1, 1.5, 2, 3, 5, 10] },
+  { minWidth: 0, edges: [0, 1, 2, 3, 5, 10] },
+];
+
 export function Summary({ data, filtered, sectorBase, onPickCompany, onSetFilter, activeSectors = [], onClearSectors, onOwnSelect, periodInfo }) {
   const stacked = useStacked();
   const { totalNok, totalUsd, avgOwn, countries, sectorCount } = React.useMemo(() => {
@@ -237,8 +248,8 @@ export function Summary({ data, filtered, sectorBase, onPickCompany, onSetFilter
           <span className="eyebrow">{owns.length.toLocaleString()} companies</span>
         </div>
         <div className="glass">
-          <Histogram data={owns} bins={28} height={220}
-            xFmt={v => v.toFixed(1) + '%'} onSelect={onOwnSelect}/>
+          <Histogram data={owns} tiers={OWNERSHIP_TIERS} height={220}
+            caption="% of company owned" onSelect={onOwnSelect}/>
         </div>
         <dl className="r-tally" style={{ margin: 'var(--space-lg) 0 0' }}>
           <TallyCell label="Median" value={<Cents text={fmt.pct(ownStats.median, 2)}/>}/>

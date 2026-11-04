@@ -475,11 +475,14 @@ total. Fill with a `--sector-*` token; `2px solid var(--surface)` gutters; label
 pie/donut for sector breakdowns.
 
 ### Histogram (distribution)
-Full-width panel. Bars in a flex row (`align-items: flex-end`, `gap: 5px`), each filled with
-`--accent`, rounded top corners only (`3px 3px 0 0`). Chart area has a `1px solid var(--line)`
-baseline and faint horizontal gridlines via `repeating-linear-gradient` in `--line`. Axis
-labels and stat labels are mono/uppercase `--soft`; stat values are `--ink` at 22px/600.
-Use for any single-variable distribution (ownership %, returns, etc.).
+Full-width glass panel of slim pills (`.r-night-bar`, 14px at most), lit at the top and fading
+toward the foot, with the count above in mono and the band's range under it in `--soft`. A band
+with no companies is a short hatched stub. Each band is a button that filters the table.
+
+Bands are clean ranges, never equal slices of the maximum: one outlier at 23% left 14 of 28
+equal bars empty. No band is narrower than 0.5. The panel's width picks the set
+(`OWNERSHIP_TIERS`, summary.jsx), and a narrower set only merges bands of a wider one, so an edge
+never moves between screens.
 
 ### Theme switcher
 A row in the nav menu (`topbar.jsx`), not a floating pill. It writes `sov-theme` to

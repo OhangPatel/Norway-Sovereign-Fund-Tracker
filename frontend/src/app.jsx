@@ -613,7 +613,8 @@ export function App() {
     if (!ownSel) return baseFiltered;
     return baseFiltered.filter(c => {
       const o = c.ownership || 0;
-      return o >= ownSel.lo && (ownSel.last ? o <= ownSel.hi : o < ownSel.hi);
+      // The chart leaves out companies at 0%, so a band must too or its table outgrows its count.
+      return o > 0 && o >= ownSel.lo && o < ownSel.hi;
     });
   }, [baseFiltered, ownSel]);
 

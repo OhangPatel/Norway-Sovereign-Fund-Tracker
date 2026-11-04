@@ -5,49 +5,65 @@ import { useState, useRef, useEffect, useMemo } from 'react';
 // Histogram of ownership %, night by night: one slim pill per band, lit at its top
 // (index.html, .r-night); a band with no companies is a short hatched stub. Each band
 // is a button that filters the ledger to its range; pressing it again clears it.
-export function Histogram({ data, bins = 20, height = 140, xFmt = v => v.toFixed(1), onSelect }) {
+// `tiers` is [{ minWidth, edges }], widest first: the panel's measured width picks how many
+// bands fit. An edge is a band's lower bound, and the last band is open-ended.
+export function Histogram({ data, tiers, height = 140, caption, onSelect }) {
   const [selected, setSelected] = useState(null); // selected bin index, or null
-  // Drop a stale selection (and notify) whenever the underlying data changes.
-  useEffect(() => { setSelected(null); onSelect && onSelect(null); }, [data]);
+  // A state ref, not useRef: the panel is absent while there is no data, and has to be
+  // observed whenever it does mount.
+  const [panel, setPanel] = useState(null);
+  const [width, setWidth] = useState(0);
+  useEffect(() => {
+    if (!panel) return;
+    const ro = new ResizeObserver(entries => { for (const e of entries) setWidth(e.contentRect.width); });
+    ro.observe(panel);
+    return () => ro.disconnect();
+  }, [panel]);
+  const edges = tiers.find(t => width >= t.minWidth).edges;
+  // Drop a stale selection (and notify) whenever the underlying data or the bands change.
+  useEffect(() => { setSelected(null); onSelect && onSelect(null); }, [data, edges]);
   if (!data || !data.length) return null;
-  const min = Math.min(...data);
-  const max = Math.max(...data);
-  const range = Math.max(max - min, 0.0001);
-  const lo = (i) => min + (i / bins) * range;
-  const bandOf = (v) => Math.min(bins - 1, Math.max(0, Math.floor(((v - min) / range) * bins)));
+  const bandOf = (v) => {
+    let i = edges.length - 1;
+    while (i > 0 && v < edges[i]) i--;
+    return i;
+  };
+  const rangeOf = (i) => (i + 1 < edges.length ? `${edges[i]}–${edges[i + 1]}` : `${edges[i]}+`);
 
   const toggle = (i) => {
     const next = selected === i ? null : i;
     setSelected(next);
     if (onSelect) onSelect(next == null ? null : {
-      lo: min + (i / bins) * range,
-      hi: min + ((i + 1) / bins) * range,
-      last: i === bins - 1,
+      lo: edges[i],
+      hi: i + 1 < edges.length ? edges[i + 1] : Infinity,
     });
   };
-  const buckets = new Array(bins).fill(0);
+  const buckets = new Array(edges.length).fill(0);
   for (const v of data) buckets[bandOf(v)] += 1;
   const peak = Math.max(...buckets);
   return (
-    <div className={`r-nights${selected != null ? ' has-sel' : ''}`} style={{ '--n': bins }}>
+    <div ref={setPanel} className={`r-nights${selected != null ? ' has-sel' : ''}`} style={{ '--n': edges.length }}>
       <div className="r-nights-bars" role="group" style={{ height }}
         aria-label="Ownership share per company, in bands; select a band to filter the ledger">
         {buckets.map((c, i) => {
-          const label = `${xFmt(lo(i))} to ${xFmt(lo(i + 1))}: ${c.toLocaleString()} ${c === 1 ? 'company' : 'companies'}`;
+          const range = i + 1 < edges.length ? `${rangeOf(i)}%` : `${edges[i]}% or more`;
+          const label = `${range}: ${c.toLocaleString()} ${c === 1 ? 'company' : 'companies'}`;
           return (
-            <button key={i} type="button"
+            <button key={edges[i]} type="button"
               className={`r-night${c === 0 ? ' is-empty' : ''}${selected === i ? ' is-on' : ''}`}
               style={{ '--h': peak ? c / peak : 0, '--i': i }}
               aria-pressed={selected === i} aria-label={label} title={label}
               onClick={() => toggle(i)}>
+              {c > 0 && <span className="r-night-n">{c.toLocaleString()}</span>}
               <span className="r-night-bar"/>
             </button>
           );
         })}
       </div>
       <div className="r-nights-axis" aria-hidden="true">
-        {buckets.map((_, i) => <span key={i}>{i === 0 ? xFmt(lo(0)) : lo(i).toFixed(1)}</span>)}
+        {edges.map((e, i) => <span key={e}>{rangeOf(i)}</span>)}
       </div>
+      {caption && <p className="r-nights-cap">{caption}</p>}
     </div>
   );
 }
