@@ -436,7 +436,7 @@ export function App() {
       ownership: { label: 'Ownership %',    visible: true },
       rec:       { label: 'Analyst rec',    visible: wide },
       pe:        { label: 'P/E ratio',      visible: false },
-      pin:       { label: 'Pin',            visible: true },
+      pin:       { label: 'Favourites',     visible: true },
     };
   });
 

@@ -337,8 +337,8 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
             </button>
             <span className="r-detail-title">Position detail</span>
             <div className="r-detail-actions">
-              <IconBtn onClick={() => togglePin(company.id)} active={isPinned} title={isPinned ? 'Unpin' : 'Pin'}>
-                <Icon name={isPinned ? 'pinned' : 'pin'} size={14}/>
+              <IconBtn onClick={() => togglePin(company.id)} active={isPinned} title={isPinned ? 'Unstar' : 'Star'}>
+                <Icon name={isPinned ? 'starred' : 'star'} size={14}/>
               </IconBtn>
               <span className="r-detail-x">
                 <IconBtn onClick={close} title="Close (Esc)">
