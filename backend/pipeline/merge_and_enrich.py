@@ -110,7 +110,8 @@ def write_manifest(periods):
     with no frontend change at all.
 
     `half` drives NBIM's own "show historical half-year holdings" toggle — H1 periods
-    stay hidden until it is ticked.
+    stay hidden until it is ticked. The totals are NBIM's headline for every company it
+    holds, where `rows` counts only the ones tracked here.
     """
     manifest = {
         "latest": periods[-1],
@@ -121,6 +122,7 @@ def write_manifest(periods):
                 "label": (f"H1 {p[:4]}" if p.endswith("-06-30") else p[:4]),
                 "half": p.endswith("-06-30"),
                 "rows": len(pd.read_csv(PERIODS_DIR / p / "holdings_with_tickers.csv")),
+                **json.loads((PERIODS_DIR / p / "totals.json").read_text()),
             }
             for p in reversed(periods)
         ],

@@ -320,14 +320,14 @@ const crumbs = (items) => ({
 });
 
 function table(list) {
-  const head = ['Company', 'Ticker', 'Country', 'Fund value (USD)', 'Fund value (NOK)',
+  const head = ['Company', 'Ticker', 'Country', 'Fund value (USD)',
     'Ownership', 'Voting', 'Price', 'P/E', 'Market cap', 'Analyst rec'];
   return `<div class="tw">
 <p class="tcap">Every position in this sector, largest first. Values are the fund's holding; ownership is the share of the company held.</p>
 <div class="tscroll"><table>
 <thead><tr>${head.map((h, i) => `<th scope="col"${i >= 3 ? ' style="text-align:right"' : ''}>${h}</th>`).join('')}</tr></thead>
 <tbody>
-${list.map((r) => `<tr><th scope="row">${esc(r.name)}</th><td class="mono">${esc(r.ticker)}</td><td>${esc(r.country)}</td><td class="n">${money(r.mvUsd, '$')}</td><td class="n">${money(r.mvNok, 'kr')}</td><td class="n">${pct(r.ownership)}</td><td class="n">${esc(r.voting ?? '—')}</td><td class="n">${num(r.price)}</td><td class="n">${num(r.pe)}</td><td class="n">${money(r.marketCap, '$')}</td><td>${esc(rec(r.rec))}</td></tr>`).join('\n')}
+${list.map((r) => `<tr><th scope="row">${esc(r.name)}</th><td class="mono">${esc(r.ticker)}</td><td>${esc(r.country)}</td><td class="n">${money(r.mvUsd, '$')}</td><td class="n">${pct(r.ownership)}</td><td class="n">${esc(r.voting ?? '—')}</td><td class="n">${num(r.price)}</td><td class="n">${num(r.pe)}</td><td class="n">${money(r.marketCap, '$')}</td><td>${esc(rec(r.rec))}</td></tr>`).join('\n')}
 </tbody></table></div></div>`;
 }
 
@@ -403,7 +403,7 @@ for (const s of sectors) {
             description: `${s.count} ${s.name} companies held by Norway's Government Pension Fund Global, worth ${money(s.usd, '$')}.`,
             temporalCoverage: AS_OF,
             url,
-            variableMeasured: ['Fund value (USD)', 'Fund value (NOK)', 'Ownership percentage',
+            variableMeasured: ['Fund value (USD)', 'Ownership percentage',
               'Voting rights', 'Share price', 'Price/earnings ratio', 'Market capitalisation', 'Analyst recommendation'],
             creator: { '@type': 'Organization', name: 'Basecase', url: 'https://learnbasecase.com' },
             isBasedOn: 'https://www.nbim.no/en/responsible-investment/holdings/',

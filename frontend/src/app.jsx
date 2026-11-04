@@ -746,6 +746,7 @@ export function App() {
           activeSectors={filters.sectors}
           onClearSectors={() => setFilters(f => ({ ...f, sectors: [] }))}
           onOwnSelect={setOwnSel}
+          periodInfo={manifest?.periods.find(p => p.period === period)}
         />
         </div>
 

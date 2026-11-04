@@ -39,7 +39,7 @@ const subscribeStacked = (cb) => {
 };
 const useStacked = () => React.useSyncExternalStore(subscribeStacked, () => window.matchMedia(STACKED_QUERY).matches);
 
-export function Summary({ data, filtered, sectorBase, onPickCompany, onSetFilter, activeSectors = [], onClearSectors, onOwnSelect }) {
+export function Summary({ data, filtered, sectorBase, onPickCompany, onSetFilter, activeSectors = [], onClearSectors, onOwnSelect, periodInfo }) {
   const stacked = useStacked();
   const { totalNok, totalUsd, avgOwn, countries, sectorCount } = React.useMemo(() => {
     let totalNok = 0, totalUsd = 0, ownSum = 0;
@@ -64,7 +64,7 @@ export function Summary({ data, filtered, sectorBase, onPickCompany, onSetFilter
   // The hero's top holdings are the fund's, whatever the filters below are set to:
   // the hero is the overview, and a sector pick used to turn it into that sector's top 8.
   const top10 = React.useMemo(
-    () => [...data].sort((a, b) => b.mvNok - a.mvNok).slice(0, 8),
+    () => [...data].sort((a, b) => b.mvUsd - a.mvUsd).slice(0, 8),
     [data]
   );
 
@@ -110,6 +110,11 @@ export function Summary({ data, filtered, sectorBase, onPickCompany, onSetFilter
   const [sectorRef, sectorSeen] = useSeen();
   const [ownRef, ownSeen] = useSeen();
 
+  // With no filter on, the lead figure is NBIM's own equity total for the period: every
+  // company it holds, not only the ones tracked here. A filter can only narrow the tracked
+  // rows, so then it is their sum.
+  const nbim = filtered.length === data.length && periodInfo?.equityUsd ? periodInfo : null;
+
   // The hero's one action: down to the ledger, without touching the hash router.
   const toLedger = () => {
     const el = document.getElementById('ledger');
@@ -126,8 +131,8 @@ export function Summary({ data, filtered, sectorBase, onPickCompany, onSetFilter
         <div className="on-photo">
           <h1 id="hero-head">The world&apos;s largest sovereign wealth fund, tracked equity by equity.</h1>
           <p className="r-hero-lede">
-            Norway&apos;s Government Pension Fund Global holds positions in {data.length.toLocaleString()} public companies across six markets.
-            Filter, compare, and click through to see how every krone is allocated.
+            This site tracks {data.length.toLocaleString()} of the public companies held by Norway&apos;s Government Pension Fund Global, across six markets.
+            Filter, compare, and click through to see how every dollar is allocated.
           </p>
           <div className="r-hero-actions">
             <button type="button" onClick={toLedger} style={{
@@ -141,7 +146,7 @@ export function Summary({ data, filtered, sectorBase, onPickCompany, onSetFilter
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 'var(--space-sm)', marginBottom: 'var(--space-2xs)' }}>
             <div>
               <h2 style={{ fontSize: 'var(--text-lg)', lineHeight: 1.2, margin: 0 }}>Top holdings</h2>
-              <p className="eyebrow" style={{ margin: '2px 0 0' }}>Market value in NOK</p>
+              <p className="eyebrow" style={{ margin: '2px 0 0' }}>Market value in USD</p>
             </div>
             <span className="eyebrow">Top 8 of {data.length.toLocaleString()}</span>
           </div>
@@ -154,10 +159,10 @@ export function Summary({ data, filtered, sectorBase, onPickCompany, onSetFilter
                     <span className="r-acct-name" style={{ display: 'block', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{c.name}</span>
                     <span className="mono" style={{ display: 'block', fontSize: 'var(--text-xs)', color: 'var(--soft)' }}>{c.ticker}, {countryCode(c.country)}</span>
                     <span className="r-acct-bar" aria-hidden="true">
-                      <span style={{ '--w': top10[0].mvNok ? c.mvNok / top10[0].mvNok : 0 }}/>
+                      <span style={{ '--w': top10[0].mvUsd ? c.mvUsd / top10[0].mvUsd : 0 }}/>
                     </span>
                   </span>
-                  <span className="mono" style={{ fontSize: 'var(--text-sm)', whiteSpace: 'nowrap' }}>{fmt.money(c.mvNok, 'NOK', 1)}</span>
+                  <span className="mono" style={{ fontSize: 'var(--text-sm)', whiteSpace: 'nowrap' }}>{fmt.money(c.mvUsd, 'USD', 1)}</span>
                 </button>
               </li>
             ))}
@@ -167,8 +172,8 @@ export function Summary({ data, filtered, sectorBase, onPickCompany, onSetFilter
 
       {/* The ruled tally, in one glass strip at the foot of the photograph. */}
       <dl className="r-tally glass" style={{ margin: 0 }}>
-        <TallyCell lead count label="Total holdings" value={fmt.money(totalUsd, 'USD', 1)}
-          sub={`${fmt.money(totalNok, 'NOK', 1)}, across ${filtered.length.toLocaleString()} companies`} />
+        <TallyCell lead count label="Total holdings" value={fmt.money(nbim ? nbim.equityUsd : totalUsd, 'USD', 1)}
+          sub={`${fmt.money(nbim ? nbim.equityNok : totalNok, 'NOK', 1)}, across ${(nbim ? nbim.companies : filtered.length).toLocaleString()} companies`} />
         <TallyCell count label="Avg ownership" value={fmt.pct(avgOwn, 2)} sub={`${ownStats.above5} positions above 5%`} />
         <TallyCell count label="Markets covered" value={countries.toString()} sub={`${sectorCount} sectors`} />
         <TallyCell
