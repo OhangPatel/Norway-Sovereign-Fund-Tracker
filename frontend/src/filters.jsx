@@ -180,7 +180,7 @@ export function FilterPanel({ data, filters, setFilters, count, open, setOpen, a
               <div className="r-sheet-sec">
                 <button className="r-sheet-sec-head" role="switch" aria-checked={filters.pinned}
                   onClick={() => setFilters(f => ({ ...f, pinned: !f.pinned }))}>
-                  <span style={{ flex: 1, textAlign: 'left' }}>Pinned only</span>
+                  <span style={{ flex: 1, textAlign: 'left' }}>Favourites only</span>
                   <span className="r-switch" aria-hidden="true"/>
                 </button>
               </div>

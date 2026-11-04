@@ -83,8 +83,9 @@ export function Footer({ positions, period, pricesAsOf, hasChanges, onPhoto }) {
         <div className="r-foot-legal">
           <p>
             Holdings sourced from NBIM&rsquo;s published GPFG equity disclosure, joined
-            with market data from Yahoo Finance. USD values are estimated at acquisition
-            FX. The dataset is a point-in-time snapshot, not a live feed.
+            with market data from Yahoo Finance. USD values are as published by NBIM, at a
+            single exchange rate for each reporting period. The dataset is a point-in-time
+            snapshot, not a live feed.
           </p>
           <p>
             Sovereign Insights is an independent research tool published by Basecase. It

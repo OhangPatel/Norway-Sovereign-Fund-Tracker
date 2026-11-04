@@ -5,43 +5,64 @@
       "period": "2026-06-30",
       "label": "H1 2026",
       "half": true,
-      "rows": 1398
+      "rows": 1398,
+      "companies": 7077,
+      "equityNok": 16357807846494,
+      "equityUsd": 1653055211611
     },
     {
       "period": "2025-12-31",
       "label": "2025",
       "half": false,
-      "rows": 1430
+      "rows": 1430,
+      "companies": 7201,
+      "equityNok": 15173080429990,
+      "equityUsd": 1504243686581
     },
     {
       "period": "2025-06-30",
       "label": "H1 2025",
       "half": true,
-      "rows": 1427
+      "rows": 1427,
+      "companies": 8374,
+      "equityNok": 13841391791701,
+      "equityUsd": 1367767008083
     },
     {
       "period": "2024-12-31",
       "label": "2024",
       "half": false,
-      "rows": 1446
+      "rows": 1446,
+      "companies": 8659,
+      "equityNok": 14112924028100,
+      "equityUsd": 1242624734476
     },
     {
       "period": "2024-06-30",
       "label": "H1 2024",
       "half": true,
-      "rows": 1421
+      "rows": 1421,
+      "companies": 8763,
+      "equityNok": 12778523720686,
+      "equityUsd": 1200143105958
     },
     {
       "period": "2023-12-31",
       "label": "2023",
       "half": false,
-      "rows": 1438
+      "rows": 1438,
+      "companies": 8859,
+      "equityNok": 11174262989647,
+      "equityUsd": 1100294710325
     },
     {
       "period": "2022-12-31",
       "label": "2022",
       "half": false,
-      "rows": 1491
+      "rows": 1491,
+      "companies": 9228,
+      "equityNok": 8672186104489,
+      "equityUsd": 880335611054
     }
   ]
 }

@@ -125,7 +125,6 @@ export function CompareModal({ companies, onClose, allData }) {
     { label: '52-week high',    val: c => fmt.price(c.high52), mono: true },
     { label: 'Analyst target',  val: c => fmt.price(c.targetPrice), mono: true },
     { label: 'Fund value (USD)', val: c => fmt.money(c.mvUsd, 'USD', 2), mono: true, divider: true },
-    { label: 'Fund value (NOK)', val: c => fmt.money(c.mvNok, 'NOK', 2), mono: true },
     { label: 'Ownership %',     val: c => fmt.pct(c.ownership, 3), mono: true, hi: c => c.ownership >= 5 },
     { label: 'Voting rights %', val: c => fmt.pct(c.voting, 3), mono: true },
     { label: 'P/E (trailing)',  val: c => c.pe?.toFixed(2) ?? 'n/a', mono: true, divider: true },

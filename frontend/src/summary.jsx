@@ -27,9 +27,10 @@ export var SECTOR_COLORS = {
   '':                      'var(--soft)',
 };
 
-// Where .r-duo stacks the sector list over the treemap (index.html, max-width 900px).
-// There the treemap no longer has to match the list's height beside it, and at 580px
-// under a full list the section ran to nearly two phone screens.
+// Where .r-duo stacks into one column (index.html, max-width 900px). The sector list is
+// dropped there: stacked over the treemap it only repeated the same names and shares.
+// The treemap then carries them alone, sized by its width (1.8x on a phone) so the small
+// sectors keep room for a label.
 const STACKED_QUERY = '(max-width: 900px)';
 const subscribeStacked = (cb) => {
   const mq = window.matchMedia(STACKED_QUERY);
@@ -38,7 +39,18 @@ const subscribeStacked = (cb) => {
 };
 const useStacked = () => React.useSyncExternalStore(subscribeStacked, () => window.matchMedia(STACKED_QUERY).matches);
 
-export function Summary({ data, filtered, sectorBase, onPickCompany, onSetFilter, activeSectors = [], onClearSectors, onOwnSelect }) {
+// Ownership bands by panel width, widest first. None is narrower than 0.5, and each narrower
+// set only merges bands of the one above it, so an edge never moves between screens. They
+// widen as they climb because companies crowd under 3% and only a handful sit above 10%;
+// every band holds companies in all seven periods. A minWidth keeps that set's labels apart.
+const OWNERSHIP_TIERS = [
+  { minWidth: 900, edges: [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 6, 7, 8, 9, 10, 15] },
+  { minWidth: 560, edges: [0, 0.5, 1, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10] },
+  { minWidth: 290, edges: [0, 0.5, 1, 1.5, 2, 3, 5, 10] },
+  { minWidth: 0, edges: [0, 1, 2, 3, 5, 10] },
+];
+
+export function Summary({ data, filtered, sectorBase, onPickCompany, onSetFilter, activeSectors = [], onClearSectors, onOwnSelect, periodInfo }) {
   const stacked = useStacked();
   const { totalNok, totalUsd, avgOwn, countries, sectorCount } = React.useMemo(() => {
     let totalNok = 0, totalUsd = 0, ownSum = 0;
@@ -63,7 +75,7 @@ export function Summary({ data, filtered, sectorBase, onPickCompany, onSetFilter
   // The hero's top holdings are the fund's, whatever the filters below are set to:
   // the hero is the overview, and a sector pick used to turn it into that sector's top 8.
   const top10 = React.useMemo(
-    () => [...data].sort((a, b) => b.mvNok - a.mvNok).slice(0, 8),
+    () => [...data].sort((a, b) => b.mvUsd - a.mvUsd).slice(0, 8),
     [data]
   );
 
@@ -109,6 +121,11 @@ export function Summary({ data, filtered, sectorBase, onPickCompany, onSetFilter
   const [sectorRef, sectorSeen] = useSeen();
   const [ownRef, ownSeen] = useSeen();
 
+  // With no filter on, the lead figure is NBIM's own equity total for the period: every
+  // company it holds, not only the ones tracked here. A filter can only narrow the tracked
+  // rows, so then it is their sum.
+  const nbim = filtered.length === data.length && periodInfo?.equityUsd ? periodInfo : null;
+
   // The hero's one action: down to the ledger, without touching the hash router.
   const toLedger = () => {
     const el = document.getElementById('ledger');
@@ -125,8 +142,8 @@ export function Summary({ data, filtered, sectorBase, onPickCompany, onSetFilter
         <div className="on-photo">
           <h1 id="hero-head">The world&apos;s largest sovereign wealth fund, tracked equity by equity.</h1>
           <p className="r-hero-lede">
-            Norway&apos;s Government Pension Fund Global holds positions in {data.length.toLocaleString()} public companies across six markets.
-            Filter, compare, and click through to see how every krone is allocated.
+            This site tracks {data.length.toLocaleString()} of the public companies held by Norway&apos;s Government Pension Fund Global, across six markets.
+            Filter, compare, and click through to see how every dollar is allocated.
           </p>
           <div className="r-hero-actions">
             <button type="button" onClick={toLedger} style={{
@@ -140,7 +157,7 @@ export function Summary({ data, filtered, sectorBase, onPickCompany, onSetFilter
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 'var(--space-sm)', marginBottom: 'var(--space-2xs)' }}>
             <div>
               <h2 style={{ fontSize: 'var(--text-lg)', lineHeight: 1.2, margin: 0 }}>Top holdings</h2>
-              <p className="eyebrow" style={{ margin: '2px 0 0' }}>Market value in NOK</p>
+              <p className="eyebrow" style={{ margin: '2px 0 0' }}>Market value in USD</p>
             </div>
             <span className="eyebrow">Top 8 of {data.length.toLocaleString()}</span>
           </div>
@@ -153,10 +170,10 @@ export function Summary({ data, filtered, sectorBase, onPickCompany, onSetFilter
                     <span className="r-acct-name" style={{ display: 'block', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{c.name}</span>
                     <span className="mono" style={{ display: 'block', fontSize: 'var(--text-xs)', color: 'var(--soft)' }}>{c.ticker}, {countryCode(c.country)}</span>
                     <span className="r-acct-bar" aria-hidden="true">
-                      <span style={{ '--w': top10[0].mvNok ? c.mvNok / top10[0].mvNok : 0 }}/>
+                      <span style={{ '--w': top10[0].mvUsd ? c.mvUsd / top10[0].mvUsd : 0 }}/>
                     </span>
                   </span>
-                  <span className="mono" style={{ fontSize: 'var(--text-sm)', whiteSpace: 'nowrap' }}>{fmt.money(c.mvNok, 'NOK', 1)}</span>
+                  <span className="mono" style={{ fontSize: 'var(--text-sm)', whiteSpace: 'nowrap' }}>{fmt.money(c.mvUsd, 'USD', 1)}</span>
                 </button>
               </li>
             ))}
@@ -166,8 +183,8 @@ export function Summary({ data, filtered, sectorBase, onPickCompany, onSetFilter
 
       {/* The ruled tally, in one glass strip at the foot of the photograph. */}
       <dl className="r-tally glass" style={{ margin: 0 }}>
-        <TallyCell lead count label="Total holdings" value={fmt.money(totalUsd, 'USD', 1)}
-          sub={`${fmt.money(totalNok, 'NOK', 1)}, across ${filtered.length.toLocaleString()} companies`} />
+        <TallyCell lead count label="Total holdings" value={fmt.money(nbim ? nbim.equityUsd : totalUsd, 'USD', 1)}
+          sub={`${fmt.money(nbim ? nbim.equityNok : totalNok, 'NOK', 1)}, across ${(nbim ? nbim.companies : filtered.length).toLocaleString()} companies`} />
         <TallyCell count label="Avg ownership" value={fmt.pct(avgOwn, 2)} sub={`${ownStats.above5} positions above 5%`} />
         <TallyCell count label="Markets covered" value={countries.toString()} sub={`${sectorCount} sectors`} />
         <TallyCell
@@ -193,24 +210,26 @@ export function Summary({ data, filtered, sectorBase, onPickCompany, onSetFilter
           )}
         </div>
         <div className="r-duo r-sector-duo">
-          <ul className={activeSectors.length ? 'r-rows has-pick' : 'r-rows'}>
-            {sectors.map((it, i) => (
-              <li key={it.label}>
-                <button type="button" className={`r-row-btn${hot === it.label ? ' is-hot' : ''}`} aria-pressed={activeSectors.includes(it.label)}
-                  onMouseEnter={() => setHot(it.label)} onMouseLeave={() => setHot(null)}
-                  onFocus={() => setHot(it.label)} onBlur={() => setHot(null)}
-                  onClick={() => pickSector(it.label)}>
-                  <span className="r-row-name">{it.label}</span>
-                  <span className="mono" style={{ fontSize: 'var(--text-sm)' }}>{it.pct.toFixed(1)}%</span>
-                  <span className="r-row-bar" aria-hidden="true">
-                    <span style={{ '--i': i, transform: `scaleX(${sectors[0].pct ? it.pct / sectors[0].pct : 0})`, background: it.color }}/>
-                  </span>
-                </button>
-              </li>
-            ))}
-          </ul>
+          {!stacked && (
+            <ul className={activeSectors.length ? 'r-rows has-pick' : 'r-rows'}>
+              {sectors.map((it, i) => (
+                <li key={it.label}>
+                  <button type="button" className={`r-row-btn${hot === it.label ? ' is-hot' : ''}`} aria-pressed={activeSectors.includes(it.label)}
+                    onMouseEnter={() => setHot(it.label)} onMouseLeave={() => setHot(null)}
+                    onFocus={() => setHot(it.label)} onBlur={() => setHot(null)}
+                    onClick={() => pickSector(it.label)}>
+                    <span className="r-row-name">{it.label}</span>
+                    <span className="mono" style={{ fontSize: 'var(--text-sm)' }}>{it.pct.toFixed(1)}%</span>
+                    <span className="r-row-bar" aria-hidden="true">
+                      <span style={{ '--i': i, transform: `scaleX(${sectors[0].pct ? it.pct / sectors[0].pct : 0})`, background: it.color }}/>
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
           <div className="glass r-sector-map">
-            <Treemap items={sectors} height={stacked ? 260 : 580} highlight={hot} onHover={setHot}
+            <Treemap items={sectors} height={stacked ? (w => (w < 500 ? w * 1.8 : w)) : 580} highlight={hot} onHover={setHot}
               selected={activeSectors}
               onClick={(it) => pickSector(it.label)}
             />
@@ -229,8 +248,8 @@ export function Summary({ data, filtered, sectorBase, onPickCompany, onSetFilter
           <span className="eyebrow">{owns.length.toLocaleString()} companies</span>
         </div>
         <div className="glass">
-          <Histogram data={owns} bins={28} height={220}
-            xFmt={v => v.toFixed(1) + '%'} onSelect={onOwnSelect}/>
+          <Histogram data={owns} tiers={OWNERSHIP_TIERS} height={220}
+            caption="% of company owned" onSelect={onOwnSelect}/>
         </div>
         <dl className="r-tally" style={{ margin: 'var(--space-lg) 0 0' }}>
           <TallyCell label="Median" value={<Cents text={fmt.pct(ownStats.median, 2)}/>}/>

@@ -100,7 +100,7 @@
           "temporalCoverage": "2026-06-22",
           "spatialCoverage": "Canada, Germany, India, Singapore, United Kingdom, United States",
           "variableMeasured": [
-            "Market value (USD)", "Market value (NOK)", "Ownership percentage",
+            "Market value (USD)", "Ownership percentage",
             "Voting rights percentage", "Price/earnings ratio", "Forward P/E",
             "Price/book", "Dividend yield", "Beta", "Market capitalisation",
             "Analyst recommendation"
@@ -649,17 +649,21 @@
       .r-nights { padding: var(--space-lg) var(--space-lg) var(--space-md); }
       .r-nights-bars, .r-nights-axis { display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: var(--space-2xs); }
       .r-nights-bars { align-items: end; }
-      .r-night { position: relative; display: flex; justify-content: center; align-items: flex-end; height: 100%; padding: 0; background: none; border: 0; cursor: pointer; }
+      .r-night { position: relative; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; height: 100%; min-width: 0; padding: 0; background: none; border: 0; cursor: pointer; }
+      .r-night-n { flex: none; margin-bottom: 6px; font-family: var(--font-mono); font-size: var(--text-xs); line-height: 1; color: var(--soft); font-variant-numeric: tabular-nums; }
       .r-night-bar {
-        width: min(14px, 62%); height: max(10px, calc(var(--h, 0) * 100%)); border-radius: var(--r-pill);
+        /* 18px is the count above the bar, so the tallest pill still fits under it. */
+        flex: none; width: min(14px, 62%); height: max(10px, calc(var(--h, 0) * (100% - 18px))); border-radius: var(--r-pill);
         background: linear-gradient(to bottom, var(--accent), color-mix(in oklab, var(--accent) 26%, transparent));
         opacity: 0.88; transform-origin: 50% 100%;
         transition: transform 800ms var(--ease-out) calc(var(--i, 0) * 25ms), opacity var(--dur-micro) var(--ease-out);
       }
       .r-night:hover .r-night-bar, .r-night:focus-visible .r-night-bar { opacity: 1; }
       .r-night.is-empty .r-night-bar { height: 10px; background: repeating-linear-gradient(135deg, var(--line) 0 2px, transparent 2px 5px); box-shadow: inset 0 0 0 1px var(--line); }
-      .r-nights.has-sel .r-night:not(.is-on) .r-night-bar { opacity: 0.3; }
-      .r-nights-axis { margin-top: var(--space-xs); font-size: var(--text-xs); color: var(--soft); text-align: center; font-variant-numeric: tabular-nums; }
+      .r-nights.has-sel .r-night:not(.is-on) .r-night-bar, .r-nights.has-sel .r-night:not(.is-on) .r-night-n { opacity: 0.3; }
+      .r-nights-axis { margin-top: var(--space-xs); font-size: var(--text-xs); color: var(--soft); font-variant-numeric: tabular-nums; }
+      .r-nights-axis span { display: flex; justify-content: center; min-width: 0; white-space: nowrap; }
+      .r-nights-cap { margin: var(--space-2xs) 0 0; font-size: var(--text-xs); color: var(--soft); text-align: center; }
 
       /* MOTION. Dusk's own, each piece once: the hour drifts, the accounts rise in,
          the tally counts up (summary.jsx), and charts grow when first seen. Only
@@ -698,8 +702,8 @@
       /* Position detail: detail.jsx. A drawer from the right on a wide screen; the
          media block below turns it into a bottom sheet (SHEET_QUERY in detail.jsx). */
       .r-detail { position: fixed; top: 0; right: 0; bottom: 0; z-index: 81; width: min(640px, 96vw); overflow-y: auto; overscroll-behavior: contain; border-radius: 0; box-shadow: var(--glass-hi), var(--shadow-overlay); }
-      /* Frosts what scrolls under it, inside the drawer's own glass. */
-      .r-detail-head { position: sticky; top: 0; z-index: 5; background: color-mix(in oklab, var(--glass) 50%, transparent); -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.35); backdrop-filter: blur(var(--glass-blur)) saturate(1.35); border-bottom: 1px solid var(--line); }
+      /* Near-opaque so the content scrolling under it can't ghost through the title and buttons; the drawer's own glass is only 62% on dark, and a nested blur doesn't hide text reliably (Safari). */
+      .r-detail-head { position: sticky; top: 0; z-index: 5; background: color-mix(in oklab, var(--surface) 96%, transparent); -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.35); backdrop-filter: blur(var(--glass-blur)) saturate(1.35); border-bottom: 1px solid var(--line); }
       .r-detail-bar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-sm); padding: var(--space-sm) var(--space-lg); }
       .r-detail-title { font-size: var(--text-sm); color: var(--soft); }
       .r-detail-actions { display: flex; gap: var(--space-xs); }
@@ -872,10 +876,18 @@
       /* The closing wordmark. 12.4cqi fills the column: the name runs 8.03 units of
          its size wide in this face and tracking. The photograph sits low in it, so
          each letter holds the sky, the lit peaks and the water. The bottom pad is
-         the chat launcher's parking space, so the name is never under it. */
+         the chat launcher's parking space, so the name is never under it.
+
+         The tight line box ends above the g's tail, and background-clip only paints
+         inside the box, which cut the tail off in a hard line. The padding carries the
+         photograph down to it (the margin gives that room back to the layout, and 75.4%
+         keeps the photograph where 72% had it in the shorter box), and the mask fades
+         the tail from just under the baseline (0.77em) to its tip (0.956em). */
       .r-foot-word { container-type: inline-size; padding: var(--space-md) 0 96px; border-top: 1px solid var(--line); user-select: none; }
       .r-foot-word-text { display: block; white-space: nowrap; font-family: var(--font-display); font-weight: 700; font-size: 12.4cqi; line-height: 0.82; letter-spacing: -0.05em; color: var(--ink);
-        background: url("/photos/austnesfjorden-lofoten-wide-1789.jpg") 50% 72% / cover no-repeat; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+        padding-bottom: 0.14em; margin-bottom: -0.14em;
+        background: url("/photos/austnesfjorden-lofoten-wide-1789.jpg") 50% 75.4% / cover no-repeat; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+        -webkit-mask-image: linear-gradient(to bottom, black 0.77em, transparent 0.956em); mask-image: linear-gradient(to bottom, black 0.77em, transparent 0.956em); }
       /* On the bone page the sky in the letters is nearly the page's own colour; deepened
          a step, the name holds its weight in both themes. */
       :root[data-theme="light"] .r-foot-word-text { filter: brightness(0.78) saturate(1.15); }
@@ -929,7 +941,6 @@
         .r-sector-duo { gap: var(--space-md); }
         .r-sector-duo .r-row-btn { padding: 6px 0; row-gap: 4px; }
         .r-sector-map { padding: var(--space-sm); }
-        .r-nights-axis span:not(:nth-child(2n+1)) { visibility: hidden; }
         .r-hero h1, .r-banner h1 { font-size: 2.5rem; }
         .r-tally { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         .r-tally > * { padding: var(--space-md) var(--space-md); }
@@ -966,7 +977,6 @@
         .r-nights { padding: var(--space-md) var(--space-sm) var(--space-sm); }
         .r-band { padding-bottom: 220px; }
         .r-band::before { height: 520px; }
-        .r-nights-axis span:not(:nth-child(4n+1)) { visibility: hidden; }
         .r-tabs { padding-right: var(--space-xl); -webkit-mask-image: linear-gradient(to right, black calc(100% - var(--space-xl)), transparent); mask-image: linear-gradient(to right, black calc(100% - var(--space-xl)), transparent); }
         .r-div-row { grid-template-columns: 40px minmax(0, 1fr) 40px; row-gap: var(--space-2xs); }
         .r-div-row > :first-child { grid-column: 1 / -1; }
@@ -1075,7 +1085,7 @@
         <p class="boot-words" aria-hidden="true">
           <span style="--n: 0">Raising the mountains</span>
           <span style="--n: 1">Polishing the glass</span>
-          <span style="--n: 2">Counting every krone</span>
+          <span style="--n: 2">Counting every dollar</span>
           <span style="--n: 3">Lighting the fjord</span>
         </p>
         <div class="boot-bar" aria-hidden="true"><span></span></div>
@@ -1111,7 +1121,7 @@
           <li>Six markets: Canada, Germany, India, Singapore, the United Kingdom, and the United States.</li>
           <li>Eleven sectors, from Technology and Financial Services to Utilities and Real Estate.</li>
           <li>
-            Per holding: market value in USD and NOK, the fund’s ownership and voting
+            Per holding: market value in USD, the fund’s ownership and voting
             percentage, share price and 52-week range, P/E and forward P/E,
             price-to-book, dividend yield, beta, market capitalisation, and the
             aggregated analyst recommendation.

@@ -460,11 +460,11 @@ export function Cell({ colKey, row, rank, cellBase, pinned, togglePin, hover, ma
           }}
           onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.15)'}
           onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
-          title={pinned ? 'Unpin' : 'Pin'}
-          aria-label={`${pinned ? 'Unpin' : 'Pin'} ${row.name}`}
+          title={pinned ? 'Unstar' : 'Star'}
+          aria-label={`${pinned ? 'Unstar' : 'Star'} ${row.name}`}
           aria-pressed={pinned}
         >
-          <Icon name={pinned ? 'pinned' : 'pin'} size={14}/>
+          <Icon name={pinned ? 'starred' : 'star'} size={14}/>
         </button>
       </div>;
   }

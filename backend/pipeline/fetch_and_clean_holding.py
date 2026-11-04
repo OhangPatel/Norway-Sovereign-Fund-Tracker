@@ -25,6 +25,7 @@ The period travels with the data from here on, as the As_Of column, so downstrea
 steps never have to infer it from a filename or a file's mtime.
 """
 import argparse
+import json
 import re
 import sys
 import tempfile
@@ -32,6 +33,7 @@ import pandas as pd
 from io import StringIO
 from datetime import date, datetime
 from pathlib import Path
+from urllib.request import Request, urlopen
 from playwright.sync_api import sync_playwright
 
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -41,6 +43,7 @@ SNAPSHOTS_DIR = DATA_DIR / "snapshots"
 OUTPUT_CSV = DATA_DIR / "fully_cleaned_dataset_with_reasons.csv"
 
 BASE_URL = "https://www.nbim.no/en/investments/all-investments/"
+INIT_URL = "https://www.nbim.no/api/investments/v2/init.json"
 USER_AGENT = (
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
     "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
@@ -163,7 +166,31 @@ def fetch_portfolio(period=None):
     raw_df = pd.read_csv(StringIO(csv_text), sep=";", decimal=",")
     print(f"Raw rows for {period.isoformat()}: {len(raw_df)}", flush=True)
     _write_roster(raw_df, period)
+    _write_totals(raw_df, period)
     return raw_df, period
+
+
+def _write_totals(raw_df, period):
+    """NBIM's headline equity total for this period, committed beside the roster.
+
+    Read from the init.json its page shows, not summed from the rows: the reported
+    figure differs from the row sum (by 3.5% for 2024), and the site quotes NBIM's.
+    NBIM publishes it in both NOK and USD, so nothing here is converted.
+    """
+    with urlopen(Request(INIT_URL, headers={"User-Agent": USER_AGENT}), timeout=30) as resp:
+        nav = json.load(resp)["data"]["nav"]
+    equity = [x["v"] for x in nav if x["a"] == "eq" and x["d"].startswith(period.isoformat())]
+    if not equity:
+        raise RuntimeError(
+            f"NBIM's init.json has no equity total for {period.isoformat()} — its format "
+            f"has probably changed."
+        )
+
+    out = ROOT_DIR / "data" / "periods" / period.isoformat() / "totals.json"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    totals = {"companies": len(raw_df), "equityNok": equity[0]["n"], "equityUsd": equity[0]["e"]}
+    out.write_text(json.dumps(totals, indent=2) + "\n")
+    print(f"Totals: {totals['companies']} companies, NOK {totals['equityNok']:,} → {out.relative_to(ROOT_DIR)}", flush=True)
 
 
 def _write_roster(raw_df, period):

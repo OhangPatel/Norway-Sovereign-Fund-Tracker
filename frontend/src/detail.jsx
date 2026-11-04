@@ -337,8 +337,8 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
             </button>
             <span className="r-detail-title">Position detail</span>
             <div className="r-detail-actions">
-              <IconBtn onClick={() => togglePin(company.id)} active={isPinned} title={isPinned ? 'Unpin' : 'Pin'}>
-                <Icon name={isPinned ? 'pinned' : 'pin'} size={14}/>
+              <IconBtn onClick={() => togglePin(company.id)} active={isPinned} title={isPinned ? 'Unstar' : 'Star'}>
+                <Icon name={isPinned ? 'starred' : 'star'} size={14}/>
               </IconBtn>
               <span className="r-detail-x">
                 <IconBtn onClick={close} title="Close (Esc)">
@@ -445,9 +445,8 @@ export function Detail({ company, allData, onClose, onPickCompany, pinned, toggl
           <section className="r-inset r-dhold r-dsec">
             <SectionLabel text="Norway GPFG holding"
               tag={historical ? `Disclosed as of ${formatPeriod(period)}` : null}/>
-            <div className="r-dtally">
+            <div className="r-dtally" style={{ gridTemplateColumns: 'repeat(2, minmax(0, 1fr))' }}>
               <Metric label="USD value" value={fmt.money(company.mvUsd, 'USD', 2)}/>
-              <Metric label="NOK value" value={fmt.money(company.mvNok, 'NOK', 2)}/>
               <Metric label="Ownership" value={fmt.pct(company.ownership, 3)}
                 accent={company.ownership >= 5}/>
             </div>
