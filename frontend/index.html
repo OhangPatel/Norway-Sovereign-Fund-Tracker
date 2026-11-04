@@ -876,10 +876,18 @@
       /* The closing wordmark. 12.4cqi fills the column: the name runs 8.03 units of
          its size wide in this face and tracking. The photograph sits low in it, so
          each letter holds the sky, the lit peaks and the water. The bottom pad is
-         the chat launcher's parking space, so the name is never under it. */
+         the chat launcher's parking space, so the name is never under it.
+
+         The tight line box ends above the g's tail, and background-clip only paints
+         inside the box, which cut the tail off in a hard line. The padding carries the
+         photograph down to it (the margin gives that room back to the layout, and 75.4%
+         keeps the photograph where 72% had it in the shorter box), and the mask fades
+         the tail from just under the baseline (0.77em) to its tip (0.956em). */
       .r-foot-word { container-type: inline-size; padding: var(--space-md) 0 96px; border-top: 1px solid var(--line); user-select: none; }
       .r-foot-word-text { display: block; white-space: nowrap; font-family: var(--font-display); font-weight: 700; font-size: 12.4cqi; line-height: 0.82; letter-spacing: -0.05em; color: var(--ink);
-        background: url("/photos/austnesfjorden-lofoten-wide-1789.jpg") 50% 72% / cover no-repeat; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+        padding-bottom: 0.14em; margin-bottom: -0.14em;
+        background: url("/photos/austnesfjorden-lofoten-wide-1789.jpg") 50% 75.4% / cover no-repeat; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+        -webkit-mask-image: linear-gradient(to bottom, black 0.77em, transparent 0.956em); mask-image: linear-gradient(to bottom, black 0.77em, transparent 0.956em); }
       /* On the bone page the sky in the letters is nearly the page's own colour; deepened
          a step, the name holds its weight in both themes. */
       :root[data-theme="light"] .r-foot-word-text { filter: brightness(0.78) saturate(1.15); }
